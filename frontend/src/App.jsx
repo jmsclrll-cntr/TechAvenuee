@@ -1,10 +1,11 @@
 function App() {
   return (
-    <div>
-      <h1>TechAvenue</h1>
-      <p>Computer and Accessories Store Management System</p>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <h1 className="text-4xl font-bold text-blue-400">
+        TechAvenue
+      </h1>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
