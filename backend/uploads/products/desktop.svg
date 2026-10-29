@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" rx="16" fill="#1E293B"/>
+  <!-- Desktop Case -->
+  <rect x="55" y="25" width="90" height="150" rx="8" fill="#0F172A" stroke="#818CF8" stroke-width="2"/>
+  <!-- Glass Side Panel -->
+  <rect x="65" y="35" width="70" height="105" rx="4" fill="#1E293B"/>
+  <!-- Fans with RGB Glow -->
+  <circle cx="100" cy="55" r="16" fill="none" stroke="#818CF8" stroke-width="3" stroke-dasharray="8 4"/>
+  <circle cx="100" cy="95" r="16" fill="none" stroke="#EC4899" stroke-width="3" stroke-dasharray="8 4"/>
+  <!-- GPU inside -->
+  <rect x="70" y="118" width="60" height="12" rx="2" fill="#334155" stroke="#34D399" stroke-width="1.5"/>
+  <!-- Power button & I/O -->
+  <circle cx="100" cy="155" r="4" fill="#38BDF8"/>
+  <rect x="80" y="163" width="40" height="3" rx="1.5" fill="#475569"/>
+</svg>

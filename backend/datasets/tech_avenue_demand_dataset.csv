@@ -1,0 +1,1201 @@
+product_id,product_name,category,unit_price,competitor_price,rating,page_views,stock_quantity,monthly_demand
+101,Apex Wireless Gaming Mouse,Peripherals & Accessories,2636.91,3025.12,4.3,7823,140,99
+102,SpeedStream Gigabit Switch 8P,Networking Devices,1778.1,1751.06,3.9,4133,14,72
+103,Station Elite Tower,Desktop Computers,49976.99,45221.9,4.5,5101,145,76
+104,Compact Office Mini,Desktop Computers,25042.82,25182.13,4.7,4887,13,84
+105,Pulse RX 7800 XT 16GB,Internal Components,33461.62,34952.97,4.6,6008,94,91
+106,Vengeance DDR5 32GB RGB,Storage & Memory,7910.34,7155.91,4.6,2317,6,64
+107,ProBook Ultra 15,Laptops & Ultrabooks,56146.74,62274.75,3.9,1182,106,52
+108,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4705.6,4975.63,4.7,11740,79,125
+109,Ryzen 7 7800X3D Processor,Internal Components,26257.04,24994.01,4.6,1716,63,60
+110,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4560.52,4352.66,4.8,7372,19,99
+111,Vengeance DDR5 32GB RGB,Storage & Memory,7474.77,7089.67,4.9,3036,65,71
+112,Core i7-14700K Processor,Internal Components,26014.29,24315.13,3.9,8959,111,96
+113,Apex Wireless Gaming Mouse,Peripherals & Accessories,2707.43,2384.62,4.9,9490,53,112
+114,Evo 990 Pro 2TB NVMe,Storage & Memory,9167.15,9629.31,3.8,6184,49,85
+115,Titanium 850W Gold PSU,Internal Components,7217.79,8067.63,4.9,6377,79,97
+116,Vengeance DDR5 32GB RGB,Storage & Memory,7586.46,7467.45,4.4,6846,14,93
+117,SpeedStream Gigabit Switch 8P,Networking Devices,1795.92,1738.34,4.1,2872,70,64
+118,Phantom B650 Motherboard,Internal Components,11379.78,10026.36,4.0,7544,53,92
+119,Pulse RX 7800 XT 16GB,Internal Components,36663.41,32874.18,4.4,7984,69,95
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9886.59,9521.58,3.9,9153,67,102
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13055.17,14788.09,4.6,11164,27,118
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4389.97,4885.35,3.9,6146,94,82
+103,Titanium 850W Gold PSU,Internal Components,7423.07,8470.52,4.7,8856,147,103
+104,Apex Wireless Gaming Mouse,Peripherals & Accessories,3183.8,2974.93,3.7,1400,69,47
+105,SpeedStream Gigabit Switch 8P,Networking Devices,1958.68,1845.11,4.5,11150,82,118
+106,Phantom B650 Motherboard,Internal Components,11747.25,11364.79,3.5,9089,5,98
+107,Liquid Master 360 AIO,Internal Components,5785.82,5113.91,4.3,5616,20,77
+108,Vengeance DDR5 32GB RGB,Storage & Memory,8171.43,8334.4,4.6,1198,139,59
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,10483.5,9891.69,4.6,11703,6,120
+110,SpeedStream Gigabit Switch 8P,Networking Devices,1711.2,1823.87,4.3,4500,35,76
+111,Titanium 850W Gold PSU,Internal Components,7077.71,7132.44,4.3,9769,107,108
+112,SpeedStream Gigabit Switch 8P,Networking Devices,1933.81,1704.16,4.9,10054,93,113
+113,GamerX Predator 16,Laptops & Ultrabooks,80835.96,80121.83,4.7,5437,88,88
+114,GamerX Predator 16,Laptops & Ultrabooks,74270.42,74506.63,4.3,1908,148,57
+115,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9741.34,8888.34,3.6,4583,51,68
+116,ProBook Ultra 15,Laptops & Ultrabooks,50512.36,45965.21,4.9,2814,107,73
+117,Phantom B650 Motherboard,Internal Components,11624.96,11153.43,4.1,6879,102,89
+118,Pulse RX 7800 XT 16GB,Internal Components,38467.78,37771.97,4.0,10416,131,108
+119,Titanium 850W Gold PSU,Internal Components,7321.87,8281.09,4.8,10028,7,115
+120,Titanium 850W Gold PSU,Internal Components,7255.49,6737.2,4.9,1287,47,64
+101,SlimLite Go 13,Laptops & Ultrabooks,31119.01,28295.74,3.8,1251,46,47
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4000.23,3669.33,4.0,1969,6,53
+103,Ryzen 7 7800X3D Processor,Internal Components,23013.02,25251.61,4.3,5577,95,87
+104,Phantom B650 Motherboard,Internal Components,12292.77,13662.14,4.4,11566,143,124
+105,SpeedStream Gigabit Switch 8P,Networking Devices,1959.97,1734.89,4.1,5651,10,76
+106,Liquid Master 360 AIO,Internal Components,4989.74,4431.65,4.2,6434,134,85
+107,Ryzen 7 7800X3D Processor,Internal Components,25767.78,24783.78,4.3,3732,29,71
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,9017.97,8081.52,3.9,2760,106,58
+109,Titanium 850W Gold PSU,Internal Components,6894.26,6857.07,4.0,10434,25,112
+110,SlimLite Go 13,Laptops & Ultrabooks,31448.07,30983.51,4.0,2309,77,61
+111,Ryzen 7 7800X3D Processor,Internal Components,23323.99,23467.19,4.2,6576,10,89
+112,GamerX Predator 16,Laptops & Ultrabooks,76842.24,79599.73,4.7,11737,63,126
+113,Ryzen 7 7800X3D Processor,Internal Components,23355.86,21456.94,4.8,11217,62,118
+114,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4429.13,4958.89,3.6,8279,102,97
+115,Titanium 850W Gold PSU,Internal Components,7388.48,7047.34,4.9,8546,12,104
+116,Vengeance DDR5 32GB RGB,Storage & Memory,7427.24,6882.25,3.5,1053,111,44
+117,Evo 990 Pro 2TB NVMe,Storage & Memory,9206.33,10110.91,4.9,11301,67,122
+118,GamerX Predator 16,Laptops & Ultrabooks,81534.7,76081.37,3.5,3986,47,65
+119,Aero RTX 4070 12GB,Internal Components,39305.41,44088.11,4.4,9467,99,105
+120,GamerX Predator 16,Laptops & Ultrabooks,84348.14,83831.5,4.4,3685,98,70
+101,Liquid Master 360 AIO,Internal Components,5672.37,6265.46,4.4,2545,102,64
+102,Vengeance DDR5 32GB RGB,Storage & Memory,7710.66,7641.16,4.4,6424,27,85
+103,SlimLite Go 13,Laptops & Ultrabooks,31997.26,29945.52,4.1,10543,25,112
+104,Ryzen 7 7800X3D Processor,Internal Components,25871.56,25264.79,4.7,1659,102,61
+105,Evo 990 Pro 2TB NVMe,Storage & Memory,9245.35,9137.65,4.9,6842,129,91
+106,Apex Wireless Gaming Mouse,Peripherals & Accessories,2713.16,2925.75,3.6,10669,131,113
+107,Aero RTX 4070 12GB,Internal Components,40423.59,36717.79,4.8,643,118,59
+108,Core i7-14700K Processor,Internal Components,25895.32,25470.07,4.3,1595,66,55
+109,Phantom B650 Motherboard,Internal Components,11541.47,12416.93,4.3,11082,10,114
+110,SlimLite Go 13,Laptops & Ultrabooks,27103.4,24073.18,3.6,11780,67,108
+111,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14560.46,16286.04,3.9,6253,68,89
+112,ProBook Ultra 15,Laptops & Ultrabooks,52256.89,55813.98,3.8,1137,111,55
+113,ProBook Ultra 15,Laptops & Ultrabooks,53954.91,52628.83,4.7,5367,32,79
+114,Void RGB Wireless Headset,Peripherals & Accessories,3580.43,3979.46,4.4,11265,73,119
+115,Core i7-14700K Processor,Internal Components,25394.08,24955.29,4.7,10111,12,111
+116,Station Elite Tower,Desktop Computers,49345.86,51730.79,4.4,8448,85,97
+117,Vengeance DDR5 32GB RGB,Storage & Memory,7496.38,7963.83,4.2,2730,131,61
+118,Titanium 850W Gold PSU,Internal Components,7218.67,6767.62,4.0,1347,78,53
+119,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9659.66,9736.99,5.0,7418,114,98
+120,Void RGB Wireless Headset,Peripherals & Accessories,3939.19,3569.61,4.8,5866,14,83
+101,Liquid Master 360 AIO,Internal Components,5416.06,5639.56,4.3,9483,71,108
+102,SpeedStream Gigabit Switch 8P,Networking Devices,1989.19,1843.76,4.6,2607,104,63
+103,Evo 990 Pro 2TB NVMe,Storage & Memory,9740.63,9374.45,4.4,6051,8,81
+104,Core i7-14700K Processor,Internal Components,24998.37,23622.53,5.0,9545,95,115
+105,Ryzen 7 7800X3D Processor,Internal Components,25157.63,23210.4,3.8,10314,80,102
+106,SpeedStream Gigabit Switch 8P,Networking Devices,2040.0,2258.16,4.7,4721,51,78
+107,Phantom B650 Motherboard,Internal Components,11985.31,10934.93,4.2,2060,131,62
+108,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8721.95,9886.8,5.0,4101,37,83
+109,Phantom B650 Motherboard,Internal Components,12984.64,13558.37,3.9,4428,48,76
+110,SpeedStream Gigabit Switch 8P,Networking Devices,1764.8,1951.43,3.9,7033,90,93
+111,Void RGB Wireless Headset,Peripherals & Accessories,3654.64,3941.65,4.1,6893,100,93
+112,Liquid Master 360 AIO,Internal Components,5992.39,5513.95,3.9,11660,31,111
+113,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13362.89,14721.42,3.7,7180,144,84
+114,Station Elite Tower,Desktop Computers,52715.74,55594.38,4.0,7589,18,94
+115,Titanium 850W Gold PSU,Internal Components,6637.97,7386.95,3.8,1260,20,50
+116,SpeedStream Gigabit Switch 8P,Networking Devices,1798.32,1602.2,4.5,8910,150,98
+117,Station Elite Tower,Desktop Computers,48592.85,52088.74,4.8,8524,22,106
+118,Compact Office Mini,Desktop Computers,23940.24,25495.75,4.1,2694,131,64
+119,Apex Wireless Gaming Mouse,Peripherals & Accessories,3179.66,3021.84,4.1,4522,19,76
+120,Phantom B650 Motherboard,Internal Components,12772.14,13528.62,3.5,9168,29,99
+101,SlimLite Go 13,Laptops & Ultrabooks,29787.57,27275.76,4.3,10473,73,107
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,2641.91,2397.97,4.8,9009,9,104
+103,Liquid Master 360 AIO,Internal Components,5605.54,5232.68,4.4,4994,82,75
+104,Apex Wireless Gaming Mouse,Peripherals & Accessories,2892.26,2756.75,4.9,9379,29,112
+105,Liquid Master 360 AIO,Internal Components,5097.05,4864.96,3.7,7664,110,90
+106,SlimLite Go 13,Laptops & Ultrabooks,28182.77,31041.1,4.1,3105,93,63
+107,Apex Wireless Gaming Mouse,Peripherals & Accessories,2953.63,2876.93,4.4,8156,96,101
+108,Vengeance DDR5 32GB RGB,Storage & Memory,7960.51,8982.14,4.1,4356,60,76
+109,ProBook Ultra 15,Laptops & Ultrabooks,57196.6,55431.38,4.9,11629,62,119
+110,Titanium 850W Gold PSU,Internal Components,6554.55,6408.0,3.8,10206,133,105
+111,Pulse RX 7800 XT 16GB,Internal Components,37812.57,36642.23,3.8,1030,135,54
+112,SlimLite Go 13,Laptops & Ultrabooks,28431.82,30332.03,4.6,9388,146,107
+113,Pulse RX 7800 XT 16GB,Internal Components,35589.0,34895.48,4.6,3136,45,66
+114,GamerX Predator 16,Laptops & Ultrabooks,83660.89,78151.27,4.2,11586,35,115
+115,Aero RTX 4070 12GB,Internal Components,39492.58,37708.93,4.2,11821,133,115
+116,SlimLite Go 13,Laptops & Ultrabooks,28005.79,27925.88,4.0,4321,74,70
+117,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13195.03,11676.21,4.3,5182,94,82
+118,Station Elite Tower,Desktop Computers,45351.02,44648.78,4.6,4547,130,76
+119,Phantom B650 Motherboard,Internal Components,11633.07,11393.75,4.3,6160,46,86
+120,Ryzen 7 7800X3D Processor,Internal Components,23807.29,23434.06,4.4,5372,28,85
+101,GamerX Predator 16,Laptops & Ultrabooks,82310.61,85028.17,4.0,3546,88,73
+102,Void RGB Wireless Headset,Peripherals & Accessories,4056.32,4025.39,4.8,4489,45,82
+103,Aero RTX 4070 12GB,Internal Components,41930.03,38019.64,4.1,1995,127,58
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8819.4,8665.9,4.4,7546,41,94
+105,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13726.43,15722.01,3.8,1075,78,57
+106,Compact Office Mini,Desktop Computers,25903.37,26866.57,4.9,11126,78,117
+107,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8609.61,8173.71,4.9,10299,57,110
+108,Titanium 850W Gold PSU,Internal Components,6296.37,6475.18,4.4,9485,115,103
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14223.72,14032.77,4.2,4791,129,73
+110,Evo 990 Pro 2TB NVMe,Storage & Memory,10776.43,11580.91,4.8,11107,66,120
+111,Apex Wireless Gaming Mouse,Peripherals & Accessories,2756.42,2428.9,3.7,8840,64,100
+112,Void RGB Wireless Headset,Peripherals & Accessories,3545.72,3983.82,4.6,6028,47,93
+113,Titanium 850W Gold PSU,Internal Components,6817.96,6790.12,4.8,9568,115,113
+114,Station Elite Tower,Desktop Computers,50187.87,49471.05,4.7,8952,138,101
+115,Ryzen 7 7800X3D Processor,Internal Components,25942.2,29728.38,4.7,1180,25,58
+116,Station Elite Tower,Desktop Computers,48851.73,49840.26,4.9,7098,93,98
+117,Vengeance DDR5 32GB RGB,Storage & Memory,7265.19,7284.67,4.3,2389,15,68
+118,Apex Wireless Gaming Mouse,Peripherals & Accessories,2710.42,2900.06,4.4,11330,58,123
+119,Aero RTX 4070 12GB,Internal Components,37230.65,36715.85,4.5,7132,119,91
+120,Ryzen 7 7800X3D Processor,Internal Components,23295.81,20519.88,3.8,2098,49,55
+101,Core i7-14700K Processor,Internal Components,25122.24,22923.73,4.3,10288,119,107
+102,Pulse RX 7800 XT 16GB,Internal Components,34827.18,33347.31,4.4,8033,84,100
+103,Apex Wireless Gaming Mouse,Peripherals & Accessories,2617.67,2777.37,4.6,8364,127,99
+104,ProBook Ultra 15,Laptops & Ultrabooks,58920.58,62904.74,3.6,5188,140,79
+105,Core i7-14700K Processor,Internal Components,25913.69,27664.53,4.5,4860,38,76
+106,Pulse RX 7800 XT 16GB,Internal Components,34467.89,39471.17,5.0,10967,105,120
+107,ProBook Ultra 15,Laptops & Ultrabooks,56402.42,62428.65,3.8,1123,25,52
+108,Pulse RX 7800 XT 16GB,Internal Components,31744.41,35439.53,4.6,8497,10,106
+109,Pulse RX 7800 XT 16GB,Internal Components,38492.35,42952.71,3.6,7872,125,92
+110,ProBook Ultra 15,Laptops & Ultrabooks,57425.68,62025.79,3.8,5312,57,78
+111,Compact Office Mini,Desktop Computers,26998.7,24854.79,4.2,1559,150,56
+112,GamerX Predator 16,Laptops & Ultrabooks,84159.81,83721.33,3.7,1481,71,49
+113,Vengeance DDR5 32GB RGB,Storage & Memory,7022.9,6569.1,4.0,3611,36,71
+114,Titanium 850W Gold PSU,Internal Components,6351.11,6792.26,3.9,856,84,52
+115,SpeedStream Gigabit Switch 8P,Networking Devices,1838.25,1640.98,3.6,3799,108,68
+116,Liquid Master 360 AIO,Internal Components,5363.34,5405.32,4.2,8526,33,101
+117,Aero RTX 4070 12GB,Internal Components,42275.01,38658.75,4.6,6787,17,88
+118,Void RGB Wireless Headset,Peripherals & Accessories,3752.91,4114.65,4.3,5314,147,78
+119,Aero RTX 4070 12GB,Internal Components,37588.23,40662.51,4.6,6395,29,92
+120,Vengeance DDR5 32GB RGB,Storage & Memory,8114.47,7927.47,4.7,10484,5,115
+101,Evo 990 Pro 2TB NVMe,Storage & Memory,10774.8,11823.1,3.9,1394,21,56
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4697.36,5042.4,3.8,11474,125,115
+103,Vengeance DDR5 32GB RGB,Storage & Memory,7070.79,7716.9,3.6,10583,10,110
+104,GamerX Predator 16,Laptops & Ultrabooks,78856.14,71652.13,4.2,6093,48,79
+105,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15101.23,15040.87,4.6,6464,101,87
+106,ProBook Ultra 15,Laptops & Ultrabooks,57964.29,65029.26,4.7,5685,150,88
+107,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3920.74,3735.26,3.8,11940,68,119
+108,Aero RTX 4070 12GB,Internal Components,40067.13,42634.63,4.0,7000,122,86
+109,SlimLite Go 13,Laptops & Ultrabooks,28270.46,31401.0,4.4,4764,77,84
+110,Aero RTX 4070 12GB,Internal Components,40145.6,44158.16,4.5,10927,150,117
+111,SpeedStream Gigabit Switch 8P,Networking Devices,1893.41,2051.32,3.9,9931,43,108
+112,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13231.84,12147.34,4.5,7923,47,96
+113,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3989.45,4485.48,4.2,5999,85,85
+114,Pulse RX 7800 XT 16GB,Internal Components,32849.02,35124.72,3.9,2071,142,56
+115,Liquid Master 360 AIO,Internal Components,5391.66,5439.3,4.7,6652,73,89
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15287.06,17429.79,4.2,5012,92,79
+117,Liquid Master 360 AIO,Internal Components,5394.8,6147.46,4.0,4443,142,71
+118,ProBook Ultra 15,Laptops & Ultrabooks,52354.01,49221.07,4.7,9365,114,110
+119,Core i7-14700K Processor,Internal Components,25076.97,23884.43,3.5,3612,113,65
+120,Phantom B650 Motherboard,Internal Components,11617.7,13344.34,3.7,4682,27,77
+101,ProBook Ultra 15,Laptops & Ultrabooks,58658.33,57374.76,3.5,5655,68,73
+102,Phantom B650 Motherboard,Internal Components,11069.2,10379.31,4.3,5366,131,80
+103,Station Elite Tower,Desktop Computers,44140.35,40107.97,4.7,2804,89,65
+104,Liquid Master 360 AIO,Internal Components,5214.8,5503.04,4.9,9035,20,111
+105,Pulse RX 7800 XT 16GB,Internal Components,35887.25,38044.39,4.5,7129,21,90
+106,SlimLite Go 13,Laptops & Ultrabooks,27929.05,30007.35,3.8,10277,85,107
+107,SpeedStream Gigabit Switch 8P,Networking Devices,1742.36,1844.88,4.5,3107,112,68
+108,Ryzen 7 7800X3D Processor,Internal Components,26856.43,23954.53,4.3,11636,142,114
+109,Core i7-14700K Processor,Internal Components,25637.03,25486.59,4.9,2699,17,74
+110,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8676.84,8714.2,3.7,587,83,43
+111,Phantom B650 Motherboard,Internal Components,12375.06,11613.52,4.1,6317,65,86
+112,Core i7-14700K Processor,Internal Components,22839.67,22055.68,4.7,4204,116,76
+113,Liquid Master 360 AIO,Internal Components,5620.54,6289.17,4.6,9585,139,108
+114,Station Elite Tower,Desktop Computers,51475.47,58575.21,3.7,2053,49,58
+115,Pulse RX 7800 XT 16GB,Internal Components,31512.65,32187.21,4.9,3125,95,68
+116,Evo 990 Pro 2TB NVMe,Storage & Memory,9691.74,8645.21,4.6,3662,36,76
+117,Station Elite Tower,Desktop Computers,47098.29,44506.11,4.1,9025,111,104
+118,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14017.9,15086.78,4.0,9231,10,104
+119,Titanium 850W Gold PSU,Internal Components,7354.88,6813.62,4.0,2092,104,54
+120,GamerX Predator 16,Laptops & Ultrabooks,83790.49,75326.35,4.8,10439,46,113
+101,ProBook Ultra 15,Laptops & Ultrabooks,53985.39,56188.26,4.4,11424,50,116
+102,Station Elite Tower,Desktop Computers,50344.31,47566.24,4.5,2521,32,63
+103,Vengeance DDR5 32GB RGB,Storage & Memory,7897.8,8325.67,4.4,9681,24,109
+104,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3942.2,4476.2,4.1,11586,54,116
+105,SlimLite Go 13,Laptops & Ultrabooks,29831.63,30739.49,4.2,8752,24,101
+106,Aero RTX 4070 12GB,Internal Components,42056.7,45545.79,3.7,10004,60,104
+107,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15123.64,16035.84,3.8,10071,77,111
+108,Aero RTX 4070 12GB,Internal Components,42240.83,46904.98,3.5,9222,149,104
+109,SpeedStream Gigabit Switch 8P,Networking Devices,1776.14,1740.02,3.8,5985,130,79
+110,Core i7-14700K Processor,Internal Components,24542.69,22653.77,3.5,3080,77,57
+111,Liquid Master 360 AIO,Internal Components,6044.45,5834.44,4.6,8351,94,96
+112,Evo 990 Pro 2TB NVMe,Storage & Memory,9790.08,10765.17,4.4,5589,72,84
+113,Station Elite Tower,Desktop Computers,47965.44,52517.78,4.9,5423,101,90
+114,Ryzen 7 7800X3D Processor,Internal Components,25900.58,24192.33,4.5,8701,134,103
+115,SlimLite Go 13,Laptops & Ultrabooks,32535.16,36574.13,4.7,7593,52,98
+116,Core i7-14700K Processor,Internal Components,24362.58,23281.1,4.0,5616,132,77
+117,Ryzen 7 7800X3D Processor,Internal Components,24191.71,25868.78,3.9,4886,129,76
+118,Aero RTX 4070 12GB,Internal Components,42007.11,43615.01,3.8,4817,36,77
+119,Core i7-14700K Processor,Internal Components,24572.72,26574.32,4.7,9407,123,114
+120,Void RGB Wireless Headset,Peripherals & Accessories,4108.42,4170.66,4.7,9169,53,110
+101,Ryzen 7 7800X3D Processor,Internal Components,22715.55,24810.67,4.0,7552,112,98
+102,ProBook Ultra 15,Laptops & Ultrabooks,59216.87,56670.18,3.8,6911,138,84
+103,SpeedStream Gigabit Switch 8P,Networking Devices,1715.17,1669.91,4.7,5868,149,85
+104,Liquid Master 360 AIO,Internal Components,5001.48,4509.6,4.1,1012,38,55
+105,Void RGB Wireless Headset,Peripherals & Accessories,3736.0,4257.57,4.1,5097,24,81
+106,Pulse RX 7800 XT 16GB,Internal Components,35719.75,40048.74,4.9,8812,113,110
+107,Liquid Master 360 AIO,Internal Components,5652.65,6408.0,4.6,5480,32,82
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,10483.74,11098.81,3.5,8194,68,90
+109,Compact Office Mini,Desktop Computers,22577.94,19903.55,4.0,1218,60,55
+110,Ryzen 7 7800X3D Processor,Internal Components,26295.89,25255.55,4.0,8275,53,99
+111,Vengeance DDR5 32GB RGB,Storage & Memory,7330.05,8207.43,5.0,11616,87,122
+112,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9825.3,9302.21,4.2,10670,30,108
+113,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8891.24,9156.23,4.6,10472,147,116
+114,Phantom B650 Motherboard,Internal Components,12441.66,12713.32,3.8,8756,32,99
+115,SpeedStream Gigabit Switch 8P,Networking Devices,1711.41,1638.53,4.6,11720,103,122
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14778.8,15541.93,3.7,7939,120,89
+117,Station Elite Tower,Desktop Computers,50178.5,54186.24,4.7,10676,145,121
+118,Station Elite Tower,Desktop Computers,48151.59,43555.88,4.6,9401,127,104
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9491.31,9506.77,3.6,11149,52,112
+120,ProBook Ultra 15,Laptops & Ultrabooks,56791.46,61742.63,4.6,7352,129,97
+101,Phantom B650 Motherboard,Internal Components,11993.59,12562.12,3.9,6570,31,87
+102,Liquid Master 360 AIO,Internal Components,5735.54,5784.95,3.7,3941,119,69
+103,Titanium 850W Gold PSU,Internal Components,6709.0,6191.82,4.4,2401,76,67
+104,Apex Wireless Gaming Mouse,Peripherals & Accessories,2789.82,2841.08,4.8,10299,109,113
+105,SlimLite Go 13,Laptops & Ultrabooks,29654.02,31155.68,4.9,2582,32,66
+106,Phantom B650 Motherboard,Internal Components,11787.18,13214.49,4.7,2795,69,75
+107,GamerX Predator 16,Laptops & Ultrabooks,72876.6,76970.21,4.2,2520,82,61
+108,Vengeance DDR5 32GB RGB,Storage & Memory,7559.39,7282.74,4.7,7196,129,92
+109,GamerX Predator 16,Laptops & Ultrabooks,83907.29,78931.82,4.9,7430,124,95
+110,Aero RTX 4070 12GB,Internal Components,36315.19,33411.22,4.0,9718,130,100
+111,Void RGB Wireless Headset,Peripherals & Accessories,3798.27,4068.95,3.7,10078,134,109
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,2746.97,2616.07,4.9,10058,28,109
+113,Station Elite Tower,Desktop Computers,50623.97,50452.19,4.4,5207,133,80
+114,Aero RTX 4070 12GB,Internal Components,39108.57,43385.96,4.8,2464,100,68
+115,Vengeance DDR5 32GB RGB,Storage & Memory,7758.78,7208.37,4.8,3486,139,73
+116,ProBook Ultra 15,Laptops & Ultrabooks,59733.76,65493.94,3.7,11513,60,118
+117,Station Elite Tower,Desktop Computers,50113.2,49895.38,3.9,7298,84,84
+118,Core i7-14700K Processor,Internal Components,24112.26,27601.44,4.1,674,81,56
+119,Ryzen 7 7800X3D Processor,Internal Components,23689.56,25122.23,3.9,3335,96,67
+120,Titanium 850W Gold PSU,Internal Components,7406.12,8494.03,4.3,5660,94,88
+101,Pulse RX 7800 XT 16GB,Internal Components,36294.68,32879.45,4.4,4661,43,78
+102,Liquid Master 360 AIO,Internal Components,5361.81,5361.84,4.5,9139,147,110
+103,Core i7-14700K Processor,Internal Components,23720.82,26598.21,4.2,10148,103,113
+104,Apex Wireless Gaming Mouse,Peripherals & Accessories,3106.47,2794.39,4.6,1471,127,63
+105,Pulse RX 7800 XT 16GB,Internal Components,33121.06,29518.72,4.9,8371,66,103
+106,Titanium 850W Gold PSU,Internal Components,7003.31,7091.54,4.7,7468,116,98
+107,Apex Wireless Gaming Mouse,Peripherals & Accessories,3017.12,2798.85,3.9,1499,110,54
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,10857.71,10711.25,3.9,7209,29,92
+109,Apex Wireless Gaming Mouse,Peripherals & Accessories,3130.29,2834.51,3.7,3429,43,60
+110,SlimLite Go 13,Laptops & Ultrabooks,30125.2,31470.2,4.0,4736,27,77
+111,Aero RTX 4070 12GB,Internal Components,36451.69,35585.17,3.8,2347,70,61
+112,SlimLite Go 13,Laptops & Ultrabooks,32218.42,33593.71,4.1,11825,101,116
+113,Pulse RX 7800 XT 16GB,Internal Components,32187.73,34166.57,4.4,4938,119,82
+114,GamerX Predator 16,Laptops & Ultrabooks,76266.81,77957.62,4.5,10618,107,118
+115,ProBook Ultra 15,Laptops & Ultrabooks,50856.75,53911.89,4.4,9040,10,103
+116,Pulse RX 7800 XT 16GB,Internal Components,38330.08,37102.3,3.8,9690,133,104
+117,SlimLite Go 13,Laptops & Ultrabooks,32696.97,30892.8,3.6,5874,119,75
+118,Phantom B650 Motherboard,Internal Components,13090.53,14765.38,3.8,1606,6,55
+119,SlimLite Go 13,Laptops & Ultrabooks,28241.78,31517.81,4.2,1931,83,58
+120,SlimLite Go 13,Laptops & Ultrabooks,30352.86,32223.63,4.6,11515,108,119
+101,Ryzen 7 7800X3D Processor,Internal Components,24420.57,22742.46,4.1,1216,46,50
+102,Compact Office Mini,Desktop Computers,27413.65,28283.6,3.8,3714,98,70
+103,Aero RTX 4070 12GB,Internal Components,42141.36,46735.27,3.9,5179,42,77
+104,SpeedStream Gigabit Switch 8P,Networking Devices,1855.99,1983.51,4.7,9931,6,112
+105,Evo 990 Pro 2TB NVMe,Storage & Memory,10226.82,10804.75,4.9,6521,51,94
+106,Station Elite Tower,Desktop Computers,49216.14,50410.64,4.3,7165,63,90
+107,Titanium 850W Gold PSU,Internal Components,6504.71,5759.98,4.9,9846,12,110
+108,Pulse RX 7800 XT 16GB,Internal Components,33604.34,34577.11,4.0,7625,97,91
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,9651.77,10946.56,4.7,954,109,59
+110,ProBook Ultra 15,Laptops & Ultrabooks,59737.1,66567.77,4.1,7129,60,96
+111,Void RGB Wireless Headset,Peripherals & Accessories,3939.86,4182.96,4.0,5470,130,79
+112,Titanium 850W Gold PSU,Internal Components,7432.35,7908.31,4.7,9572,107,111
+113,Phantom B650 Motherboard,Internal Components,12270.98,11920.99,4.0,3184,77,68
+114,SlimLite Go 13,Laptops & Ultrabooks,31686.58,34505.48,3.7,1349,44,53
+115,Compact Office Mini,Desktop Computers,26484.76,28051.36,4.8,2072,134,64
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14973.58,14534.27,4.9,7926,34,97
+117,Compact Office Mini,Desktop Computers,27087.78,27275.58,3.7,9238,65,102
+118,Phantom B650 Motherboard,Internal Components,13110.58,13633.9,4.4,11682,51,121
+119,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14514.84,16020.02,4.5,6448,82,91
+120,Aero RTX 4070 12GB,Internal Components,37671.48,37634.78,4.4,9796,76,107
+101,Void RGB Wireless Headset,Peripherals & Accessories,3431.66,3697.09,4.0,3132,116,62
+102,SlimLite Go 13,Laptops & Ultrabooks,29859.39,30762.41,5.0,8900,52,108
+103,Ryzen 7 7800X3D Processor,Internal Components,24963.6,28401.18,3.8,2964,116,62
+104,Pulse RX 7800 XT 16GB,Internal Components,33413.21,30232.51,3.9,6098,71,85
+105,Void RGB Wireless Headset,Peripherals & Accessories,4083.14,3771.13,4.9,6395,12,91
+106,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14077.08,15807.96,3.8,2614,31,63
+107,Apex Wireless Gaming Mouse,Peripherals & Accessories,2685.97,3082.26,4.7,1160,24,65
+108,SpeedStream Gigabit Switch 8P,Networking Devices,1731.59,1536.18,4.9,5310,43,84
+109,Pulse RX 7800 XT 16GB,Internal Components,34578.89,38876.43,4.5,2660,48,67
+110,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4699.17,4457.5,4.4,4376,13,72
+111,Pulse RX 7800 XT 16GB,Internal Components,37142.69,37415.9,4.6,11132,14,116
+112,Vengeance DDR5 32GB RGB,Storage & Memory,7878.27,7363.39,3.9,6136,95,84
+113,Core i7-14700K Processor,Internal Components,25977.33,29700.93,4.0,1960,130,56
+114,GamerX Predator 16,Laptops & Ultrabooks,81390.8,77193.74,4.4,8739,150,100
+115,SpeedStream Gigabit Switch 8P,Networking Devices,1730.69,1671.71,4.4,3536,125,66
+116,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8566.49,9626.68,3.6,11345,134,110
+117,Core i7-14700K Processor,Internal Components,24557.19,23137.46,5.0,8522,16,101
+118,Ryzen 7 7800X3D Processor,Internal Components,25220.53,22279.79,4.3,1341,139,52
+119,Ryzen 7 7800X3D Processor,Internal Components,26381.44,28299.19,3.9,5611,42,77
+120,Vengeance DDR5 32GB RGB,Storage & Memory,7212.33,7657.47,4.1,4462,136,72
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14235.64,13108.79,4.7,11579,34,119
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,8977.7,9742.1,4.7,6250,130,86
+103,Evo 990 Pro 2TB NVMe,Storage & Memory,9156.96,9842.56,3.5,11941,35,114
+104,Void RGB Wireless Headset,Peripherals & Accessories,3920.57,4339.44,3.9,10435,137,110
+105,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4633.03,4310.46,4.7,7950,25,101
+106,Aero RTX 4070 12GB,Internal Components,37378.67,33183.72,4.9,951,85,60
+107,SlimLite Go 13,Laptops & Ultrabooks,32725.29,31912.01,4.2,3736,12,70
+108,SpeedStream Gigabit Switch 8P,Networking Devices,1970.97,2199.29,4.3,1314,88,56
+109,SpeedStream Gigabit Switch 8P,Networking Devices,1765.48,1963.75,3.8,2112,46,62
+110,Core i7-14700K Processor,Internal Components,24608.38,22736.41,4.3,4914,56,75
+111,Compact Office Mini,Desktop Computers,24887.59,27857.89,4.3,7244,96,97
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,2869.76,3143.85,3.9,3926,87,71
+113,Apex Wireless Gaming Mouse,Peripherals & Accessories,3148.17,3590.28,3.7,8670,50,95
+114,Station Elite Tower,Desktop Computers,45927.4,43255.47,3.6,3213,148,60
+115,GamerX Predator 16,Laptops & Ultrabooks,80797.26,76913.56,4.9,11444,128,122
+116,Pulse RX 7800 XT 16GB,Internal Components,37317.31,40329.35,4.1,9186,89,108
+117,Core i7-14700K Processor,Internal Components,22960.72,24234.64,3.8,1060,37,53
+118,GamerX Predator 16,Laptops & Ultrabooks,72082.3,66685.49,4.4,7386,34,91
+119,Titanium 850W Gold PSU,Internal Components,6802.31,6975.22,3.6,6140,93,85
+120,GamerX Predator 16,Laptops & Ultrabooks,78407.43,82859.77,3.9,1657,35,54
+101,Vengeance DDR5 32GB RGB,Storage & Memory,7559.94,8502.15,4.7,961,79,61
+102,Titanium 850W Gold PSU,Internal Components,6369.84,6640.2,4.1,1068,118,55
+103,Titanium 850W Gold PSU,Internal Components,7369.53,7438.54,4.6,10976,138,115
+104,Evo 990 Pro 2TB NVMe,Storage & Memory,10627.87,9389.11,4.4,7345,84,87
+105,Titanium 850W Gold PSU,Internal Components,6862.93,6079.02,4.0,7833,14,96
+106,Core i7-14700K Processor,Internal Components,23345.08,25988.31,4.6,9051,141,108
+107,Phantom B650 Motherboard,Internal Components,11816.88,13414.74,4.5,2501,125,63
+108,SlimLite Go 13,Laptops & Ultrabooks,30809.42,30895.92,4.7,10736,9,119
+109,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8862.87,9591.87,3.6,10305,57,107
+110,ProBook Ultra 15,Laptops & Ultrabooks,52002.89,51240.98,3.5,7243,130,86
+111,Titanium 850W Gold PSU,Internal Components,7438.82,6764.27,4.4,7508,42,96
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,2693.47,3013.63,4.2,9946,72,109
+113,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14337.95,14628.29,4.9,11662,100,121
+114,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4637.67,4287.49,3.9,9011,75,99
+115,Phantom B650 Motherboard,Internal Components,12364.73,11628.0,4.1,6771,37,84
+116,Apex Wireless Gaming Mouse,Peripherals & Accessories,2991.74,3054.93,4.7,7563,8,101
+117,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4181.29,4365.79,3.6,1002,133,54
+118,Vengeance DDR5 32GB RGB,Storage & Memory,7158.22,6797.07,3.7,8463,46,94
+119,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13829.95,14335.77,4.0,9461,110,106
+120,Liquid Master 360 AIO,Internal Components,6026.72,6000.85,4.9,2131,27,67
+101,Core i7-14700K Processor,Internal Components,26383.31,28223.4,3.9,10068,8,107
+102,Void RGB Wireless Headset,Peripherals & Accessories,3493.29,3630.21,3.6,11066,35,110
+103,Compact Office Mini,Desktop Computers,26688.85,30370.8,4.8,11951,83,125
+104,Titanium 850W Gold PSU,Internal Components,7245.05,6991.73,3.6,6737,20,87
+105,Core i7-14700K Processor,Internal Components,25176.94,28641.92,4.1,5513,98,83
+106,Compact Office Mini,Desktop Computers,25591.35,24717.74,4.3,2323,104,59
+107,Compact Office Mini,Desktop Computers,25981.21,27520.01,4.0,4165,59,73
+108,Station Elite Tower,Desktop Computers,48179.4,51660.79,3.8,6523,86,90
+109,Core i7-14700K Processor,Internal Components,23202.4,21538.84,5.0,8351,108,101
+110,Compact Office Mini,Desktop Computers,26010.79,24896.41,4.9,8657,56,106
+111,Ryzen 7 7800X3D Processor,Internal Components,24968.37,24488.4,4.8,9015,19,104
+112,Pulse RX 7800 XT 16GB,Internal Components,33078.88,37381.67,4.1,668,32,56
+113,SlimLite Go 13,Laptops & Ultrabooks,27112.79,27536.36,4.3,8439,36,98
+114,Station Elite Tower,Desktop Computers,44597.9,46108.29,4.5,1171,121,54
+115,Aero RTX 4070 12GB,Internal Components,37327.62,40159.58,3.5,8411,28,98
+116,Void RGB Wireless Headset,Peripherals & Accessories,3643.34,3447.98,4.2,3265,97,68
+117,Phantom B650 Motherboard,Internal Components,12514.01,13778.2,3.6,11077,52,113
+118,Evo 990 Pro 2TB NVMe,Storage & Memory,9081.76,9807.91,3.6,10902,23,108
+119,Pulse RX 7800 XT 16GB,Internal Components,37304.24,41169.61,3.9,11085,107,110
+120,Liquid Master 360 AIO,Internal Components,5079.31,4624.35,3.6,11175,8,104
+101,Titanium 850W Gold PSU,Internal Components,6526.07,7214.24,4.4,10644,33,115
+102,Titanium 850W Gold PSU,Internal Components,6835.98,6498.74,4.2,3722,48,68
+103,SlimLite Go 13,Laptops & Ultrabooks,27581.87,25482.25,3.7,11656,149,111
+104,GamerX Predator 16,Laptops & Ultrabooks,79821.24,73634.68,4.1,5001,97,74
+105,Aero RTX 4070 12GB,Internal Components,37513.18,38900.84,4.7,9744,71,110
+106,Vengeance DDR5 32GB RGB,Storage & Memory,7124.73,8058.76,3.9,11913,105,115
+107,Aero RTX 4070 12GB,Internal Components,34794.64,32756.0,3.6,4474,52,67
+108,SpeedStream Gigabit Switch 8P,Networking Devices,1913.68,1786.87,4.8,4079,14,76
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14964.51,16887.91,4.2,10004,131,111
+110,SpeedStream Gigabit Switch 8P,Networking Devices,1985.05,1964.17,4.2,6843,109,90
+111,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4379.17,4879.68,4.8,5233,143,87
+112,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8415.41,9171.26,4.1,11683,65,117
+113,Apex Wireless Gaming Mouse,Peripherals & Accessories,3130.08,2956.52,4.2,6307,78,88
+114,SlimLite Go 13,Laptops & Ultrabooks,27212.54,24780.25,3.6,3814,55,62
+115,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9791.48,9152.12,3.8,4852,133,75
+116,Apex Wireless Gaming Mouse,Peripherals & Accessories,3152.34,3219.68,4.0,9770,66,104
+117,Apex Wireless Gaming Mouse,Peripherals & Accessories,3174.29,3511.69,4.4,6516,97,86
+118,ProBook Ultra 15,Laptops & Ultrabooks,57935.0,61557.13,4.6,8099,89,98
+119,Phantom B650 Motherboard,Internal Components,13015.2,13620.1,3.7,1664,117,55
+120,Station Elite Tower,Desktop Computers,46786.61,47273.71,4.6,1179,81,60
+101,SlimLite Go 13,Laptops & Ultrabooks,31137.5,30472.64,3.8,8022,72,96
+102,Station Elite Tower,Desktop Computers,48891.16,56165.62,3.6,6399,8,84
+103,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13876.36,15219.18,4.3,2386,100,61
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8397.15,9006.92,4.5,9599,86,111
+105,Core i7-14700K Processor,Internal Components,26185.96,27897.43,4.0,11912,23,122
+106,SlimLite Go 13,Laptops & Ultrabooks,28912.43,26467.03,4.9,6144,111,91
+107,Aero RTX 4070 12GB,Internal Components,40563.15,39318.33,4.7,2193,20,68
+108,SlimLite Go 13,Laptops & Ultrabooks,28238.03,31610.29,5.0,10459,15,117
+109,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8700.92,7843.41,3.5,8421,42,87
+110,Titanium 850W Gold PSU,Internal Components,6622.75,7236.7,4.4,11250,85,115
+111,Apex Wireless Gaming Mouse,Peripherals & Accessories,3144.68,3471.09,4.2,7285,124,93
+112,Ryzen 7 7800X3D Processor,Internal Components,23615.28,22683.77,3.7,4382,54,68
+113,GamerX Predator 16,Laptops & Ultrabooks,71348.2,72321.62,3.5,8007,66,94
+114,Ryzen 7 7800X3D Processor,Internal Components,24693.96,24047.75,4.1,2267,144,58
+115,Liquid Master 360 AIO,Internal Components,5981.74,6226.93,3.8,6550,18,82
+116,Apex Wireless Gaming Mouse,Peripherals & Accessories,2867.31,2801.11,3.9,6628,48,83
+117,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13551.11,15025.24,4.1,5417,91,86
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8540.66,8965.51,4.7,8581,102,105
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9597.85,10145.7,3.5,4425,13,72
+120,Titanium 850W Gold PSU,Internal Components,7181.9,7158.93,3.6,532,124,45
+101,Ryzen 7 7800X3D Processor,Internal Components,22453.09,21637.93,4.1,11225,59,111
+102,GamerX Predator 16,Laptops & Ultrabooks,85328.24,79368.74,4.1,7441,91,88
+103,Compact Office Mini,Desktop Computers,26792.01,29650.41,4.3,2609,5,69
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9663.57,10135.56,3.9,8108,104,98
+105,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8876.38,8017.9,4.6,2989,60,68
+106,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8822.69,9096.27,3.7,6427,76,86
+107,Station Elite Tower,Desktop Computers,48742.34,51736.79,3.9,1987,34,63
+108,ProBook Ultra 15,Laptops & Ultrabooks,51053.01,48728.27,4.9,1553,72,63
+109,Vengeance DDR5 32GB RGB,Storage & Memory,7303.54,7679.8,4.1,7102,149,86
+110,Pulse RX 7800 XT 16GB,Internal Components,38420.73,33985.46,3.9,11904,69,120
+111,GamerX Predator 16,Laptops & Ultrabooks,73122.25,71731.35,3.6,10479,33,110
+112,Vengeance DDR5 32GB RGB,Storage & Memory,7915.53,8097.0,5.0,7532,56,98
+113,Apex Wireless Gaming Mouse,Peripherals & Accessories,2841.14,2540.26,4.4,6112,111,80
+114,Pulse RX 7800 XT 16GB,Internal Components,35098.71,35448.42,3.7,8844,88,94
+115,Compact Office Mini,Desktop Computers,24559.95,26629.4,4.9,7805,56,105
+116,SpeedStream Gigabit Switch 8P,Networking Devices,2010.1,1792.48,4.1,11937,10,119
+117,Ryzen 7 7800X3D Processor,Internal Components,23424.84,26812.19,4.0,2409,54,58
+118,Pulse RX 7800 XT 16GB,Internal Components,38206.82,43205.96,3.7,7481,50,89
+119,Vengeance DDR5 32GB RGB,Storage & Memory,7965.81,7114.86,3.8,9036,59,102
+120,Titanium 850W Gold PSU,Internal Components,6209.51,6263.31,3.7,5353,62,72
+101,Pulse RX 7800 XT 16GB,Internal Components,34384.4,31900.41,4.4,3483,86,65
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,9473.74,10442.7,4.8,2788,130,68
+103,Apex Wireless Gaming Mouse,Peripherals & Accessories,3114.02,3272.68,3.9,1821,146,54
+104,Core i7-14700K Processor,Internal Components,22649.54,23159.25,3.8,8427,118,101
+105,Void RGB Wireless Headset,Peripherals & Accessories,3621.04,3574.4,3.8,4388,89,70
+106,ProBook Ultra 15,Laptops & Ultrabooks,49955.57,55713.74,5.0,3492,119,75
+107,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8677.58,9522.37,3.8,11253,56,109
+108,Titanium 850W Gold PSU,Internal Components,6150.94,6334.84,4.7,5291,18,87
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14563.85,14858.87,4.3,9619,79,111
+110,Pulse RX 7800 XT 16GB,Internal Components,32115.73,31890.73,4.3,4393,14,72
+111,Pulse RX 7800 XT 16GB,Internal Components,34436.01,35075.86,4.1,11824,38,116
+112,Pulse RX 7800 XT 16GB,Internal Components,31890.48,29379.22,4.3,3203,49,71
+113,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13259.38,14285.3,4.1,8341,120,102
+114,Titanium 850W Gold PSU,Internal Components,6844.75,6087.3,4.2,1154,43,51
+115,ProBook Ultra 15,Laptops & Ultrabooks,56708.93,52318.78,4.2,8547,17,96
+116,Core i7-14700K Processor,Internal Components,25497.39,28425.29,4.8,1228,38,59
+117,Void RGB Wireless Headset,Peripherals & Accessories,3844.97,4386.9,3.8,5700,33,82
+118,Void RGB Wireless Headset,Peripherals & Accessories,3934.12,3968.15,4.3,6507,59,88
+119,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8672.91,8155.42,3.9,9129,16,98
+120,Apex Wireless Gaming Mouse,Peripherals & Accessories,2648.76,2892.44,3.7,7754,104,88
+101,Compact Office Mini,Desktop Computers,24492.05,24782.65,4.6,4916,125,86
+102,Vengeance DDR5 32GB RGB,Storage & Memory,7634.6,8209.79,3.8,11488,45,119
+103,Liquid Master 360 AIO,Internal Components,6045.03,5854.64,3.6,6379,46,81
+104,Aero RTX 4070 12GB,Internal Components,39802.43,41358.79,3.5,6872,15,81
+105,GamerX Predator 16,Laptops & Ultrabooks,72836.01,71803.44,4.8,2010,150,68
+106,Titanium 850W Gold PSU,Internal Components,6753.52,5994.65,4.5,9742,25,103
+107,Aero RTX 4070 12GB,Internal Components,36589.42,35753.4,4.1,11384,115,117
+108,Compact Office Mini,Desktop Computers,25971.83,23363.18,3.8,2594,139,54
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15282.25,15554.18,4.0,1700,49,60
+110,Evo 990 Pro 2TB NVMe,Storage & Memory,10105.89,10794.49,4.0,550,72,46
+111,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15030.45,14928.23,4.0,10480,95,113
+112,Void RGB Wireless Headset,Peripherals & Accessories,3871.81,4321.97,4.3,1296,69,56
+113,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14093.69,13918.53,3.7,11995,12,120
+114,Liquid Master 360 AIO,Internal Components,5245.44,5844.35,4.8,992,126,56
+115,Aero RTX 4070 12GB,Internal Components,40284.4,41291.72,4.2,2846,93,68
+116,Titanium 850W Gold PSU,Internal Components,6731.18,7497.79,4.8,7486,108,104
+117,Aero RTX 4070 12GB,Internal Components,36676.93,37400.82,3.8,9034,20,97
+118,Void RGB Wireless Headset,Peripherals & Accessories,3770.71,3963.71,4.4,894,71,54
+119,Apex Wireless Gaming Mouse,Peripherals & Accessories,3050.09,2947.86,3.6,1946,83,55
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8963.8,9708.11,4.8,2657,116,70
+101,Titanium 850W Gold PSU,Internal Components,6777.7,7413.87,4.5,4815,30,77
+102,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9236.72,9320.67,3.9,7675,143,90
+103,Liquid Master 360 AIO,Internal Components,5057.92,5185.34,4.3,6257,6,87
+104,Ryzen 7 7800X3D Processor,Internal Components,24023.06,25830.22,3.6,11169,110,110
+105,SlimLite Go 13,Laptops & Ultrabooks,29546.66,29010.74,4.8,8029,46,100
+106,SlimLite Go 13,Laptops & Ultrabooks,27872.91,31463.91,5.0,2574,11,75
+107,Pulse RX 7800 XT 16GB,Internal Components,35099.68,33299.5,4.3,10535,113,116
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,8952.22,8492.05,4.4,8484,88,96
+109,Titanium 850W Gold PSU,Internal Components,6708.26,6913.28,3.8,7239,107,88
+110,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13923.19,13104.93,5.0,10240,109,111
+111,ProBook Ultra 15,Laptops & Ultrabooks,50923.3,57866.1,4.2,6895,8,91
+112,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13490.45,12716.88,3.9,11055,132,112
+113,Vengeance DDR5 32GB RGB,Storage & Memory,7762.64,8406.07,4.8,3627,38,80
+114,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3903.19,4068.83,4.8,7820,17,104
+115,Aero RTX 4070 12GB,Internal Components,34669.93,38168.38,5.0,1175,50,61
+116,Pulse RX 7800 XT 16GB,Internal Components,34225.17,32467.7,4.3,6739,97,91
+117,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3982.52,3888.95,4.2,3820,24,75
+118,Pulse RX 7800 XT 16GB,Internal Components,31757.63,28165.24,3.7,3642,93,60
+119,Titanium 850W Gold PSU,Internal Components,7222.52,7876.81,4.4,7725,140,97
+120,Aero RTX 4070 12GB,Internal Components,39105.61,43107.94,3.7,8341,118,94
+101,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4524.88,4232.6,4.5,2223,40,65
+102,Station Elite Tower,Desktop Computers,44889.96,45087.39,4.1,6228,54,89
+103,GamerX Predator 16,Laptops & Ultrabooks,73601.33,68201.02,4.3,7191,60,92
+104,ProBook Ultra 15,Laptops & Ultrabooks,53443.07,49659.18,3.9,2053,105,55
+105,Station Elite Tower,Desktop Computers,47520.01,42282.24,4.7,7369,27,96
+106,Aero RTX 4070 12GB,Internal Components,39823.11,38597.57,4.7,2952,7,73
+107,Void RGB Wireless Headset,Peripherals & Accessories,3572.98,3212.86,4.9,8482,150,102
+108,ProBook Ultra 15,Laptops & Ultrabooks,52617.59,51506.04,5.0,5940,77,94
+109,Compact Office Mini,Desktop Computers,24026.13,25189.66,4.0,10407,44,112
+110,ProBook Ultra 15,Laptops & Ultrabooks,56992.01,52684.79,3.9,5744,149,77
+111,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8480.4,9674.68,4.0,2234,66,62
+112,ProBook Ultra 15,Laptops & Ultrabooks,53942.87,48897.86,3.9,5111,33,70
+113,Compact Office Mini,Desktop Computers,26631.87,29987.83,3.8,6564,30,86
+114,SpeedStream Gigabit Switch 8P,Networking Devices,1877.2,1876.57,4.1,4007,111,70
+115,Core i7-14700K Processor,Internal Components,21958.03,24376.72,3.7,10100,10,104
+116,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4233.32,4519.28,4.4,1485,115,63
+117,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8189.36,8419.54,4.9,1728,62,67
+118,GamerX Predator 16,Laptops & Ultrabooks,77121.78,74089.1,4.5,8164,15,103
+119,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3896.75,4149.41,3.9,11189,92,118
+120,Core i7-14700K Processor,Internal Components,22391.54,22576.46,3.9,991,45,50
+101,Void RGB Wireless Headset,Peripherals & Accessories,3918.73,4051.97,3.7,9766,16,99
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4650.51,4136.59,5.0,8945,55,111
+103,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9695.41,9351.46,3.6,9646,129,99
+104,Liquid Master 360 AIO,Internal Components,5819.59,5126.46,4.7,6362,127,86
+105,Liquid Master 360 AIO,Internal Components,5407.86,6098.55,3.9,10452,52,106
+106,Pulse RX 7800 XT 16GB,Internal Components,38071.34,36997.9,4.9,7082,146,93
+107,SlimLite Go 13,Laptops & Ultrabooks,31893.97,30745.63,4.1,10492,5,107
+108,GamerX Predator 16,Laptops & Ultrabooks,86695.98,98272.7,4.8,6503,122,95
+109,SlimLite Go 13,Laptops & Ultrabooks,28041.74,24710.27,3.5,11941,35,109
+110,Apex Wireless Gaming Mouse,Peripherals & Accessories,3111.33,3329.2,4.7,9106,92,108
+111,Evo 990 Pro 2TB NVMe,Storage & Memory,9560.56,8719.46,4.3,674,127,51
+112,Station Elite Tower,Desktop Computers,52147.67,50922.14,4.7,3437,48,75
+113,Ryzen 7 7800X3D Processor,Internal Components,23232.08,21661.99,4.6,2094,16,68
+114,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4349.29,4079.9,3.5,9711,113,102
+115,Apex Wireless Gaming Mouse,Peripherals & Accessories,2884.7,2695.54,3.6,11786,89,116
+116,Ryzen 7 7800X3D Processor,Internal Components,26313.8,26615.38,4.4,11079,122,114
+117,Titanium 850W Gold PSU,Internal Components,6243.38,6764.53,3.5,11765,145,114
+118,Titanium 850W Gold PSU,Internal Components,7242.97,8107.74,4.0,5792,13,87
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,10180.48,11423.27,3.9,1777,61,61
+120,Evo 990 Pro 2TB NVMe,Storage & Memory,10305.5,11158.07,4.3,8179,42,102
+101,Vengeance DDR5 32GB RGB,Storage & Memory,7988.44,7624.44,3.9,5875,41,84
+102,GamerX Predator 16,Laptops & Ultrabooks,80664.09,81706.52,4.3,4420,134,72
+103,SlimLite Go 13,Laptops & Ultrabooks,29320.29,26816.87,5.0,7074,40,96
+104,Compact Office Mini,Desktop Computers,24725.96,22456.86,4.5,857,16,49
+105,GamerX Predator 16,Laptops & Ultrabooks,86638.89,76610.18,3.6,5955,130,76
+106,Aero RTX 4070 12GB,Internal Components,36443.05,34018.63,4.8,3366,23,74
+107,SlimLite Go 13,Laptops & Ultrabooks,30427.4,31269.0,4.2,5403,98,82
+108,Vengeance DDR5 32GB RGB,Storage & Memory,7554.21,7975.58,3.7,2273,21,62
+109,SlimLite Go 13,Laptops & Ultrabooks,28548.88,31705.7,3.9,6490,56,84
+110,Phantom B650 Motherboard,Internal Components,11980.18,12897.89,3.8,11614,132,112
+111,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14077.72,15282.0,4.8,3491,53,76
+112,SlimLite Go 13,Laptops & Ultrabooks,31486.53,34015.89,3.8,1410,78,59
+113,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9302.3,8641.83,4.7,501,12,50
+114,Compact Office Mini,Desktop Computers,24502.2,27743.96,4.9,10720,46,120
+115,Titanium 850W Gold PSU,Internal Components,6492.86,7000.1,3.7,8102,20,94
+116,Station Elite Tower,Desktop Computers,46169.59,52934.05,3.8,8560,127,98
+117,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8442.18,7762.57,4.1,1546,114,52
+118,ProBook Ultra 15,Laptops & Ultrabooks,56485.61,57636.71,3.9,7902,59,90
+119,Vengeance DDR5 32GB RGB,Storage & Memory,7497.95,6893.79,4.8,3495,73,72
+120,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14168.39,14765.93,4.0,10557,57,112
+101,Void RGB Wireless Headset,Peripherals & Accessories,3944.82,4113.58,4.7,10152,107,116
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,2951.24,3148.87,4.7,11345,129,120
+103,Void RGB Wireless Headset,Peripherals & Accessories,3819.8,3634.76,3.6,10828,135,110
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9789.24,10985.72,3.7,1732,70,54
+105,Liquid Master 360 AIO,Internal Components,5141.82,5151.51,3.9,9038,84,102
+106,SpeedStream Gigabit Switch 8P,Networking Devices,1751.86,1692.51,4.3,5528,28,80
+107,Void RGB Wireless Headset,Peripherals & Accessories,3706.31,3961.0,3.8,800,85,55
+108,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8503.46,8136.8,3.5,8495,89,88
+109,Void RGB Wireless Headset,Peripherals & Accessories,3815.15,3892.94,4.7,8392,77,99
+110,Station Elite Tower,Desktop Computers,48481.88,47008.0,4.7,1094,25,56
+111,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4051.71,4147.6,4.3,7132,150,90
+112,Compact Office Mini,Desktop Computers,24273.85,26731.9,3.6,4667,27,69
+113,ProBook Ultra 15,Laptops & Ultrabooks,57670.91,52286.92,4.6,1843,22,62
+114,ProBook Ultra 15,Laptops & Ultrabooks,54926.62,51824.63,4.3,9413,8,105
+115,Void RGB Wireless Headset,Peripherals & Accessories,4107.89,3640.99,4.1,1091,115,49
+116,GamerX Predator 16,Laptops & Ultrabooks,77504.8,88508.22,3.6,10870,62,115
+117,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4569.65,4706.97,3.5,4586,36,75
+118,Evo 990 Pro 2TB NVMe,Storage & Memory,9813.8,8644.0,4.8,1718,84,59
+119,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12665.51,12232.48,4.2,9247,67,102
+120,SlimLite Go 13,Laptops & Ultrabooks,31916.68,36481.02,4.4,5534,118,84
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14957.8,16135.37,3.8,4987,77,79
+102,SlimLite Go 13,Laptops & Ultrabooks,31314.37,33235.86,4.2,8232,15,95
+103,Phantom B650 Motherboard,Internal Components,12400.55,14056.73,4.4,7636,56,93
+104,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12798.13,11783.07,4.8,8646,136,104
+105,SpeedStream Gigabit Switch 8P,Networking Devices,1742.46,1839.24,4.4,11468,51,120
+106,SlimLite Go 13,Laptops & Ultrabooks,30623.42,27177.79,4.2,5765,93,78
+107,Liquid Master 360 AIO,Internal Components,5151.46,5857.18,3.6,2519,72,61
+108,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4053.11,3886.15,3.8,7302,28,93
+109,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4710.97,4747.44,4.8,4492,56,80
+110,Ryzen 7 7800X3D Processor,Internal Components,22191.95,20438.72,3.9,811,113,47
+111,SpeedStream Gigabit Switch 8P,Networking Devices,2007.92,1853.32,4.8,1697,56,60
+112,SpeedStream Gigabit Switch 8P,Networking Devices,1828.73,1995.1,4.4,4168,102,72
+113,SpeedStream Gigabit Switch 8P,Networking Devices,1723.76,1670.87,4.1,1310,30,50
+114,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8444.27,8254.23,4.1,5286,128,83
+115,Liquid Master 360 AIO,Internal Components,5432.96,5264.45,3.7,3874,27,67
+116,Vengeance DDR5 32GB RGB,Storage & Memory,7891.32,8610.74,3.9,4232,13,73
+117,Aero RTX 4070 12GB,Internal Components,39857.34,37774.26,4.5,11990,28,119
+118,ProBook Ultra 15,Laptops & Ultrabooks,58486.18,65249.87,3.7,3302,26,71
+119,Apex Wireless Gaming Mouse,Peripherals & Accessories,2664.96,2546.07,3.7,10031,95,101
+120,SpeedStream Gigabit Switch 8P,Networking Devices,1874.25,1974.48,3.6,1364,95,48
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15087.9,13664.33,4.7,742,147,50
+102,SlimLite Go 13,Laptops & Ultrabooks,32954.34,30957.77,4.3,7234,15,96
+103,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9607.36,9565.08,4.4,2110,79,59
+104,SlimLite Go 13,Laptops & Ultrabooks,32241.4,28830.78,3.5,885,27,47
+105,Core i7-14700K Processor,Internal Components,22920.27,21847.34,3.9,6471,76,85
+106,Station Elite Tower,Desktop Computers,52468.61,54108.35,4.8,8951,50,103
+107,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8186.33,7829.15,4.4,10979,117,116
+108,SpeedStream Gigabit Switch 8P,Networking Devices,1803.11,1625.06,4.3,3833,30,66
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14021.32,13042.07,4.1,8734,75,103
+110,Apex Wireless Gaming Mouse,Peripherals & Accessories,2914.34,3150.73,4.3,6072,59,88
+111,Liquid Master 360 AIO,Internal Components,5892.29,6117.11,5.0,6425,22,96
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,2842.69,2923.31,4.9,2142,60,69
+113,Pulse RX 7800 XT 16GB,Internal Components,33065.8,34023.52,4.2,6622,81,88
+114,SlimLite Go 13,Laptops & Ultrabooks,28982.33,26437.52,3.6,8897,136,94
+115,Titanium 850W Gold PSU,Internal Components,6167.35,6224.3,3.8,1032,136,52
+116,ProBook Ultra 15,Laptops & Ultrabooks,55331.29,55788.08,4.7,7855,89,102
+117,Phantom B650 Motherboard,Internal Components,11735.51,11404.78,4.6,629,26,52
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8675.65,8027.3,4.8,3009,91,65
+119,Vengeance DDR5 32GB RGB,Storage & Memory,8090.08,8905.95,4.4,11001,28,116
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8421.94,7555.06,4.5,987,51,56
+101,Aero RTX 4070 12GB,Internal Components,37485.4,38525.17,4.8,4774,138,82
+102,Liquid Master 360 AIO,Internal Components,5295.47,5301.02,4.2,2280,146,65
+103,Phantom B650 Motherboard,Internal Components,10995.42,11436.34,4.1,2845,22,69
+104,SlimLite Go 13,Laptops & Ultrabooks,30248.98,28097.48,4.2,7362,15,89
+105,Pulse RX 7800 XT 16GB,Internal Components,33210.79,31063.9,3.9,5312,120,73
+106,SlimLite Go 13,Laptops & Ultrabooks,29302.44,28093.3,4.5,10820,90,120
+107,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12642.78,13393.4,3.7,8169,108,90
+108,SpeedStream Gigabit Switch 8P,Networking Devices,2058.98,2121.28,4.6,2534,123,66
+109,Titanium 850W Gold PSU,Internal Components,6777.03,6389.53,4.5,6909,57,87
+110,Aero RTX 4070 12GB,Internal Components,35181.12,34472.08,3.9,10598,15,104
+111,Core i7-14700K Processor,Internal Components,26322.69,24156.98,4.6,2241,5,65
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,3018.25,3402.07,3.9,3682,88,67
+113,Core i7-14700K Processor,Internal Components,22451.17,21410.85,4.1,6721,32,87
+114,Compact Office Mini,Desktop Computers,25893.39,24475.49,3.7,10920,121,108
+115,Pulse RX 7800 XT 16GB,Internal Components,34091.6,30127.15,3.8,4351,68,65
+116,SpeedStream Gigabit Switch 8P,Networking Devices,1904.48,1688.12,3.9,3000,98,65
+117,ProBook Ultra 15,Laptops & Ultrabooks,54515.67,52124.15,4.0,9169,83,97
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8350.81,8764.31,4.3,7873,46,98
+119,Phantom B650 Motherboard,Internal Components,11103.59,11124.09,4.9,8379,126,101
+120,GamerX Predator 16,Laptops & Ultrabooks,85618.58,95922.12,4.1,6321,89,85
+101,Aero RTX 4070 12GB,Internal Components,39624.12,40813.54,4.5,8275,11,99
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,2899.8,2866.73,3.5,2115,139,59
+103,Compact Office Mini,Desktop Computers,25499.86,28453.44,4.1,2871,51,70
+104,Station Elite Tower,Desktop Computers,49002.9,54890.16,4.0,8000,17,100
+105,Titanium 850W Gold PSU,Internal Components,7013.98,7492.68,4.0,5918,54,85
+106,Compact Office Mini,Desktop Computers,23318.1,22089.77,4.4,3674,139,72
+107,Pulse RX 7800 XT 16GB,Internal Components,34108.82,38307.81,4.2,1356,79,56
+108,GamerX Predator 16,Laptops & Ultrabooks,71510.05,65488.99,4.2,8302,112,98
+109,Core i7-14700K Processor,Internal Components,23840.32,26271.1,3.9,1880,121,63
+110,ProBook Ultra 15,Laptops & Ultrabooks,54499.41,56449.21,3.9,8769,84,99
+111,Vengeance DDR5 32GB RGB,Storage & Memory,7619.05,6706.89,4.0,7763,36,90
+112,Ryzen 7 7800X3D Processor,Internal Components,25958.59,23000.93,3.5,11154,70,104
+113,Compact Office Mini,Desktop Computers,26122.45,28771.25,4.4,4348,88,73
+114,GamerX Predator 16,Laptops & Ultrabooks,76937.49,78384.2,3.7,3269,75,68
+115,Titanium 850W Gold PSU,Internal Components,7008.61,7383.54,3.7,10561,140,105
+116,GamerX Predator 16,Laptops & Ultrabooks,72956.82,77718.72,4.9,4486,18,80
+117,Pulse RX 7800 XT 16GB,Internal Components,33738.09,33164.85,4.0,3875,148,66
+118,Titanium 850W Gold PSU,Internal Components,6780.63,6109.62,3.9,4668,28,68
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9153.08,8328.48,3.8,5283,91,76
+120,Titanium 850W Gold PSU,Internal Components,7428.74,7675.1,4.7,4089,147,74
+101,Vengeance DDR5 32GB RGB,Storage & Memory,8052.35,8727.26,4.0,5705,108,81
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,10008.86,10764.41,4.8,1921,34,64
+103,ProBook Ultra 15,Laptops & Ultrabooks,59697.12,60964.38,4.0,4324,36,72
+104,Pulse RX 7800 XT 16GB,Internal Components,38347.43,43657.9,3.6,3798,78,65
+105,Core i7-14700K Processor,Internal Components,21791.03,20409.36,4.3,4921,96,81
+106,Apex Wireless Gaming Mouse,Peripherals & Accessories,3021.28,2978.74,4.8,7846,52,99
+107,Apex Wireless Gaming Mouse,Peripherals & Accessories,2850.58,3008.58,4.9,8254,39,101
+108,Apex Wireless Gaming Mouse,Peripherals & Accessories,3117.7,3410.22,3.8,7542,104,95
+109,Vengeance DDR5 32GB RGB,Storage & Memory,8052.81,7131.98,4.8,7055,142,90
+110,Ryzen 7 7800X3D Processor,Internal Components,25304.47,25051.5,3.8,5031,31,79
+111,SpeedStream Gigabit Switch 8P,Networking Devices,1936.19,1985.83,4.4,6401,22,92
+112,Station Elite Tower,Desktop Computers,51949.5,56046.58,3.9,7300,36,94
+113,Vengeance DDR5 32GB RGB,Storage & Memory,7136.14,6923.74,4.0,7005,37,87
+114,Core i7-14700K Processor,Internal Components,23196.27,25983.04,4.7,5455,7,85
+115,Titanium 850W Gold PSU,Internal Components,7113.3,7297.5,4.0,2166,89,56
+116,Compact Office Mini,Desktop Computers,26470.46,24205.85,4.0,5904,112,84
+117,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15044.68,13752.0,3.9,10415,118,107
+118,Titanium 850W Gold PSU,Internal Components,7439.65,7244.21,3.7,1505,10,52
+119,Station Elite Tower,Desktop Computers,45263.37,44393.44,4.0,8128,93,99
+120,Compact Office Mini,Desktop Computers,25178.26,23168.96,3.8,4778,140,76
+101,Station Elite Tower,Desktop Computers,48563.68,49985.59,4.2,4709,106,75
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3913.52,3866.36,4.6,10307,135,114
+103,Liquid Master 360 AIO,Internal Components,5002.28,4760.52,3.8,10938,111,108
+104,GamerX Predator 16,Laptops & Ultrabooks,84825.21,92309.2,4.9,790,126,64
+105,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13781.85,12482.47,4.5,3052,32,70
+106,Apex Wireless Gaming Mouse,Peripherals & Accessories,2709.64,2500.57,5.0,6997,48,94
+107,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9718.71,10228.75,4.9,5701,61,86
+108,Void RGB Wireless Headset,Peripherals & Accessories,3589.3,4069.13,3.6,1305,40,52
+109,Compact Office Mini,Desktop Computers,23658.34,22200.1,3.8,1358,123,52
+110,ProBook Ultra 15,Laptops & Ultrabooks,54821.4,59529.85,3.8,11499,108,116
+111,Core i7-14700K Processor,Internal Components,25440.22,23895.77,4.5,9043,23,102
+112,ProBook Ultra 15,Laptops & Ultrabooks,56152.84,61236.44,4.7,8436,111,108
+113,Phantom B650 Motherboard,Internal Components,11541.53,12604.38,4.7,3042,133,69
+114,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8976.01,8805.79,3.8,2260,80,60
+115,Ryzen 7 7800X3D Processor,Internal Components,22841.79,22045.16,4.5,2150,126,59
+116,GamerX Predator 16,Laptops & Ultrabooks,71604.15,69446.04,4.7,6027,131,87
+117,Evo 990 Pro 2TB NVMe,Storage & Memory,9973.75,10483.37,4.8,2025,127,69
+118,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14769.69,16258.56,4.2,5453,35,82
+119,Core i7-14700K Processor,Internal Components,22635.15,22978.7,4.6,796,78,55
+120,ProBook Ultra 15,Laptops & Ultrabooks,54941.24,61130.68,4.0,3733,56,68
+101,ProBook Ultra 15,Laptops & Ultrabooks,56491.92,56695.95,4.8,5627,7,91
+102,Core i7-14700K Processor,Internal Components,24465.23,21725.29,4.9,10010,122,112
+103,SpeedStream Gigabit Switch 8P,Networking Devices,1990.33,2145.1,4.4,3297,38,73
+104,ProBook Ultra 15,Laptops & Ultrabooks,57351.5,64410.4,4.1,8811,33,103
+105,Station Elite Tower,Desktop Computers,53455.75,52286.84,4.2,8183,126,101
+106,Titanium 850W Gold PSU,Internal Components,6340.6,5931.89,4.9,1151,67,58
+107,ProBook Ultra 15,Laptops & Ultrabooks,53018.07,52422.85,3.6,3006,32,64
+108,Liquid Master 360 AIO,Internal Components,5008.34,5589.66,3.8,10928,71,110
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,10763.09,12217.64,4.0,6876,109,89
+110,ProBook Ultra 15,Laptops & Ultrabooks,51011.29,52677.29,3.6,10446,87,106
+111,Apex Wireless Gaming Mouse,Peripherals & Accessories,2653.22,2973.13,4.0,4362,32,76
+112,Vengeance DDR5 32GB RGB,Storage & Memory,7577.41,7081.27,4.6,11525,107,119
+113,Station Elite Tower,Desktop Computers,46252.69,48323.77,3.5,7600,62,93
+114,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4482.57,4581.69,4.6,2644,150,69
+115,Ryzen 7 7800X3D Processor,Internal Components,22936.04,21274.45,4.3,4349,101,75
+116,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4274.36,4171.73,5.0,10784,43,120
+117,Vengeance DDR5 32GB RGB,Storage & Memory,7821.59,8030.97,5.0,2850,12,75
+118,Aero RTX 4070 12GB,Internal Components,34692.94,38276.76,3.7,8809,116,102
+119,Aero RTX 4070 12GB,Internal Components,40742.69,42064.92,3.8,8864,147,95
+120,Compact Office Mini,Desktop Computers,25404.65,22393.06,4.7,5782,90,83
+101,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4380.05,3976.57,3.8,5322,47,74
+102,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14890.73,13912.89,4.5,10435,117,108
+103,Compact Office Mini,Desktop Computers,25265.9,22559.33,4.3,7114,91,87
+104,Pulse RX 7800 XT 16GB,Internal Components,37140.63,42096.85,4.7,508,123,53
+105,SpeedStream Gigabit Switch 8P,Networking Devices,1882.33,2160.27,3.6,4065,5,69
+106,Evo 990 Pro 2TB NVMe,Storage & Memory,9040.83,8495.0,4.9,5710,24,83
+107,Void RGB Wireless Headset,Peripherals & Accessories,4013.74,3920.64,3.8,4587,111,76
+108,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14973.52,14703.75,4.7,6983,69,95
+109,Liquid Master 360 AIO,Internal Components,4951.15,4423.26,4.7,8191,142,97
+110,Pulse RX 7800 XT 16GB,Internal Components,38185.04,36172.73,4.8,9392,82,113
+111,SpeedStream Gigabit Switch 8P,Networking Devices,1787.89,1644.84,4.9,1053,101,57
+112,Phantom B650 Motherboard,Internal Components,12541.3,12413.82,4.6,6066,114,90
+113,Phantom B650 Motherboard,Internal Components,11656.89,10398.59,4.8,9868,129,111
+114,Core i7-14700K Processor,Internal Components,24485.64,27876.82,4.4,3455,122,71
+115,Aero RTX 4070 12GB,Internal Components,41784.4,38912.63,4.1,10245,30,111
+116,Core i7-14700K Processor,Internal Components,24458.01,26154.4,4.9,2750,111,73
+117,Phantom B650 Motherboard,Internal Components,12457.55,13274.76,4.4,6936,137,94
+118,Ryzen 7 7800X3D Processor,Internal Components,25113.47,24960.33,4.4,3204,106,70
+119,Titanium 850W Gold PSU,Internal Components,6325.97,6638.8,3.5,2022,127,53
+120,Liquid Master 360 AIO,Internal Components,6002.73,6270.08,4.9,10580,31,121
+101,Station Elite Tower,Desktop Computers,51318.34,54868.0,4.7,5800,113,89
+102,Core i7-14700K Processor,Internal Components,23187.78,26136.77,4.6,4108,138,82
+103,Aero RTX 4070 12GB,Internal Components,36176.46,34548.45,4.3,4327,18,73
+104,Ryzen 7 7800X3D Processor,Internal Components,23982.28,26489.32,4.1,10911,67,113
+105,Titanium 850W Gold PSU,Internal Components,7314.89,7682.2,3.8,6385,60,86
+106,Ryzen 7 7800X3D Processor,Internal Components,23889.85,23905.07,3.7,5074,147,74
+107,Void RGB Wireless Headset,Peripherals & Accessories,4128.07,3999.76,4.2,10229,44,110
+108,Station Elite Tower,Desktop Computers,48826.02,49258.48,4.9,1853,87,68
+109,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8607.7,8197.07,3.7,5194,25,72
+110,Titanium 850W Gold PSU,Internal Components,6246.87,6333.04,4.3,7094,74,89
+111,Void RGB Wireless Headset,Peripherals & Accessories,3763.56,3924.42,4.7,4496,138,84
+112,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4345.34,4160.54,4.2,11482,61,115
+113,Liquid Master 360 AIO,Internal Components,5538.97,4889.49,3.7,1532,22,48
+114,Liquid Master 360 AIO,Internal Components,5602.11,5091.87,4.2,9308,138,103
+115,Compact Office Mini,Desktop Computers,26434.34,25986.76,3.9,3364,79,61
+116,Core i7-14700K Processor,Internal Components,23379.93,25722.7,4.0,11161,79,112
+117,Titanium 850W Gold PSU,Internal Components,6430.61,6622.95,4.1,10231,140,112
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9354.23,8480.33,4.2,5141,71,81
+119,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15203.17,16252.14,3.8,10512,132,106
+120,Core i7-14700K Processor,Internal Components,23215.29,24822.98,3.7,4141,57,67
+101,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3943.69,3989.29,4.0,6368,149,83
+102,Vengeance DDR5 32GB RGB,Storage & Memory,7214.93,8221.45,4.4,8736,33,107
+103,SpeedStream Gigabit Switch 8P,Networking Devices,1852.16,1643.69,3.6,6745,7,86
+104,Compact Office Mini,Desktop Computers,25047.63,25254.69,4.4,8240,146,97
+105,Void RGB Wireless Headset,Peripherals & Accessories,3844.17,4095.01,3.7,8375,145,98
+106,Ryzen 7 7800X3D Processor,Internal Components,24107.65,27084.27,4.3,4413,14,77
+107,Station Elite Tower,Desktop Computers,48661.21,54398.98,4.2,2923,111,68
+108,Titanium 850W Gold PSU,Internal Components,6614.33,6334.96,5.0,10860,53,121
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,9191.78,9529.12,4.8,1650,73,65
+110,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8705.37,8981.98,3.8,6080,80,78
+111,Void RGB Wireless Headset,Peripherals & Accessories,3797.82,4220.71,3.9,4525,85,76
+112,Ryzen 7 7800X3D Processor,Internal Components,22713.68,26090.14,4.2,6677,150,88
+113,Ryzen 7 7800X3D Processor,Internal Components,24925.78,24599.22,4.4,5144,42,76
+114,Core i7-14700K Processor,Internal Components,23158.42,23324.0,3.8,7086,53,86
+115,Phantom B650 Motherboard,Internal Components,11411.96,10350.77,4.9,11548,109,125
+116,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4619.6,4102.29,4.3,2489,122,67
+117,Phantom B650 Motherboard,Internal Components,11352.47,11363.31,3.9,4657,122,69
+118,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15149.75,14882.55,3.7,8120,110,97
+119,Compact Office Mini,Desktop Computers,23610.53,21854.49,4.2,10347,110,105
+120,Pulse RX 7800 XT 16GB,Internal Components,36139.93,37943.29,4.7,5251,73,81
+101,Titanium 850W Gold PSU,Internal Components,6976.5,6720.71,4.8,4483,70,81
+102,Core i7-14700K Processor,Internal Components,21817.31,24414.88,4.0,11795,39,114
+103,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9750.95,10378.35,4.5,11503,68,122
+104,SlimLite Go 13,Laptops & Ultrabooks,29533.89,26630.68,4.1,4875,89,73
+105,Core i7-14700K Processor,Internal Components,24046.7,21500.48,4.8,8051,40,96
+106,SpeedStream Gigabit Switch 8P,Networking Devices,1856.32,1940.06,4.1,5039,49,75
+107,Pulse RX 7800 XT 16GB,Internal Components,34149.85,35867.56,4.5,3978,143,76
+108,Pulse RX 7800 XT 16GB,Internal Components,32150.51,33123.22,4.0,7324,76,90
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,9664.19,9601.22,3.9,6185,58,83
+110,Vengeance DDR5 32GB RGB,Storage & Memory,6976.12,6397.74,5.0,10303,119,118
+111,Titanium 850W Gold PSU,Internal Components,7071.41,7106.19,3.8,1570,48,54
+112,Pulse RX 7800 XT 16GB,Internal Components,34515.83,39565.2,4.1,816,127,51
+113,Pulse RX 7800 XT 16GB,Internal Components,35334.48,38848.66,4.4,7635,43,92
+114,SpeedStream Gigabit Switch 8P,Networking Devices,2030.22,1904.34,4.2,11257,129,117
+115,GamerX Predator 16,Laptops & Ultrabooks,80148.79,80409.4,3.5,657,37,51
+116,Compact Office Mini,Desktop Computers,25732.66,24948.44,4.6,8084,148,99
+117,Vengeance DDR5 32GB RGB,Storage & Memory,6829.34,6073.19,3.7,9615,39,98
+118,SlimLite Go 13,Laptops & Ultrabooks,27752.05,31146.11,4.8,6566,55,97
+119,Apex Wireless Gaming Mouse,Peripherals & Accessories,2881.45,2815.85,4.5,8334,38,98
+120,Aero RTX 4070 12GB,Internal Components,40446.73,36561.31,4.3,4883,120,75
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15241.01,16957.61,4.1,9980,29,113
+102,Compact Office Mini,Desktop Computers,27389.1,27699.35,3.9,11831,94,114
+103,Aero RTX 4070 12GB,Internal Components,39763.8,41814.49,4.7,1147,136,56
+104,SpeedStream Gigabit Switch 8P,Networking Devices,1894.89,1993.09,4.5,2123,127,61
+105,Ryzen 7 7800X3D Processor,Internal Components,26582.93,27271.43,4.3,5874,122,89
+106,Pulse RX 7800 XT 16GB,Internal Components,32363.94,31520.83,4.5,2144,76,60
+107,ProBook Ultra 15,Laptops & Ultrabooks,56359.62,64296.75,3.9,8857,49,96
+108,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4087.95,4367.09,4.1,11078,5,118
+109,Titanium 850W Gold PSU,Internal Components,7304.0,7003.75,4.7,8203,79,105
+110,Compact Office Mini,Desktop Computers,26377.0,28322.58,4.1,552,105,56
+111,Compact Office Mini,Desktop Computers,25345.35,24729.59,3.8,10428,10,105
+112,Liquid Master 360 AIO,Internal Components,5604.42,6400.32,3.8,6696,56,92
+113,Station Elite Tower,Desktop Computers,44129.42,45275.09,3.6,3232,137,62
+114,GamerX Predator 16,Laptops & Ultrabooks,80681.06,80655.08,4.1,8478,135,97
+115,Liquid Master 360 AIO,Internal Components,5329.46,5849.55,3.8,11966,62,120
+116,Vengeance DDR5 32GB RGB,Storage & Memory,7176.17,7650.6,4.0,10478,7,112
+117,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12797.26,14201.2,4.7,960,54,60
+118,Void RGB Wireless Headset,Peripherals & Accessories,3969.51,3911.01,5.0,1563,76,67
+119,Ryzen 7 7800X3D Processor,Internal Components,22916.76,23885.04,3.5,7525,25,90
+120,Aero RTX 4070 12GB,Internal Components,41029.45,39523.96,4.7,7099,21,91
+101,Ryzen 7 7800X3D Processor,Internal Components,24088.03,24381.35,3.6,5997,98,84
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,9231.22,10227.56,4.5,2725,47,68
+103,Liquid Master 360 AIO,Internal Components,5512.72,5912.01,5.0,1183,39,66
+104,Core i7-14700K Processor,Internal Components,25118.98,25785.9,4.1,10505,23,108
+105,GamerX Predator 16,Laptops & Ultrabooks,71164.25,73103.44,4.1,9130,19,104
+106,Compact Office Mini,Desktop Computers,27400.01,25656.12,3.6,10612,70,107
+107,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4115.72,4427.75,3.6,11319,60,115
+108,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8256.58,8623.22,3.6,7923,141,91
+109,SpeedStream Gigabit Switch 8P,Networking Devices,1858.93,1809.9,3.7,2374,85,55
+110,Liquid Master 360 AIO,Internal Components,5706.63,5348.2,4.0,6137,133,80
+111,SpeedStream Gigabit Switch 8P,Networking Devices,2054.17,1847.1,4.8,10350,13,116
+112,Station Elite Tower,Desktop Computers,46422.77,46413.99,3.9,6041,65,78
+113,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9077.43,9882.83,4.2,2285,20,68
+114,Titanium 850W Gold PSU,Internal Components,6597.17,6503.46,4.2,8659,28,101
+115,Core i7-14700K Processor,Internal Components,21792.63,24048.06,3.6,2058,56,57
+116,Void RGB Wireless Headset,Peripherals & Accessories,4015.55,3632.67,3.6,10255,46,101
+117,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3922.57,4341.58,4.4,10842,94,113
+118,Void RGB Wireless Headset,Peripherals & Accessories,3787.27,3506.19,4.6,10267,93,107
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9994.97,10848.62,4.3,10755,104,114
+120,SlimLite Go 13,Laptops & Ultrabooks,30422.87,32341.89,3.9,2857,13,65
+101,Vengeance DDR5 32GB RGB,Storage & Memory,7939.94,8111.15,3.6,2551,33,60
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,9425.65,9851.18,4.7,8088,81,102
+103,Core i7-14700K Processor,Internal Components,24384.3,26617.59,4.4,7501,45,95
+104,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14912.79,15897.05,3.7,6323,123,80
+105,Void RGB Wireless Headset,Peripherals & Accessories,3697.48,4026.27,3.9,10255,40,105
+106,ProBook Ultra 15,Laptops & Ultrabooks,51853.36,48764.11,4.0,8316,65,95
+107,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14399.78,14526.28,4.5,9139,67,110
+108,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8712.94,9558.5,4.5,10493,93,110
+109,ProBook Ultra 15,Laptops & Ultrabooks,53392.77,57815.21,4.3,3530,52,68
+110,Evo 990 Pro 2TB NVMe,Storage & Memory,10499.29,11814.23,4.6,1616,56,65
+111,Void RGB Wireless Headset,Peripherals & Accessories,3743.92,3799.27,4.5,4114,35,73
+112,ProBook Ultra 15,Laptops & Ultrabooks,52185.55,49746.11,3.9,3044,145,63
+113,Station Elite Tower,Desktop Computers,46307.36,41774.29,4.0,11584,109,113
+114,ProBook Ultra 15,Laptops & Ultrabooks,52108.53,55255.0,4.9,9141,132,106
+115,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4613.52,4099.22,4.3,6977,112,90
+116,SpeedStream Gigabit Switch 8P,Networking Devices,1790.77,1791.4,4.6,1329,143,57
+117,Ryzen 7 7800X3D Processor,Internal Components,24103.72,26177.55,4.4,9038,90,109
+118,Void RGB Wireless Headset,Peripherals & Accessories,3953.22,3632.43,4.4,11392,91,112
+119,Apex Wireless Gaming Mouse,Peripherals & Accessories,2968.58,2631.43,4.3,2803,106,69
+120,Station Elite Tower,Desktop Computers,51778.97,58644.25,4.7,4871,144,85
+101,Aero RTX 4070 12GB,Internal Components,40469.53,36254.17,3.6,3416,74,61
+102,ProBook Ultra 15,Laptops & Ultrabooks,52335.79,57985.7,4.5,6984,46,93
+103,SpeedStream Gigabit Switch 8P,Networking Devices,1781.49,1626.52,4.7,5821,120,89
+104,SlimLite Go 13,Laptops & Ultrabooks,31663.84,29401.25,3.8,4739,142,70
+105,SpeedStream Gigabit Switch 8P,Networking Devices,1763.79,1674.79,4.9,5258,50,88
+106,SlimLite Go 13,Laptops & Ultrabooks,30142.3,33819.72,3.8,10253,142,108
+107,SlimLite Go 13,Laptops & Ultrabooks,30296.14,30555.29,4.3,10669,25,110
+108,ProBook Ultra 15,Laptops & Ultrabooks,58496.92,58008.81,3.7,4442,47,71
+109,Apex Wireless Gaming Mouse,Peripherals & Accessories,2655.73,2575.7,4.2,3906,48,75
+110,Aero RTX 4070 12GB,Internal Components,36947.62,40903.55,4.1,7652,49,93
+111,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8952.8,8749.48,4.6,5105,44,78
+112,Vengeance DDR5 32GB RGB,Storage & Memory,7794.84,7225.89,4.1,5539,92,76
+113,Phantom B650 Motherboard,Internal Components,11187.5,11069.8,3.9,3892,68,67
+114,SlimLite Go 13,Laptops & Ultrabooks,27206.92,24369.72,4.6,8811,90,104
+115,Aero RTX 4070 12GB,Internal Components,36029.68,40102.06,4.1,10066,69,105
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13028.78,13084.88,4.7,4228,118,81
+117,Apex Wireless Gaming Mouse,Peripherals & Accessories,3069.22,3515.36,3.7,1964,94,55
+118,Apex Wireless Gaming Mouse,Peripherals & Accessories,2971.05,2932.99,3.6,521,149,44
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9843.5,9743.76,4.7,5799,46,83
+120,ProBook Ultra 15,Laptops & Ultrabooks,52962.47,52491.88,3.6,2841,148,56
+101,Aero RTX 4070 12GB,Internal Components,36419.88,37080.53,4.7,8504,55,106
+102,GamerX Predator 16,Laptops & Ultrabooks,83124.06,91064.28,3.7,2458,108,63
+103,Phantom B650 Motherboard,Internal Components,13191.33,14380.53,4.5,10071,138,110
+104,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4348.42,4369.8,3.7,11308,85,116
+105,Titanium 850W Gold PSU,Internal Components,7077.44,7840.68,4.7,6361,23,90
+106,Apex Wireless Gaming Mouse,Peripherals & Accessories,3167.01,3287.67,4.4,4049,96,75
+107,Ryzen 7 7800X3D Processor,Internal Components,24494.04,27682.65,3.7,4057,87,66
+108,Core i7-14700K Processor,Internal Components,24908.49,25744.45,4.6,1166,100,63
+109,Ryzen 7 7800X3D Processor,Internal Components,24563.59,26658.33,4.8,6374,30,94
+110,Station Elite Tower,Desktop Computers,45199.62,44313.06,4.5,5839,61,81
+111,Apex Wireless Gaming Mouse,Peripherals & Accessories,3073.09,3194.45,4.5,965,92,58
+112,Vengeance DDR5 32GB RGB,Storage & Memory,7526.61,7889.24,3.6,11441,49,114
+113,SlimLite Go 13,Laptops & Ultrabooks,31838.88,28737.16,3.8,5807,48,82
+114,Phantom B650 Motherboard,Internal Components,12012.46,12183.37,5.0,2354,120,68
+115,Liquid Master 360 AIO,Internal Components,5676.94,5547.11,4.8,7052,61,91
+116,Liquid Master 360 AIO,Internal Components,4977.48,5143.7,3.7,2677,108,64
+117,Void RGB Wireless Headset,Peripherals & Accessories,3874.14,3473.07,3.8,7099,113,91
+118,Titanium 850W Gold PSU,Internal Components,7186.26,6350.17,4.8,6870,43,88
+119,Core i7-14700K Processor,Internal Components,24461.67,27476.53,4.7,838,140,54
+120,SpeedStream Gigabit Switch 8P,Networking Devices,1922.56,2050.03,4.0,9743,146,110
+101,Evo 990 Pro 2TB NVMe,Storage & Memory,8987.41,9319.49,3.9,4498,66,70
+102,Phantom B650 Motherboard,Internal Components,12312.39,12438.5,3.8,2675,38,66
+103,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4090.59,3861.72,3.7,5533,16,77
+104,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13058.16,14673.4,4.1,11953,104,119
+105,Void RGB Wireless Headset,Peripherals & Accessories,4034.05,4274.41,4.4,10117,40,109
+106,Core i7-14700K Processor,Internal Components,22433.01,21345.75,3.7,11951,141,111
+107,Void RGB Wireless Headset,Peripherals & Accessories,3566.81,4018.14,4.0,5164,72,81
+108,ProBook Ultra 15,Laptops & Ultrabooks,54198.91,49512.29,3.6,3494,41,67
+109,Phantom B650 Motherboard,Internal Components,13052.15,12724.67,4.7,2908,100,74
+110,Titanium 850W Gold PSU,Internal Components,6844.36,7496.29,3.7,2439,8,58
+111,Evo 990 Pro 2TB NVMe,Storage & Memory,9220.37,9324.75,4.3,5288,53,80
+112,Apex Wireless Gaming Mouse,Peripherals & Accessories,2873.35,2790.73,4.0,635,131,51
+113,Liquid Master 360 AIO,Internal Components,5653.78,6498.07,4.9,5964,98,87
+114,SpeedStream Gigabit Switch 8P,Networking Devices,1816.09,1892.15,3.7,11125,39,109
+115,Liquid Master 360 AIO,Internal Components,6012.04,6241.42,4.9,762,84,63
+116,SpeedStream Gigabit Switch 8P,Networking Devices,1938.95,1842.38,4.2,9755,104,103
+117,Station Elite Tower,Desktop Computers,53249.23,52087.05,3.7,9085,51,99
+118,SlimLite Go 13,Laptops & Ultrabooks,28611.9,27120.73,3.6,768,139,46
+119,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13938.01,15653.5,3.8,11408,144,111
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8321.19,8564.59,4.9,7864,83,103
+101,SpeedStream Gigabit Switch 8P,Networking Devices,1757.24,1629.37,4.2,2421,101,65
+102,Aero RTX 4070 12GB,Internal Components,38923.25,38621.41,4.0,1631,53,54
+103,Vengeance DDR5 32GB RGB,Storage & Memory,6872.45,7588.78,4.6,2115,109,67
+104,Phantom B650 Motherboard,Internal Components,12130.46,11524.74,4.1,4754,30,72
+105,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4252.85,4694.97,4.2,1421,59,60
+106,Phantom B650 Motherboard,Internal Components,12664.99,12914.97,3.8,3344,59,64
+107,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8613.88,8854.02,4.7,11365,96,123
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,9661.72,8869.68,4.2,11219,27,114
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13331.23,15257.15,4.8,10893,147,116
+110,Apex Wireless Gaming Mouse,Peripherals & Accessories,3054.4,3288.23,3.8,1557,141,55
+111,Compact Office Mini,Desktop Computers,27464.35,28854.81,3.6,8657,47,95
+112,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4055.56,3695.33,3.7,6721,127,80
+113,SlimLite Go 13,Laptops & Ultrabooks,31048.44,30773.26,3.5,873,39,45
+114,Core i7-14700K Processor,Internal Components,26176.28,26123.96,4.8,7838,91,97
+115,Vengeance DDR5 32GB RGB,Storage & Memory,6979.42,7311.2,4.3,10292,136,116
+116,Ryzen 7 7800X3D Processor,Internal Components,25937.57,23965.93,4.3,7285,46,88
+117,Aero RTX 4070 12GB,Internal Components,41225.15,44260.75,3.6,1596,89,57
+118,SlimLite Go 13,Laptops & Ultrabooks,29947.95,29461.58,3.7,11638,105,114
+119,Phantom B650 Motherboard,Internal Components,11317.86,10013.25,4.2,10840,80,112
+120,Evo 990 Pro 2TB NVMe,Storage & Memory,9079.07,8663.27,4.7,8121,86,99
+101,Void RGB Wireless Headset,Peripherals & Accessories,4056.45,3955.36,4.4,3011,28,66
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4318.29,4817.92,4.2,2528,50,63
+103,Phantom B650 Motherboard,Internal Components,11078.95,11531.2,4.9,4072,112,75
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8427.55,8615.25,4.6,3053,11,67
+105,SlimLite Go 13,Laptops & Ultrabooks,32684.92,28866.78,3.8,7306,107,89
+106,Vengeance DDR5 32GB RGB,Storage & Memory,7935.37,8207.02,3.7,10725,50,107
+107,Aero RTX 4070 12GB,Internal Components,39607.81,42477.41,4.1,11796,17,117
+108,Compact Office Mini,Desktop Computers,22827.2,20979.92,3.7,7290,36,83
+109,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8922.65,9722.6,3.5,5288,49,72
+110,Aero RTX 4070 12GB,Internal Components,40856.29,42426.78,4.5,2236,48,68
+111,Station Elite Tower,Desktop Computers,49970.22,52458.09,3.5,11208,21,110
+112,Compact Office Mini,Desktop Computers,23636.73,26097.41,4.9,996,123,66
+113,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12735.72,12235.83,4.2,11642,109,120
+114,Aero RTX 4070 12GB,Internal Components,38046.98,41584.17,4.9,3638,47,74
+115,Apex Wireless Gaming Mouse,Peripherals & Accessories,3024.54,3326.4,3.8,2388,97,58
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14256.64,15385.02,4.4,1508,15,63
+117,Liquid Master 360 AIO,Internal Components,5635.53,6447.36,3.9,5954,144,84
+118,Vengeance DDR5 32GB RGB,Storage & Memory,8169.24,8018.18,4.3,1203,61,56
+119,SlimLite Go 13,Laptops & Ultrabooks,30832.25,31652.69,4.5,9803,83,110
+120,Pulse RX 7800 XT 16GB,Internal Components,36221.58,37993.45,4.1,8592,68,97
+101,Ryzen 7 7800X3D Processor,Internal Components,23466.98,23313.52,3.7,5730,40,81
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,3053.21,3456.99,4.9,1425,16,63
+103,Titanium 850W Gold PSU,Internal Components,6718.04,6668.38,4.7,10918,46,117
+104,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8805.27,9041.14,4.3,3622,84,67
+105,Apex Wireless Gaming Mouse,Peripherals & Accessories,2934.3,3170.49,3.6,11269,31,110
+106,Phantom B650 Motherboard,Internal Components,13146.78,13082.31,4.5,3455,147,68
+107,GamerX Predator 16,Laptops & Ultrabooks,73064.24,72522.21,4.5,2228,36,59
+108,Compact Office Mini,Desktop Computers,27386.42,27807.35,3.8,2342,140,59
+109,SpeedStream Gigabit Switch 8P,Networking Devices,2019.6,2253.65,3.6,5841,14,82
+110,Void RGB Wireless Headset,Peripherals & Accessories,3850.15,4400.54,3.6,2586,52,64
+111,SpeedStream Gigabit Switch 8P,Networking Devices,1838.65,1996.38,4.0,9648,50,109
+112,Evo 990 Pro 2TB NVMe,Storage & Memory,9640.17,11079.12,4.3,8957,14,103
+113,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4445.34,4523.42,3.9,8672,122,95
+114,Evo 990 Pro 2TB NVMe,Storage & Memory,10617.15,9616.69,5.0,785,140,62
+115,SlimLite Go 13,Laptops & Ultrabooks,31088.06,29022.31,3.5,3097,114,62
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13476.55,14229.92,4.8,9823,103,110
+117,Station Elite Tower,Desktop Computers,52616.61,54219.55,3.6,3303,107,68
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8844.22,9610.98,4.9,11820,22,125
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9475.39,8689.45,3.6,1181,70,52
+120,Apex Wireless Gaming Mouse,Peripherals & Accessories,2649.91,2455.5,4.9,9069,24,111
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13250.2,14077.65,4.1,10449,61,109
+102,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4603.72,4486.39,4.4,11239,24,113
+103,Ryzen 7 7800X3D Processor,Internal Components,25931.58,24241.43,3.8,1123,126,54
+104,Vengeance DDR5 32GB RGB,Storage & Memory,6854.79,6245.42,3.8,5406,132,79
+105,Aero RTX 4070 12GB,Internal Components,41401.02,47579.14,3.8,8158,72,99
+106,Core i7-14700K Processor,Internal Components,24784.45,27277.23,4.5,4893,84,78
+107,SpeedStream Gigabit Switch 8P,Networking Devices,1752.16,1609.97,4.5,10245,30,115
+108,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12620.32,14127.4,3.5,7596,46,88
+109,GamerX Predator 16,Laptops & Ultrabooks,74059.14,69166.76,4.8,3898,79,71
+110,Pulse RX 7800 XT 16GB,Internal Components,35670.13,32399.43,4.7,1336,64,57
+111,Pulse RX 7800 XT 16GB,Internal Components,37116.78,36423.2,5.0,2238,107,68
+112,Evo 990 Pro 2TB NVMe,Storage & Memory,9254.67,10211.88,3.9,2518,7,63
+113,Core i7-14700K Processor,Internal Components,22933.63,20786.82,4.5,5955,11,87
+114,GamerX Predator 16,Laptops & Ultrabooks,85313.83,80703.93,3.5,9708,124,98
+115,Compact Office Mini,Desktop Computers,25727.33,25553.91,4.5,10698,72,112
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14377.73,14169.7,4.3,7736,27,94
+117,Titanium 850W Gold PSU,Internal Components,6618.01,6247.66,4.4,3070,119,63
+118,Liquid Master 360 AIO,Internal Components,5226.41,4786.73,3.9,7261,15,86
+119,Phantom B650 Motherboard,Internal Components,11045.95,10186.97,4.5,10705,99,118
+120,Liquid Master 360 AIO,Internal Components,5010.44,4971.85,4.7,6888,13,91
+101,Evo 990 Pro 2TB NVMe,Storage & Memory,9948.21,10635.45,4.2,830,111,53
+102,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13894.01,12963.8,4.4,7448,90,93
+103,Vengeance DDR5 32GB RGB,Storage & Memory,7657.16,7038.64,4.0,9731,20,100
+104,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4610.16,4678.0,4.5,4471,26,73
+105,Titanium 850W Gold PSU,Internal Components,7097.15,7772.25,3.8,1013,27,56
+106,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14108.09,12491.57,4.3,4106,129,68
+107,Apex Wireless Gaming Mouse,Peripherals & Accessories,3175.6,3506.98,4.0,5989,83,81
+108,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8496.44,9529.31,3.8,5259,134,78
+109,Pulse RX 7800 XT 16GB,Internal Components,37561.07,37794.57,4.4,4403,10,78
+110,Liquid Master 360 AIO,Internal Components,6045.55,5897.55,4.4,6974,117,93
+111,Titanium 850W Gold PSU,Internal Components,6845.05,7633.68,4.5,1462,128,61
+112,ProBook Ultra 15,Laptops & Ultrabooks,53633.71,49101.19,4.7,11621,59,123
+113,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9872.7,9759.09,3.9,931,80,50
+114,Liquid Master 360 AIO,Internal Components,5324.81,4967.71,4.7,1888,134,67
+115,Void RGB Wireless Headset,Peripherals & Accessories,3866.7,3911.5,4.4,6701,34,87
+116,Liquid Master 360 AIO,Internal Components,5914.57,6575.56,3.6,9371,44,97
+117,Vengeance DDR5 32GB RGB,Storage & Memory,6882.43,7802.32,4.7,5882,73,89
+118,Phantom B650 Motherboard,Internal Components,12397.0,13960.72,3.7,9662,95,104
+119,Core i7-14700K Processor,Internal Components,26135.44,24004.75,3.6,2221,100,59
+120,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4306.88,4168.36,4.3,1968,73,60
+101,Phantom B650 Motherboard,Internal Components,12055.74,10727.88,3.6,10059,148,104
+102,Void RGB Wireless Headset,Peripherals & Accessories,3487.0,3755.98,3.9,4872,111,74
+103,Compact Office Mini,Desktop Computers,22934.76,21084.01,4.8,3162,61,70
+104,Compact Office Mini,Desktop Computers,22575.84,21704.42,3.9,5404,119,76
+105,Pulse RX 7800 XT 16GB,Internal Components,34147.97,34588.89,3.9,9898,93,109
+106,Apex Wireless Gaming Mouse,Peripherals & Accessories,2804.45,2503.56,3.5,1825,40,54
+107,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12650.29,14422.77,4.5,10914,62,117
+108,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15189.27,16743.7,4.1,11859,17,124
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15280.95,15460.17,4.9,10035,98,113
+110,Evo 990 Pro 2TB NVMe,Storage & Memory,10494.15,10372.28,3.7,10922,22,110
+111,Station Elite Tower,Desktop Computers,47719.03,42607.83,5.0,7377,75,101
+112,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15176.66,15707.62,4.3,5893,51,89
+113,Ryzen 7 7800X3D Processor,Internal Components,26627.76,29690.29,4.4,11366,141,117
+114,Void RGB Wireless Headset,Peripherals & Accessories,3989.49,4139.41,4.0,9585,128,107
+115,SpeedStream Gigabit Switch 8P,Networking Devices,1798.47,1920.93,3.6,4112,74,67
+116,Liquid Master 360 AIO,Internal Components,5866.46,5700.2,4.2,10195,14,104
+117,Aero RTX 4070 12GB,Internal Components,39454.59,41924.61,4.3,4294,130,72
+118,Precision Pro Mechanical Keyboard,Peripherals & Accessories,3978.38,4555.33,4.7,6794,73,92
+119,SpeedStream Gigabit Switch 8P,Networking Devices,1927.54,1799.37,4.0,2853,129,59
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8332.81,7929.19,4.5,11458,65,114
+101,Ryzen 7 7800X3D Processor,Internal Components,23598.44,23308.92,4.5,4557,13,78
+102,Station Elite Tower,Desktop Computers,47036.62,50885.78,4.9,11999,125,126
+103,GamerX Predator 16,Laptops & Ultrabooks,77663.08,74775.6,4.6,7471,35,93
+104,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13968.14,14623.43,4.6,7104,17,90
+105,Vengeance DDR5 32GB RGB,Storage & Memory,7188.76,7543.74,3.6,9612,55,106
+106,Ryzen 7 7800X3D Processor,Internal Components,25546.55,27369.19,4.5,4496,28,78
+107,GamerX Predator 16,Laptops & Ultrabooks,80808.33,82120.14,4.0,7908,132,92
+108,SlimLite Go 13,Laptops & Ultrabooks,28644.79,25371.67,4.4,2421,140,64
+109,GamerX Predator 16,Laptops & Ultrabooks,78395.69,82788.29,3.8,4743,17,70
+110,Titanium 850W Gold PSU,Internal Components,6944.47,7488.94,4.1,3221,136,70
+111,Liquid Master 360 AIO,Internal Components,5003.44,4525.05,3.8,4780,47,71
+112,Titanium 850W Gold PSU,Internal Components,7415.26,6608.44,4.8,705,27,54
+113,Evo 990 Pro 2TB NVMe,Storage & Memory,9358.33,10140.91,4.1,4020,43,76
+114,Apex Wireless Gaming Mouse,Peripherals & Accessories,2664.39,2477.29,3.5,591,9,40
+115,Void RGB Wireless Headset,Peripherals & Accessories,3632.15,3526.39,3.9,2512,102,65
+116,Evo 990 Pro 2TB NVMe,Storage & Memory,10879.87,10928.89,4.2,9970,131,107
+117,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4078.53,3753.02,5.0,3459,113,71
+118,SpeedStream Gigabit Switch 8P,Networking Devices,1832.71,1937.44,4.2,6975,127,95
+119,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8767.11,9079.84,3.5,4997,14,68
+120,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9263.26,9413.03,4.0,11664,48,114
+101,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9487.51,9166.91,5.0,9269,108,108
+102,Compact Office Mini,Desktop Computers,26795.34,25239.53,3.7,11447,91,110
+103,Compact Office Mini,Desktop Computers,23850.36,22150.97,4.6,1918,96,59
+104,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14549.1,16102.54,3.9,2462,26,63
+105,Compact Office Mini,Desktop Computers,24200.96,27488.38,4.9,8916,18,109
+106,Phantom B650 Motherboard,Internal Components,12642.35,12994.34,4.3,10685,59,110
+107,Aero RTX 4070 12GB,Internal Components,41527.82,38778.69,4.6,1959,140,59
+108,Vengeance DDR5 32GB RGB,Storage & Memory,8067.28,9128.75,3.6,9687,141,107
+109,Liquid Master 360 AIO,Internal Components,5566.73,5287.58,4.5,10703,45,111
+110,Phantom B650 Motherboard,Internal Components,12352.34,13793.29,3.7,9094,26,98
+111,SpeedStream Gigabit Switch 8P,Networking Devices,1758.03,1593.21,3.5,9198,140,98
+112,Aero RTX 4070 12GB,Internal Components,38946.6,43505.14,3.5,10966,125,114
+113,SpeedStream Gigabit Switch 8P,Networking Devices,1763.5,1574.09,4.8,6893,77,92
+114,Apex Wireless Gaming Mouse,Peripherals & Accessories,3075.49,3432.09,3.9,6773,49,89
+115,SlimLite Go 13,Laptops & Ultrabooks,27669.91,29479.48,3.6,1375,88,51
+116,Titanium 850W Gold PSU,Internal Components,7405.15,8444.43,4.6,10376,107,113
+117,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13781.15,14965.61,4.2,7024,52,92
+118,Titanium 850W Gold PSU,Internal Components,7072.76,7383.87,3.6,3169,54,64
+119,Aero RTX 4070 12GB,Internal Components,34693.47,35760.36,4.7,9399,74,108
+120,Apex Wireless Gaming Mouse,Peripherals & Accessories,3041.52,3238.32,4.6,8674,35,103
+101,Void RGB Wireless Headset,Peripherals & Accessories,3804.73,3648.76,4.6,6236,57,91
+102,SpeedStream Gigabit Switch 8P,Networking Devices,1782.17,1804.87,3.6,11381,19,109
+103,Ryzen 7 7800X3D Processor,Internal Components,26783.6,28452.93,3.6,11027,40,110
+104,Liquid Master 360 AIO,Internal Components,5649.93,5654.17,4.5,7096,60,98
+105,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14463.02,14720.6,3.7,6299,139,81
+106,Void RGB Wireless Headset,Peripherals & Accessories,3709.85,3426.63,3.8,5331,127,80
+107,SpeedStream Gigabit Switch 8P,Networking Devices,1781.94,1966.35,4.3,4874,87,80
+108,Core i7-14700K Processor,Internal Components,25507.3,28547.31,4.0,3244,63,67
+109,SlimLite Go 13,Laptops & Ultrabooks,31115.49,34089.35,4.0,9967,52,110
+110,Titanium 850W Gold PSU,Internal Components,7392.43,7535.21,3.8,10393,71,111
+111,Vengeance DDR5 32GB RGB,Storage & Memory,7056.48,7969.78,4.6,10137,111,118
+112,Station Elite Tower,Desktop Computers,46441.07,42244.76,4.9,4913,141,80
+113,Core i7-14700K Processor,Internal Components,24669.93,22280.63,3.6,11071,21,110
+114,Vengeance DDR5 32GB RGB,Storage & Memory,7779.77,6885.3,4.9,4394,133,77
+115,Core i7-14700K Processor,Internal Components,24790.47,27488.24,4.8,5962,41,86
+116,Titanium 850W Gold PSU,Internal Components,6948.77,6132.63,4.4,9933,14,111
+117,Void RGB Wireless Headset,Peripherals & Accessories,3992.59,4495.1,4.6,9371,129,111
+118,Liquid Master 360 AIO,Internal Components,5034.6,5266.15,4.4,11155,128,119
+119,Ryzen 7 7800X3D Processor,Internal Components,22373.67,21784.59,4.4,4256,60,73
+120,ProBook Ultra 15,Laptops & Ultrabooks,59349.2,62263.26,3.6,6615,29,80
+101,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,13539.08,14083.16,3.7,4791,31,77
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,2885.49,2671.81,4.8,4292,103,78
+103,Phantom B650 Motherboard,Internal Components,12878.8,12956.81,4.5,10015,110,109
+104,Core i7-14700K Processor,Internal Components,24909.84,27596.99,4.1,10998,85,113
+105,Aero RTX 4070 12GB,Internal Components,38195.25,42315.5,3.9,7175,62,88
+106,Liquid Master 360 AIO,Internal Components,5190.68,4864.81,3.9,9995,55,104
+107,Vengeance DDR5 32GB RGB,Storage & Memory,7702.57,7426.26,4.3,7765,78,97
+108,SpeedStream Gigabit Switch 8P,Networking Devices,2003.96,1892.57,4.4,10624,148,114
+109,Vengeance DDR5 32GB RGB,Storage & Memory,7550.81,7305.25,3.7,9087,74,103
+110,ProBook Ultra 15,Laptops & Ultrabooks,55908.46,50584.89,3.7,1786,84,56
+111,SlimLite Go 13,Laptops & Ultrabooks,32433.32,30591.67,4.0,6736,137,86
+112,SlimLite Go 13,Laptops & Ultrabooks,29533.98,27349.76,4.6,7692,58,96
+113,Station Elite Tower,Desktop Computers,52932.3,49093.68,4.6,10714,122,117
+114,Core i7-14700K Processor,Internal Components,23828.5,23611.16,4.7,6293,149,91
+115,Vengeance DDR5 32GB RGB,Storage & Memory,7788.56,7898.3,4.3,3335,149,67
+116,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,12804.59,12142.49,4.9,10375,98,116
+117,Apex Wireless Gaming Mouse,Peripherals & Accessories,2663.0,2697.99,4.3,2557,145,67
+118,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4537.93,4563.37,4.4,4199,15,79
+119,ProBook Ultra 15,Laptops & Ultrabooks,55664.74,61588.15,5.0,9958,141,117
+120,ProBook Ultra 15,Laptops & Ultrabooks,59674.45,55779.85,4.7,11169,66,119
+101,Ryzen 7 7800X3D Processor,Internal Components,24725.2,27484.95,4.3,11974,104,120
+102,Apex Wireless Gaming Mouse,Peripherals & Accessories,3045.9,3107.69,3.7,5311,139,75
+103,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14720.42,14906.85,4.9,1179,114,64
+104,Compact Office Mini,Desktop Computers,22931.55,21421.39,4.5,2714,117,62
+105,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14200.97,15714.72,4.2,7155,145,91
+106,Evo 990 Pro 2TB NVMe,Storage & Memory,9256.6,9482.96,4.4,7919,139,99
+107,Vengeance DDR5 32GB RGB,Storage & Memory,7199.54,8221.78,3.8,621,13,47
+108,Evo 990 Pro 2TB NVMe,Storage & Memory,9454.43,10512.59,3.9,2105,47,59
+109,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,14120.68,13676.01,4.9,3272,107,73
+110,Nighthawk WiFi 6 AX5400 Router,Networking Devices,9572.65,9083.67,4.7,10459,73,118
+111,Ryzen 7 7800X3D Processor,Internal Components,22283.24,21142.02,4.0,5352,87,75
+112,Station Elite Tower,Desktop Computers,44508.43,49382.7,4.2,10806,93,118
+113,Liquid Master 360 AIO,Internal Components,5089.96,5549.26,3.5,2833,51,61
+114,GamerX Predator 16,Laptops & Ultrabooks,72209.89,70885.62,3.9,3060,8,68
+115,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4414.31,4198.59,4.9,2121,26,62
+116,Apex Wireless Gaming Mouse,Peripherals & Accessories,3103.09,3150.48,3.6,2671,48,56
+117,SpeedStream Gigabit Switch 8P,Networking Devices,2049.41,2180.34,4.5,10613,53,114
+118,Crystal 27-inch 165Hz Monitor,Peripherals & Accessories,15275.86,14150.1,4.6,6384,68,93
+119,Titanium 850W Gold PSU,Internal Components,6342.87,6738.96,4.0,10920,103,113
+120,Apex Wireless Gaming Mouse,Peripherals & Accessories,2834.05,2632.69,4.9,6117,51,89
+101,Phantom B650 Motherboard,Internal Components,12454.6,11247.52,4.8,2775,27,65
+102,Evo 990 Pro 2TB NVMe,Storage & Memory,10811.16,11496.21,4.7,1564,144,62
+103,ProBook Ultra 15,Laptops & Ultrabooks,56935.84,52287.91,4.2,9378,84,102
+104,GamerX Predator 16,Laptops & Ultrabooks,79060.92,79341.56,4.8,7243,114,93
+105,Aero RTX 4070 12GB,Internal Components,41720.96,44979.96,5.0,8311,71,105
+106,Evo 990 Pro 2TB NVMe,Storage & Memory,9837.57,9301.98,4.2,7857,113,93
+107,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4409.45,4051.2,4.5,9392,53,101
+108,Vengeance DDR5 32GB RGB,Storage & Memory,7842.86,7870.21,4.1,3875,113,69
+109,Pulse RX 7800 XT 16GB,Internal Components,34814.4,39794.23,3.8,3826,36,74
+110,Ryzen 7 7800X3D Processor,Internal Components,25097.81,28618.98,4.8,6087,49,92
+111,GamerX Predator 16,Laptops & Ultrabooks,84420.29,89832.34,4.2,3222,59,70
+112,ProBook Ultra 15,Laptops & Ultrabooks,57703.28,59951.45,4.2,591,51,51
+113,Liquid Master 360 AIO,Internal Components,5338.47,4749.24,4.9,5002,18,84
+114,Vengeance DDR5 32GB RGB,Storage & Memory,7984.45,7556.31,4.3,8638,77,100
+115,Core i7-14700K Processor,Internal Components,25557.24,25500.2,4.0,4592,147,77
+116,GamerX Predator 16,Laptops & Ultrabooks,83387.46,88361.84,3.5,1565,117,48
+117,SlimLite Go 13,Laptops & Ultrabooks,32035.71,30984.8,4.2,3275,132,67
+118,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8577.66,8922.47,4.1,4931,76,79
+119,Evo 990 Pro 2TB NVMe,Storage & Memory,9320.35,9416.9,3.7,7090,106,82
+120,Core i7-14700K Processor,Internal Components,26029.66,25275.87,3.6,6714,79,84
+101,Vengeance DDR5 32GB RGB,Storage & Memory,6901.07,7288.56,4.9,6716,113,91
+102,SlimLite Go 13,Laptops & Ultrabooks,28595.21,29984.8,4.5,9228,47,102
+103,SlimLite Go 13,Laptops & Ultrabooks,31467.62,33652.66,4.4,7885,111,94
+104,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4280.13,4867.84,4.5,11791,109,128
+105,Liquid Master 360 AIO,Internal Components,5729.0,5163.29,4.8,839,69,54
+106,Phantom B650 Motherboard,Internal Components,11249.36,12895.58,4.8,3208,32,76
+107,Ryzen 7 7800X3D Processor,Internal Components,24406.86,28067.06,4.7,8775,50,111
+108,Void RGB Wireless Headset,Peripherals & Accessories,4156.73,3935.28,4.1,5232,138,79
+109,ProBook Ultra 15,Laptops & Ultrabooks,53277.58,55383.12,3.6,10022,77,104
+110,Void RGB Wireless Headset,Peripherals & Accessories,3517.22,3926.25,3.6,3294,148,69
+111,Ryzen 7 7800X3D Processor,Internal Components,25412.97,23985.8,3.9,5370,39,75
+112,Compact Office Mini,Desktop Computers,25845.89,25403.99,4.0,9827,58,109
+113,Core i7-14700K Processor,Internal Components,25564.62,25858.81,4.1,4309,118,69
+114,Station Elite Tower,Desktop Computers,46569.27,48882.25,4.2,5370,145,77
+115,Void RGB Wireless Headset,Peripherals & Accessories,4074.77,4129.6,4.9,11224,142,124
+116,SlimLite Go 13,Laptops & Ultrabooks,31177.38,33877.67,3.7,10264,57,103
+117,Core i7-14700K Processor,Internal Components,25466.89,27450.05,3.8,5933,51,85
+118,Pulse RX 7800 XT 16GB,Internal Components,37795.07,40921.33,4.5,2201,121,62
+119,Titanium 850W Gold PSU,Internal Components,6882.29,6165.71,3.6,862,132,50
+120,ProBook Ultra 15,Laptops & Ultrabooks,55653.99,52732.02,3.6,5205,71,70
+101,Aero RTX 4070 12GB,Internal Components,42087.51,40657.38,4.0,6172,94,83
+102,SpeedStream Gigabit Switch 8P,Networking Devices,1965.65,1985.9,4.4,6753,16,93
+103,Compact Office Mini,Desktop Computers,24951.42,23870.5,4.5,10994,50,112
+104,Station Elite Tower,Desktop Computers,52556.7,57435.59,3.9,8725,26,103
+105,Nighthawk WiFi 6 AX5400 Router,Networking Devices,8602.38,9576.66,3.6,6992,98,91
+106,SpeedStream Gigabit Switch 8P,Networking Devices,1904.1,1702.66,3.7,6887,12,81
+107,Vengeance DDR5 32GB RGB,Storage & Memory,7129.17,6302.39,4.3,3687,117,67
+108,SpeedStream Gigabit Switch 8P,Networking Devices,1884.86,2046.48,4.0,2175,88,57
+109,Evo 990 Pro 2TB NVMe,Storage & Memory,10486.81,12058.05,5.0,10458,40,117
+110,Pulse RX 7800 XT 16GB,Internal Components,37038.18,37886.0,4.7,9351,23,112
+111,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4623.81,5065.76,4.0,3557,107,73
+112,Phantom B650 Motherboard,Internal Components,11190.79,10026.43,4.2,4500,20,75
+113,ProBook Ultra 15,Laptops & Ultrabooks,51542.35,48921.82,4.0,11760,126,115
+114,SlimLite Go 13,Laptops & Ultrabooks,31444.04,27972.16,3.6,3838,47,70
+115,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4306.69,4947.37,4.4,6719,79,89
+116,Compact Office Mini,Desktop Computers,23434.11,21463.79,5.0,4485,24,78
+117,Core i7-14700K Processor,Internal Components,21605.0,21409.78,4.0,3097,94,62
+118,Ryzen 7 7800X3D Processor,Internal Components,23333.65,25624.68,4.3,5759,80,87
+119,Precision Pro Mechanical Keyboard,Peripherals & Accessories,4606.57,4266.3,4.6,1600,109,59
+120,Ryzen 7 7800X3D Processor,Internal Components,23588.21,25664.92,5.0,6937,35,102

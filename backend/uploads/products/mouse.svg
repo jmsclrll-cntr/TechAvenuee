@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" rx="16" fill="#1E293B"/>
+  <!-- Mouse body -->
+  <path d="M 100 35 C 75 35 65 65 65 110 C 65 145 78 165 100 165 C 122 165 135 145 135 110 C 135 65 125 35 100 35 Z" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+  <!-- Click line -->
+  <line x1="100" y1="35" x2="100" y2="85" stroke="#334155" stroke-width="2"/>
+  <!-- Scroll wheel -->
+  <rect x="96" y="55" width="8" height="18" rx="4" fill="#38BDF8"/>
+  <!-- RGB Logo Glow -->
+  <circle cx="100" cy="125" r="8" fill="none" stroke="#EC4899" stroke-width="2"/>
+</svg>
