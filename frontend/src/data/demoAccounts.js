@@ -1,0 +1,38 @@
+export const DEMO_ACCOUNTS = [
+  {
+    role: 'admin',
+    displayName: 'Admin',
+    name: 'Eleanor Vance',
+    username: 'admin',
+    password: 'Admin@123',
+    email: 'admin@techavenue.com',
+    description: 'Full store operations, employee user management, and prediction generation.',
+  },
+  {
+    role: 'inventory_clerk',
+    displayName: 'Inventory Clerk',
+    name: 'Marcus Brody',
+    username: 'inventory',
+    password: 'Inventory@123',
+    email: 'inventory@techavenue.com',
+    description: 'Stock management, low-stock monitoring, product catalog, and restocking operations.',
+  },
+  {
+    role: 'sales_personnel',
+    displayName: 'Sales Personnel',
+    name: 'Maria Santos',
+    username: 'sales',
+    password: 'Sales@123',
+    email: 'sales@techavenue.com',
+    description: 'Point of Sale (POS), customer checkout, receipts, and sales tracking.',
+  },
+  {
+    role: 'instructor',
+    displayName: 'Instructor',
+    name: 'Prof. Gabriel Reyes',
+    username: 'instructor',
+    password: 'Instructor@123',
+    email: 'instructor@techavenue.com',
+    description: 'Academic evaluation, machine learning models (SLR, RF), datasets, and metric verification.',
+  },
+];

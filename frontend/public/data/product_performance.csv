@@ -1,0 +1,1101 @@
+sku,product_name,category,supplier,stock_quantity,units_sold_90d,turnover_days,sales_velocity_score,return_rate,status,action_recommendation
+MOT-MSI-1001,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,11,245,68.1,19.14,0.35%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1002,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,74,29,43.5,2.27,0.64%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1003,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,114,305,56.2,23.83,1.78%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1004,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,22,342,12.3,26.72,2.44%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1005,NVIDIA RTX 4060 Dual OC 8GB,GPU,TechLink Distribution Inc.,147,0,11.9,0.0,1.23%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1006,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,143,185,8.8,14.45,0.52%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1007,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,39,178,94.8,13.91,1.46%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1008,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,59,349,88.4,27.27,0.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1009,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,45,317,126.7,24.77,1.23%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1010,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,118,345,98.5,26.95,1.69%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1011,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,59,306,62.0,23.91,1.53%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1012,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,80,130,117.2,10.16,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1013,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,67,342,92.5,26.72,0.23%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1014,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,73,57,52.1,4.45,1.83%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1015,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,11,348,119.9,27.19,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1016,Intel Core i7-14700K,CPU,Macro Memory Corp,118,313,108.6,24.45,2.18%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1017,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,147,311,65.4,24.3,1.38%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1018,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,136,163,51.4,12.73,1.94%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1019,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,12,185,75.3,14.45,1.58%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1020,Seasonic Focus GX-850W 80+ Gold,PSU,Silicon Pacific Supply,131,40,42.1,3.12,1.51%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1021,NVIDIA RTX 4070 Ti Super 16GB,GPU,Silicon Pacific Supply,15,108,134.1,8.44,2.01%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1022,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,73,23,96.0,1.8,1.17%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1023,Crucial T700 2TB Gen5 NVMe,Storage,Global Components Hub,7,289,88.3,22.58,1.44%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1024,Intel Core i5-14600K,CPU,Macro Memory Corp,67,191,108.3,14.92,0.86%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1025,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,28,49,126.7,3.83,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1026,NVIDIA RTX 4070 Super 12GB,GPU,Apex Hardware Partners,133,190,113.1,14.84,2.17%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1027,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,109,261,87.3,20.39,1.7%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1028,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,57,84,15.3,6.56,0.96%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1029,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,129,340,33.3,26.56,2.06%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1030,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,51,333,42.1,26.02,2.35%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1031,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,40,75,93.6,5.86,1.1%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1032,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,127,339,130.9,26.48,0.12%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1033,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Global Components Hub,140,83,116.1,6.48,1.34%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1034,SteelSeries Apex Pro TKL Mechanical,Peripherals,Silicon Pacific Supply,27,312,24.0,24.38,0.25%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1035,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,66,311,103.4,24.3,0.77%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1036,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,2,150,28.6,11.72,0.69%,Low-Stock Alert,Immediate Purchase Order
+PER-RAZ-1037,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,124,280,129.0,21.88,1.74%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1038,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,68,220,15.6,17.19,0.54%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1039,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,13,138,51.5,10.78,0.45%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1040,Intel Core i9-14900K,CPU,LogiTech Direct PH,115,219,88.7,17.11,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1041,Razer DeathAdder V3 Pro Wireless,Peripherals,Silicon Pacific Supply,139,268,67.2,20.94,1.23%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1042,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,85,262,39.8,20.47,1.18%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1043,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,61,142,5.6,11.09,2.3%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1044,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,149,109,61.2,8.52,2.24%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1045,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,85,308,63.7,24.06,1.77%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1046,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,17,297,33.2,23.2,1.0%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1047,Samsung 990 Pro 1TB NVMe,Storage,Silicon Pacific Supply,7,56,25.7,4.38,0.77%,Low-Stock Alert,Immediate Purchase Order
+RAM-KIN-1048,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,123,309,37.7,24.14,1.83%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1049,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,LogiTech Direct PH,31,35,137.5,2.73,1.08%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1050,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,34,122,122.2,9.53,0.25%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1051,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,108,171,87.8,13.36,1.34%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1052,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,27,193,9.7,15.08,1.8%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1053,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,77,123,38.5,9.61,0.61%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1054,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,46,333,101.6,26.02,2.28%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1055,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,106,325,92.6,25.39,0.78%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1056,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,108,96,121.3,7.5,2.02%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1057,AMD Radeon RX 7900 XTX 24GB,GPU,Macro Memory Corp,20,107,78.4,8.36,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1058,Intel Core i9-14900K,CPU,Silicon Pacific Supply,125,276,107.4,21.56,0.21%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1059,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,20,163,99.1,12.73,0.82%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1060,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,103,192,36.3,15.0,1.14%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1061,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,134,14,27.3,1.09,2.15%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1062,Intel Core i9-14900K,CPU,Global Components Hub,36,38,131.6,2.97,2.3%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1063,Gigabyte Z790 AORUS Elite AX,Motherboard,LogiTech Direct PH,150,21,128.0,1.64,0.86%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1064,Kingston KC3000 2TB PCIe 4.0,Storage,LogiTech Direct PH,135,158,28.7,12.34,1.3%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1065,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,137,146,65.6,11.41,0.19%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1066,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,63,40,95.4,3.12,2.12%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1067,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,139,284,122.1,22.19,1.2%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1068,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,41,8,33.1,0.62,1.14%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1069,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,112,150,22.1,11.72,1.16%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1070,SteelSeries Apex Pro TKL Mechanical,Peripherals,Silicon Pacific Supply,100,69,62.7,5.39,1.4%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1071,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,121,73,76.4,5.7,1.87%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1072,NVIDIA RTX 4080 Super 16GB,GPU,Apex Hardware Partners,63,76,5.8,5.94,2.49%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1073,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,144,115,117.2,8.98,1.15%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1074,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,2,208,29.6,16.25,1.39%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1075,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,89,325,100.1,25.39,1.25%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1076,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,LogiTech Direct PH,45,98,133.8,7.66,0.41%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1077,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,10,28,39.4,2.19,0.61%,Low-Stock Alert,Immediate Purchase Order
+MOT-ASU-1078,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,150,240,34.5,18.75,2.36%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1079,Razer DeathAdder V3 Pro Wireless,Peripherals,Macro Memory Corp,33,87,79.4,6.8,2.06%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1080,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,80,83,111.5,6.48,0.2%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1081,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,88,172,44.2,13.44,1.09%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1082,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,116,234,92.6,18.28,0.8%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1083,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,123,285,77.6,22.27,2.39%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1084,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,108,326,110.9,25.47,0.79%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1085,Razer DeathAdder V3 Pro Wireless,Peripherals,Macro Memory Corp,136,200,118.6,15.62,2.47%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1086,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,LogiTech Direct PH,3,152,135.1,11.88,0.77%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1087,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,111,255,105.7,19.92,0.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1088,Intel Core i9-14900K,CPU,Silicon Pacific Supply,19,83,43.3,6.48,1.55%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1089,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Silicon Pacific Supply,120,224,8.9,17.5,1.68%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1090,Corsair RM850x 850W 80+ Gold,PSU,Macro Memory Corp,62,346,88.0,27.03,2.36%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1091,Kingston KC3000 2TB PCIe 4.0,Storage,Macro Memory Corp,108,140,9.3,10.94,1.09%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1092,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,16,43,22.4,3.36,1.82%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1093,Samsung 990 Pro 2TB NVMe,Storage,Macro Memory Corp,148,261,8.9,20.39,0.38%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1094,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,97,73,78.5,5.7,0.69%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1095,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,14,164,125.3,12.81,1.42%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1096,NVIDIA RTX 4060 Ti 8GB,GPU,TechLink Distribution Inc.,139,344,7.3,26.88,0.38%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1097,Intel Core i5-14600K,CPU,Macro Memory Corp,118,143,118.1,11.17,0.57%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1098,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,6,66,90.8,5.16,1.18%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1099,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,118,36,139.7,2.81,2.32%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1100,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,111,337,88.8,26.33,1.21%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1101,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,127,174,81.7,13.59,1.57%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1102,MSI MAG B650 Tomahawk WiFi,Motherboard,Global Components Hub,7,175,48.8,13.67,1.66%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1103,Gigabyte Z790 AORUS Elite AX,Motherboard,Macro Memory Corp,145,323,16.2,25.23,0.38%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1104,MSI MAG B650 Tomahawk WiFi,Motherboard,Global Components Hub,20,286,35.3,22.34,0.93%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1105,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,81,67,104.8,5.23,1.69%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1106,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,16,232,125.7,18.12,1.96%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1107,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,101,332,47.3,25.94,2.2%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1108,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,77,191,71.3,14.92,1.81%,Best-Seller,Increase Purchase Allocation
+RAM-COR-1109,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,16,104,10.4,8.12,2.04%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1110,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,99,318,124.0,24.84,1.21%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1111,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,141,72,45.5,5.62,0.24%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1112,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,62,88,102.7,6.88,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1113,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,73,146,6.3,11.41,1.79%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1114,Intel Core i7-14700K,CPU,LogiTech Direct PH,60,148,91.9,11.56,2.01%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1115,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,65,46,28.8,3.59,1.82%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1116,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,43,181,69.6,14.14,0.86%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1117,NVIDIA RTX 4070 Super 12GB,GPU,Apex Hardware Partners,7,144,129.9,11.25,1.25%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1118,Crucial T700 2TB Gen5 NVMe,Storage,TechLink Distribution Inc.,35,335,37.0,26.17,0.47%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1119,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,3,44,79.7,3.44,1.53%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1120,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,78,119,40.4,9.3,1.31%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1121,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,18,103,33.9,8.05,1.94%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1122,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,46,236,62.7,18.44,1.1%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1123,Intel Core i9-14900K,CPU,LogiTech Direct PH,62,148,115.6,11.56,0.38%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1124,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,7,84,88.6,6.56,2.22%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1125,Intel Core i5-14600K,CPU,Silicon Pacific Supply,22,114,10.3,8.91,0.8%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1126,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,9,83,88.4,6.48,2.38%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1127,NVIDIA RTX 4070 Super 12GB,GPU,Silicon Pacific Supply,140,330,76.3,25.78,0.27%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1128,Gigabyte Z790 AORUS Elite AX,Motherboard,Apex Hardware Partners,106,154,114.3,12.03,0.48%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1129,AMD Radeon RX 7800 XT 16GB,GPU,Silicon Pacific Supply,28,346,82.7,27.03,1.52%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1130,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,56,98,48.3,7.66,2.41%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1131,Intel Core i5-14600K,CPU,TechLink Distribution Inc.,114,77,36.5,6.02,1.13%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1132,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,14,153,136.5,11.95,1.81%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1133,NVIDIA RTX 4060 Ti 8GB,GPU,LogiTech Direct PH,22,5,120.9,0.39,0.62%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1134,NVIDIA RTX 4060 Dual OC 8GB,GPU,Silicon Pacific Supply,30,259,112.1,20.23,1.25%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1135,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,8,57,37.3,4.45,0.59%,Low-Stock Alert,Immediate Purchase Order
+CPU-AMD-1136,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,64,139,133.6,10.86,0.73%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1137,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,8,252,15.3,19.69,2.25%,Best-Seller,Increase Purchase Allocation
+PER-STE-1138,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,89,29,116.6,2.27,1.29%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1139,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,40,183,100.5,14.3,1.67%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1140,AMD Ryzen 7 7800X3D,CPU,Macro Memory Corp,20,193,107.0,15.08,0.6%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1141,Seasonic Focus GX-850W 80+ Gold,PSU,TechLink Distribution Inc.,51,339,72.2,26.48,1.64%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1142,NVIDIA RTX 4060 Ti 8GB,GPU,TechLink Distribution Inc.,15,161,109.0,12.58,1.76%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1143,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,49,293,87.6,22.89,2.16%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1144,Intel Core i5-14600K,CPU,TechLink Distribution Inc.,109,204,122.4,15.94,0.15%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1145,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Silicon Pacific Supply,72,206,128.4,16.09,2.17%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1146,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,63,70,138.2,5.47,0.69%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1147,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,8,252,19.6,19.69,1.73%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1148,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,149,253,122.0,19.77,0.26%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1149,NVIDIA RTX 4070 Super 12GB,GPU,Silicon Pacific Supply,108,101,38.7,7.89,0.62%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1150,Intel Core i5-14600K,CPU,TechLink Distribution Inc.,104,172,125.1,13.44,1.97%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1151,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,139,269,79.5,21.02,1.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1152,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,120,171,86.0,13.36,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1153,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,37,268,119.9,20.94,0.88%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1154,AMD Ryzen 7 7800X3D,CPU,Apex Hardware Partners,96,281,132.6,21.95,1.88%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1155,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,29,108,88.7,8.44,0.37%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1156,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,55,159,75.1,12.42,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1157,Samsung 990 Pro 1TB NVMe,Storage,LogiTech Direct PH,127,277,80.7,21.64,0.59%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1158,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,102,288,118.6,22.5,0.56%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1159,Samsung 990 Pro 1TB NVMe,Storage,Silicon Pacific Supply,5,16,39.8,1.25,0.66%,Low-Stock Alert,Immediate Purchase Order
+STO-CRU-1160,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,94,265,47.0,20.7,1.11%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1161,Kingston KC3000 2TB PCIe 4.0,Storage,Silicon Pacific Supply,111,245,132.4,19.14,0.74%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1162,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,126,45,22.6,3.52,1.06%,Healthy Turnover,Maintain Normal Buffer
+GPU-SAP-1163,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,86,176,125.2,13.75,1.48%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1164,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,10,62,40.1,4.84,1.33%,Low-Stock Alert,Immediate Purchase Order
+GPU-ASU-1165,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,27,56,106.2,4.38,0.75%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1166,NVIDIA RTX 4060 Dual OC 8GB,GPU,Global Components Hub,113,91,78.4,7.11,1.8%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1167,Intel Core i5-14600K,CPU,Apex Hardware Partners,98,35,14.8,2.73,1.39%,Healthy Turnover,Maintain Normal Buffer
+GPU-POW-1168,AMD Radeon RX 7800 XT 16GB,GPU,TechLink Distribution Inc.,79,197,128.9,15.39,2.16%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1169,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,23,264,87.0,20.62,1.06%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1170,NVIDIA RTX 4080 Super 16GB,GPU,Global Components Hub,88,173,100.8,13.52,0.75%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1171,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,45,203,72.6,15.86,0.69%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1172,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,128,231,17.1,18.05,0.74%,Best-Seller,Increase Purchase Allocation
+GPU-MSI-1173,NVIDIA RTX 4080 Super 16GB,GPU,Macro Memory Corp,75,346,41.8,27.03,1.75%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1174,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,146,181,96.1,14.14,1.99%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1175,NVIDIA RTX 4080 Super 16GB,GPU,TechLink Distribution Inc.,60,3,119.9,0.23,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1176,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,36,77,72.0,6.02,0.46%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1177,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,97,300,68.7,23.44,0.74%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1178,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,26,333,120.7,26.02,2.42%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1179,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,54,199,112.7,15.55,0.66%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1180,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,15,297,48.9,23.2,1.73%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1181,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,150,99,39.9,7.73,1.97%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1182,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,93,16,78.4,1.25,0.27%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1183,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,67,9,37.5,0.7,2.06%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1184,Crucial T700 2TB Gen5 NVMe,Storage,Silicon Pacific Supply,70,96,122.7,7.5,2.41%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1185,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,4,215,28.3,16.8,1.27%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1186,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,148,171,123.3,13.36,0.4%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1187,Intel Core i9-14900K,CPU,Silicon Pacific Supply,91,130,43.5,10.16,1.9%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1188,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,85,150,23.7,11.72,0.3%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1189,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,91,222,22.6,17.34,0.92%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1190,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,29,212,135.5,16.56,1.88%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1191,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,115,104,41.6,8.12,1.21%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1192,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,82,299,29.9,23.36,0.85%,Best-Seller,Increase Purchase Allocation
+GPU-POW-1193,AMD Radeon RX 7800 XT 16GB,GPU,LogiTech Direct PH,55,282,35.8,22.03,0.49%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1194,Kingston KC3000 2TB PCIe 4.0,Storage,Apex Hardware Partners,132,310,70.7,24.22,0.32%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1195,NVIDIA RTX 4070 Ti Super 16GB,GPU,TechLink Distribution Inc.,24,227,6.7,17.73,1.43%,Best-Seller,Increase Purchase Allocation
+GPU-SAP-1196,AMD Radeon RX 7900 XTX 24GB,GPU,Macro Memory Corp,73,325,93.6,25.39,1.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1197,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,62,20,120.6,1.56,2.2%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1198,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,73,46,99.3,3.59,2.15%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1199,Intel Core i9-14900K,CPU,Apex Hardware Partners,63,160,101.3,12.5,1.96%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1200,Intel Core i7-14700K,CPU,Apex Hardware Partners,55,247,27.8,19.3,1.38%,Best-Seller,Increase Purchase Allocation
+PER-STE-1201,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,92,207,93.9,16.17,1.48%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1202,AMD Radeon RX 7800 XT 16GB,GPU,Apex Hardware Partners,54,24,129.0,1.88,1.09%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1203,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,71,326,66.6,25.47,1.81%,Best-Seller,Increase Purchase Allocation
+GPU-SAP-1204,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,88,265,80.6,20.7,2.22%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1205,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,120,19,96.1,1.48,1.35%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1206,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,1,249,103.2,19.45,0.39%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1207,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,20,153,131.0,11.95,0.72%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1208,Gigabyte Z790 AORUS Elite AX,Motherboard,Apex Hardware Partners,21,52,139.9,4.06,2.16%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1209,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,148,234,54.0,18.28,0.83%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1210,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,55,343,74.7,26.8,1.41%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1211,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,48,123,72.1,9.61,1.83%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1212,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,144,345,118.2,26.95,1.85%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1213,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,15,240,80.6,18.75,2.23%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1214,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,63,88,50.1,6.88,0.33%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1215,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,143,15,79.3,1.17,0.49%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1216,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,124,292,136.2,22.81,0.24%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1217,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,104,210,103.3,16.41,0.46%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1218,Corsair RM850x 850W 80+ Gold,PSU,Global Components Hub,53,281,139.0,21.95,2.09%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1219,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,17,209,46.5,16.33,1.92%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1220,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,1,7,30.5,0.55,2.48%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1221,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,6,228,11.3,17.81,0.69%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1222,NVIDIA RTX 4070 Super 12GB,GPU,Silicon Pacific Supply,132,213,129.1,16.64,1.79%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1223,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,58,84,9.9,6.56,2.02%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1224,NVIDIA RTX 4070 Ti Super 16GB,GPU,Silicon Pacific Supply,132,120,41.8,9.38,0.75%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1225,AMD Ryzen 7 7800X3D,CPU,Apex Hardware Partners,112,251,102.5,19.61,1.4%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1226,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,46,315,60.3,24.61,0.24%,Best-Seller,Increase Purchase Allocation
+PER-STE-1227,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,69,174,58.3,13.59,1.16%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1228,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,102,184,96.4,14.38,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1229,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,27,228,139.7,17.81,0.75%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1230,SteelSeries Apex Pro TKL Mechanical,Peripherals,Silicon Pacific Supply,90,1,121.0,0.08,2.04%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1231,Intel Core i7-14700K,CPU,Global Components Hub,86,67,106.9,5.23,0.25%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1232,Corsair RM850x 850W 80+ Gold,PSU,Macro Memory Corp,102,313,138.9,24.45,0.64%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1233,Intel Core i5-14600K,CPU,Macro Memory Corp,100,339,133.5,26.48,0.71%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1234,AMD Ryzen 5 7600X,CPU,Global Components Hub,114,114,37.6,8.91,1.57%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1235,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,67,20,103.9,1.56,0.65%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1236,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,132,175,24.8,13.67,0.46%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1237,Razer DeathAdder V3 Pro Wireless,Peripherals,LogiTech Direct PH,123,188,21.5,14.69,0.92%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1238,Intel Core i7-14700K,CPU,LogiTech Direct PH,148,303,137.8,23.67,0.25%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1239,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,103,208,86.1,16.25,0.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1240,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,112,118,34.3,9.22,0.72%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1241,AMD Ryzen 7 7800X3D,CPU,Silicon Pacific Supply,91,204,26.5,15.94,2.37%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1242,Samsung 990 Pro 2TB NVMe,Storage,LogiTech Direct PH,36,112,72.1,8.75,0.52%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1243,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,54,52,9.8,4.06,2.04%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1244,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,14,3,78.3,0.23,1.5%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1245,AMD Ryzen 7 7800X3D,CPU,Apex Hardware Partners,54,128,131.3,10.0,0.18%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1246,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,69,101,30.8,7.89,2.23%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1247,Intel Core i7-14700K,CPU,Apex Hardware Partners,32,323,89.6,25.23,2.23%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1248,Intel Core i5-14600K,CPU,Silicon Pacific Supply,72,187,58.8,14.61,1.94%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1249,NVIDIA RTX 4060 Dual OC 8GB,GPU,Macro Memory Corp,93,330,70.7,25.78,1.41%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1250,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,119,112,64.4,8.75,1.52%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1251,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,30,244,133.2,19.06,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1252,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,5,334,89.8,26.09,0.81%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1253,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,78,73,17.9,5.7,1.27%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1254,Samsung 990 Pro 2TB NVMe,Storage,LogiTech Direct PH,41,222,44.1,17.34,0.88%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1255,AMD Ryzen 7 7800X3D,CPU,Apex Hardware Partners,116,101,92.4,7.89,2.48%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1256,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,136,185,88.3,14.45,0.73%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1257,AMD Ryzen 9 7950X3D,CPU,Silicon Pacific Supply,143,109,90.8,8.52,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1258,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,117,314,127.9,24.53,1.22%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1259,Intel Core i5-14600K,CPU,Apex Hardware Partners,55,41,98.6,3.2,0.15%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1260,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,131,191,107.3,14.92,2.08%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1261,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,93,41,96.9,3.2,1.85%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1262,AMD Ryzen 9 7950X3D,CPU,Global Components Hub,3,202,63.8,15.78,2.2%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1263,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,10,206,92.2,16.09,0.64%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1264,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,107,241,17.6,18.83,0.81%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1265,Corsair RM850x 850W 80+ Gold,PSU,Macro Memory Corp,37,286,83.8,22.34,1.84%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1266,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,1,118,76.2,9.22,0.54%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1267,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,98,86,25.6,6.72,0.88%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1268,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,114,151,32.8,11.8,1.72%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1269,Seasonic Focus GX-750W 80+ Gold,PSU,Macro Memory Corp,66,314,50.5,24.53,1.53%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1270,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,143,288,52.0,22.5,1.99%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1271,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,93,222,110.1,17.34,1.67%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1272,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,121,29,74.3,2.27,0.62%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1273,NVIDIA RTX 4070 Super 12GB,GPU,Macro Memory Corp,24,8,94.4,0.62,1.87%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1274,Razer DeathAdder V3 Pro Wireless,Peripherals,Macro Memory Corp,98,343,55.8,26.8,1.74%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1275,AMD Ryzen 5 7600X,CPU,Global Components Hub,100,336,112.3,26.25,0.59%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1276,Intel Core i9-14900K,CPU,Macro Memory Corp,53,145,128.9,11.33,1.18%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1277,Intel Core i5-14600K,CPU,Silicon Pacific Supply,17,218,95.1,17.03,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1278,AMD Radeon RX 7900 XTX 24GB,GPU,Silicon Pacific Supply,32,17,86.4,1.33,0.83%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1279,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,6,226,33.1,17.66,2.16%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1280,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,80,155,129.7,12.11,1.17%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1281,Intel Core i7-14700K,CPU,Apex Hardware Partners,121,263,53.2,20.55,0.97%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1282,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,124,220,112.3,17.19,1.99%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1283,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,51,253,18.1,19.77,1.1%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1284,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,144,55,7.0,4.3,0.94%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1285,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,70,214,63.8,16.72,1.48%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1286,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Global Components Hub,127,109,98.0,8.52,2.42%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1287,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,15,166,22.7,12.97,2.36%,Best-Seller,Increase Purchase Allocation
+GPU-MSI-1288,NVIDIA RTX 4080 Super 16GB,GPU,Apex Hardware Partners,85,199,64.0,15.55,2.3%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1289,NVIDIA RTX 4060 Dual OC 8GB,GPU,Silicon Pacific Supply,49,226,78.2,17.66,2.25%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1290,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,24,303,76.4,23.67,1.91%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1291,Samsung 990 Pro 1TB NVMe,Storage,LogiTech Direct PH,71,125,115.1,9.77,0.95%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1292,Seasonic Focus GX-850W 80+ Gold,PSU,Silicon Pacific Supply,82,316,33.9,24.69,0.2%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1293,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,83,29,25.2,2.27,0.21%,Healthy Turnover,Maintain Normal Buffer
+MOT-GIG-1294,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,101,311,133.6,24.3,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1295,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,60,183,38.9,14.3,1.07%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1296,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,29,95,115.7,7.42,1.75%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1297,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,61,258,66.0,20.16,0.11%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1298,NVIDIA RTX 4070 Ti Super 16GB,GPU,Macro Memory Corp,85,158,61.6,12.34,0.8%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1299,Corsair RM850x 850W 80+ Gold,PSU,TechLink Distribution Inc.,77,300,113.3,23.44,0.61%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1300,Seasonic Focus GX-850W 80+ Gold,PSU,Global Components Hub,113,141,67.0,11.02,1.86%,Healthy Turnover,Maintain Normal Buffer
+GPU-POW-1301,AMD Radeon RX 7800 XT 16GB,GPU,Apex Hardware Partners,21,218,15.9,17.03,0.53%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1302,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,TechLink Distribution Inc.,61,294,115.2,22.97,1.07%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1303,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Global Components Hub,142,209,100.9,16.33,1.81%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1304,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,145,327,11.0,25.55,1.99%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1305,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,TechLink Distribution Inc.,81,266,86.3,20.78,0.62%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1306,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,140,212,101.5,16.56,1.69%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1307,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,58,263,47.4,20.55,1.9%,Best-Seller,Increase Purchase Allocation
+GPU-MSI-1308,NVIDIA RTX 4080 Super 16GB,GPU,Macro Memory Corp,87,246,31.1,19.22,1.34%,Best-Seller,Increase Purchase Allocation
+GPU-SAP-1309,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,18,94,120.5,7.34,2.05%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1310,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,139,47,128.0,3.67,1.44%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1311,Gigabyte Z790 AORUS Elite AX,Motherboard,Apex Hardware Partners,24,306,44.9,23.91,1.46%,Best-Seller,Increase Purchase Allocation
+GPU-POW-1312,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,103,320,110.9,25.0,1.0%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1313,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,31,294,17.8,22.97,2.05%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1314,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,106,272,64.1,21.25,1.3%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1315,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,124,3,77.4,0.23,1.64%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1316,AMD Ryzen 7 7800X3D,CPU,Silicon Pacific Supply,53,83,106.4,6.48,2.37%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1317,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,126,51,86.0,3.98,0.3%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1318,Samsung 990 Pro 2TB NVMe,Storage,Macro Memory Corp,36,38,107.9,2.97,0.77%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1319,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,35,21,80.9,1.64,2.36%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1320,Crucial T700 2TB Gen5 NVMe,Storage,TechLink Distribution Inc.,14,109,69.5,8.52,1.72%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1321,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,93,267,80.0,20.86,1.02%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1322,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,139,3,57.5,0.23,0.35%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1323,Intel Core i9-14900K,CPU,LogiTech Direct PH,34,16,92.7,1.25,2.3%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1324,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,95,37,63.0,2.89,1.28%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1325,NVIDIA RTX 4060 Dual OC 8GB,GPU,Macro Memory Corp,29,60,79.8,4.69,0.22%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1326,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,21,62,95.1,4.84,0.42%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1327,Samsung 990 Pro 2TB NVMe,Storage,Apex Hardware Partners,57,100,13.0,7.81,0.88%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1328,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,35,30,62.9,2.34,0.46%,Healthy Turnover,Maintain Normal Buffer
+GPU-POW-1329,AMD Radeon RX 7800 XT 16GB,GPU,Global Components Hub,88,307,63.1,23.98,1.68%,Best-Seller,Increase Purchase Allocation
+GPU-SAP-1330,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,150,198,90.5,15.47,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1331,Seasonic Focus GX-850W 80+ Gold,PSU,Silicon Pacific Supply,13,147,53.5,11.48,0.93%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1332,NVIDIA RTX 4060 Dual OC 8GB,GPU,TechLink Distribution Inc.,37,25,118.7,1.95,2.0%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1333,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,32,207,111.1,16.17,1.96%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1334,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,66,208,118.4,16.25,2.2%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1335,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,128,52,39.6,4.06,2.03%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1336,Samsung 990 Pro 1TB NVMe,Storage,Global Components Hub,109,288,49.0,22.5,0.77%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1337,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,104,5,84.7,0.39,2.05%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1338,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,9,211,116.7,16.48,1.76%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1339,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,88,203,63.3,15.86,1.44%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1340,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Silicon Pacific Supply,11,249,39.8,19.45,1.56%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1341,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,79,73,94.8,5.7,1.68%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1342,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,92,232,130.5,18.12,2.49%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1343,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,46,161,119.5,12.58,1.72%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1344,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,104,199,86.7,15.55,2.21%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1345,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,12,49,57.8,3.83,2.16%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1346,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,36,268,137.4,20.94,1.06%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1347,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,97,265,48.2,20.7,2.28%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1348,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,100,66,87.2,5.16,1.17%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1349,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,31,199,57.2,15.55,1.94%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1350,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,3,97,46.6,7.58,1.35%,Low-Stock Alert,Immediate Purchase Order
+STO-KIN-1351,Kingston KC3000 2TB PCIe 4.0,Storage,LogiTech Direct PH,141,304,128.9,23.75,2.5%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1352,Seasonic Focus GX-750W 80+ Gold,PSU,LogiTech Direct PH,12,63,58.4,4.92,1.01%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1353,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,126,350,44.9,27.34,0.48%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1354,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,34,105,16.7,8.2,2.35%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1355,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,71,91,134.7,7.11,0.92%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1356,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,100,17,5.1,1.33,0.87%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1357,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,100,32,66.1,2.5,0.36%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1358,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,39,4,89.5,0.31,2.28%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1359,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,51,44,30.4,3.44,0.39%,Healthy Turnover,Maintain Normal Buffer
+STO-KIN-1360,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,106,8,49.5,0.62,2.41%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1361,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,39,124,25.2,9.69,1.84%,Healthy Turnover,Maintain Normal Buffer
+GPU-POW-1362,AMD Radeon RX 7800 XT 16GB,GPU,TechLink Distribution Inc.,22,75,129.4,5.86,1.49%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1363,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,58,55,112.0,4.3,0.77%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1364,NVIDIA RTX 4060 Ti 8GB,GPU,Global Components Hub,8,275,130.0,21.48,1.27%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1365,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,51,348,118.8,27.19,1.22%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1366,SteelSeries Apex Pro TKL Mechanical,Peripherals,Silicon Pacific Supply,140,77,98.0,6.02,0.83%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1367,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,30,218,130.6,17.03,0.45%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1368,NVIDIA RTX 4060 Dual OC 8GB,GPU,Macro Memory Corp,126,318,131.9,24.84,2.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1369,NVIDIA RTX 4060 Dual OC 8GB,GPU,Silicon Pacific Supply,28,334,7.1,26.09,0.2%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1370,Gigabyte Z790 AORUS Elite AX,Motherboard,Macro Memory Corp,80,83,136.4,6.48,0.93%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1371,Razer DeathAdder V3 Pro Wireless,Peripherals,Silicon Pacific Supply,112,111,96.7,8.67,0.97%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1372,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,73,177,122.0,13.83,1.1%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1373,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,134,272,24.4,21.25,1.9%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1374,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,39,161,47.0,12.58,1.89%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1375,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,83,103,49.1,8.05,0.26%,Healthy Turnover,Maintain Normal Buffer
+PER-RAZ-1376,Razer DeathAdder V3 Pro Wireless,Peripherals,Silicon Pacific Supply,143,95,79.7,7.42,0.89%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1377,Samsung 990 Pro 1TB NVMe,Storage,Global Components Hub,87,187,36.1,14.61,1.87%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1378,Intel Core i9-14900K,CPU,Silicon Pacific Supply,121,81,6.0,6.33,0.73%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1379,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,112,194,128.5,15.16,1.8%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1380,AMD Ryzen 9 7950X3D,CPU,Silicon Pacific Supply,140,253,45.4,19.77,1.8%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1381,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,34,28,89.5,2.19,0.85%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1382,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,56,199,80.0,15.55,1.55%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1383,AMD Radeon RX 7900 XTX 24GB,GPU,Global Components Hub,35,202,22.3,15.78,1.68%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1384,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,76,42,39.7,3.28,2.39%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1385,Samsung 990 Pro 2TB NVMe,Storage,TechLink Distribution Inc.,32,7,113.7,0.55,0.3%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1386,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,37,302,111.4,23.59,1.53%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1387,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Global Components Hub,119,159,41.6,12.42,0.59%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1388,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,123,49,114.5,3.83,1.74%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1389,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,59,124,124.8,9.69,1.99%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1390,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,111,315,68.1,24.61,0.32%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1391,NVIDIA RTX 4070 Ti Super 16GB,GPU,Apex Hardware Partners,53,324,45.8,25.31,0.81%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1392,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Global Components Hub,139,182,114.9,14.22,1.82%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1393,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,136,268,73.4,20.94,2.11%,Best-Seller,Increase Purchase Allocation
+PER-STE-1394,SteelSeries Apex Pro TKL Mechanical,Peripherals,Silicon Pacific Supply,104,27,133.0,2.11,2.49%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1395,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,94,293,84.8,22.89,1.3%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1396,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,117,223,137.0,17.42,0.63%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1397,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,74,298,122.1,23.28,2.39%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1398,Intel Core i5-14600K,CPU,Macro Memory Corp,31,82,27.6,6.41,0.65%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1399,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Global Components Hub,143,20,130.5,1.56,1.15%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1400,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,53,60,137.4,4.69,1.86%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1401,Intel Core i5-14600K,CPU,LogiTech Direct PH,143,237,46.8,18.52,1.23%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1402,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Global Components Hub,2,235,7.4,18.36,1.07%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1403,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,103,6,5.5,0.47,2.42%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1404,Gigabyte Z790 AORUS Elite AX,Motherboard,Apex Hardware Partners,36,82,120.4,6.41,1.42%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1405,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,47,330,77.7,25.78,0.39%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1406,Intel Core i5-14600K,CPU,Silicon Pacific Supply,107,275,27.3,21.48,1.43%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1407,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,35,218,40.3,17.03,2.0%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1408,Intel Core i5-14600K,CPU,Macro Memory Corp,3,153,102.5,11.95,0.96%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1409,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,43,339,107.7,26.48,2.26%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1410,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,102,16,124.8,1.25,1.4%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1411,Samsung 990 Pro 2TB NVMe,Storage,TechLink Distribution Inc.,47,103,39.1,8.05,2.29%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1412,Intel Core i5-14600K,CPU,Global Components Hub,134,141,83.1,11.02,2.5%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1413,NVIDIA RTX 4060 Dual OC 8GB,GPU,TechLink Distribution Inc.,134,336,46.8,26.25,2.16%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1414,Corsair RM850x 850W 80+ Gold,PSU,Global Components Hub,26,78,135.5,6.09,0.54%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1415,NVIDIA RTX 4080 Super 16GB,GPU,LogiTech Direct PH,61,239,80.2,18.67,0.31%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1416,NVIDIA RTX 4080 Super 16GB,GPU,Global Components Hub,144,115,111.6,8.98,0.71%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1417,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,106,173,83.2,13.52,2.32%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1418,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,67,85,14.9,6.64,0.69%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1419,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,54,209,31.1,16.33,1.75%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1420,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,128,90,71.0,7.03,1.21%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1421,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,125,187,81.7,14.61,0.97%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1422,Corsair RM850x 850W 80+ Gold,PSU,TechLink Distribution Inc.,54,158,17.1,12.34,0.72%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1423,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,89,112,109.5,8.75,2.49%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1424,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,140,152,29.2,11.88,1.99%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1425,AMD Ryzen 9 7950X3D,CPU,Macro Memory Corp,52,311,86.9,24.3,1.73%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1426,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,30,186,121.9,14.53,0.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1427,NVIDIA RTX 4060 Ti 8GB,GPU,TechLink Distribution Inc.,58,312,19.3,24.38,0.84%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1428,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,73,93,106.2,7.27,1.09%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1429,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,41,38,40.3,2.97,1.5%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1430,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,1,268,133.4,20.94,0.33%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1431,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,118,310,7.5,24.22,2.11%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1432,NVIDIA RTX 4060 Dual OC 8GB,GPU,Global Components Hub,124,114,76.6,8.91,2.31%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1433,Gigabyte Z790 AORUS Elite AX,Motherboard,LogiTech Direct PH,147,195,67.3,15.23,0.65%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1434,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,10,299,96.2,23.36,0.38%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1435,Intel Core i9-14900K,CPU,Macro Memory Corp,118,92,63.4,7.19,0.64%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1436,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,94,260,112.8,20.31,1.46%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1437,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,69,185,88.8,14.45,1.23%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1438,MSI MAG B650 Tomahawk WiFi,Motherboard,Global Components Hub,114,316,31.4,24.69,1.94%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1439,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,2,60,20.6,4.69,0.91%,Low-Stock Alert,Immediate Purchase Order
+GPU-SAP-1440,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,128,105,89.4,8.2,0.54%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1441,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,109,260,50.9,20.31,1.32%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1442,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,9,268,51.3,20.94,1.55%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1443,Intel Core i7-14700K,CPU,Global Components Hub,129,193,138.2,15.08,1.25%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1444,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Macro Memory Corp,50,210,42.0,16.41,2.22%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1445,NVIDIA RTX 4070 Super 12GB,GPU,Macro Memory Corp,98,102,25.3,7.97,1.05%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1446,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,109,179,85.3,13.98,2.04%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1447,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,86,265,65.0,20.7,1.88%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1448,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,67,298,90.5,23.28,2.43%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1449,NVIDIA RTX 4060 Dual OC 8GB,GPU,Global Components Hub,91,321,114.2,25.08,0.67%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1450,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,82,331,9.9,25.86,1.63%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1451,Crucial T700 2TB Gen5 NVMe,Storage,TechLink Distribution Inc.,94,123,64.8,9.61,0.51%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1452,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,70,347,117.3,27.11,1.36%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1453,Seasonic Focus GX-850W 80+ Gold,PSU,Global Components Hub,59,328,89.2,25.62,0.9%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1454,NVIDIA RTX 4080 Super 16GB,GPU,Macro Memory Corp,113,178,42.8,13.91,2.18%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1455,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,135,3,55.6,0.23,1.38%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1456,Intel Core i7-14700K,CPU,Apex Hardware Partners,137,190,129.9,14.84,1.49%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1457,Intel Core i9-14900K,CPU,Apex Hardware Partners,31,126,60.0,9.84,1.01%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1458,NVIDIA RTX 4070 Ti Super 16GB,GPU,Apex Hardware Partners,71,14,69.1,1.09,1.2%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1459,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,23,180,5.2,14.06,2.21%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1460,Intel Core i5-14600K,CPU,Macro Memory Corp,66,15,47.4,1.17,0.21%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1461,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,93,264,36.1,20.62,1.38%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1462,Corsair RM850x 850W 80+ Gold,PSU,Macro Memory Corp,52,149,129.8,11.64,1.22%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1463,Corsair RM850x 850W 80+ Gold,PSU,Global Components Hub,101,221,105.7,17.27,0.69%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1464,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,51,292,88.6,22.81,0.73%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1465,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,38,27,100.7,2.11,1.92%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1466,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,14,45,7.9,3.52,1.61%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1467,Corsair RM850x 850W 80+ Gold,PSU,TechLink Distribution Inc.,124,273,19.9,21.33,2.2%,Best-Seller,Increase Purchase Allocation
+RAM-COR-1468,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,101,153,136.9,11.95,0.73%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1469,Razer DeathAdder V3 Pro Wireless,Peripherals,LogiTech Direct PH,145,324,68.4,25.31,1.34%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1470,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,110,44,40.6,3.44,0.62%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1471,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,96,138,100.3,10.78,1.24%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1472,Intel Core i5-14600K,CPU,Global Components Hub,6,176,95.3,13.75,1.94%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1473,Intel Core i9-14900K,CPU,LogiTech Direct PH,9,95,107.7,7.42,0.17%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1474,Seasonic Focus GX-850W 80+ Gold,PSU,Silicon Pacific Supply,121,171,63.4,13.36,1.23%,Best-Seller,Increase Purchase Allocation
+PER-STE-1475,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,139,348,132.2,27.19,2.36%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1476,Intel Core i9-14900K,CPU,Macro Memory Corp,103,48,121.5,3.75,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1477,AMD Ryzen 9 7950X3D,CPU,Macro Memory Corp,126,236,39.2,18.44,1.54%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1478,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Apex Hardware Partners,27,106,127.7,8.28,0.7%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1479,Seasonic Focus GX-750W 80+ Gold,PSU,Silicon Pacific Supply,115,4,50.2,0.31,1.76%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1480,NVIDIA RTX 4090 OC 24GB,GPU,LogiTech Direct PH,149,33,107.4,2.58,1.61%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1481,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,94,60,124.7,4.69,2.06%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1482,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,127,18,135.4,1.41,1.37%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1483,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,136,137,74.2,10.7,0.57%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1484,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,66,264,118.6,20.62,0.94%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1485,Intel Core i5-14600K,CPU,LogiTech Direct PH,85,337,43.4,26.33,1.73%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1486,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,34,245,29.9,19.14,0.24%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1487,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,31,231,79.8,18.05,2.07%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1488,Samsung 990 Pro 1TB NVMe,Storage,Apex Hardware Partners,100,131,38.2,10.23,2.38%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1489,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,133,166,105.7,12.97,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1490,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,69,21,79.4,1.64,1.68%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1491,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,56,12,32.0,0.94,0.55%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1492,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,96,223,5.7,17.42,1.81%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1493,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,109,317,89.4,24.77,0.23%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1494,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,53,332,10.1,25.94,0.41%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1495,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,51,112,7.9,8.75,1.54%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1496,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,92,204,52.6,15.94,2.43%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1497,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,113,305,91.8,23.83,0.38%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1498,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,16,92,97.2,7.19,0.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1499,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,31,74,122.0,5.78,1.61%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1500,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,24,285,136.8,22.27,0.88%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1501,NVIDIA RTX 4080 Super 16GB,GPU,Global Components Hub,33,102,15.6,7.97,2.37%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1502,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,10,196,131.0,15.31,0.4%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1503,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,136,63,110.5,4.92,0.18%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1504,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,89,152,76.6,11.88,1.8%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1505,Intel Core i5-14600K,CPU,Silicon Pacific Supply,92,227,107.1,17.73,1.26%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1506,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,135,76,41.6,5.94,1.82%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1507,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,135,53,55.6,4.14,0.3%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1508,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,38,347,30.4,27.11,1.34%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1509,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,71,67,84.2,5.23,2.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1510,AMD Radeon RX 7900 XTX 24GB,GPU,Silicon Pacific Supply,88,94,122.6,7.34,0.98%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1511,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,108,270,110.8,21.09,1.69%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1512,NVIDIA RTX 4060 Dual OC 8GB,GPU,Global Components Hub,87,302,10.5,23.59,0.23%,Best-Seller,Increase Purchase Allocation
+GPU-POW-1513,AMD Radeon RX 7800 XT 16GB,GPU,Silicon Pacific Supply,109,317,49.3,24.77,0.83%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1514,Razer DeathAdder V3 Pro Wireless,Peripherals,LogiTech Direct PH,27,345,112.9,26.95,0.14%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1515,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,142,144,84.0,11.25,0.38%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1516,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,8,261,82.2,20.39,1.67%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1517,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,75,21,37.0,1.64,0.9%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1518,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,93,177,110.8,13.83,1.54%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1519,Intel Core i5-14600K,CPU,Global Components Hub,86,260,74.0,20.31,2.16%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1520,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,40,228,64.2,17.81,0.89%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1521,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,128,252,41.7,19.69,1.48%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1522,Intel Core i9-14900K,CPU,Global Components Hub,73,60,22.0,4.69,1.33%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1523,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,64,247,85.5,19.3,1.58%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1524,NVIDIA RTX 4080 Super 16GB,GPU,LogiTech Direct PH,16,145,123.0,11.33,2.24%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1525,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,80,291,97.9,22.73,1.1%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1526,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,28,223,62.6,17.42,0.57%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1527,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,LogiTech Direct PH,126,60,25.8,4.69,0.97%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1528,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,8,86,109.8,6.72,1.13%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1529,Crucial T700 2TB Gen5 NVMe,Storage,Silicon Pacific Supply,6,192,45.7,15.0,1.98%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1530,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,38,347,70.2,27.11,0.97%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1531,NVIDIA RTX 4060 Ti 8GB,GPU,Global Components Hub,95,57,98.6,4.45,0.58%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1532,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,13,28,50.8,2.19,2.4%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1533,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,62,148,52.7,11.56,1.59%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1534,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Global Components Hub,112,95,134.4,7.42,1.12%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1535,Intel Core i5-14600K,CPU,Macro Memory Corp,96,336,70.3,26.25,2.43%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1536,Seasonic Focus GX-750W 80+ Gold,PSU,LogiTech Direct PH,131,27,80.7,2.11,1.98%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1537,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,78,297,17.4,23.2,1.31%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1538,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,52,40,68.9,3.12,0.99%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1539,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,121,286,48.3,22.34,0.48%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1540,Razer DeathAdder V3 Pro Wireless,Peripherals,Silicon Pacific Supply,60,114,57.8,8.91,1.02%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1541,NVIDIA RTX 4070 Ti Super 16GB,GPU,Silicon Pacific Supply,63,35,95.2,2.73,1.11%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1542,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,7,45,9.5,3.52,0.99%,Low-Stock Alert,Immediate Purchase Order
+CPU-INT-1543,Intel Core i7-14700K,CPU,Silicon Pacific Supply,21,47,19.6,3.67,2.12%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1544,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,42,207,43.5,16.17,0.18%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1545,Intel Core i7-14700K,CPU,Apex Hardware Partners,61,111,132.0,8.67,1.14%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1546,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,11,94,127.8,7.34,1.7%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1547,Samsung 990 Pro 1TB NVMe,Storage,Silicon Pacific Supply,144,325,65.4,25.39,0.51%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1548,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,137,314,33.5,24.53,0.81%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1549,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,26,211,109.3,16.48,1.14%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1550,Samsung 990 Pro 1TB NVMe,Storage,Apex Hardware Partners,70,69,104.8,5.39,1.4%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1551,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,24,95,44.7,7.42,1.88%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1552,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,75,246,42.5,19.22,1.85%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1553,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,71,15,39.8,1.17,1.66%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1554,Intel Core i7-14700K,CPU,Apex Hardware Partners,43,253,85.9,19.77,1.14%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1555,Samsung 990 Pro 1TB NVMe,Storage,LogiTech Direct PH,84,265,17.5,20.7,1.76%,Best-Seller,Increase Purchase Allocation
+PER-STE-1556,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,78,139,87.3,10.86,0.51%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1557,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,115,339,16.9,26.48,2.34%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1558,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,56,291,88.2,22.73,0.9%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1559,NVIDIA RTX 4060 Dual OC 8GB,GPU,Global Components Hub,85,223,59.5,17.42,1.67%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1560,Intel Core i7-14700K,CPU,Silicon Pacific Supply,72,5,132.1,0.39,1.6%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1561,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,145,192,41.2,15.0,2.39%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1562,Gigabyte Z790 AORUS Elite AX,Motherboard,LogiTech Direct PH,108,341,139.5,26.64,1.35%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1563,AMD Radeon RX 7800 XT 16GB,GPU,Apex Hardware Partners,138,93,118.4,7.27,1.48%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1564,AMD Ryzen 7 7800X3D,CPU,Macro Memory Corp,35,136,56.8,10.62,1.28%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1565,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,58,239,33.1,18.67,1.27%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1566,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,100,345,101.2,26.95,0.59%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1567,Seasonic Focus GX-750W 80+ Gold,PSU,LogiTech Direct PH,78,266,135.1,20.78,1.29%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1568,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,68,168,49.3,13.12,1.02%,Best-Seller,Increase Purchase Allocation
+RAM-COR-1569,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,116,339,58.9,26.48,2.07%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1570,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,129,197,80.8,15.39,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1571,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Global Components Hub,18,67,128.7,5.23,1.63%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1572,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,109,133,91.3,10.39,2.36%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1573,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,107,114,27.4,8.91,0.19%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1574,Seasonic Focus GX-750W 80+ Gold,PSU,TechLink Distribution Inc.,66,222,52.9,17.34,2.22%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1575,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,11,31,44.4,2.42,0.31%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1576,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,65,233,101.6,18.2,2.18%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1577,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,64,166,16.2,12.97,1.48%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1578,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,6,174,60.2,13.59,1.61%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1579,Samsung 990 Pro 1TB NVMe,Storage,Macro Memory Corp,82,280,48.1,21.88,1.4%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1580,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,48,95,100.8,7.42,1.3%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1581,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,106,104,30.1,8.12,1.28%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1582,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,33,106,32.6,8.28,0.33%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1583,Seasonic Focus GX-850W 80+ Gold,PSU,TechLink Distribution Inc.,130,315,136.0,24.61,1.87%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1584,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,10,186,25.4,14.53,1.55%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1585,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,118,335,110.1,26.17,2.3%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1586,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,6,170,119.4,13.28,1.24%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1587,Intel Core i9-14900K,CPU,Global Components Hub,110,48,134.3,3.75,2.02%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1588,Intel Core i5-14600K,CPU,Global Components Hub,129,99,11.0,7.73,2.36%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1589,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,124,245,103.8,19.14,1.88%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1590,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,57,20,62.8,1.56,0.13%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1591,AMD Ryzen 7 7800X3D,CPU,Macro Memory Corp,28,205,79.2,16.02,1.19%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1592,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,118,56,43.1,4.38,1.17%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1593,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,73,125,16.2,9.77,0.4%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1594,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Macro Memory Corp,23,91,60.9,7.11,1.09%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1595,Seasonic Focus GX-850W 80+ Gold,PSU,TechLink Distribution Inc.,45,113,32.2,8.83,0.31%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1596,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,87,261,8.0,20.39,1.93%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1597,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,84,169,50.7,13.2,1.11%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1598,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,62,207,89.9,16.17,1.24%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1599,NVIDIA RTX 4070 Super 12GB,GPU,Macro Memory Corp,117,160,20.2,12.5,0.12%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1600,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,112,281,70.8,21.95,1.12%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1601,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,119,38,109.3,2.97,2.43%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1602,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,134,46,119.7,3.59,1.19%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1603,Intel Core i7-14700K,CPU,Macro Memory Corp,62,186,112.9,14.53,0.55%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1604,Samsung 990 Pro 2TB NVMe,Storage,Apex Hardware Partners,60,8,90.0,0.62,0.99%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1605,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,150,163,135.7,12.73,2.19%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1606,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,122,28,126.0,2.19,1.5%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1607,Intel Core i7-14700K,CPU,Macro Memory Corp,28,270,35.7,21.09,0.45%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1608,Intel Core i9-14900K,CPU,LogiTech Direct PH,68,211,106.2,16.48,1.98%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1609,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,29,293,8.3,22.89,1.83%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1610,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,TechLink Distribution Inc.,17,165,100.9,12.89,1.41%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1611,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,26,25,86.9,1.95,0.56%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1612,Seasonic Focus GX-850W 80+ Gold,PSU,Global Components Hub,64,114,137.4,8.91,0.59%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1613,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,81,246,100.7,19.22,0.98%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1614,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Macro Memory Corp,120,27,5.4,2.11,2.07%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1615,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,104,134,36.5,10.47,2.33%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1616,NVIDIA RTX 4070 Ti Super 16GB,GPU,Apex Hardware Partners,38,49,111.1,3.83,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1617,Kingston KC3000 2TB PCIe 4.0,Storage,LogiTech Direct PH,16,56,115.6,4.38,0.92%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1618,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,58,108,129.3,8.44,1.61%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1619,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,115,328,118.5,25.62,1.39%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1620,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,28,232,56.1,18.12,1.17%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1621,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,25,252,133.5,19.69,0.67%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1622,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,18,29,97.6,2.27,1.83%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1623,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,141,96,38.4,7.5,1.66%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1624,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,55,192,43.8,15.0,1.3%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1625,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,77,22,57.1,1.72,1.79%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1626,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Global Components Hub,39,171,82.1,13.36,2.34%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1627,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,6,339,72.2,26.48,2.36%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1628,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,2,295,40.2,23.05,0.53%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1629,NVIDIA RTX 4090 OC 24GB,GPU,LogiTech Direct PH,138,331,48.2,25.86,0.45%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1630,Intel Core i9-14900K,CPU,LogiTech Direct PH,29,297,94.3,23.2,0.48%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1631,NVIDIA RTX 4080 Super 16GB,GPU,Macro Memory Corp,99,33,21.4,2.58,1.15%,Healthy Turnover,Maintain Normal Buffer
+GPU-MSI-1632,NVIDIA RTX 4080 Super 16GB,GPU,Apex Hardware Partners,31,13,138.6,1.02,2.23%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1633,Samsung 990 Pro 2TB NVMe,Storage,LogiTech Direct PH,1,300,92.7,23.44,1.51%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1634,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,18,334,68.1,26.09,0.22%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1635,Intel Core i7-14700K,CPU,Macro Memory Corp,128,207,95.0,16.17,1.37%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1636,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,135,236,67.8,18.44,1.28%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1637,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,22,142,95.6,11.09,1.21%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1638,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,34,51,19.2,3.98,0.91%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1639,Seasonic Focus GX-850W 80+ Gold,PSU,Global Components Hub,112,14,135.2,1.09,1.18%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1640,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,93,199,98.9,15.55,1.45%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1641,AMD Radeon RX 7800 XT 16GB,GPU,Silicon Pacific Supply,43,76,10.0,5.94,2.18%,Healthy Turnover,Maintain Normal Buffer
+GPU-POW-1642,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,95,205,37.4,16.02,2.33%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1643,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,136,343,87.3,26.8,0.94%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1644,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,92,54,62.3,4.22,1.89%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1645,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,122,96,54.0,7.5,0.39%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1646,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,29,250,103.1,19.53,0.73%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1647,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,128,230,87.0,17.97,1.0%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1648,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,141,157,34.2,12.27,0.66%,Healthy Turnover,Maintain Normal Buffer
+MOT-GIG-1649,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,149,302,68.4,23.59,0.4%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1650,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,10,41,87.6,3.2,0.25%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1651,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,110,327,83.0,25.55,0.46%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1652,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,148,45,81.8,3.52,2.41%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1653,Intel Core i7-14700K,CPU,Macro Memory Corp,95,122,96.6,9.53,0.61%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1654,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,143,244,80.2,19.06,0.2%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1655,Seasonic Focus GX-850W 80+ Gold,PSU,Silicon Pacific Supply,34,263,112.7,20.55,1.84%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1656,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,60,120,49.5,9.38,0.9%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1657,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,44,27,23.3,2.11,1.72%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1658,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Global Components Hub,123,258,21.7,20.16,0.55%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1659,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,51,148,105.7,11.56,0.39%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1660,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,43,65,23.6,5.08,0.63%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1661,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,118,261,63.3,20.39,2.27%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1662,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,146,333,42.4,26.02,1.83%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1663,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,15,161,49.0,12.58,1.26%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1664,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,124,288,15.6,22.5,0.82%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1665,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,78,108,45.7,8.44,0.87%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1666,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,129,39,14.3,3.05,0.89%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1667,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,37,235,26.3,18.36,1.59%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1668,NVIDIA RTX 4070 Ti Super 16GB,GPU,Apex Hardware Partners,49,194,84.9,15.16,2.15%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1669,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,91,213,30.2,16.64,1.57%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1670,Intel Core i7-14700K,CPU,Macro Memory Corp,148,51,59.9,3.98,1.01%,Healthy Turnover,Maintain Normal Buffer
+PER-RAZ-1671,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,134,274,47.6,21.41,0.14%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1672,Kingston KC3000 2TB PCIe 4.0,Storage,Macro Memory Corp,149,329,128.6,25.7,0.74%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1673,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,18,8,45.5,0.62,2.16%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1674,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,50,178,42.6,13.91,1.5%,Best-Seller,Increase Purchase Allocation
+GPU-POW-1675,AMD Radeon RX 7800 XT 16GB,GPU,TechLink Distribution Inc.,28,268,113.0,20.94,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1676,Seasonic Focus GX-750W 80+ Gold,PSU,Silicon Pacific Supply,30,109,134.5,8.52,1.93%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1677,Samsung 990 Pro 1TB NVMe,Storage,Global Components Hub,115,164,33.4,12.81,0.84%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1678,NVIDIA RTX 4060 Ti 8GB,GPU,TechLink Distribution Inc.,23,166,101.7,12.97,0.19%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1679,Intel Core i7-14700K,CPU,Global Components Hub,118,189,58.4,14.77,1.64%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1680,Seasonic Focus GX-750W 80+ Gold,PSU,Global Components Hub,42,196,30.3,15.31,2.1%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1681,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Global Components Hub,73,213,138.5,16.64,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1682,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,60,174,100.7,13.59,2.0%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1683,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,64,291,43.4,22.73,1.28%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1684,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,64,341,44.8,26.64,0.76%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1685,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,88,132,68.8,10.31,0.22%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1686,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,13,127,130.1,9.92,1.36%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1687,NVIDIA RTX 4060 Ti 8GB,GPU,TechLink Distribution Inc.,114,295,139.4,23.05,0.96%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1688,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,87,68,15.1,5.31,1.62%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1689,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,46,0,128.2,0.0,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1690,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,87,204,14.1,15.94,1.34%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1691,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,LogiTech Direct PH,65,340,117.1,26.56,1.37%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1692,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Global Components Hub,32,98,34.5,7.66,0.57%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1693,Seasonic Focus GX-850W 80+ Gold,PSU,Global Components Hub,4,71,74.9,5.55,2.45%,Low-Stock Alert,Immediate Purchase Order
+GPU-PAL-1694,NVIDIA RTX 4060 Ti 8GB,GPU,Global Components Hub,111,163,79.5,12.73,1.15%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1695,AMD Radeon RX 7900 XTX 24GB,GPU,Apex Hardware Partners,96,242,79.1,18.91,1.46%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1696,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,78,303,29.1,23.67,0.31%,Best-Seller,Increase Purchase Allocation
+GPU-POW-1697,AMD Radeon RX 7800 XT 16GB,GPU,Apex Hardware Partners,27,333,43.2,26.02,1.47%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1698,Kingston KC3000 2TB PCIe 4.0,Storage,Silicon Pacific Supply,29,148,19.9,11.56,0.12%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1699,NVIDIA RTX 4060 Dual OC 8GB,GPU,Macro Memory Corp,132,185,98.6,14.45,1.05%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1700,Intel Core i7-14700K,CPU,Silicon Pacific Supply,31,145,120.4,11.33,1.09%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1701,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,31,83,115.8,6.48,0.17%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1702,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,11,77,12.0,6.02,2.27%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1703,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Apex Hardware Partners,79,223,88.5,17.42,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1704,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,94,319,45.1,24.92,0.28%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1705,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,48,307,21.8,23.98,1.69%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1706,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,84,310,133.5,24.22,2.29%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1707,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Global Components Hub,148,63,139.5,4.92,2.42%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1708,Intel Core i7-14700K,CPU,Macro Memory Corp,30,286,93.4,22.34,2.24%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1709,AMD Radeon RX 7900 XTX 24GB,GPU,Macro Memory Corp,16,264,47.5,20.62,0.43%,Best-Seller,Increase Purchase Allocation
+GPU-SAP-1710,AMD Radeon RX 7900 XTX 24GB,GPU,Global Components Hub,104,273,108.6,21.33,2.23%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1711,Samsung 990 Pro 1TB NVMe,Storage,Global Components Hub,47,278,38.8,21.72,1.82%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1712,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,33,75,124.0,5.86,2.2%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1713,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,45,201,69.3,15.7,0.3%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1714,Samsung 990 Pro 1TB NVMe,Storage,Macro Memory Corp,3,71,47.3,5.55,2.35%,Low-Stock Alert,Immediate Purchase Order
+STO-CRU-1715,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,62,274,62.2,21.41,2.02%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1716,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,99,15,47.0,1.17,0.42%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1717,Intel Core i7-14700K,CPU,Apex Hardware Partners,138,252,91.4,19.69,2.28%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1718,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,102,240,45.8,18.75,2.43%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1719,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,35,38,10.4,2.97,1.66%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1720,Intel Core i9-14900K,CPU,Global Components Hub,14,10,37.5,0.78,0.62%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1721,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,19,9,97.9,0.7,2.05%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1722,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,73,236,113.6,18.44,0.43%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1723,Kingston KC3000 2TB PCIe 4.0,Storage,Macro Memory Corp,111,177,44.1,13.83,0.26%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1724,Intel Core i5-14600K,CPU,Silicon Pacific Supply,46,248,139.7,19.38,1.14%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1725,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,142,163,99.4,12.73,0.63%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1726,AMD Radeon RX 7900 XTX 24GB,GPU,Silicon Pacific Supply,44,261,82.8,20.39,2.28%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1727,Intel Core i7-14700K,CPU,Apex Hardware Partners,43,235,79.2,18.36,1.12%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1728,NVIDIA RTX 4080 Super 16GB,GPU,LogiTech Direct PH,11,140,29.4,10.94,2.2%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1729,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,LogiTech Direct PH,60,40,75.3,3.12,1.55%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1730,Samsung 990 Pro 1TB NVMe,Storage,TechLink Distribution Inc.,21,218,97.0,17.03,1.52%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1731,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,49,163,38.7,12.73,1.8%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1732,NVIDIA RTX 4070 Super 12GB,GPU,Global Components Hub,2,240,137.8,18.75,2.49%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1733,NVIDIA RTX 4090 OC 24GB,GPU,LogiTech Direct PH,123,191,5.8,14.92,1.44%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1734,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,73,337,83.0,26.33,1.57%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1735,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,89,233,56.0,18.2,1.1%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1736,Seasonic Focus GX-750W 80+ Gold,PSU,Macro Memory Corp,19,121,78.8,9.45,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1737,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,92,37,87.5,2.89,2.08%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1738,Kingston KC3000 2TB PCIe 4.0,Storage,Apex Hardware Partners,92,142,106.0,11.09,0.49%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1739,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,86,172,18.6,13.44,2.06%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1740,Intel Core i7-14700K,CPU,Apex Hardware Partners,9,167,87.7,13.05,0.94%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1741,AMD Radeon RX 7900 XTX 24GB,GPU,Silicon Pacific Supply,106,106,94.0,8.28,0.95%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1742,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,106,254,46.7,19.84,0.36%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1743,Samsung 990 Pro 2TB NVMe,Storage,LogiTech Direct PH,59,205,107.1,16.02,1.86%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1744,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,8,128,13.8,10.0,0.67%,Low-Stock Alert,Immediate Purchase Order
+CPU-AMD-1745,AMD Ryzen 7 7800X3D,CPU,Macro Memory Corp,61,133,23.1,10.39,2.18%,Healthy Turnover,Maintain Normal Buffer
+MON-ASU-1746,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,120,20,139.1,1.56,0.58%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1747,Intel Core i9-14900K,CPU,Macro Memory Corp,140,57,23.9,4.45,0.29%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1748,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,146,117,52.7,9.14,2.17%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1749,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,82,71,133.8,5.55,0.39%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1750,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,82,297,62.1,23.2,1.92%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1751,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,19,44,46.3,3.44,2.12%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1752,Intel Core i5-14600K,CPU,Macro Memory Corp,27,8,139.5,0.62,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1753,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,14,221,103.8,17.27,0.9%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1754,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,7,13,36.7,1.02,2.33%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1755,AMD Radeon RX 7900 XTX 24GB,GPU,Silicon Pacific Supply,5,124,100.2,9.69,0.81%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1756,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,24,346,10.1,27.03,0.21%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-1757,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,40,155,15.2,12.11,0.71%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1758,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,12,68,74.9,5.31,2.43%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1759,NVIDIA RTX 4060 Ti 8GB,GPU,LogiTech Direct PH,141,240,76.9,18.75,1.64%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1760,Intel Core i7-14700K,CPU,Macro Memory Corp,17,144,81.7,11.25,1.48%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1761,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,33,10,42.8,0.78,1.65%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1762,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Global Components Hub,55,104,46.4,8.12,0.41%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1763,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,93,33,122.6,2.58,2.03%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1764,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,1,33,6.6,2.58,0.8%,Low-Stock Alert,Immediate Purchase Order
+CPU-INT-1765,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,61,172,54.5,13.44,2.4%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1766,Razer DeathAdder V3 Pro Wireless,Peripherals,Silicon Pacific Supply,78,68,11.4,5.31,1.23%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1767,AMD Ryzen 7 7800X3D,CPU,Apex Hardware Partners,33,347,36.3,27.11,2.4%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1768,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,119,66,93.7,5.16,1.27%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1769,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,134,307,125.3,23.98,1.44%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1770,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,142,232,71.3,18.12,1.24%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1771,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,17,111,72.5,8.67,1.22%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1772,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,55,310,77.5,24.22,1.38%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1773,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,117,329,90.8,25.7,0.49%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1774,Kingston KC3000 2TB PCIe 4.0,Storage,Silicon Pacific Supply,122,115,10.2,8.98,0.97%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1775,Crucial T700 2TB Gen5 NVMe,Storage,Global Components Hub,88,256,60.3,20.0,1.32%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1776,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,117,114,42.9,8.91,1.39%,Healthy Turnover,Maintain Normal Buffer
+GPU-MSI-1777,NVIDIA RTX 4080 Super 16GB,GPU,LogiTech Direct PH,149,336,59.4,26.25,0.85%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1778,NVIDIA RTX 4070 Ti Super 16GB,GPU,Macro Memory Corp,28,178,123.3,13.91,2.03%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1779,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,50,291,19.3,22.73,2.46%,Best-Seller,Increase Purchase Allocation
+RAM-COR-1780,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,101,71,9.5,5.55,2.26%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1781,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,49,120,83.8,9.38,1.18%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1782,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Global Components Hub,8,210,35.8,16.41,0.85%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1783,Seasonic Focus GX-750W 80+ Gold,PSU,LogiTech Direct PH,3,71,136.9,5.55,1.87%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-PAL-1784,NVIDIA RTX 4060 Ti 8GB,GPU,Global Components Hub,51,234,80.5,18.28,0.77%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1785,NVIDIA RTX 4070 Super 12GB,GPU,Apex Hardware Partners,89,183,97.1,14.3,0.94%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1786,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,82,136,43.1,10.62,1.92%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1787,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,133,303,96.5,23.67,1.19%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1788,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,35,54,107.9,4.22,0.18%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1789,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,36,347,94.9,27.11,2.32%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1790,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,80,253,107.6,19.77,0.26%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1791,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,76,206,19.3,16.09,1.16%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1792,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,4,143,17.8,11.17,2.23%,Low-Stock Alert,Immediate Purchase Order
+RAM-KIN-1793,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,110,209,70.3,16.33,1.35%,Best-Seller,Increase Purchase Allocation
+STO-CRU-1794,Crucial T700 2TB Gen5 NVMe,Storage,Global Components Hub,39,221,22.0,17.27,0.8%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1795,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,67,288,79.1,22.5,1.23%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1796,AMD Radeon RX 7800 XT 16GB,GPU,TechLink Distribution Inc.,31,257,67.5,20.08,1.97%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1797,Samsung 990 Pro 2TB NVMe,Storage,Macro Memory Corp,41,167,67.5,13.05,0.21%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1798,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,76,114,111.1,8.91,0.17%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1799,Samsung 990 Pro 1TB NVMe,Storage,Macro Memory Corp,79,192,94.0,15.0,1.95%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1800,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,66,307,114.5,23.98,1.73%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1801,Intel Core i5-14600K,CPU,Apex Hardware Partners,15,133,112.7,10.39,0.65%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1802,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,114,319,85.3,24.92,1.88%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1803,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,104,293,26.7,22.89,1.22%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1804,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,32,53,130.4,4.14,1.73%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1805,NVIDIA RTX 4070 Super 12GB,GPU,TechLink Distribution Inc.,131,218,108.7,17.03,0.79%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1806,AMD Ryzen 9 7950X3D,CPU,Macro Memory Corp,22,135,129.5,10.55,1.75%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1807,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,131,63,27.4,4.92,0.98%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1808,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,15,11,38.2,0.86,0.68%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1809,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,51,79,52.8,6.17,1.02%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1810,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,8,169,33.3,13.2,0.43%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1811,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,40,105,21.7,8.2,2.07%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1812,Crucial T700 2TB Gen5 NVMe,Storage,TechLink Distribution Inc.,18,58,84.9,4.53,2.31%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1813,NVIDIA RTX 4080 Super 16GB,GPU,Apex Hardware Partners,36,14,56.2,1.09,1.27%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1814,Samsung 990 Pro 1TB NVMe,Storage,Apex Hardware Partners,103,332,83.7,25.94,0.23%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1815,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,33,90,15.2,7.03,1.72%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1816,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,109,224,93.3,17.5,2.37%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1817,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,144,135,95.4,10.55,0.86%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1818,Corsair RM850x 850W 80+ Gold,PSU,TechLink Distribution Inc.,32,209,19.7,16.33,1.75%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1819,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Global Components Hub,37,211,111.9,16.48,0.3%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1820,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,81,107,64.2,8.36,1.96%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1821,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,40,205,76.5,16.02,1.83%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1822,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,137,54,41.4,4.22,1.57%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1823,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,TechLink Distribution Inc.,47,98,23.0,7.66,0.93%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1824,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,59,178,74.0,13.91,1.76%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1825,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,44,260,74.9,20.31,0.91%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1826,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Global Components Hub,12,254,101.7,19.84,1.32%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1827,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,93,132,111.4,10.31,2.07%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1828,AMD Ryzen 9 7950X3D,CPU,Global Components Hub,47,143,100.0,11.17,1.24%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1829,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,65,146,110.1,11.41,0.76%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1830,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,63,17,46.3,1.33,0.78%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1831,NVIDIA RTX 4070 Super 12GB,GPU,TechLink Distribution Inc.,112,4,57.2,0.31,1.38%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1832,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,77,279,63.6,21.8,2.4%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1833,Razer DeathAdder V3 Pro Wireless,Peripherals,Global Components Hub,94,106,72.1,8.28,1.52%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-1834,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,75,334,113.6,26.09,0.15%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1835,AMD Radeon RX 7900 XTX 24GB,GPU,Macro Memory Corp,32,11,124.6,0.86,0.71%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1836,Razer DeathAdder V3 Pro Wireless,Peripherals,Macro Memory Corp,93,129,114.3,10.08,0.95%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1837,Intel Core i7-14700K,CPU,Silicon Pacific Supply,112,22,17.5,1.72,1.14%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1838,Samsung 990 Pro 2TB NVMe,Storage,Macro Memory Corp,65,239,9.2,18.67,1.45%,Best-Seller,Increase Purchase Allocation
+PSU-SEA-1839,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,93,342,131.6,26.72,2.01%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1840,SteelSeries Apex Pro TKL Mechanical,Peripherals,Global Components Hub,52,63,97.6,4.92,1.96%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1841,Intel Core i5-14600K,CPU,Macro Memory Corp,96,30,92.6,2.34,0.65%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1842,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Macro Memory Corp,131,271,39.9,21.17,0.74%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1843,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,143,293,53.3,22.89,1.75%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1844,Samsung 990 Pro 1TB NVMe,Storage,LogiTech Direct PH,24,255,84.9,19.92,0.74%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1845,Seasonic Focus GX-750W 80+ Gold,PSU,Apex Hardware Partners,68,172,130.1,13.44,0.84%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1846,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,91,233,104.0,18.2,2.2%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1847,Intel Core i9-14900K,CPU,LogiTech Direct PH,50,55,71.6,4.3,2.2%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1848,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,28,270,35.9,21.09,2.14%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1849,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,42,109,86.0,8.52,0.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1850,AMD Ryzen 9 7950X3D,CPU,LogiTech Direct PH,100,52,67.3,4.06,2.3%,Healthy Turnover,Maintain Normal Buffer
+STO-KIN-1851,Kingston KC3000 2TB PCIe 4.0,Storage,Apex Hardware Partners,8,341,42.4,26.64,0.2%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1852,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,94,50,15.9,3.91,1.43%,Healthy Turnover,Maintain Normal Buffer
+STO-SAM-1853,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,21,62,135.3,4.84,0.94%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1854,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,34,272,102.0,21.25,0.49%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1855,SteelSeries Apex Pro TKL Mechanical,Peripherals,Apex Hardware Partners,75,347,90.9,27.11,1.51%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1856,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,35,226,110.3,17.66,2.26%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1857,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,70,93,32.8,7.27,0.6%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1858,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,59,327,139.3,25.55,1.2%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1859,AMD Ryzen 9 7950X3D,CPU,Apex Hardware Partners,113,266,135.1,20.78,1.56%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1860,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,89,61,10.5,4.77,0.43%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1861,NVIDIA RTX 4090 OC 24GB,GPU,LogiTech Direct PH,113,84,14.1,6.56,0.56%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1862,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,134,197,134.1,15.39,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-1863,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,56,254,14.2,19.84,2.27%,Best-Seller,Increase Purchase Allocation
+PER-STE-1864,SteelSeries Apex Pro TKL Mechanical,Peripherals,Macro Memory Corp,29,13,53.1,1.02,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1865,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,143,232,35.0,18.12,1.7%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1866,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,122,318,33.3,24.84,0.66%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1867,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,27,66,87.7,5.16,2.47%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1868,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,80,264,50.9,20.62,2.24%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1869,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,117,342,128.2,26.72,1.0%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-1870,NVIDIA RTX 4080 Super 16GB,GPU,Silicon Pacific Supply,39,210,78.5,16.41,0.14%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1871,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,39,88,8.7,6.88,1.67%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1872,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,41,62,75.5,4.84,2.13%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1873,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,47,125,85.5,9.77,1.64%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1874,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,106,19,22.7,1.48,0.6%,Healthy Turnover,Maintain Normal Buffer
+RAM-COR-1875,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,133,237,132.7,18.52,0.38%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1876,MSI MAG B650 Tomahawk WiFi,Motherboard,LogiTech Direct PH,8,101,27.6,7.89,0.13%,Low-Stock Alert,Immediate Purchase Order
+GPU-ZOT-1877,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,1,309,43.2,24.14,0.26%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1878,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,TechLink Distribution Inc.,44,143,21.4,11.17,0.63%,Healthy Turnover,Maintain Normal Buffer
+GPU-MSI-1879,NVIDIA RTX 4080 Super 16GB,GPU,TechLink Distribution Inc.,114,262,89.4,20.47,1.12%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1880,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Silicon Pacific Supply,125,166,51.0,12.97,1.4%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1881,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,87,294,106.7,22.97,0.83%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1882,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,113,90,126.7,7.03,1.04%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1883,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Apex Hardware Partners,101,65,65.1,5.08,1.3%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-1884,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,TechLink Distribution Inc.,139,63,43.9,4.92,1.76%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-1885,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,58,333,79.7,26.02,1.94%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1886,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,67,205,24.7,16.02,1.27%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1887,Gigabyte Z790 AORUS Elite AX,Motherboard,Global Components Hub,50,151,86.6,11.8,0.58%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1888,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,109,193,65.6,15.08,2.42%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1889,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,144,344,123.4,26.88,1.11%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1890,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,81,228,41.5,17.81,0.28%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-1891,NVIDIA RTX 4060 Dual OC 8GB,GPU,TechLink Distribution Inc.,102,330,114.5,25.78,1.15%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1892,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,75,46,73.0,3.59,1.6%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-1893,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,82,110,66.4,8.59,0.23%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1894,AMD Ryzen 5 7600X,CPU,Global Components Hub,148,108,123.6,8.44,0.36%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1895,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,134,75,130.1,5.86,0.72%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1896,Samsung 990 Pro 1TB NVMe,Storage,LogiTech Direct PH,140,7,41.5,0.55,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1897,NVIDIA RTX 4070 Ti Super 16GB,GPU,LogiTech Direct PH,52,199,51.5,15.55,2.02%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1898,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,101,296,29.1,23.12,1.14%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1899,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,57,342,135.8,26.72,1.84%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1900,SteelSeries Apex Pro TKL Mechanical,Peripherals,Macro Memory Corp,88,254,20.9,19.84,0.97%,Best-Seller,Increase Purchase Allocation
+PER-STE-1901,SteelSeries Apex Pro TKL Mechanical,Peripherals,Macro Memory Corp,19,79,120.1,6.17,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1902,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,LogiTech Direct PH,130,294,52.1,22.97,1.51%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1903,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,37,156,29.5,12.19,1.96%,Healthy Turnover,Maintain Normal Buffer
+MOT-GIG-1904,Gigabyte Z790 AORUS Elite AX,Motherboard,TechLink Distribution Inc.,2,297,77.9,23.2,1.84%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1905,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,126,275,33.7,21.48,1.67%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-1906,NVIDIA RTX 4070 Ti Super 16GB,GPU,Apex Hardware Partners,53,15,32.3,1.17,2.28%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-1907,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,104,173,93.3,13.52,0.4%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-1908,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,138,136,88.2,10.62,1.73%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1909,Logitech G Pro X Superlight 2,Peripherals,Apex Hardware Partners,113,14,104.4,1.09,2.02%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1910,Corsair RM850x 850W 80+ Gold,PSU,TechLink Distribution Inc.,7,255,41.8,19.92,1.01%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1911,Kingston KC3000 2TB PCIe 4.0,Storage,Macro Memory Corp,64,227,9.2,17.73,0.22%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1912,Kingston KC3000 2TB PCIe 4.0,Storage,Apex Hardware Partners,21,338,70.9,26.41,0.84%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1913,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Macro Memory Corp,100,286,64.1,22.34,1.68%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-1914,Gigabyte Z790 AORUS Elite AX,Motherboard,Macro Memory Corp,129,234,63.9,18.28,2.2%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-1915,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,LogiTech Direct PH,126,154,117.4,12.03,1.87%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1916,Crucial T700 2TB Gen5 NVMe,Storage,Global Components Hub,129,223,62.9,17.42,1.36%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-1917,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,Silicon Pacific Supply,128,157,14.1,12.27,0.51%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1918,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,17,128,19.7,10.0,1.86%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-1919,SteelSeries Apex Pro TKL Mechanical,Peripherals,Macro Memory Corp,108,106,100.7,8.28,1.75%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1920,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,42,69,32.7,5.39,0.63%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1921,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,81,288,111.0,22.5,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1922,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,36,338,99.0,26.41,0.79%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1923,Kingston KC3000 2TB PCIe 4.0,Storage,Silicon Pacific Supply,67,179,61.7,13.98,2.32%,Best-Seller,Increase Purchase Allocation
+PER-STE-1924,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,94,341,40.9,26.64,1.86%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-1925,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,98,199,6.0,15.55,0.86%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1926,Samsung 990 Pro 2TB NVMe,Storage,Silicon Pacific Supply,22,50,59.3,3.91,2.07%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1927,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Global Components Hub,113,334,59.1,26.09,2.31%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1928,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,96,242,102.1,18.91,1.02%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1929,Crucial T700 2TB Gen5 NVMe,Storage,LogiTech Direct PH,101,23,80.9,1.8,0.4%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-1930,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Apex Hardware Partners,36,300,63.8,23.44,0.89%,Best-Seller,Increase Purchase Allocation
+RAM-COR-1931,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,Macro Memory Corp,19,251,54.1,19.61,0.79%,Best-Seller,Increase Purchase Allocation
+MON-ASU-1932,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Silicon Pacific Supply,35,303,80.4,23.67,1.27%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1933,AMD Ryzen 7 7800X3D,CPU,LogiTech Direct PH,93,153,105.0,11.95,0.44%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1934,NVIDIA RTX 4090 OC 24GB,GPU,LogiTech Direct PH,20,283,53.8,22.11,0.2%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1935,AMD Ryzen 5 7600X,CPU,Silicon Pacific Supply,138,239,110.8,18.67,0.66%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1936,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,71,17,13.3,1.33,2.02%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-1937,AMD Ryzen 9 7950X3D,CPU,Global Components Hub,107,221,32.3,17.27,0.19%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-1938,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,66,126,12.5,9.84,0.31%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1939,Intel Core i7-14700K,CPU,Silicon Pacific Supply,62,123,115.8,9.61,2.25%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1940,AMD Radeon RX 7900 XTX 24GB,GPU,TechLink Distribution Inc.,131,134,95.3,10.47,1.06%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-1941,Crucial T700 2TB Gen5 NVMe,Storage,Silicon Pacific Supply,137,165,51.3,12.89,1.3%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-1942,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,75,182,25.7,14.22,1.04%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1943,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,TechLink Distribution Inc.,71,98,60.6,7.66,1.2%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-1944,Crucial T700 2TB Gen5 NVMe,Storage,Global Components Hub,117,267,33.5,20.86,0.27%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1945,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,140,102,92.8,7.97,1.2%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1946,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,62,168,52.1,13.12,1.05%,Best-Seller,Increase Purchase Allocation
+PSU-COR-1947,Corsair RM850x 850W 80+ Gold,PSU,Silicon Pacific Supply,111,126,93.7,9.84,0.59%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1948,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,138,223,94.7,17.42,0.26%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1949,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,100,23,98.5,1.8,1.54%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-1950,AMD Radeon RX 7800 XT 16GB,GPU,Apex Hardware Partners,111,66,40.6,5.16,1.12%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1951,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Apex Hardware Partners,121,215,100.0,16.8,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1952,Intel Core i7-14700K,CPU,LogiTech Direct PH,138,145,23.5,11.33,1.36%,Healthy Turnover,Maintain Normal Buffer
+MOT-MSI-1953,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,125,302,66.8,23.59,1.14%,Best-Seller,Increase Purchase Allocation
+GPU-ZOT-1954,NVIDIA RTX 4070 Super 12GB,GPU,TechLink Distribution Inc.,2,67,93.4,5.23,2.33%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1955,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,TechLink Distribution Inc.,15,347,111.2,27.11,1.59%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-1956,AMD Ryzen 9 7950X3D,CPU,TechLink Distribution Inc.,49,276,133.9,21.56,1.19%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-1957,AMD Radeon RX 7900 XTX 24GB,GPU,Macro Memory Corp,32,187,91.0,14.61,1.47%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1958,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,98,87,116.5,6.8,2.06%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1959,Kingston KC3000 2TB PCIe 4.0,Storage,LogiTech Direct PH,47,77,9.8,6.02,1.04%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-1960,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,56,323,111.9,25.23,1.54%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1961,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,134,79,43.9,6.17,1.86%,Healthy Turnover,Maintain Normal Buffer
+MOT-GIG-1962,Gigabyte Z790 AORUS Elite AX,Motherboard,Macro Memory Corp,83,123,95.9,9.61,0.32%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1963,Kingston KC3000 2TB PCIe 4.0,Storage,TechLink Distribution Inc.,61,27,91.8,2.11,0.85%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-1964,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,TechLink Distribution Inc.,71,81,13.3,6.33,2.22%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1965,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Macro Memory Corp,89,25,70.9,1.95,0.99%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1966,Intel Core i5-14600K,CPU,Apex Hardware Partners,64,94,74.6,7.34,2.15%,Healthy Turnover,Maintain Normal Buffer
+PER-RAZ-1967,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,36,135,41.4,10.55,0.83%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1968,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,7,317,6.6,24.77,1.26%,Best-Seller,Increase Purchase Allocation
+CPU-INT-1969,Intel Core i9-14900K,CPU,Macro Memory Corp,85,123,131.7,9.61,0.41%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-1970,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,57,250,63.9,19.53,0.92%,Best-Seller,Increase Purchase Allocation
+PER-LOG-1971,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,17,224,22.2,17.5,0.96%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1972,Samsung 990 Pro 2TB NVMe,Storage,Global Components Hub,83,158,80.3,12.34,0.36%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1973,Razer DeathAdder V3 Pro Wireless,Peripherals,TechLink Distribution Inc.,47,199,59.8,15.55,0.35%,Best-Seller,Increase Purchase Allocation
+STO-SAM-1974,Samsung 990 Pro 1TB NVMe,Storage,Silicon Pacific Supply,56,295,105.6,23.05,0.41%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-1975,Kingston KC3000 2TB PCIe 4.0,Storage,Macro Memory Corp,119,26,117.4,2.03,2.41%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-1976,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,26,106,124.4,8.28,2.09%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-1977,Samsung 990 Pro 2TB NVMe,Storage,Apex Hardware Partners,64,291,11.8,22.73,0.48%,Best-Seller,Increase Purchase Allocation
+RAM-G.S-1978,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Silicon Pacific Supply,47,147,114.7,11.48,1.24%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-1979,Intel Core i5-14600K,CPU,Apex Hardware Partners,145,35,117.2,2.73,1.55%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-GIG-1980,NVIDIA RTX 4070 Ti Super 16GB,GPU,Macro Memory Corp,116,57,98.0,4.45,0.36%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1981,Logitech G Pro X Superlight 2,Peripherals,Global Components Hub,63,290,99.1,22.66,0.97%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-RAZ-1982,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,23,147,113.3,11.48,0.3%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-1983,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,48,90,9.5,7.03,2.32%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-1984,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,84,306,17.0,23.91,0.11%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1985,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,49,201,38.9,15.7,0.62%,Best-Seller,Increase Purchase Allocation
+STO-KIN-1986,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,65,107,116.2,8.36,1.9%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1987,Seasonic Focus GX-750W 80+ Gold,PSU,Silicon Pacific Supply,24,129,24.9,10.08,1.76%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-1988,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,15,237,89.9,18.52,0.5%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-1989,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,129,122,48.1,9.53,1.21%,Healthy Turnover,Maintain Normal Buffer
+GPU-ZOT-1990,NVIDIA RTX 4070 Super 12GB,GPU,Apex Hardware Partners,130,228,129.4,17.81,0.87%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-1991,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,15,308,128.7,24.06,0.55%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1992,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,11,7,10.9,0.55,0.2%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-1993,NVIDIA RTX 4070 Super 12GB,GPU,Apex Hardware Partners,109,108,90.6,8.44,0.44%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-1994,Corsair RM850x 850W 80+ Gold,PSU,Apex Hardware Partners,122,228,124.4,17.81,0.78%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-1995,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,106,61,69.7,4.77,1.43%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-1996,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,8,123,44.1,9.61,2.03%,Low-Stock Alert,Immediate Purchase Order
+CPU-INT-1997,Intel Core i5-14600K,CPU,Macro Memory Corp,48,146,115.7,11.41,0.95%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-1998,Seasonic Focus GX-750W 80+ Gold,PSU,Silicon Pacific Supply,73,33,50.1,2.58,1.9%,Healthy Turnover,Maintain Normal Buffer
+CPU-INT-1999,Intel Core i7-14700K,CPU,Global Components Hub,31,238,47.2,18.59,0.59%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-2000,NVIDIA RTX 4060 Ti 8GB,GPU,Silicon Pacific Supply,94,55,111.3,4.3,2.12%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-2001,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,146,345,57.2,26.95,1.79%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-2002,MSI MAG B650 Tomahawk WiFi,Motherboard,Silicon Pacific Supply,105,167,111.5,13.05,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-2003,Samsung 990 Pro 2TB NVMe,Storage,Apex Hardware Partners,57,229,105.4,17.89,0.47%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-2004,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,70,264,39.6,20.62,0.44%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-2005,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,41,94,136.1,7.34,0.41%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2006,NVIDIA RTX 4060 Dual OC 8GB,GPU,Apex Hardware Partners,68,173,52.7,13.52,2.3%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-2007,MSI MAG B650 Tomahawk WiFi,Motherboard,Apex Hardware Partners,51,232,91.6,18.12,0.65%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-2008,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,12,139,14.5,10.86,0.45%,Healthy Turnover,Maintain Normal Buffer
+PSU-COR-2009,Corsair RM850x 850W 80+ Gold,PSU,Global Components Hub,55,29,30.0,2.27,2.13%,Healthy Turnover,Maintain Normal Buffer
+GPU-GIG-2010,NVIDIA RTX 4070 Ti Super 16GB,GPU,Silicon Pacific Supply,20,112,111.7,8.75,0.47%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2011,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,5,317,110.2,24.77,0.97%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2012,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,49,310,25.6,24.22,1.56%,Best-Seller,Increase Purchase Allocation
+MOT-MSI-2013,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,23,344,95.1,26.88,2.34%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-2014,Seasonic Focus GX-850W 80+ Gold,PSU,Macro Memory Corp,143,133,8.5,10.39,2.03%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-2015,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,14,279,68.2,21.8,2.34%,Best-Seller,Increase Purchase Allocation
+RAM-KIN-2016,Kingston Fury Beast 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,104,234,97.8,18.28,0.16%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-2017,Logitech G Pro X Superlight 2,Peripherals,Silicon Pacific Supply,40,159,46.0,12.42,1.13%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-2018,Seasonic Focus GX-850W 80+ Gold,PSU,LogiTech Direct PH,80,287,35.0,22.42,2.33%,Best-Seller,Increase Purchase Allocation
+GPU-ASU-2019,NVIDIA RTX 4090 OC 24GB,GPU,Apex Hardware Partners,145,324,46.8,25.31,1.34%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-2020,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,92,8,76.5,0.62,0.9%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2021,Intel Core i9-14900K,CPU,Global Components Hub,110,84,82.1,6.56,2.0%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-2022,Gigabyte Z790 AORUS Elite AX,Motherboard,LogiTech Direct PH,145,74,33.4,5.78,2.29%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-2023,AMD Ryzen 7 7800X3D,CPU,Global Components Hub,115,81,70.9,6.33,1.62%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-2024,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Apex Hardware Partners,106,276,115.7,21.56,1.55%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2025,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,15,349,41.5,27.27,0.52%,Best-Seller,Increase Purchase Allocation
+STO-SAM-2026,Samsung 990 Pro 1TB NVMe,Storage,Global Components Hub,65,220,61.2,17.19,0.35%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-2027,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,TechLink Distribution Inc.,77,306,103.4,23.91,1.03%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ZOT-2028,NVIDIA RTX 4070 Super 12GB,GPU,LogiTech Direct PH,132,202,27.8,15.78,2.05%,Best-Seller,Increase Purchase Allocation
+MOT-GIG-2029,Gigabyte Z790 AORUS Elite AX,Motherboard,Apex Hardware Partners,134,267,134.0,20.86,2.36%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2030,AMD Ryzen 5 7600X,CPU,Global Components Hub,65,309,125.7,24.14,0.71%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-MSI-2031,NVIDIA RTX 4080 Super 16GB,GPU,Macro Memory Corp,93,42,75.2,3.28,1.13%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-COR-2032,Corsair Vengeance RGB 32GB DDR5 6000MHz,RAM,LogiTech Direct PH,23,117,95.1,9.14,0.76%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-2033,Samsung 990 Pro 2TB NVMe,Storage,Apex Hardware Partners,61,51,78.5,3.98,1.41%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-2034,AMD Radeon RX 7800 XT 16GB,GPU,LogiTech Direct PH,149,97,41.2,7.58,1.11%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-2035,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,53,252,135.4,19.69,1.55%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-2036,Samsung 990 Pro 1TB NVMe,Storage,Apex Hardware Partners,142,1,17.3,0.08,1.72%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2037,AMD Ryzen 5 7600X,CPU,Macro Memory Corp,8,39,57.1,3.05,0.33%,Low-Stock Alert,Immediate Purchase Order
+MOT-MSI-2038,MSI MAG B650 Tomahawk WiFi,Motherboard,Macro Memory Corp,8,3,89.7,0.23,0.68%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-SAP-2039,AMD Radeon RX 7900 XTX 24GB,GPU,Global Components Hub,39,110,14.9,8.59,0.57%,Healthy Turnover,Maintain Normal Buffer
+PSU-SEA-2040,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,56,347,14.0,27.11,1.94%,Best-Seller,Increase Purchase Allocation
+CPU-INT-2041,Intel Core i9-14900K,CPU,TechLink Distribution Inc.,43,248,11.1,19.38,0.69%,Best-Seller,Increase Purchase Allocation
+PSU-COR-2042,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,48,17,117.6,1.33,0.54%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-ASU-2043,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Silicon Pacific Supply,5,125,18.2,9.77,1.96%,Low-Stock Alert,Immediate Purchase Order
+MON-ASU-2044,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Apex Hardware Partners,82,204,127.0,15.94,1.77%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2045,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,2,53,93.6,4.14,1.63%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2046,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,97,175,118.8,13.67,2.22%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2047,Intel Core i9-14900K,CPU,Global Components Hub,80,271,37.2,21.17,2.48%,Best-Seller,Increase Purchase Allocation
+PER-STE-2048,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,96,37,47.2,2.89,1.83%,Healthy Turnover,Maintain Normal Buffer
+RAM-KIN-2049,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,30,58,67.8,4.53,1.6%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-2050,Logitech G Pro X Superlight 2,Peripherals,TechLink Distribution Inc.,35,247,24.0,19.3,2.42%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-2051,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,14,23,89.1,1.8,1.68%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2052,NVIDIA RTX 4090 OC 24GB,GPU,Silicon Pacific Supply,52,144,89.7,11.25,1.46%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-2053,AMD Radeon RX 7800 XT 16GB,GPU,Macro Memory Corp,53,85,20.3,6.64,1.7%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-2054,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,96,307,122.5,23.98,0.62%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-2055,Crucial T700 2TB Gen5 NVMe,Storage,Apex Hardware Partners,20,279,36.5,21.8,1.74%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-2056,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Macro Memory Corp,116,196,26.6,15.31,0.45%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-2057,NVIDIA RTX 4070 Ti Super 16GB,GPU,Macro Memory Corp,23,112,20.1,8.75,1.15%,Healthy Turnover,Maintain Normal Buffer
+MOT-ASU-2058,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,Apex Hardware Partners,75,84,76.4,6.56,2.27%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2059,Intel Core i5-14600K,CPU,Macro Memory Corp,99,252,96.8,19.69,0.34%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2060,NVIDIA RTX 4060 Dual OC 8GB,GPU,LogiTech Direct PH,115,258,20.0,20.16,2.03%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-2061,Razer DeathAdder V3 Pro Wireless,Peripherals,Apex Hardware Partners,138,210,104.5,16.41,2.39%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2062,NVIDIA RTX 4090 OC 24GB,GPU,Macro Memory Corp,82,49,50.0,3.83,1.32%,Healthy Turnover,Maintain Normal Buffer
+STO-CRU-2063,Crucial T700 2TB Gen5 NVMe,Storage,Macro Memory Corp,111,226,36.6,17.66,0.14%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-2064,AMD Ryzen 5 7600X,CPU,TechLink Distribution Inc.,147,153,16.3,11.95,1.75%,Healthy Turnover,Maintain Normal Buffer
+RAM-G.S-2065,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,Macro Memory Corp,6,144,132.6,11.25,0.13%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2066,Intel Core i7-14700K,CPU,TechLink Distribution Inc.,134,143,110.2,11.17,0.25%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-G.S-2067,G.Skill Trident Z5 32GB DDR5 6400MHz,RAM,TechLink Distribution Inc.,115,165,112.4,12.89,0.11%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-2068,Crucial T700 2TB Gen5 NVMe,Storage,Silicon Pacific Supply,82,83,78.9,6.48,1.09%,Slow-Moving,Clearance Promo / Bundle Discount
+MON-ASU-2069,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,LogiTech Direct PH,16,119,110.5,9.3,1.31%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-COR-2070,Corsair RM850x 850W 80+ Gold,PSU,LogiTech Direct PH,126,25,104.1,1.95,1.44%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-SAM-2071,Samsung 990 Pro 2TB NVMe,Storage,TechLink Distribution Inc.,116,201,41.8,15.7,0.81%,Best-Seller,Increase Purchase Allocation
+GPU-GIG-2072,NVIDIA RTX 4070 Ti Super 16GB,GPU,Global Components Hub,131,118,48.5,9.22,1.82%,Healthy Turnover,Maintain Normal Buffer
+GPU-ASU-2073,NVIDIA RTX 4090 OC 24GB,GPU,TechLink Distribution Inc.,128,83,64.7,6.48,1.19%,Healthy Turnover,Maintain Normal Buffer
+PER-LOG-2074,Logitech G Pro X Superlight 2,Peripherals,Macro Memory Corp,36,280,30.3,21.88,0.16%,Best-Seller,Increase Purchase Allocation
+STO-SAM-2075,Samsung 990 Pro 1TB NVMe,Storage,Macro Memory Corp,3,184,19.6,14.38,1.9%,Best-Seller,Increase Purchase Allocation
+GPU-PAL-2076,NVIDIA RTX 4060 Ti 8GB,GPU,Macro Memory Corp,66,14,62.7,1.09,0.57%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-GIG-2077,Gigabyte Z790 AORUS Elite AX,Motherboard,Silicon Pacific Supply,8,37,124.6,2.89,1.53%,Slow-Moving,Clearance Promo / Bundle Discount
+MOT-MSI-2078,MSI MAG B650 Tomahawk WiFi,Motherboard,TechLink Distribution Inc.,46,155,10.6,12.11,0.86%,Healthy Turnover,Maintain Normal Buffer
+GPU-PAL-2079,NVIDIA RTX 4060 Ti 8GB,GPU,Apex Hardware Partners,121,326,101.3,25.47,0.76%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-STE-2080,SteelSeries Apex Pro TKL Mechanical,Peripherals,TechLink Distribution Inc.,23,235,11.6,18.36,1.04%,Best-Seller,Increase Purchase Allocation
+MOT-ASU-2081,ASUS ROG Strix B650-A Gaming WiFi,Motherboard,LogiTech Direct PH,146,223,128.2,17.42,1.43%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2082,Intel Core i7-14700K,CPU,Apex Hardware Partners,23,83,125.7,6.48,1.99%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-CRU-2083,Crucial T700 2TB Gen5 NVMe,Storage,TechLink Distribution Inc.,115,338,86.6,26.41,0.84%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-2084,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,Silicon Pacific Supply,21,126,78.2,9.84,1.68%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-POW-2085,AMD Radeon RX 7800 XT 16GB,GPU,Silicon Pacific Supply,16,63,18.5,4.92,1.91%,Healthy Turnover,Maintain Normal Buffer
+STO-KIN-2086,Kingston KC3000 2TB PCIe 4.0,Storage,Global Components Hub,105,255,112.4,19.92,1.07%,Slow-Moving,Clearance Promo / Bundle Discount
+PER-LOG-2087,Logitech G Pro X Superlight 2,Peripherals,LogiTech Direct PH,19,299,121.2,23.36,0.41%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-2088,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,8,49,70.3,3.83,1.46%,Low-Stock Alert,Immediate Purchase Order
+GPU-SAP-2089,AMD Radeon RX 7900 XTX 24GB,GPU,LogiTech Direct PH,109,156,49.7,12.19,2.34%,Healthy Turnover,Maintain Normal Buffer
+PER-STE-2090,SteelSeries Apex Pro TKL Mechanical,Peripherals,LogiTech Direct PH,11,66,124.4,5.16,1.7%,Slow-Moving,Clearance Promo / Bundle Discount
+GPU-ASU-2091,NVIDIA RTX 4090 OC 24GB,GPU,Global Components Hub,90,117,46.2,9.14,1.31%,Healthy Turnover,Maintain Normal Buffer
+CPU-AMD-2092,AMD Ryzen 5 7600X,CPU,LogiTech Direct PH,118,336,23.4,26.25,2.17%,Best-Seller,Increase Purchase Allocation
+CPU-AMD-2093,AMD Ryzen 7 7800X3D,CPU,TechLink Distribution Inc.,91,325,84.4,25.39,1.76%,Slow-Moving,Clearance Promo / Bundle Discount
+STO-KIN-2094,Kingston KC3000 2TB PCIe 4.0,Storage,Silicon Pacific Supply,145,284,69.0,22.19,0.67%,Best-Seller,Increase Purchase Allocation
+MON-ASU-2095,ASUS ROG Swift 27-inch 240Hz OLED,Monitor,Macro Memory Corp,118,87,88.6,6.8,2.2%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-INT-2096,Intel Core i7-14700K,CPU,Macro Memory Corp,87,241,125.4,18.83,1.6%,Slow-Moving,Clearance Promo / Bundle Discount
+CPU-AMD-2097,AMD Ryzen 5 7600X,CPU,Apex Hardware Partners,66,15,125.7,1.17,1.57%,Slow-Moving,Clearance Promo / Bundle Discount
+PSU-SEA-2098,Seasonic Focus GX-850W 80+ Gold,PSU,Apex Hardware Partners,109,100,101.4,7.81,2.02%,Slow-Moving,Clearance Promo / Bundle Discount
+RAM-KIN-2099,Kingston Fury Beast 16GB DDR5 5600MHz,RAM,LogiTech Direct PH,74,273,43.6,21.33,0.42%,Best-Seller,Increase Purchase Allocation
+PER-RAZ-2100,Razer DeathAdder V3 Pro Wireless,Peripherals,Macro Memory Corp,150,285,36.4,22.27,1.83%,Best-Seller,Increase Purchase Allocation
