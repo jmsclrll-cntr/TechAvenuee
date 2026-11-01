@@ -16,14 +16,7 @@ import ml_engine
 app = Flask(__name__)
 CORS(
     app,
-    resources={
-        r"/api/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173"
-            ]
-        }
-    }
+    resources={r"/api/*": {"origins": "*"}}
 )
 
 # Directory configurations for uploads

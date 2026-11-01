@@ -44,7 +44,11 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
         setError(res?.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      setError(err.message || 'Invalid email/username or password. Please try again.');
+      if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+        setError('Cannot connect to backend server. Please verify the backend is running on http://127.0.0.1:5000.');
+      } else {
+        setError(err.message || 'Invalid email/username or password. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

@@ -294,6 +294,109 @@ def init_db():
             """)
 
             print("Database tables verified/initialized successfully.")
+
+            # Seed default users if users table is empty
+            cursor.execute("SELECT COUNT(*) AS count FROM users;")
+            if cursor.fetchone()["count"] == 0:
+                print("Seeding default role-based accounts...")
+                default_users = [
+                    (
+                        "admin",
+                        "Carl Cantre",
+                        "admin@techavenue.com",
+                        generate_password_hash("admin123"),
+                        "admin",
+                        "active"
+                    ),
+                    (
+                        "clerk",
+                        "Maria Santos",
+                        "clerk@techavenue.com",
+                        generate_password_hash("clerk123"),
+                        "inventory_clerk",
+                        "active"
+                    ),
+                    (
+                        "sales",
+                        "John Reyes",
+                        "sales@techavenue.com",
+                        generate_password_hash("sales123"),
+                        "sales_personnel",
+                        "active"
+                    ),
+                    (
+                        "instructor",
+                        "Academic Instructor",
+                        "instructor@techavenue.com",
+                        generate_password_hash("instructor123"),
+                        "instructor",
+                        "active"
+                    )
+                ]
+                cursor.executemany("""
+                    INSERT INTO users (username, full_name, email, password_hash, role, status)
+                    VALUES (%s, %s, %s, %s, %s, %s);
+                """, default_users)
+                print("Default users seeded successfully.")
+
+            # Seed default categories if empty
+            cursor.execute("SELECT COUNT(*) AS count FROM categories;")
+            if cursor.fetchone()["count"] == 0:
+                print("Seeding default categories...")
+                categories = [
+                    ("Computers & Laptops", "COMP", "Desktop towers, workstations, laptops, and ultrabooks"),
+                    ("Keyboards & Input Devices", "KEYBOARD", "Mechanical keyboards, membrane switches, and accessories"),
+                    ("Mice & Gaming Peripherals", "MOUSE", "Wireless mice, gaming optical mice, and mousepads"),
+                    ("Monitors & Displays", "MONITOR", "IPS, OLED, and curved gaming monitors"),
+                    ("Computer Components", "COMP-PARTS", "CPUs, GPUs, RAM, motherboards, and power supplies"),
+                    ("Storage & Networking", "STORAGE", "NVMe SSDs, external hard drives, routers, and switches")
+                ]
+                cursor.executemany("""
+                    INSERT INTO categories (name, code, description)
+                    VALUES (%s, %s, %s);
+                """, categories)
+                print("Categories seeded successfully.")
+
+            # Seed default suppliers if empty
+            cursor.execute("SELECT COUNT(*) AS count FROM suppliers;")
+            if cursor.fetchone()["count"] == 0:
+                print("Seeding default suppliers...")
+                suppliers = [
+                    ("Asus Philippines Distribution", "Michael Chang", "sales@asus-ph.com", "+63 917 123 4567", "Bonifacio Global City, Taguig, Philippines", "COMP, COMP-PARTS, MONITOR", "active"),
+                    ("Logitech Regional Hub", "Sarah Lim", "support@logitech-dist.com", "+63 918 555 1234", "Ortigas Center, Pasig City, Philippines", "KEYBOARD, MOUSE", "active"),
+                    ("Corsair & Kingston PH Hub", "David Tan", "orders@corsair-ph.com", "+63 920 444 8888", "Quezon City, Metro Manila, Philippines", "COMP-PARTS, STORAGE", "active")
+                ]
+                cursor.executemany("""
+                    INSERT INTO suppliers (name, contact_person, email, phone, address, supplied_categories, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s);
+                """, suppliers)
+                print("Suppliers seeded successfully.")
+
+            # Seed default products if empty
+            cursor.execute("SELECT COUNT(*) AS count FROM products;")
+            if cursor.fetchone()["count"] == 0:
+                print("Seeding initial products...")
+                cursor.execute("SELECT id, code FROM categories;")
+                cat_map = {row["code"]: row["id"] for row in cursor.fetchall()}
+
+                products = [
+                    ("PRD-1001", "Avenue Beast Gaming PC (i7/RTX 4070)", "TechAvenue", cat_map.get("COMP", 1), 65000.00, 78999.00, 8, 3, "in_stock", "/products/desktop.svg", "High performance Intel Core i7 14th Gen, RTX 4070 12GB, 32GB DDR5, 1TB NVMe"),
+                    ("PRD-1002", "Avenue Slim Ultrabook Laptop 15.6\"", "TechAvenue", cat_map.get("COMP", 1), 38000.00, 46500.00, 15, 5, "in_stock", "/products/laptop.svg", "Intel Core i5, 16GB RAM, 512GB SSD, FHD IPS Display, All-day Battery"),
+                    ("PRD-1003", "ApexPro RGB Mechanical Keyboard", "ApexGear", cat_map.get("KEYBOARD", 2), 3200.00, 4499.00, 32, 8, "in_stock", "/products/keyboard.svg", "Hot-swappable tactile switches with customizable per-key RGB backlighting"),
+                    ("PRD-1004", "SilentTouch Wireless Keyboard", "LogiTech", cat_map.get("KEYBOARD", 2), 1200.00, 1899.00, 24, 6, "in_stock", "/products/keyboard.svg", "Ergonomic low-profile wireless multi-device keyboard with quiet membrane switches"),
+                    ("PRD-1005", "ViperStrike Wireless Gaming Mouse", "Razer", cat_map.get("MOUSE", 3), 2800.00, 3899.00, 20, 5, "in_stock", "/products/mouse.svg", "Ultra-lightweight 26,000 DPI optical sensor with 80-hour rechargeable battery"),
+                    ("PRD-1006", "UltraView 27\" 165Hz IPS Gaming Monitor", "Asus", cat_map.get("MONITOR", 4), 11500.00, 14999.00, 12, 4, "in_stock", "/products/monitor.svg", "2560x1440 QHD 165Hz 1ms response time, HDR400, G-Sync Compatible"),
+                    ("PRD-1007", "Intel Core i7-14700K Desktop Processor", "Intel", cat_map.get("COMP-PARTS", 5), 21000.00, 25500.00, 10, 3, "in_stock", "/products/cpu.svg", "20 cores (8 P-cores + 12 E-cores) up to 5.6 GHz turbo boost unlocked"),
+                    ("PRD-1008", "NVIDIA GeForce RTX 4070 Super 12GB", "Asus", cat_map.get("COMP-PARTS", 5), 36000.00, 42999.00, 6, 2, "in_stock", "/products/gpu.svg", "Ada Lovelace architecture, DLSS 3.5, 12GB GDDR6X, Triple Fan cooling"),
+                    ("PRD-1009", "Vengeance RGB 32GB (2x16GB) DDR5 6000MHz", "Corsair", cat_map.get("COMP-PARTS", 5), 5800.00, 7499.00, 18, 5, "in_stock", "/products/ram.svg", "High performance overclocked DDR5 memory with ten-zone RGB lighting"),
+                    ("PRD-1010", "Samsung 990 PRO 2TB PCIe 4.0 NVMe SSD", "Samsung", cat_map.get("STORAGE", 6), 7900.00, 10299.00, 14, 4, "in_stock", "/products/storage.svg", "Up to 7,450 MB/s sequential read and 6,900 MB/s write speed"),
+                    ("PRD-1011", "Archer AX73 WiFi 6 Gigabit Router", "TP-Link", cat_map.get("STORAGE", 6), 4200.00, 5699.00, 9, 3, "in_stock", "/products/router.svg", "Dual-Band 6-stream Gigabit Wi-Fi 6 up to 5400 Mbps with 6 external antennas")
+                ]
+                cursor.executemany("""
+                    INSERT INTO products (sku, name, brand, category_id, cost_price, selling_price, stock_quantity, reorder_level, status, image_url, description)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                """, products)
+                print("Products seeded successfully.")
     finally:
         conn.close()
 
