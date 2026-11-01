@@ -14,7 +14,17 @@ from database import get_db_connection, init_db
 import ml_engine
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173",
+                "http://127.0.0.1:5173"
+            ]
+        }
+    }
+)
 
 # Directory configurations for uploads
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
