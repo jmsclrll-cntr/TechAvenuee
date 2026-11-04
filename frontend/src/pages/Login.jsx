@@ -185,11 +185,11 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
         {/* Brand Logo & Heading with User's Uploaded Photo */}
         <div className="text-center space-y-4">
           {/* Logo Badge Container */}
-          <div className="relative w-36 sm:w-44 rounded-2xl bg-white p-3 mx-auto border border-cyan-400/60 group hover:scale-105 transition-all duration-300 shadow-none">
+          <div className="relative w-40 sm:w-48 rounded-2xl bg-black/90 p-2.5 mx-auto border border-white/20 dark:border-cyan-500/40 group hover:scale-105 transition-all duration-300 shadow-none overflow-hidden">
             <img
               src={logoImg}
-              alt="Tech Avenue"
-              className="relative w-full h-auto max-h-20 object-contain filter drop-shadow-sm"
+              alt="Tech Avenue Smart Solutions"
+              className="relative w-full h-auto max-h-24 object-contain"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.parentNode.innerHTML = '<svg class="w-10 h-10 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>';

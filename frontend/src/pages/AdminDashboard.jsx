@@ -29,6 +29,7 @@ import Modal from '../components/Modal';
 import { api } from '../api';
 import PurchasingManagement from './PurchasingManagement';
 import ReportsAnalytics from './ReportsAnalytics';
+import logoImg from '../assets/logo.png';
 
 export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [stats, setStats] = useState(null);
@@ -276,23 +277,28 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
         <div className="space-y-6 sm:space-y-8">
           {/* Executive Header Banner */}
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-navy via-navy-light to-navy p-6 sm:p-7 text-white shadow-lg border border-cyan-500/20">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
-                    EXECUTIVE OVERVIEW
-                  </span>
-                  <span className="text-xs text-slate-300 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Live Store Operations
-                  </span>
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/50 border border-white/20 p-2 shrink-0 overflow-hidden shadow-inner flex items-center justify-center">
+                  <img src={logoImg} alt="Tech Avenue Smart Solutions" className="w-full h-full object-contain" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                  Welcome back, {user?.full_name || user?.username || 'Administrator'}
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-200 mt-1 max-w-2xl">
-                  Comprehensive performance analytics, real-time inventory levels, and AI-powered forecasting.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
+                      EXECUTIVE OVERVIEW
+                    </span>
+                    <span className="text-xs text-slate-300 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Live Store Operations
+                    </span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                    Welcome back, {user?.full_name || user?.username || 'Administrator'}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-200 mt-0.5 max-w-2xl">
+                    Comprehensive performance analytics, real-time inventory levels, and AI-powered forecasting.
+                  </p>
+                </div>
               </div>
 
               {/* Action Buttons */}
