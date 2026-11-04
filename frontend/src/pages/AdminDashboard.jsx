@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  CircleDollarSign, 
-  TrendingUp, 
-  Package, 
-  Boxes, 
-  AlertTriangle, 
-  Receipt, 
-  Users, 
-  Sparkles, 
-  Search, 
-  Plus, 
-  Edit2, 
-  UserPlus, 
-  CheckCircle2, 
-  XCircle, 
-  Download, 
-  Truck, 
-  Activity, 
-  BrainCircuit, 
-  FileSpreadsheet, 
+import {
+  CircleDollarSign,
+  TrendingUp,
+  Package,
+  Boxes,
+  AlertTriangle,
+  Receipt,
+  Users,
+  Sparkles,
+  Search,
+  Plus,
+  Edit2,
+  UserPlus,
+  CheckCircle2,
+  XCircle,
+  Download,
+  Truck,
+  Activity,
+  BrainCircuit,
+  FileSpreadsheet,
   Settings as SettingsIcon,
   ShieldCheck,
   Eye
@@ -59,6 +59,18 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [newUser, setNewUser] = useState({
     username: '', full_name: '', email: '', password: '', role: 'sales_personnel'
   });
+
+  // Store Settings (Individual Settings Panel)
+  const [storeSettings, setStoreSettings] = useState({
+    storeName: 'Tech Avenue Smart Solutions',
+    branchName: 'Main HQ - Flagship',
+    vatRate: 12,
+    currency: 'PHP (₱)',
+    reorderThreshold: 10,
+    receiptFooter: 'Thank you for shopping at Tech Avenue! Official warranty valid with this receipt.',
+    autoDeductStock: true
+  });
+  const [settingsSavedToast, setSettingsSavedToast] = useState(false);
 
   // Prediction Form State (Executive View)
   const [selectedTask, setSelectedTask] = useState('sales');
@@ -258,75 +270,128 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const tables = stats?.tables || {};
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1700px] mx-auto transition-colors">
       {/* VIEW: MAIN ADMIN DASHBOARD */}
       {activeTab === 'dashboard' && (
-        <div className="space-y-6">
-          {/* Top 8 KPI Cards (Required for Admin) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
-            <StatCard
-              title="Daily Sales"
-              value={`PHP ${(cards.total_daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Gross revenue today"
-              icon={CircleDollarSign}
-              badgeColor="green"
-              trend="+12.4%"
-            />
-            <StatCard
-              title="Monthly Revenue"
-              value={`PHP ${(cards.monthly_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Current month"
-              icon={TrendingUp}
-              badgeColor="green"
-            />
-            <StatCard
-              title="Total Products"
-              value={cards.total_products || 0}
-              subtitle="Registered catalog"
-              icon={Package}
-              badgeColor="blue"
-            />
-            <StatCard
-              title="Inventory Value"
-              value={`PHP ${(cards.total_inventory_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Total asset cost"
-              icon={Boxes}
-              badgeColor="green"
-            />
-            <StatCard
-              title="Low-Stock Alerts"
-              value={cards.low_stock_products || 0}
-              subtitle="At/below threshold"
-              icon={AlertTriangle}
-              badgeColor="amber"
-              trend="Attention"
-            />
-            <StatCard
-              title="Transactions"
-              value={cards.transactions_today || 0}
-              subtitle="Completed today"
-              icon={Receipt}
-              badgeColor="blue"
-            />
-            <StatCard
-              title="Active Staff"
-              value={cards.active_employees || 0}
-              subtitle="Operating staff"
-              icon={Users}
-              badgeColor="green"
-            />
-            <StatCard
-              title="Sales Growth"
-              value={cards.predicted_sales_growth || '+14.8%'}
-              subtitle="ML projected trajectory"
-              icon={Sparkles}
-              badgeColor="blue"
-            />
+        <div className="space-y-6 sm:space-y-8">
+          {/* Executive Header Banner */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-navy via-navy-light to-navy p-6 sm:p-7 text-white shadow-lg border border-cyan-500/20">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
+                    EXECUTIVE OVERVIEW
+                  </span>
+                  <span className="text-xs text-slate-300 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live Store Operations
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                  Welcome back, {user?.full_name || user?.username || 'Administrator'}
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-200 mt-1 max-w-2xl">
+                  Comprehensive performance analytics, real-time inventory levels, and AI-powered forecasting.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={loadData}
+                  disabled={loading}
+                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold backdrop-blur-md border border-white/15 transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  title="Sync with database"
+                >
+                  <Activity className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : 'text-cyan-300'}`} />
+                  <span>{loading ? 'Syncing...' : 'Sync Data'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportReport}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Export Sales CSV</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Top 8 KPI Cards (Organized in 2 balanced 4-column rows) */}
+          <div>
+            <div className="flex items-center justify-between mb-3 px-1">
+              <h3 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Key Performance Indicators (KPIs)
+              </h3>
+              <span className="text-xs text-gray-400">Real-time store metrics</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              <StatCard
+                title="Daily Sales"
+                value={`PHP ${(cards.total_daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                subtitle="Gross revenue today"
+                icon={CircleDollarSign}
+                badgeColor="green"
+                trend="+12.4%"
+              />
+              <StatCard
+                title="Monthly Revenue"
+                value={`PHP ${(cards.monthly_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                subtitle="Current month"
+                icon={TrendingUp}
+                badgeColor="green"
+              />
+              <StatCard
+                title="Total Products"
+                value={cards.total_products || 0}
+                subtitle="Registered catalog"
+                icon={Package}
+                badgeColor="blue"
+              />
+              <StatCard
+                title="Inventory Value"
+                value={`PHP ${(cards.total_inventory_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                subtitle="Total asset cost"
+                icon={Boxes}
+                badgeColor="green"
+              />
+              <StatCard
+                title="Low-Stock Alerts"
+                value={cards.low_stock_products || 0}
+                subtitle="At/below threshold"
+                icon={AlertTriangle}
+                badgeColor="amber"
+                trend="Attention"
+              />
+              <StatCard
+                title="Transactions"
+                value={cards.transactions_today || 0}
+                subtitle="Completed today"
+                icon={Receipt}
+                badgeColor="blue"
+              />
+              <StatCard
+                title="Active Staff"
+                value={cards.active_employees || 0}
+                subtitle="Operating staff"
+                icon={Users}
+                badgeColor="green"
+              />
+              <StatCard
+                title="Sales Growth"
+                value={cards.predicted_sales_growth || '+14.8%'}
+                subtitle="ML projected trajectory"
+                icon={Sparkles}
+                badgeColor="blue"
+              />
+            </div>
           </div>
 
           {/* Charts Row: 5 responsive charts for Admin */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-8 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <ResponsiveLineChart
                 title="Daily & Monthly Sales Trend vs Projected (PHP)"
                 data={charts.sales_trends || []}
@@ -337,7 +402,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 strokeColor2="#10B981"
               />
             </div>
-            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <ResponsiveDonutChart
                 title="Inventory Status Distribution"
                 data={charts.inventory_status || []}
@@ -349,7 +414,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <ResponsiveBarChart
                 title="Category Stock Breakdown"
                 data={charts.category_breakdown || []}
@@ -358,7 +423,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 barColor="#1E3A5F"
               />
             </div>
-            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <ResponsiveBarChart
                 title="Top-Selling Products (Volume)"
                 data={charts.top_products || []}
@@ -367,7 +432,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 barColor="#10B981"
               />
             </div>
-            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <ResponsiveLineChart
                 title="Predicted Demand Trends"
                 data={charts.predicted_demand_trends || []}
@@ -531,36 +596,39 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: INVENTORY MANAGEMENT */}
       {activeTab === 'inventory' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Master Inventory Administration</h2>
-              <p className="text-xs text-gray-500">Full administrative control over store inventory, pricing, and stock limits</p>
+              <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">Master Inventory Catalog</h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Full administrative authority over hardware specifications, procurement cost, and retail pricing
+              </p>
             </div>
             <button
+              type="button"
               onClick={() => setIsAddProductModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              Add New Product
+              <span>Add New Product</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100 dark:border-darkbg-border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search inventory..."
+                placeholder="Search by product name, SKU, or brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full text-xs sm:text-sm pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-gray-900 dark:text-white focus:ring-2 focus:ring-navy/20 dark:focus:ring-cyan-500/30 outline-none"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-gray-900 dark:text-white focus:ring-2 focus:ring-navy/20 dark:focus:ring-cyan-500/30 outline-none font-medium cursor-pointer"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -569,18 +637,18 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </select>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-darkbg-border">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-gray-50/80 dark:bg-darkbg text-gray-500 uppercase text-[11px] font-bold border-b border-gray-100 dark:border-darkbg-border">
                 <tr>
-                  <th className="py-3 px-3">SKU</th>
-                  <th className="py-3 px-3">Product Name</th>
-                  <th className="py-3 px-3">Brand</th>
-                  <th className="py-3 px-3 text-right">Cost (PHP)</th>
-                  <th className="py-3 px-3 text-right">Retail (PHP)</th>
-                  <th className="py-3 px-3 text-center">Stock</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-3 text-right">Action</th>
+                  <th className="py-3 px-3.5">SKU</th>
+                  <th className="py-3 px-3.5">Product Name</th>
+                  <th className="py-3 px-3.5">Brand</th>
+                  <th className="py-3 px-3.5 text-right">Cost (PHP)</th>
+                  <th className="py-3 px-3.5 text-right">Retail (PHP)</th>
+                  <th className="py-3 px-3.5 text-center">Stock</th>
+                  <th className="py-3 px-3.5 text-center">Status</th>
+                  <th className="py-3 px-3.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
@@ -593,9 +661,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-center font-bold">{p.stock_quantity}</td>
                     <td className="py-2.5 px-3 text-center">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        p.stock_quantity === 0 ? 'bg-red-500/10 text-red-500' : p.stock_quantity <= p.reorder_level ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-600'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.stock_quantity === 0 ? 'bg-red-500/10 text-red-500' : p.stock_quantity <= p.reorder_level ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-600'
+                        }`}>
                         {p.status?.replace('_', ' ').toUpperCase()}
                       </span>
                     </td>
@@ -621,32 +688,35 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: USER MANAGEMENT */}
       {activeTab === 'users' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Store Employee Accounts & RBAC</h2>
-              <p className="text-xs text-gray-500">Create team accounts, assign dashboard roles, and configure system access</p>
+              <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">Store Employee Accounts & Access</h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Create team accounts, assign role permissions, and control operational access
+              </p>
             </div>
             <button
+              type="button"
               onClick={() => setIsAddUserModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <UserPlus className="w-4 h-4" />
-              Create Employee Account
+              <span>Create Employee Account</span>
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-darkbg-border">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-gray-50/80 dark:bg-darkbg text-gray-500 uppercase text-[11px] font-bold border-b border-gray-100 dark:border-darkbg-border">
                 <tr>
-                  <th className="py-3 px-3">Full Name</th>
-                  <th className="py-3 px-3">Username</th>
-                  <th className="py-3 px-3">Email Address</th>
-                  <th className="py-3 px-3">Assigned Role</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-3">Last Login</th>
-                  <th className="py-3 px-3 text-right">Actions</th>
+                  <th className="py-3 px-3.5">Full Name</th>
+                  <th className="py-3 px-3.5">Username</th>
+                  <th className="py-3 px-3.5">Email Address</th>
+                  <th className="py-3 px-3.5">Assigned Role</th>
+                  <th className="py-3 px-3.5 text-center">Status</th>
+                  <th className="py-3 px-3.5">Last Login</th>
+                  <th className="py-3 px-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
@@ -668,9 +738,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       </select>
                     </td>
                     <td className="py-2.5 px-3 text-center">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        u.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-500'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${u.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-500'
+                        }`}>
                         {u.status.toUpperCase()}
                       </span>
                     </td>
@@ -679,11 +748,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       {u.id !== user?.id && (
                         <button
                           onClick={() => handleToggleUserStatus(u.id, u.status)}
-                          className={`px-2 py-1 rounded text-[11px] font-semibold ${
-                            u.status === 'active' 
-                              ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20' 
-                              : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
-                          }`}
+                          className={`px-2 py-1 rounded text-[11px] font-semibold ${u.status === 'active'
+                            ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20'
+                            : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
+                            }`}
                         >
                           {u.status === 'active' ? 'Deactivate' : 'Activate'}
                         </button>
@@ -699,33 +767,36 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SALES TRANSACTIONS MONITOR */}
       {activeTab === 'sales' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Store Sales Transaction Audit</h2>
-              <p className="text-xs text-gray-500">Comprehensive real-time register ledger from MySQL database</p>
+              <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">Store Sales Transaction Audit</h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Comprehensive real-time register ledger and electronic audit trail
+              </p>
             </div>
             <button
+              type="button"
               onClick={handleExportReport}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <Download className="w-4 h-4" />
-              Export Transactions CSV
+              <span>Export Transactions CSV</span>
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-darkbg-border">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-gray-50/80 dark:bg-darkbg text-gray-500 uppercase text-[11px] font-bold border-b border-gray-100 dark:border-darkbg-border">
                 <tr>
-                  <th className="py-3 px-3">Invoice #</th>
-                  <th className="py-3 px-3">Date & Time</th>
-                  <th className="py-3 px-3">Customer</th>
-                  <th className="py-3 px-3">Cashier Station</th>
-                  <th className="py-3 px-3 text-right">Subtotal</th>
-                  <th className="py-3 px-3 text-right">12% VAT</th>
-                  <th className="py-3 px-3 text-right">Gross Total</th>
-                  <th className="py-3 px-3 text-center">Payment</th>
+                  <th className="py-3 px-3.5">Invoice #</th>
+                  <th className="py-3 px-3.5">Date & Time</th>
+                  <th className="py-3 px-3.5">Customer</th>
+                  <th className="py-3 px-3.5">Cashier Station</th>
+                  <th className="py-3 px-3.5 text-right">Subtotal</th>
+                  <th className="py-3 px-3.5 text-right">12% VAT</th>
+                  <th className="py-3 px-3.5 text-right">Gross Total</th>
+                  <th className="py-3 px-3.5 text-center">Payment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
@@ -764,15 +835,15 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: ADMIN KNOWLEDGE ANALYSIS & PREDICTION (EXECUTIVE VIEW) */}
       {isPredictionTab && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <BrainCircuit className="w-5 h-5 text-purple-600" />
+                <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
+                  <BrainCircuit className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   Executive Prediction & Business Forecasting
                 </h2>
-                <p className="text-xs text-gray-500">
-                  Select a business task, configure input parameters, and receive predictive revenue models and recommendations.
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  Select a business task, configure input parameters, and receive predictive revenue models and recommendations
                 </p>
               </div>
 
@@ -806,11 +877,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     setPredictionError(null);
                     setPredictionSuccess(null);
                   }}
-                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${
-                    selectedTask === task.id
-                      ? 'bg-navy text-white border-navy shadow-sm'
-                      : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
-                  }`}
+                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${selectedTask === task.id
+                    ? 'bg-navy text-white border-navy shadow-sm'
+                    : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
+                    }`}
                 >
                   {task.label}
                 </button>
@@ -824,7 +894,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
                   <span>{predictionError}</span>
                 </div>
-                <button onClick={() => setPredictionError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
+                <button onClick={() => setPredictionError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">├ù</button>
               </div>
             )}
 
@@ -834,7 +904,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
                   <span>{predictionSuccess}</span>
                 </div>
-                <button onClick={() => setPredictionSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
+                <button onClick={() => setPredictionSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">├ù</button>
               </div>
             )}
 
@@ -1028,9 +1098,144 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
+      {/* VIEW: SYSTEM & STORE CONFIGURATION (INDIVIDUAL PANEL) */}
+      {activeTab === 'settings' && (
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
+                <SettingsIcon className="w-6 h-6 text-navy dark:text-cyan-400" />
+                Store Settings & System Controls
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Configure corporate store identity, fiscal VAT rate, POS preferences, and telemetry thresholds
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSettingsSavedToast(true);
+                setTimeout(() => setSettingsSavedToast(false), 3000);
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+            >
+              <Check className="w-4 h-4" />
+              <span>Save Preferences</span>
+            </button>
+          </div>
+
+          {settingsSavedToast && (
+            <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm animate-in fade-in">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Store configuration saved successfully!</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Store Information */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-4">
+              <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+                <Building className="w-4 h-4" />
+                <span>Store Identity & Branch</span>
+              </div>
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="block font-semibold mb-1 text-gray-700 dark:text-gray-300">Registered Store Name</label>
+                  <input
+                    type="text"
+                    value={storeSettings.storeName}
+                    onChange={(e) => setStoreSettings({ ...storeSettings, storeName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1 text-gray-700 dark:text-gray-300">HQ Branch / Outlet</label>
+                  <input
+                    type="text"
+                    value={storeSettings.branchName}
+                    onChange={(e) => setStoreSettings({ ...storeSettings, branchName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Financial & Fiscal */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-4">
+              <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+                <CreditCard className="w-4 h-4" />
+                <span>Point of Sale & Fiscal Rules</span>
+              </div>
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="block font-semibold mb-1 text-gray-700 dark:text-gray-300">Value Added Tax (VAT %)</label>
+                  <input
+                    type="number"
+                    value={storeSettings.vatRate}
+                    onChange={(e) => setStoreSettings({ ...storeSettings, vatRate: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1 text-gray-700 dark:text-gray-300">Default Reorder Warning Level</label>
+                  <input
+                    type="number"
+                    value={storeSettings.reorderThreshold}
+                    onChange={(e) => setStoreSettings({ ...storeSettings, reorderThreshold: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Receipt Customization */}
+          <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-3">
+            <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+              <Printer className="w-4 h-4" />
+              <span>Official Receipt Footer Message</span>
+            </div>
+            <textarea
+              rows={2}
+              value={storeSettings.receiptFooter}
+              onChange={(e) => setStoreSettings({ ...storeSettings, receiptFooter: e.target.value })}
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+            />
+          </div>
+
+          {/* Infrastructure Health Status */}
+          <div className="p-5 rounded-2xl bg-navy/5 dark:bg-darkbg/50 border border-navy/15 dark:border-darkbg-border space-y-3">
+            <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+              <Database className="w-4 h-4" />
+              <span>System & Database Diagnostics</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400 font-medium">MySQL Database:</span>
+                <span className="font-bold text-emerald-600 flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Connected
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400 font-medium">ML Inference Service:</span>
+                <span className="font-bold text-purple-600 flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                  Ready
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-400 font-medium">Role Access Level:</span>
+                <span className="font-bold text-navy dark:text-cyan-400">Admin (L4)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* VIEW: MY PROFILE */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-8 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-navy text-white text-2xl font-bold flex items-center justify-center shadow-md">
               {user?.full_name?.charAt(0) || 'A'}

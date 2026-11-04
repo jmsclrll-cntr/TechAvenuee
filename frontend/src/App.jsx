@@ -148,8 +148,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-gray-100 flex transition-colors">
-      {/* Persistent Role-Specific Sidebar */}
+    <div className="h-screen bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-gray-100 flex overflow-hidden transition-colors">
+      {/* Persistent Role-Specific Sidebar - Fixed Individual Panel */}
       <Sidebar
         role={user.role}
         activeTab={activeTab}
@@ -158,8 +158,8 @@ function App() {
         onSwitchRole={handleSwitchRole}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      {/* Main Content Area - Scrollable Workspace Panel */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Header with theme toggle and live info */}
         <Header
           user={user}
@@ -171,7 +171,7 @@ function App() {
         />
 
         {/* Dashboard Role Body */}
-        <main className="flex-1">
+        <main className="flex-1 overflow-y-auto">
           {renderDashboardContent()}
         </main>
       </div>

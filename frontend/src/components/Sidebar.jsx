@@ -126,10 +126,11 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
   };
 
   return (
-    <aside className="w-64 shrink-0 min-h-screen bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-colors shadow-lg text-white">
-      {/* Brand Logo & Header */}
-      <div>
-        <div className="p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center gap-3">
+    <aside className="w-64 shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-colors shadow-2xl text-white z-40 select-none overflow-hidden">
+      {/* Top Section */}
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Brand Logo & Header */}
+        <div className="p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center gap-3 shrink-0">
           <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
             <img 
               src={logoImg} 
@@ -152,7 +153,7 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
         </div>
 
         {/* Current Active Role Badge */}
-        <div className="px-5 py-3 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between">
+        <div className="px-5 py-3 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between shrink-0">
           <span className="text-[11px] text-greige uppercase font-semibold tracking-wider">
             Active Workspace
           </span>
@@ -161,8 +162,8 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
           </span>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-270px)]">
+        {/* Navigation Items - Individual Scrollable Panel */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
 
