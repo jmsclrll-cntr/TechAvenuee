@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Lock, 
-  User, 
-  Eye, 
-  EyeOff, 
-  Sun, 
-  Moon, 
+import {
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  Sun,
+  Moon,
   ArrowRight,
   AlertCircle
 } from 'lucide-react';
@@ -82,9 +82,9 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
         {/* Brand Logo & Heading */}
         <div className="text-center space-y-2">
           <div className="w-16 h-16 rounded-2xl bg-navy/10 dark:bg-white/5 border border-navy/20 dark:border-white/10 mx-auto flex items-center justify-center p-2 shadow-inner">
-            <img 
-              src={logoImg} 
-              alt="Tech Avenue" 
+            <img
+              src={logoImg}
+              alt="Tech Avenue"
               className="w-full h-full object-contain"
               onError={(e) => {
                 e.target.style.display = 'none';

@@ -82,16 +82,16 @@ def serve_product_image(filename):
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     data = request.get_json() or {}
-    email = data.get("email", "").strip().lower()
+    identifier = (data.get("email") or data.get("username") or data.get("identifier") or "").strip().lower()
     password = data.get("password", "")
 
-    if not email or not password:
-        return jsonify({"status": "error", "message": "Email and password are required"}), 400
+    if not identifier or not password:
+        return jsonify({"status": "error", "message": "Email/username and password are required"}), 400
 
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE LOWER(email) = %s OR LOWER(username) = %s;", (email, email))
+            cursor.execute("SELECT * FROM users WHERE LOWER(email) = %s OR LOWER(username) = %s;", (identifier, identifier))
             user = cursor.fetchone()
             
             if not user or not check_password_hash(user["password_hash"], password):

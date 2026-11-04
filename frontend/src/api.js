@@ -47,10 +47,22 @@ export async function apiRequest(endpoint, options = {}) {
 
 export const api = {
   // Auth
-  login: (email, password) => apiRequest("/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password })
-  }),
+  login: (identifierOrData, password) => {
+    let payload;
+    if (typeof identifierOrData === 'object' && identifierOrData !== null) {
+      payload = identifierOrData;
+    } else {
+      payload = {
+        email: identifierOrData,
+        username: identifierOrData,
+        password
+      };
+    }
+    return apiRequest("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+  },
   switchRole: (role) => apiRequest("/auth/switch-role", {
     method: "POST",
     body: JSON.stringify({ role })

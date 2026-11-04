@@ -1,7 +1,7 @@
 import os
 import pymysql
 from pymysql.cursors import DictCursor
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
 DB_CONFIG = {
@@ -295,49 +295,25 @@ def init_db():
 
             print("Database tables verified/initialized successfully.")
 
-            # Seed default users if users table is empty
-            cursor.execute("SELECT COUNT(*) AS count FROM users;")
-            if cursor.fetchone()["count"] == 0:
-                print("Seeding default role-based accounts...")
-                default_users = [
-                    (
-                        "admin",
-                        "Carl Cantre",
-                        "admin@techavenue.com",
-                        generate_password_hash("admin123"),
-                        "admin",
-                        "active"
-                    ),
-                    (
-                        "clerk",
-                        "Maria Santos",
-                        "clerk@techavenue.com",
-                        generate_password_hash("clerk123"),
-                        "inventory_clerk",
-                        "active"
-                    ),
-                    (
-                        "sales",
-                        "John Reyes",
-                        "sales@techavenue.com",
-                        generate_password_hash("sales123"),
-                        "sales_personnel",
-                        "active"
-                    ),
-                    (
-                        "instructor",
-                        "Academic Instructor",
-                        "instructor@techavenue.com",
-                        generate_password_hash("instructor123"),
-                        "instructor",
-                        "active"
-                    )
-                ]
-                cursor.executemany("""
-                    INSERT INTO users (username, full_name, email, password_hash, role, status)
-                    VALUES (%s, %s, %s, %s, %s, %s);
-                """, default_users)
-                print("Default users seeded successfully.")
+            # Ensure default role-based accounts exist with valid password hashes
+            default_users = [
+                ("admin", "Carl Cantre", "admin@techavenue.com", "admin123", "admin"),
+                ("clerk", "Maria Santos", "clerk@techavenue.com", "clerk123", "inventory_clerk"),
+                ("sales", "John Reyes", "sales@techavenue.com", "sales123", "sales_personnel"),
+                ("instructor", "Academic Instructor", "instructor@techavenue.com", "instructor123", "instructor")
+            ]
+            for uname, fname, mail, pwd, role in default_users:
+                cursor.execute("SELECT id, password_hash FROM users WHERE username = %s OR email = %s;", (uname, mail))
+                existing = cursor.fetchone()
+                if not existing:
+                    cursor.execute("""
+                        INSERT INTO users (username, full_name, email, password_hash, role, status)
+                        VALUES (%s, %s, %s, %s, %s, 'active');
+                    """, (uname, fname, mail, generate_password_hash(pwd), role))
+                    print(f"Created default user: {uname}")
+                elif not existing.get("password_hash") or existing["password_hash"].startswith("PASTE_") or not check_password_hash(existing["password_hash"], pwd):
+                    cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s;", (generate_password_hash(pwd), existing["id"]))
+                    print(f"Repaired password hash for user: {uname}")
 
             # Seed default categories if empty
             cursor.execute("SELECT COUNT(*) AS count FROM categories;")
