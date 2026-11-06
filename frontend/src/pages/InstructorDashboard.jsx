@@ -22,12 +22,15 @@ import {
   Sparkles,
   BarChart3,
   Layers,
-  FileText
+  FileText,
+  Eye
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart, ModelComparisonBarChart } from '../components/Charts';
 import Modal from '../components/Modal';
 import { api } from '../api';
+import SupplierTable from '../components/SupplierTable';
+import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const [stats, setStats] = useState(null);
@@ -37,6 +40,9 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const [previewPage, setPreviewPage] = useState(1);
   const [previewSearch, setPreviewSearch] = useState('');
   const [loadingPreview, setLoadingPreview] = useState(false);
+  const [suppliers, setSuppliers] = useState([]);
+  const [viewProduct, setViewProduct] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   // Model Training State
   const [trainTask, setTrainTask] = useState('sales');
@@ -91,13 +97,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, datasetsRes, modelsRes, histRes, invRes, salesRes] = await Promise.all([
+      const [statsRes, datasetsRes, modelsRes, histRes, invRes, salesRes, supRes] = await Promise.all([
         api.getDashboardStats('instructor'),
         api.getDatasets(),
         api.getSavedModels(),
         api.getPredictionHistory(),
         api.getInventory(),
-        api.getSalesHistory()
+        api.getSalesHistory(),
+        api.getSuppliers()
       ]);
 
       if (statsRes.status === 'success') setStats(statsRes.data);
@@ -106,6 +113,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       if (histRes.status === 'success') setPredictionHistory(histRes.history);
       if (invRes.status === 'success') setOverviewProducts(invRes.products);
       if (salesRes.status === 'success') setOverviewSales(salesRes.transactions);
+      if (supRes && supRes.status === 'success') setSuppliers(supRes.suppliers || []);
     } catch (err) {
       console.error('Error fetching instructor data:', err);
     } finally {
@@ -410,16 +418,24 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 {overviewProducts
                   .filter(p => !overviewSearch || p.name.toLowerCase().includes(overviewSearch.toLowerCase()) || p.sku.toLowerCase().includes(overviewSearch.toLowerCase()))
                   .map(p => (
-                    <tr key={p.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg">
+                    <tr 
+                      key={p.id} 
+                      onClick={() => {
+                        setViewProduct(p);
+                        setIsViewModalOpen(true);
+                      }}
+                      className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                      title="Click to view full product & supplier specifications"
+                    >
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded bg-white dark:bg-darkbg border p-0.5 shrink-0 flex items-center justify-center">
-                            <img src={p.image_url || '/products/default.svg'} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/default.svg'; }} />
+                            <img src={p.image_url || '/products/desktop.svg'} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/desktop.svg'; }} />
                           </div>
-                          <span className="font-bold text-gray-900 dark:text-white truncate max-w-[200px]">{p.name}</span>
+                          <span className="font-bold text-gray-900 dark:text-white truncate max-w-[200px] group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">{p.name}</span>
                         </div>
                       </td>
-                      <td className="py-2.5 px-2 font-mono text-gray-500">{p.sku}</td>
+                      <td className="py-2.5 px-2 font-mono text-gray-500 group-hover:underline">{p.sku}</td>
                       <td className="py-2.5 px-2 text-gray-600 dark:text-gray-300">{p.category_name || p.category}</td>
                       <td className="py-2.5 px-2 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-2 text-right font-mono font-bold text-navy dark:text-greige">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
@@ -440,6 +456,17 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Supplier Information Table */}
+          <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border">
+            <SupplierTable
+              suppliers={suppliers}
+              title="Verified Suppliers & Distribution Partners"
+              subtitle="Inspection and audit of registered hardware suppliers and supply-chain sources"
+              canAdd={false}
+              role="instructor"
+            />
           </div>
         </div>
       )}
@@ -512,25 +539,26 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       )}
       {activeTab === 'datasets' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-6">
+            {/* Header: Title, Subtitle, Dataset Selector & Download */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Database className="w-5 h-5 text-navy dark:text-blue-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                  <Database className="w-6 h-6 text-navy dark:text-cyan-400" />
                   Dataset Explorer & Inspection Suite
                 </h2>
-                <p className="text-xs text-gray-500">
-                  Inspect validated historical datasets. Each required dataset strictly maintains at least 1,000 real records.
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 max-w-2xl leading-relaxed">
+                  Inspect validated historical datasets. Each required dataset strictly maintains verified real records for training and predictive analytics.
                 </p>
               </div>
 
-              {/* Dataset Selector */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold">Select Dataset:</span>
+              {/* Dataset Selector & Download */}
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Dataset:</span>
                 <select
                   value={selectedDataset}
                   onChange={(e) => setSelectedDataset(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-mono font-semibold"
+                  className="text-sm px-3.5 py-2 rounded-xl border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
                 >
                   {datasets.map((d) => (
                     <option key={d.filename} value={d.filename}>
@@ -542,73 +570,83 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 <a
                   href={api.getDatasetDownloadUrl(selectedDataset)}
                   download={selectedDataset}
-                  className="px-3 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-navy hover:bg-navy-light text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  Download CSV
+                  <Download className="w-4 h-4" />
+                  <span>Download CSV</span>
                 </a>
               </div>
             </div>
 
-            {/* Dataset Metadata Summary Cards (Required) */}
+            {/* Dataset Metadata Summary Cards */}
             {currentDatasetMeta && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Total Records</p>
-                  <p className="text-base font-bold font-mono text-navy dark:text-white mt-0.5">
-                    {currentDatasetMeta.total_records.toLocaleString()}
-                  </p>
-                  <span className="text-[9px] font-semibold text-emerald-600">✓ &gt;= 1,000 Verified</span>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Total Features</p>
-                  <p className="text-base font-bold font-mono text-navy dark:text-white mt-0.5">
-                    {currentDatasetMeta.features_count}
-                  </p>
-                  <span className="text-[9px] text-gray-400">Columns</span>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Target Variable</p>
-                  <p className="text-sm font-bold font-mono text-purple-600 dark:text-purple-400 mt-0.5 truncate">
-                    {currentDatasetMeta.target_variable}
-                  </p>
-                  <span className="text-[9px] text-gray-400">Supervised Target</span>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Missing Values</p>
-                  <p className="text-base font-bold font-mono text-emerald-600 mt-0.5">
-                    {currentDatasetMeta.missing_values}
-                  </p>
-                  <span className="text-[9px] text-emerald-600">Clean / Imputed</span>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Completeness</p>
-                  <p className="text-base font-bold font-mono text-emerald-600 mt-0.5">
-                    {currentDatasetMeta.completeness_pct}%
-                  </p>
-                  <span className="text-[9px] text-gray-400">Data Quality</span>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-100 dark:border-darkbg-border col-span-2">
-                  <p className="text-[10px] uppercase font-bold text-gray-400">Date / Observation Range</p>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 mt-1 truncate">
-                    {currentDatasetMeta.date_range || 'Cross-sectional catalog history'}
-                  </p>
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                  Dataset Summary & Health Metrics
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5">
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Total Records</p>
+                    <p className="text-2xl font-black font-mono text-navy dark:text-white mt-1">
+                      {currentDatasetMeta.total_records.toLocaleString()}
+                    </p>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">
+                      ✓ &gt;= 1,000 Verified
+                    </span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Features</p>
+                    <p className="text-2xl font-black font-mono text-navy dark:text-white mt-1">
+                      {currentDatasetMeta.features_count}
+                    </p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Columns</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Target Variable</p>
+                    <p className="text-base font-bold font-mono text-purple-600 dark:text-purple-400 mt-1 truncate" title={currentDatasetMeta.target_variable}>
+                      {currentDatasetMeta.target_variable}
+                    </p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Supervised</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Missing Values</p>
+                    <p className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-1">
+                      {currentDatasetMeta.missing_values}
+                    </p>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">Clean / Complete</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Completeness</p>
+                    <p className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-1">
+                      {currentDatasetMeta.completeness_pct}%
+                    </p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Data Quality</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border col-span-2">
+                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Observation Range</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-1 truncate">
+                      {currentDatasetMeta.date_range || 'Cross-sectional historical dataset'}
+                    </p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Validated Range</span>
+                  </div>
                 </div>
               </div>
             )}
 
             {/* Feature Names & Data Types Attributes Table */}
             {currentDatasetMeta && (
-              <div className="space-y-2 pt-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
+              <div className="space-y-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   Feature Schema & Attribute Types
                 </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                   {currentDatasetMeta.columns?.map((col) => (
-                    <div key={col.name} className="p-2 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-xs">
-                      <p className="font-mono font-bold text-navy dark:text-blue-400 truncate">{col.name}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Type: {col.type}</p>
-                      <p className="text-[10px] text-gray-400">Unique: {col.unique_count}</p>
+                    <div key={col.name} className="p-3 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-sm">
+                      <p className="font-mono font-bold text-navy dark:text-cyan-400 truncate text-sm" title={col.name}>
+                        {col.name}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 font-medium">Type: {col.type}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Unique: {col.unique_count}</p>
                     </div>
                   ))}
                 </div>
@@ -616,13 +654,19 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             )}
 
             {/* Searchable, Paginated Dataset Preview */}
-            <div className="space-y-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+            <div className="space-y-4 pt-3 border-t border-gray-100 dark:border-darkbg-border">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                  Paginated Dataset Preview (Showing 15 rows/page)
-                </h4>
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-gray-400" />
+                <div>
+                  <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                    Paginated Dataset Records (15 rows/page)
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Inspect individual table records and feature observations.
+                  </p>
+                </div>
+
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search records in dataset..."
@@ -631,29 +675,33 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       setPreviewSearch(e.target.value);
                       loadDatasetPreview(selectedDataset, 1, e.target.value);
                     }}
-                    className="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                    className="w-full text-sm pl-10 pr-3.5 py-2 rounded-xl border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
                   />
                 </div>
               </div>
 
               {loadingPreview ? (
-                <div className="py-12 text-center text-xs text-gray-400">Loading dataset rows from CSV...</div>
+                <div className="py-16 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Loading dataset rows from CSV...
+                </div>
               ) : previewData && previewData.rows ? (
                 <>
-                  <div className="overflow-x-auto max-h-96 border border-gray-200 dark:border-darkbg-border rounded-xl">
-                    <table className="w-full text-left text-xs font-mono">
-                      <thead className="bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 uppercase sticky top-0 font-bold border-b border-gray-200 dark:border-darkbg-border">
+                  <div className="overflow-x-auto max-h-[520px] border border-gray-200 dark:border-darkbg-border rounded-xl shadow-xs">
+                    <table className="w-full text-left text-sm font-mono">
+                      <thead className="bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-200 uppercase sticky top-0 font-bold border-b border-gray-200 dark:border-darkbg-border text-xs sm:text-sm tracking-wider">
                         <tr>
                           {previewData.columns.map((c) => (
-                            <th key={c} className="py-2 px-3 whitespace-nowrap">{c}</th>
+                            <th key={c} className="py-3 px-4 whitespace-nowrap bg-gray-100 dark:bg-darkbg">
+                              {c}
+                            </th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
+                      <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-100">
                         {previewData.rows.map((row, idx) => (
-                          <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
+                          <tr key={idx} className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/60 transition-colors">
                             {previewData.columns.map((c) => (
-                              <td key={c} className="py-1.5 px-3 whitespace-nowrap text-[11px]">
+                              <td key={c} className="py-3 px-4 whitespace-nowrap text-xs sm:text-sm font-mono font-medium">
                                 {String(row[c])}
                               </td>
                             ))}
@@ -664,23 +712,25 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   </div>
 
                   {/* Pagination Controls */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
-                    <span>
-                      Page {previewData.page} of {previewData.total_pages} ({previewData.total_rows.toLocaleString()} total rows matched)
+                  <div className="flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600 dark:text-gray-300 pt-3 gap-3">
+                    <span className="font-medium">
+                      Page <strong className="text-gray-900 dark:text-white">{previewData.page}</strong> of <strong className="text-gray-900 dark:text-white">{previewData.total_pages}</strong> ({previewData.total_rows.toLocaleString()} total matched rows)
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => loadDatasetPreview(selectedDataset, previewPage - 1, previewSearch)}
                         disabled={previewPage <= 1}
-                        className="p-1.5 rounded border border-gray-200 dark:border-darkbg-border disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-darkbg-hover"
+                        className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-darkbg-border disabled:opacity-35 hover:bg-gray-100 dark:hover:bg-darkbg-hover flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" />
+                        <span>Previous</span>
                       </button>
                       <button
                         onClick={() => loadDatasetPreview(selectedDataset, previewPage + 1, previewSearch)}
                         disabled={previewPage >= previewData.total_pages}
-                        className="p-1.5 rounded border border-gray-200 dark:border-darkbg-border disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-darkbg-hover"
+                        className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-darkbg-border disabled:opacity-35 hover:bg-gray-100 dark:hover:bg-darkbg-hover flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
                       >
+                        <span>Next</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -1413,6 +1463,18 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
           </div>
         </div>
       )}
+
+      {/* VIEW PRODUCT DETAIL MODAL */}
+      <ProductDetailModal
+        isOpen={isViewModalOpen}
+        onClose={() => {
+          setIsViewModalOpen(false);
+          setViewProduct(null);
+        }}
+        product={viewProduct}
+        suppliers={suppliers}
+        role="instructor"
+      />
     </div>
   );
 }

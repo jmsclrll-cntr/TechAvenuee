@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rgbBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="30%" stop-color="#818CF8"/>
+      <stop offset="60%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
+    </linearGradient>
+    <linearGradient id="ramBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="24" fill="#0B132B"/>
+  <rect x="10" y="10" width="280" height="280" rx="20" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- STICK 1 (Front Stick) -->
+  <!-- Top RGB Lightbar -->
+  <rect x="35" y="70" width="230" height="14" rx="6" fill="url(#rgbBar)" stroke="#FFFFFF" stroke-width="1"/>
+  <!-- Heat Spreader Aluminum Chassis -->
+  <path d="M 35 84 L 265 84 L 260 160 L 40 160 Z" fill="url(#ramBody)" stroke="#334155" stroke-width="2"/>
+  <!-- Geometric grooves / cooling fins -->
+  <line x1="55" y1="95" x2="120" y2="95" stroke="#475569" stroke-width="2"/>
+  <line x1="55" y1="105" x2="100" y2="105" stroke="#475569" stroke-width="2"/>
+  <!-- Vengeance Badge -->
+  <rect x="135" y="95" width="115" height="26" rx="4" fill="#090D16" stroke="#475569" stroke-width="1"/>
+  <text x="192" y="107" fill="#F8FAFC" font-family="sans-serif" font-size="9" font-weight="900" text-anchor="middle">VENGEANCE</text>
+  <text x="192" y="117" fill="#FACC15" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">DDR5 6000MHz</text>
+  <!-- Gold Connector Contacts -->
+  <rect x="42" y="160" width="216" height="12" fill="#090D16"/>
+  <g fill="#FACC15">
+    <rect x="48" y="162" width="2.5" height="8"/>
+    <rect x="53" y="162" width="2.5" height="8"/>
+    <rect x="58" y="162" width="2.5" height="8"/>
+    <rect x="63" y="162" width="2.5" height="8"/>
+    <rect x="68" y="162" width="2.5" height="8"/>
+    <rect x="73" y="162" width="2.5" height="8"/>
+    <rect x="78" y="162" width="2.5" height="8"/>
+    <rect x="83" y="162" width="2.5" height="8"/>
+    <rect x="88" y="162" width="2.5" height="8"/>
+    <rect x="93" y="162" width="2.5" height="8"/>
+    <rect x="98" y="162" width="2.5" height="8"/>
+    <rect x="103" y="162" width="2.5" height="8"/>
+    <rect x="108" y="162" width="2.5" height="8"/>
+    <rect x="113" y="162" width="2.5" height="8"/>
+    <!-- Key notch -->
+    <rect x="135" y="162" width="2.5" height="8"/>
+    <rect x="140" y="162" width="2.5" height="8"/>
+    <rect x="145" y="162" width="2.5" height="8"/>
+    <rect x="150" y="162" width="2.5" height="8"/>
+    <rect x="155" y="162" width="2.5" height="8"/>
+    <rect x="160" y="162" width="2.5" height="8"/>
+    <rect x="165" y="162" width="2.5" height="8"/>
+    <rect x="170" y="162" width="2.5" height="8"/>
+    <rect x="175" y="162" width="2.5" height="8"/>
+    <rect x="180" y="162" width="2.5" height="8"/>
+    <rect x="185" y="162" width="2.5" height="8"/>
+    <rect x="190" y="162" width="2.5" height="8"/>
+    <rect x="195" y="162" width="2.5" height="8"/>
+    <rect x="200" y="162" width="2.5" height="8"/>
+    <rect x="205" y="162" width="2.5" height="8"/>
+    <rect x="210" y="162" width="2.5" height="8"/>
+    <rect x="215" y="162" width="2.5" height="8"/>
+    <rect x="220" y="162" width="2.5" height="8"/>
+    <rect x="225" y="162" width="2.5" height="8"/>
+    <rect x="230" y="162" width="2.5" height="8"/>
+    <rect x="235" y="162" width="2.5" height="8"/>
+    <rect x="240" y="162" width="2.5" height="8"/>
+    <rect x="245" y="162" width="2.5" height="8"/>
+    <rect x="250" y="162" width="2.5" height="8"/>
+  </g>
+
+  <!-- Dual Channel Indicator Tag -->
+  <rect x="100" y="200" width="100" height="24" rx="6" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
+  <text x="150" y="216" fill="#38BDF8" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">2 × 16GB DUAL KIT</text>
+</svg>

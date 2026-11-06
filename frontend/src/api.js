@@ -77,6 +77,7 @@ export const api = {
     method: "POST",
     body: formData
   }),
+  getProductImages: (id) => apiRequest(`/products/${id}/images`),
   stockIn: (data) => apiRequest("/inventory/stock-in", {
     method: "POST",
     body: JSON.stringify(data)
@@ -230,7 +231,7 @@ export const api = {
     }
     return apiRequest(`/datasets/${filename}/preview?${q}`);
   },
-  getDatasetDownloadUrl: (filename) => `${API_BASE}/datasets/${filename}/download?token=${localStorage.getItem('techavenue_token') || ''}`,
+  getDatasetDownloadUrl: (filename) => `${API_BASE}/datasets/${filename}/download?token=${localStorage.getItem('techavenuee_token') || ''}`,
   trainModel: (taskOrData, algorithm, testSplit = 0.2, hyperparams = {}) => {
     const payload = (typeof taskOrData === 'object' && taskOrData !== null)
       ? taskOrData

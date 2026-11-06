@@ -25,6 +25,7 @@ import {
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal from '../components/Modal';
+import ProductDetailModal from '../components/ProductDetailModal';
 import { api } from '../api';
 import PointOfSale from './PointOfSale';
 import NewTransaction from './NewTransaction';
@@ -57,21 +58,26 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
   // Product Lookup state
   const [lookupQuery, setLookupQuery] = useState('');
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, posRes, salesRes, shiftRes] = await Promise.all([
+      const [statsRes, posRes, salesRes, shiftRes, suppliersRes] = await Promise.all([
         api.getDashboardStats('sales_personnel'),
         api.getPosProducts(),
         api.getSalesHistory(),
-        api.getCurrentShift()
+        api.getCurrentShift(),
+        api.getSuppliers()
       ]);
 
       if (statsRes.status === 'success') setStats(statsRes.data);
       if (posRes.status === 'success') setPosProducts(posRes.products);
       if (salesRes.status === 'success') setSalesHistory(salesRes.transactions);
       if (shiftRes.status === 'success') setCurrentShift(shiftRes.shift);
+      if (suppliersRes.status === 'success') setSuppliers(suppliersRes.suppliers || []);
     } catch (err) {
       console.error('Error fetching sales data:', err);
     } finally {
@@ -862,21 +868,43 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             {posProducts
               .filter(p => !lookupQuery || p.name.toLowerCase().includes(lookupQuery.toLowerCase()) || p.sku.toLowerCase().includes(lookupQuery.toLowerCase()))
               .map((p) => (
-                <div key={p.id} className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2">
+                <div
+                  key={p.id}
+                  onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
+                  className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2 cursor-pointer hover:border-navy dark:hover:border-blue-500 hover:shadow-md transition-all duration-150 group"
+                >
                   <div className="flex items-start justify-between">
                     <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{p.sku}</span>
-                    <span className="text-xs px-2 py-0.5 rounded font-bold bg-emerald-500/10 text-emerald-600">
-                      {p.stock_quantity} available
+                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${
+                      p.stock_quantity === 0
+                        ? 'bg-red-500/10 text-red-600'
+                        : p.stock_quantity <= (p.reorder_level ?? 3)
+                          ? 'bg-amber-500/10 text-amber-600'
+                          : 'bg-emerald-500/10 text-emerald-600'
+                    }`}>
+                      {p.stock_quantity === 0 ? 'Out of Stock' : `${p.stock_quantity} available`}
                     </span>
                   </div>
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{p.name}</h4>
+                  <h4 className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">{p.name}</h4>
                   <p className="text-xs text-gray-500">{p.brand} • {p.category_name}</p>
-                  <p className="text-lg font-bold text-navy dark:text-greige pt-2 font-mono">
-                    PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
+                  <div className="flex items-end justify-between pt-2">
+                    <p className="text-lg font-bold text-navy dark:text-greige font-mono">
+                      PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </p>
+                    <span className="text-xs text-gray-400 group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">View details →</span>
+                  </div>
                 </div>
               ))}
           </div>
+
+          {/* Product Detail Modal */}
+          <ProductDetailModal
+            isOpen={isDetailModalOpen}
+            onClose={() => { setIsDetailModalOpen(false); setSelectedProduct(null); }}
+            product={selectedProduct}
+            suppliers={suppliers}
+            role="sales"
+          />
         </div>
       )}
 

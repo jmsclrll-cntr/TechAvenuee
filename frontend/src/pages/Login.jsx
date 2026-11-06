@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import workstationBg from '../assets/workstation-bg.svg';
+import TextSizeControl from '../components/TextSizeControl';
 import { api } from '../api';
 
 const COMPUTER_BACKGROUNDS = [
@@ -152,8 +153,14 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-cyan-400/20 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/25 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
 
-      {/* Top-Right Theme Toggle */}
-      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-20">
+      {/* Top-Right Option Bar: Text Size Control (User Preferences) & Theme Toggle */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-2.5">
+        {/* User Text Size Scaler */}
+        <div className="bg-slate-900/80 backdrop-blur-xl rounded-xl border border-white/20 p-1 shadow-xl">
+          <TextSizeControl />
+        </div>
+
+        {/* Theme Toggle */}
         <button
           type="button"
           onClick={() => setDarkMode(!darkMode)}

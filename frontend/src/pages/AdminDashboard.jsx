@@ -30,6 +30,8 @@ import { api } from '../api';
 import PurchasingManagement from './PurchasingManagement';
 import ReportsAnalytics from './ReportsAnalytics';
 import logoImg from '../assets/logo.png';
+import SupplierTable from '../components/SupplierTable';
+import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [stats, setStats] = useState(null);
@@ -48,6 +50,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   // Modals
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [activeReceipt, setActiveReceipt] = useState(null);
@@ -659,9 +663,29 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
                 {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{p.sku}</td>
-                    <td className="py-2.5 px-3 font-medium">{p.name}</td>
+                  <tr 
+                    key={p.id} 
+                    onClick={() => {
+                      setViewProduct(p);
+                      setIsViewModalOpen(true);
+                    }}
+                    className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                    title="Click to view full product & supplier specifications"
+                  >
+                    <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400 group-hover:underline">{p.sku}</td>
+                    <td className="py-2.5 px-3 font-medium">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                          <img 
+                            src={p.image_url || '/products/desktop.svg'} 
+                            alt={p.name} 
+                            className="max-h-full max-w-full object-contain" 
+                            onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
+                          />
+                        </div>
+                        <span className="group-hover:text-navy dark:group-hover:text-blue-400 transition-colors font-bold block">{p.name}</span>
+                      </div>
+                    </td>
                     <td className="py-2.5 px-3">{p.brand}</td>
                     <td className="py-2.5 px-3 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
@@ -674,11 +698,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     </td>
                     <td className="py-2.5 px-3 text-right">
                       <button
-                        onClick={() => {
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedProduct(p);
                           setIsEditProductModalOpen(true);
                         }}
-                        className="px-2.5 py-1 rounded bg-navy text-white text-[11px] font-semibold hover:bg-navy-light inline-flex items-center gap-1"
+                        className="px-2.5 py-1 rounded bg-navy text-white text-[11px] font-semibold hover:bg-navy-light inline-flex items-center gap-1 transition-colors"
                       >
                         <Edit2 className="w-3 h-3" />
                         Edit Item
@@ -688,6 +714,17 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Supplier Information Table */}
+          <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border">
+            <SupplierTable
+              suppliers={suppliers}
+              title="Authorized Suppliers & Procurement Partners"
+              subtitle="Approved manufacturers, parts distributors, and supply chain partners"
+              canAdd={false}
+              role="admin"
+            />
           </div>
         </div>
       )}
@@ -1446,6 +1483,22 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
         </form>
       </Modal>
+
+      {/* VIEW PRODUCT DETAIL MODAL */}
+      <ProductDetailModal
+        isOpen={isViewModalOpen}
+        onClose={() => {
+          setIsViewModalOpen(false);
+          setViewProduct(null);
+        }}
+        product={viewProduct}
+        suppliers={suppliers}
+        role="admin"
+        onEdit={(prod) => {
+          setSelectedProduct(prod);
+          setIsEditProductModalOpen(true);
+        }}
+      />
     </div>
   );
 }

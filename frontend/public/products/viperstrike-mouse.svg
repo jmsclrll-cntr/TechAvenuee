@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mouseBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="neonGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#15803D"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="24" fill="#0B132B"/>
+  <rect x="10" y="10" width="280" height="280" rx="20" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Mouse Contour Shape -->
+  <path d="M 150 40 
+           C 185 40, 215 90, 215 150 
+           C 215 210, 190 255, 150 255 
+           C 110 255, 85 210, 85 150 
+           C 85 90, 115 40, 150 40 Z" 
+        fill="url(#mouseBody)" stroke="#334155" stroke-width="2.5"/>
+
+  <!-- Left / Right Click Split Line -->
+  <line x1="150" y1="40" x2="150" y2="115" stroke="#334155" stroke-width="2"/>
+
+  <!-- Scroll Wheel with Neon Green Halo -->
+  <rect x="142" y="55" width="16" height="38" rx="7" fill="#090D16" stroke="url(#neonGreen)" stroke-width="2.5"/>
+  <line x1="144" y1="65" x2="156" y2="65" stroke="#22C55E" stroke-width="1.5"/>
+  <line x1="144" y1="74" x2="156" y2="74" stroke="#22C55E" stroke-width="1.5"/>
+  <line x1="144" y1="83" x2="156" y2="83" stroke="#22C55E" stroke-width="1.5"/>
+
+  <!-- DPI Cycle Button -->
+  <rect x="145" y="103" width="10" height="12" rx="3" fill="#334155" stroke="#475569" stroke-width="1"/>
+
+  <!-- Honeycomb Lightweight Venting Cutouts -->
+  <g fill="#090D16" stroke="#22C55E" stroke-width="1" opacity="0.8">
+    <circle cx="150" cy="150" r="5"/>
+    <circle cx="138" cy="142" r="5"/>
+    <circle cx="162" cy="142" r="5"/>
+    <circle cx="138" cy="158" r="5"/>
+    <circle cx="162" cy="158" r="5"/>
+    <circle cx="150" cy="166" r="5"/>
+    <circle cx="126" cy="150" r="5"/>
+    <circle cx="174" cy="150" r="5"/>
+    <circle cx="150" cy="182" r="5"/>
+    <circle cx="138" cy="174" r="5"/>
+    <circle cx="162" cy="174" r="5"/>
+  </g>
+
+  <!-- Ergonomic Side Thumb Buttons -->
+  <rect x="80" y="115" width="6" height="22" rx="2" fill="#22C55E"/>
+  <rect x="80" y="142" width="6" height="20" rx="2" fill="#22C55E"/>
+
+  <!-- Viper Emblem RGB Glow -->
+  <path d="M 145 220 L 155 220 L 150 232 Z" fill="#22C55E"/>
+</svg>

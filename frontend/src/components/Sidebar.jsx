@@ -25,11 +25,26 @@ import {
   Save,
   ChevronDown,
   ChevronRight,
-  PackageCheck
+  ChevronLeft,
+  Pin,
+  PinOff,
+  BookOpen
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
-export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwitchRole }) {
+export default function Sidebar({
+  role,
+  activeTab,
+  setActiveTab,
+  onLogout,
+  onSwitchRole,
+  collapsed,
+  isPinned,
+  onTogglePin,
+  onMouseEnter,
+  onMouseLeave,
+  onOpenManual
+}) {
   const [predictionExpanded, setPredictionExpanded] = useState(true);
 
   const getNavItems = () => {
@@ -126,34 +141,62 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
   };
 
   return (
-    <aside className="w-64 shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-colors shadow-2xl text-white z-40 select-none overflow-hidden">
+    <aside
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={`relative shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white z-40 select-none overflow-hidden ${
+        collapsed ? 'w-0 border-r-0 opacity-0 pointer-events-none' : 'w-64 opacity-100'
+      }`}
+    >
       {/* Top Section */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Brand Logo & Header */}
-        <div className="p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
-            <img 
-              src={logoImg} 
-              alt="Tech Avenue Logo" 
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.parentNode.innerHTML = '<svg class="w-6 h-6 text-greige" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>';
-              }}
-            />
+        {/* Brand Logo & Header with Pin/Auto-Hide Control */}
+        <div className="p-4 sm:p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
+              <img 
+                src={logoImg} 
+                alt="Tech Avenue Logo" 
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.parentNode.innerHTML = '<svg class="w-6 h-6 text-greige" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>';
+                }}
+              />
+            </div>
+            <div>
+              <span className="font-extrabold text-base tracking-wider text-white flex items-center gap-1.5">
+                TECH AVENUE
+              </span>
+              <p className="text-[10px] text-greige tracking-wide font-medium uppercase">
+                Computer & Accessories
+              </p>
+            </div>
           </div>
-          <div>
-            <span className="font-extrabold text-base tracking-wider text-white flex items-center gap-1.5">
-              TECH AVENUE
-            </span>
-            <p className="text-[10px] text-greige tracking-wide font-medium uppercase">
-              Computer & Accessories
-            </p>
-          </div>
+
+          {/* Pin/Unpin Toggle Button */}
+          {onTogglePin && (
+            <button
+              type="button"
+              onClick={onTogglePin}
+              className={`p-1.5 rounded-lg border transition-all text-xs cursor-pointer ${
+                isPinned
+                  ? 'border-cyan-400/30 bg-cyan-500/20 text-cyan-300'
+                  : 'border-white/15 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+              title={isPinned ? 'Sidebar is pinned open (Click to enable auto-hide on cursor touch)' : 'Sidebar is in auto-hide mode (Click to pin open)'}
+            >
+              {isPinned ? (
+                <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-300" />
+              ) : (
+                <PinOff className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Current Active Role Badge */}
-        <div className="px-5 py-3 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between shrink-0">
+        <div className="px-5 py-2.5 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between shrink-0">
           <span className="text-[11px] text-greige uppercase font-semibold tracking-wider">
             Active Workspace
           </span>
@@ -162,7 +205,7 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
           </span>
         </div>
 
-        {/* Navigation Items - Individual Scrollable Panel */}
+        {/* Navigation Items - Scrollable Panel */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -260,13 +303,36 @@ export default function Sidebar({ role, activeTab, setActiveTab, onLogout, onSwi
         </div>
 
         <button
+          onClick={onOpenManual}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/20 transition-colors cursor-pointer"
+        >
+          <BookOpen className="w-3.5 h-3.5 text-greige" />
+          <span>User Manual & Guide</span>
+        </button>
+
+        <button
           onClick={onLogout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-semibold border border-red-500/30 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Sign Out</span>
         </button>
       </div>
+
+      {/* ========================================================================= */}
+      {/* DIVIDING LINE HANDLE: Touching or clicking this border line collapses it  */}
+      {/* ========================================================================= */}
+      {onTogglePin && (
+        <button
+          type="button"
+          onClick={onTogglePin}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-12 rounded-full bg-navy border border-white/20 dark:border-cyan-400/40 text-white shadow-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150 z-50 cursor-pointer"
+          title="Click line to collapse into auto-hide mode"
+          aria-label="Collapse sidebar"
+        >
+          <ChevronLeft className="w-3 h-3 text-greige dark:text-cyan-300" />
+        </button>
+      )}
     </aside>
   );
 }

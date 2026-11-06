@@ -101,6 +101,19 @@ def init_db():
             """)
 
             # Shifts
+            # Product Images
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS product_image (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                product_id INT NOT NULL,
+                image_url VARCHAR(255) NOT NULL,
+                alt_text VARCHAR(200) NULL,
+                is_primary BOOLEAN DEFAULT TRUE,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                INDEX (product_id),
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            """)
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS shifts (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -397,6 +410,41 @@ def init_db():
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """, products)
                 print("Products seeded successfully.")
+
+            # Sync and seed specific photos into product_image table
+            image_map = {
+                "PRD-1001": ("/products/beast-gaming-pc.svg", "Avenue Beast Gaming PC Tower Chassis with RGB Liquid Cooling"),
+                "PRD-1002": ("/products/slim-ultrabook-laptop.svg", "Avenue Slim Ultrabook Laptop 15.6 inch IPS Screen"),
+                "PRD-1003": ("/products/apexpro-rgb-keyboard.svg", "ApexPro RGB Hot-Swap Mechanical Keyboard"),
+                "PRD-1004": ("/products/silenttouch-keyboard.svg", "SilentTouch Ergonomic Low Profile Wireless Keyboard"),
+                "PRD-1005": ("/products/viperstrike-mouse.svg", "ViperStrike Lightweight Optical Sensor Gaming Mouse"),
+                "PRD-1006": ("/products/ultraview-monitor.svg", "UltraView 27 inch 165Hz QHD IPS Curved Monitor"),
+                "PRD-1007": ("/products/intel-i7-processor.svg", "Intel Core i7-14700K 20-Core Unlocked Desktop Processor"),
+                "PRD-1008": ("/products/rtx-4070-super.svg", "NVIDIA GeForce RTX 4070 Super 12GB Gaming Graphics Card"),
+                "PRD-1009": ("/products/vengeance-ddr5-ram.svg", "Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000MHz Memory"),
+                "PRD-1010": ("/products/samsung-990-pro-ssd.svg", "Samsung 990 PRO 2TB PCIe 4.0 NVMe M.2 SSD"),
+                "PRD-1011": ("/products/archer-wifi6-router.svg", "TP-Link Archer AX73 WiFi 6 Gigabit 6-Antenna Router")
+            }
+
+            cursor.execute("SELECT id, sku FROM products;")
+            existing_products = cursor.fetchall()
+            for prod in existing_products:
+                sku = prod["sku"]
+                if sku in image_map:
+                    img_url, alt_text = image_map[sku]
+                    cursor.execute("UPDATE products SET image_url = %s WHERE id = %s;", (img_url, prod["id"]))
+                    cursor.execute("SELECT id FROM product_image WHERE product_id = %s;", (prod["id"],))
+                    if not cursor.fetchone():
+                        cursor.execute("""
+                            INSERT INTO product_image (product_id, image_url, alt_text, is_primary)
+                            VALUES (%s, %s, %s, TRUE);
+                        """, (prod["id"], img_url, alt_text))
+                    else:
+                        cursor.execute("""
+                            UPDATE product_image SET image_url = %s, alt_text = %s, is_primary = TRUE 
+                            WHERE product_id = %s;
+                        """, (img_url, alt_text, prod["id"]))
+            print("Product images verified and synced into product_image table.")
     finally:
         conn.close()
 

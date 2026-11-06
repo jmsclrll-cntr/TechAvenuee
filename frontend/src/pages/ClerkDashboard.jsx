@@ -21,6 +21,8 @@ import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal, { ConfirmDialog } from '../components/Modal';
 import { api } from '../api';
+import SupplierTable from '../components/SupplierTable';
+import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [stats, setStats] = useState(null);
@@ -36,6 +38,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
   const [isStockInModalOpen, setIsStockInModalOpen] = useState(false);
   const [isStockOutModalOpen, setIsStockOutModalOpen] = useState(false);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
@@ -471,12 +475,30 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   </tr>
                 ) : (
                   products.map((p) => (
-                    <tr key={p.id} className="hover:bg-gray-50/70 dark:hover:bg-darkbg-hover/60 transition-colors">
-                      <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{p.sku}</td>
+                    <tr 
+                      key={p.id} 
+                      onClick={() => {
+                        setViewProduct(p);
+                        setIsViewModalOpen(true);
+                      }}
+                      className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                      title="Click to view full product & supplier specifications"
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400 group-hover:underline">{p.sku}</td>
                       <td className="py-2.5 px-3 font-medium">
-                        <div>
-                          <span>{p.name}</span>
-                          {p.description && <p className="text-[10px] text-gray-400 truncate max-w-xs">{p.description}</p>}
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                            <img 
+                              src={p.image_url || '/products/desktop.svg'} 
+                              alt={p.name} 
+                              className="max-h-full max-w-full object-contain" 
+                              onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
+                            />
+                          </div>
+                          <div>
+                            <span className="group-hover:text-navy dark:group-hover:text-blue-400 transition-colors font-bold block">{p.name}</span>
+                            {p.description && <p className="text-[10px] text-gray-400 truncate max-w-xs">{p.description}</p>}
+                          </div>
                         </div>
                       </td>
                       <td className="py-2.5 px-3">{p.brand}</td>
@@ -495,7 +517,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                           {/* Stock In */}
                           <button
                             title="Stock In / Restock"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedProduct(p);
                               setStockActionData({ quantity: 5, supplier_id: '', notes: 'Routine restock' });
                               setIsStockInModalOpen(true);
@@ -508,7 +531,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                           {/* Stock Out */}
                           <button
                             title="Authorized Stock Out"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedProduct(p);
                               setStockActionData({ quantity: 1, reason: 'Damaged / Store Transfer' });
                               setIsStockOutModalOpen(true);
@@ -521,7 +545,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                           {/* Edit Product (Clerk cannot change price) */}
                           <button
                             title="Edit Product Details"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEditProduct(p);
                               setIsEditModalOpen(true);
                             }}
@@ -536,6 +561,22 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Supplier Information Table */}
+          <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border">
+            <SupplierTable
+              suppliers={suppliers}
+              title="Authorized Hardware Suppliers & Vendors"
+              subtitle="Direct manufacturer accounts, component distributors, and delivery partners for restocking"
+              canAdd={true}
+              onAdd={() => setIsSupplierModalOpen(true)}
+              onRestock={(supplier) => {
+                setStockActionData({ quantity: 10, supplier_id: supplier.id, notes: `Restock delivery from ${supplier.name}` });
+                setIsStockInModalOpen(true);
+              }}
+              role="inventory_clerk"
+            />
           </div>
         </div>
       )}
@@ -1200,6 +1241,23 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           </div>
         </form>
       </Modal>
+
+      {/* VIEW PRODUCT DETAIL MODAL */}
+      <ProductDetailModal
+        isOpen={isViewModalOpen}
+        onClose={() => {
+          setIsViewModalOpen(false);
+          setViewProduct(null);
+        }}
+        product={viewProduct}
+        suppliers={suppliers}
+        role="clerk"
+        onRestock={(prod) => {
+          setSelectedProduct(prod);
+          setStockActionData({ quantity: 5, supplier_id: '', notes: `Restock order for ${prod.name}` });
+          setIsStockInModalOpen(true);
+        }}
+      />
 
       {/* REUSABLE CONFIRMATION DIALOG */}
       <ConfirmDialog
