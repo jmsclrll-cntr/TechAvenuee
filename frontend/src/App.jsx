@@ -143,6 +143,13 @@ function App() {
     return (
       <Login
         onLoginSuccess={(u) => {
+          // Ensure dashboard loads in full-width fullscreen mode
+          setSidebarCollapsed(true);
+          try {
+            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+              document.documentElement.requestFullscreen().catch(() => {});
+            }
+          } catch {}
           setUser(u);
           setActiveTab('dashboard');
         }}
