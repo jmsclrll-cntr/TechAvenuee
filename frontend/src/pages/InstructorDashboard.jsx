@@ -62,6 +62,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const [comparisonError, setComparisonError] = useState(null);
   const [comparisonSuccess, setComparisonSuccess] = useState(null);
 
+  // 10-Fold Cross-Validation State
+  const [cvTask, setCvTask] = useState('sales');
+  const [cvAlgorithm, setCvAlgorithm] = useState('random_forest');
+  const [isCvLoading, setIsCvLoading] = useState(false);
+  const [cvResult, setCvResult] = useState(null);
+  const [cvError, setCvError] = useState(null);
+
   // Saved Models & History
   const [savedModels, setSavedModels] = useState([]);
   const [predictionHistory, setPredictionHistory] = useState([]);
@@ -123,6 +130,8 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
   useEffect(() => {
     loadData();
+    // Pre-populate 10-fold cross validation table on initial load
+    handleRun10FoldCv('sales', 'random_forest');
   }, []);
 
   // Synchronize prediction tabs
@@ -200,6 +209,25 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       setComparisonError(err.message || 'Model comparison benchmark failed.');
     } finally {
       setIsComparing(false);
+    }
+  };
+
+  // Run 10-Fold Cross-Validation
+  const handleRun10FoldCv = async (taskToRun = cvTask, algoToRun = cvAlgorithm) => {
+    setIsCvLoading(true);
+    setCvError(null);
+    try {
+      const res = await api.get10FoldCrossValidation(taskToRun, algoToRun);
+      if (res && res.status === 'success' && res.data) {
+        setCvResult(res.data);
+      } else {
+        throw new Error(res?.message || 'Failed to retrieve cross-validation data');
+      }
+    } catch (err) {
+      console.error('10-Fold CV failed:', err);
+      setCvError(err.message || 'Error executing 10-fold cross-validation');
+    } finally {
+      setIsCvLoading(false);
     }
   };
 
@@ -967,6 +995,209 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 )}
               </div>
             )}
+
+            {/* 10-Fold Cross-Validation Section */}
+            <div className="pt-6 border-t border-gray-100 dark:border-darkbg-border space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    10-Fold Cross-Validation Analysis & Empirical Breakdown
+                  </h3>
+                  <p className="text-xs text-gray-500">
+                    Partition data into 10 rotating folds to measure generalization consistency, eliminate hold-out bias, and verify model stability.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={cvTask}
+                    onChange={(e) => setCvTask(e.target.value)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
+                  >
+                    <option value="sales">Sales Dataset (PHP)</option>
+                    <option value="demand">Demand Dataset (units)</option>
+                    <option value="slow_moving">Slow-Moving Dataset (days)</option>
+                    <option value="best_selling">Best-Sellers Dataset (units)</option>
+                  </select>
+
+                  <select
+                    value={cvAlgorithm}
+                    onChange={(e) => setCvAlgorithm(e.target.value)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
+                  >
+                    <option value="random_forest">Random Forest</option>
+                    <option value="linear_regression">Linear Regression</option>
+                  </select>
+
+                  <button
+                    onClick={() => handleRun10FoldCv()}
+                    disabled={isCvLoading}
+                    className="px-3.5 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    {isCvLoading ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Running 10 Folds...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3.5 h-3.5 fill-white" />
+                        Run 10-Fold CV
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {cvError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400">
+                  {cvError}
+                </div>
+              )}
+
+              {cvResult && (
+                <div className="space-y-4">
+                  {/* Summary Metric Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50">
+                      <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">
+                        Mean R² Score (± Std Dev)
+                      </span>
+                      <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                        {cvResult.summary.mean_r2} <span className="text-xs text-gray-500">± {cvResult.summary.std_r2}</span>
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">Overfitting check: {cvResult.summary.stability}</p>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50">
+                      <span className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">
+                        Mean MAE (± Std Dev)
+                      </span>
+                      <p className="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-0.5">
+                        {cvResult.summary.mean_mae.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_mae} {cvResult.unit} across folds</p>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50">
+                      <span className="text-[10px] font-bold text-purple-800 dark:text-purple-400 uppercase tracking-wider">
+                        Mean RMSE (± Std Dev)
+                      </span>
+                      <p className="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-0.5">
+                        {cvResult.summary.mean_rmse.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_rmse} {cvResult.unit} penalty deviation</p>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50">
+                      <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
+                        Dataset Partitioning
+                      </span>
+                      <p className="text-xl font-bold font-mono text-amber-700 dark:text-amber-400 mt-0.5">
+                        10 Folds × 10%
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">{cvResult.total_samples} total instances evaluated</p>
+                    </div>
+                  </div>
+
+                  {/* Tabular Fold-by-Fold Breakdown */}
+                  <div className="border border-gray-200 dark:border-darkbg-border rounded-xl overflow-hidden shadow-sm">
+                    <div className="px-4 py-2.5 bg-gray-50 dark:bg-darkbg/70 border-b border-gray-200 dark:border-darkbg-border flex justify-between items-center text-xs">
+                      <span className="font-bold text-gray-700 dark:text-gray-300">
+                        {cvResult.algo_label} — Fold-by-Fold Performance Matrix ({cvResult.dataset_name})
+                      </span>
+                      <span className="text-[11px] text-gray-500 font-mono">
+                        Target: {cvResult.target_label}
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-gray-100/70 dark:bg-darkbg text-gray-500 uppercase font-semibold text-[11px] border-b border-gray-200 dark:border-darkbg-border">
+                          <tr>
+                            <th className="py-2.5 px-3">Fold Index</th>
+                            <th className="py-2.5 px-3">Train Samples (90%)</th>
+                            <th className="py-2.5 px-3">Test Samples (10%)</th>
+                            <th className="py-2.5 px-3 font-mono text-right">R² Score</th>
+                            <th className="py-2.5 px-3 font-mono text-right">MAE ({cvResult.unit})</th>
+                            <th className="py-2.5 px-3 font-mono text-right">MSE</th>
+                            <th className="py-2.5 px-3 font-mono text-right">RMSE ({cvResult.unit})</th>
+                            <th className="py-2.5 px-3 text-center">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+                          {cvResult.folds.map((f) => (
+                            <tr key={f.fold} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
+                              <td className="py-2 px-3 font-bold text-navy dark:text-blue-400">Fold #{f.fold}</td>
+                              <td className="py-2 px-3 font-mono">{f.train_samples} rows</td>
+                              <td className="py-2 px-3 font-mono">{f.test_samples} rows</td>
+                              <td className="py-2 px-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                {f.r2_score}
+                              </td>
+                              <td className="py-2 px-3 text-right font-mono">
+                                {f.mae.toLocaleString()}
+                              </td>
+                              <td className="py-2 px-3 text-right font-mono text-gray-500">
+                                {f.mse.toLocaleString()}
+                              </td>
+                              <td className="py-2 px-3 text-right font-mono font-bold text-purple-600 dark:text-purple-400">
+                                {f.rmse.toLocaleString()}
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                                  Validated
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-gray-50 dark:bg-darkbg/90 font-bold border-t-2 border-gray-300 dark:border-darkbg-border">
+                          <tr>
+                            <td className="py-2.5 px-3 uppercase text-navy dark:text-greige">Mean (Average)</td>
+                            <td className="py-2.5 px-3 font-mono">—</td>
+                            <td className="py-2.5 px-3 font-mono">—</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-emerald-600 dark:text-emerald-400">
+                              {cvResult.summary.mean_r2}
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-mono">
+                              {cvResult.summary.mean_mae.toLocaleString()}
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-mono text-gray-400">—</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-purple-600 dark:text-purple-400">
+                              {cvResult.summary.mean_rmse.toLocaleString()}
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600">
+                                Overall Average
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 px-3 uppercase text-gray-500 text-[10px]">Std Dev (± σ)</td>
+                            <td className="py-2 px-3 font-mono">—</td>
+                            <td className="py-2 px-3 font-mono">—</td>
+                            <td className="py-2 px-3 text-right font-mono text-gray-500 text-[11px]">
+                              ± {cvResult.summary.std_r2}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono text-gray-500 text-[11px]">
+                              ± {cvResult.summary.std_mae}
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-mono text-gray-400">—</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-gray-500 text-[11px]">
+                              ± {cvResult.summary.std_rmse}
+                            </td>
+                            <td className="py-2 px-3 text-center text-[10px] text-gray-500">
+                              Variance Across Folds
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

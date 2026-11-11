@@ -4,7 +4,7 @@ import joblib
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
@@ -396,6 +396,85 @@ def compare_models(task):
             {'metric': 'MAE (Lower Better)', 'Linear Regression': lr_res['mae'], 'Random Forest': rf_res['mae']},
             {'metric': 'RMSE (Lower Better)', 'Linear Regression': lr_res['rmse'], 'Random Forest': rf_res['rmse']}
         ]
+    }
+
+def perform_10_fold_cv(task='sales', algorithm='random_forest'):
+    t_norm = normalize_task(task)
+    if t_norm not in TASK_CONFIGS:
+        raise ValueError(f"Unknown task: {task}. Must be one of {list(TASK_CONFIGS.keys())}")
+        
+    config = TASK_CONFIGS[t_norm]
+    csv_path = get_dataset_path(config['dataset'])
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"Dataset not found at {csv_path}")
+        
+    df = pd.read_csv(csv_path)
+    X = df[config['features']].values
+    y = df[config['target']].values
+    total_samples = len(df)
+    
+    kf = KFold(n_splits=10, shuffle=True, random_state=42)
+    folds = []
+    
+    for fold_num, (train_idx, test_idx) in enumerate(kf.split(X), start=1):
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx]
+        
+        if 'linear' in str(algorithm).lower():
+            model = LinearRegression()
+            algo_label = 'Linear Regression'
+        else:
+            model = RandomForestRegressor(n_estimators=100, max_depth=12, random_state=42)
+            algo_label = 'Random Forest Regressor'
+            
+        model.fit(X_train, y_train)
+        preds = model.predict(X_test)
+        
+        r2 = float(r2_score(y_test, preds))
+        mae = float(mean_absolute_error(y_test, preds))
+        mse = float(mean_squared_error(y_test, preds))
+        rmse = float(np.sqrt(mse))
+        
+        folds.append({
+            'fold': fold_num,
+            'train_samples': len(train_idx),
+            'test_samples': len(test_idx),
+            'r2_score': round(r2, 4),
+            'mae': round(mae, 2),
+            'mse': round(mse, 2),
+            'rmse': round(rmse, 2)
+        })
+        
+    r2_vals = [f['r2_score'] for f in folds]
+    mae_vals = [f['mae'] for f in folds]
+    rmse_vals = [f['rmse'] for f in folds]
+    
+    mean_r2 = round(float(np.mean(r2_vals)), 4)
+    std_r2 = round(float(np.std(r2_vals)), 4)
+    mean_mae = round(float(np.mean(mae_vals)), 2)
+    std_mae = round(float(np.std(mae_vals)), 2)
+    mean_rmse = round(float(np.mean(rmse_vals)), 2)
+    std_rmse = round(float(np.std(rmse_vals)), 2)
+    
+    return {
+        'task': task,
+        'algorithm': algorithm,
+        'algo_label': 'Linear Regression' if 'linear' in str(algorithm).lower() else 'Random Forest Regressor',
+        'target_variable': config['target'],
+        'target_label': config['target_label'],
+        'unit': config['unit'],
+        'dataset_name': config['dataset'],
+        'total_samples': total_samples,
+        'folds': folds,
+        'summary': {
+            'mean_r2': mean_r2,
+            'std_r2': std_r2,
+            'mean_mae': mean_mae,
+            'std_mae': std_mae,
+            'mean_rmse': mean_rmse,
+            'std_rmse': std_rmse,
+            'stability': 'High (Low Variance)' if std_r2 <= 0.01 else 'Moderate Variance'
+        }
     }
 
 def get_datasets_list():

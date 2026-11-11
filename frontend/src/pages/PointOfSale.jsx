@@ -88,28 +88,70 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     loadInitialData();
   }, [initialDraftId]);
 
-  const applyDraftToCart = (draft, productCatalog = products) => {
-    setActiveDraft(draft);
-    setCustomerName(draft.customer_name || 'Walk-in Customer');
-    setDiscountPct(draft.discount_pct || 0);
-    setNotes(draft.notes || '');
+  // Safe Date Formatter helper
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return 'Recently';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return String(dateStr);
+      return d.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch {
+      return String(dateStr);
+    }
+  };
 
-    const cartItems = (draft.items || []).map(item => {
-      const liveProd = productCatalog.find(p => p.id === item.product_id);
+  // Robust draft loading & cart hydration handler
+  const applyDraftToCart = async (draft, productCatalog = products) => {
+    if (!draft) return;
+
+    let fullDraft = draft;
+    // If draft items are not populated in the summary object, fetch the full draft details from backend
+    if (!draft.items || draft.items.length === 0) {
+      const draftIdentifier = draft.id || draft.draft_id;
+      if (draftIdentifier) {
+        try {
+          const detailRes = await api.getDraftDetail(draftIdentifier);
+          if (detailRes && detailRes.status === 'success' && detailRes.draft) {
+            fullDraft = detailRes.draft;
+          }
+        } catch (fetchErr) {
+          console.warn('Could not fetch detailed draft items, using available draft data:', fetchErr);
+        }
+      }
+    }
+
+    setActiveDraft(fullDraft);
+    setCustomerName(fullDraft.customer_name || 'Walk-in Customer');
+    setDiscountPct(Number(fullDraft.discount_pct || 0));
+    setNotes(fullDraft.notes || '');
+
+    const draftItems = fullDraft.items || [];
+    const cartItems = draftItems.map(item => {
+      const liveProd = (productCatalog || []).find(p => p.id === item.product_id);
       return {
         product_id: item.product_id,
-        name: item.product_name,
-        sku: item.sku,
-        unit_price: Number(item.unit_price),
-        quantity: Number(item.quantity),
+        name: item.name || item.product_name || liveProd?.name || 'Item',
+        sku: item.sku || liveProd?.sku || '',
+        unit_price: Number(item.unit_price || liveProd?.selling_price || 0),
+        quantity: Math.max(1, Number(item.quantity || 1)),
         image_url: item.image_url || liveProd?.image_url,
-        max_stock: liveProd ? liveProd.stock_quantity : item.quantity
+        max_stock: liveProd ? liveProd.stock_quantity : (item.available_stock || item.quantity || 999)
       };
     });
 
     setCart(cartItems);
-    showFeedback(`Loaded Draft ${draft.transaction_number} for customer ${draft.customer_name || 'Walk-in'}!`);
+
+    const draftNumber = fullDraft.transaction_number || fullDraft.reference_number || fullDraft.invoice_number || `DFT-${fullDraft.id || fullDraft.draft_id}`;
+    showFeedback(`Loaded Draft ${draftNumber} for customer ${fullDraft.customer_name || 'Walk-in Customer'}!`);
   };
+
 
   const handleUnloadDraft = () => {
     setActiveDraft(null);
@@ -280,8 +322,153 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     return matchesCategory && matchesSearch;
   });
 
+  const handleSaveReceiptPdf = (receipt) => {
+    if (!receipt) return;
+    const printWindow = window.open('', '_blank', 'width=450,height=700');
+    if (!printWindow) {
+      alert('Please allow popups to save or print receipt.');
+      return;
+    }
+
+    const itemsHtml = (receipt.items || []).map(item => `
+      <tr>
+        <td style="padding: 4px 0; font-weight: 600;">
+          ${item.product_name || item.name}
+          <div style="font-size: 9px; color: #666; font-weight: normal;">${item.sku || ''}</div>
+        </td>
+        <td style="padding: 4px 0; text-align: center;">${item.quantity}</td>
+        <td style="padding: 4px 0; text-align: right;">₱${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right; font-weight: bold;">₱${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      </tr>
+    `).join('');
+
+    const subtotalNet = Number(receipt.subtotal || (Number(receipt.total_amount) / 1.12));
+    const vatVal = Number(receipt.vat_amount || (Number(receipt.total_amount) - subtotalNet));
+    const discountVal = Number(receipt.discount_amount || 0);
+    const discountPctVal = Number(receipt.discount_pct || 0);
+
+    const docContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>receipt_${receipt.invoice_number}.pdf</title>
+        <style>
+          @page { size: 80mm auto; margin: 4mm; }
+          body {
+            font-family: 'Courier New', Courier, monospace, -apple-system, sans-serif;
+            font-size: 11px;
+            color: #111;
+            margin: 0;
+            padding: 8px;
+            width: 72mm;
+            background: #fff;
+          }
+          .text-center { text-align: center; }
+          .bold { font-weight: bold; }
+          .border-b { border-bottom: 1px dashed #888; padding-bottom: 6px; margin-bottom: 6px; }
+          .border-t { border-top: 1px dashed #888; padding-top: 6px; margin-top: 6px; }
+          table { width: 100%; border-collapse: collapse; font-size: 10px; }
+          th { border-bottom: 1px solid #444; padding-bottom: 3px; font-size: 9px; text-transform: uppercase; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+          .total-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; margin: 4px 0; }
+          .footer { text-align: center; font-size: 9px; color: #555; margin-top: 10px; }
+          @media print { body { width: 100%; } }
+        </style>
+      </head>
+      <body>
+        <div class="text-center border-b">
+          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">TECH AVENUE</div>
+          <div style="font-size: 9px; font-weight: bold;">COMPUTER & ACCESSORIES STORE</div>
+          <div style="font-size: 8px; color: #444;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
+          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 10px; font-weight: bold; margin-top: 4px; text-transform: uppercase;">Official Transaction Receipt</div>
+        </div>
+
+        <div class="border-b" style="font-size: 10px;">
+          <div class="row"><span>Receipt No:</span><span class="bold">${receipt.invoice_number}</span></div>
+          <div class="row"><span>Date & Time:</span><span>${receipt.created_at || receipt.transaction_date || new Date().toLocaleString()}</span></div>
+          <div class="row"><span>Cashier:</span><span>${receipt.cashier_name || receipt.cashier || user?.full_name || 'Cashier'}</span></div>
+          <div class="row"><span>Customer:</span><span>${receipt.customer_name || 'Walk-in Customer'}</span></div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">Item</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Price</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <div class="border-t" style="font-size: 10px;">
+          <div class="row">
+            <span>Subtotal (Net of VAT):</span>
+            <span>₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
+            <span>12% Output VAT:</span>
+            <span>₱${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          ${discountVal > 0 ? `
+            <div class="row" style="color: #059669;">
+              <span>Discount (${discountPctVal}%):</span>
+              <span>-₱${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          ` : ''}
+          <div class="total-row border-t border-b">
+            <span>TOTAL AMOUNT DUE:</span>
+            <span>₱${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
+            <span>Payment Method:</span>
+            <span class="bold">${receipt.payment_method || 'Cash'}</span>
+          </div>
+          ${(receipt.payment_method === 'Cash' || !receipt.payment_method) ? `
+            <div class="row">
+              <span>Amount Tendered:</span>
+              <span>₱${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="row bold">
+              <span>Change:</span>
+              <span>₱${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          ` : `
+            <div class="row">
+              <span>Payment Ref / Auth:</span>
+              <span>${receipt.payment_reference || 'N/A'}</span>
+            </div>
+          `}
+        </div>
+
+        <div class="footer">
+          <div class="bold">THANK YOU FOR YOUR PURCHASE!</div>
+          <div>Items eligible for 7-day replacement with this receipt.</div>
+          <div style="font-size: 8px; margin-top: 4px;">*** THIS SERVES AS AN OFFICIAL RECEIPT ***</div>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.document.title = "receipt_" + "${receipt.invoice_number}" + ".pdf";
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(docContent);
+    printWindow.document.close();
+  };
+
   const printReceipt = () => {
-    window.print();
+    handleSaveReceiptPdf(completedTransaction);
   };
 
   return (
@@ -357,11 +544,11 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                   Processing Draft Order:
                 </span>
                 <span className="font-mono text-xs font-bold text-navy dark:text-white bg-white dark:bg-darkbg px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
-                  {activeDraft.transaction_number}
+                  {activeDraft.transaction_number || activeDraft.reference_number || activeDraft.invoice_number || `DFT-${activeDraft.id}`}
                 </span>
               </div>
               <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-                Customer: <strong>{activeDraft.customer_name || 'Walk-in'}</strong> • Created {new Date(activeDraft.transaction_date).toLocaleString()} • Draft will be completed in MySQL upon payment.
+                Customer: <strong>{activeDraft.customer_name || 'Walk-in'}</strong> • Created {formatDateTime(activeDraft.transaction_date || activeDraft.created_at)} • Draft will be completed in MySQL upon payment.
               </p>
             </div>
           </div>
@@ -820,7 +1007,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-mono font-bold text-xs text-navy dark:text-greige">
-                        {d.transaction_number}
+                        {d.transaction_number || d.reference_number || d.invoice_number || `DFT-${d.id}`}
                       </span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
                         Draft
@@ -830,7 +1017,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                       Customer: {d.customer_name || 'Walk-in'} • {d.item_count || d.items?.length || 0} items
                     </p>
                     <p className="text-[10px] text-gray-400">
-                      Created: {new Date(d.transaction_date).toLocaleString()}
+                      Created: {formatDateTime(d.transaction_date || d.created_at)}
                     </p>
                   </div>
 
@@ -1001,14 +1188,24 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
 
             {/* Modal Actions */}
             <div className="flex items-center justify-between pt-2">
-              <button
-                type="button"
-                onClick={printReceipt}
-                className="flex items-center gap-2 px-4 py-2 bg-navy text-white rounded-lg text-xs font-bold hover:bg-navy-dark shadow transition"
-              >
-                <Printer className="w-4 h-4" />
-                Print Receipt
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSaveReceiptPdf(completedTransaction)}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 shadow transition"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Save as PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={printReceipt}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-navy text-white rounded-lg text-xs font-bold hover:bg-navy-dark shadow transition"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  Print
+                </button>
+              </div>
 
               <button
                 type="button"

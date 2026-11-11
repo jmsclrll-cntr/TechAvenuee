@@ -885,9 +885,21 @@ def get_drafts():
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT t.id, t.invoice_number as reference_number, t.customer_name, t.subtotal, 
-                       t.discount_pct, t.discount_amount, t.vat_amount, t.total_amount, 
-                       t.status, t.notes, t.created_at, u.full_name as created_by,
+                SELECT t.id, 
+                       t.id as draft_id,
+                       t.invoice_number as reference_number,
+                       t.invoice_number as transaction_number,
+                       t.customer_name, 
+                       t.subtotal, 
+                       t.discount_pct, 
+                       t.discount_amount, 
+                       t.vat_amount, 
+                       t.total_amount, 
+                       t.status, 
+                       t.notes, 
+                       t.created_at,
+                       t.created_at as transaction_date,
+                       u.full_name as created_by,
                        (SELECT COUNT(*) FROM sales_items WHERE transaction_id = t.id) as item_count
                 FROM sales_transactions t
                 JOIN users u ON t.user_id = u.id
@@ -1133,9 +1145,18 @@ def get_pos_eligible_drafts():
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT t.id, t.invoice_number as reference_number, t.customer_name, 
-                       t.subtotal, t.vat_amount, t.total_amount, t.discount_amount, t.discount_pct,
+                SELECT t.id, 
+                       t.id as draft_id,
+                       t.invoice_number as reference_number,
+                       t.invoice_number as transaction_number,
+                       t.customer_name, 
+                       t.subtotal, 
+                       t.vat_amount, 
+                       t.total_amount, 
+                       t.discount_amount, 
+                       t.discount_pct,
                        t.created_at,
+                       t.created_at as transaction_date,
                        (SELECT COUNT(*) FROM sales_items WHERE transaction_id = t.id) as item_count
                 FROM sales_transactions t
                 WHERE t.status = 'draft'
@@ -1287,7 +1308,36 @@ def pos_checkout():
             shift_row = cursor.fetchone()
             shift_id = shift_row["id"] if shift_row else None
 
-            final_invoice_num = f"INV-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}-{secrets.token_hex(2).upper()}"
+            # Dynamic & Safe Sequential OR Number Generation
+            # Extracts maximum numeric sequence for today to prevent duplicates
+            today_prefix = datetime.datetime.now().strftime("OR-%Y%m%d-")
+            cursor.execute("""
+                SELECT invoice_number 
+                FROM sales_transactions 
+                WHERE invoice_number LIKE %s 
+                ORDER BY CAST(SUBSTRING_INDEX(invoice_number, '-', -1) AS UNSIGNED) DESC, id DESC 
+                LIMIT 1 
+                FOR UPDATE;
+            """, (f"{today_prefix}%",))
+            last_receipt = cursor.fetchone()
+
+            if last_receipt and last_receipt.get("invoice_number"):
+                last_num_str = str(last_receipt["invoice_number"]).split("-")[-1]
+                try:
+                    next_seq = int(last_num_str) + 1
+                except (ValueError, TypeError):
+                    next_seq = 1
+            else:
+                next_seq = 1
+
+            # Fallback collision check: verify candidate number is unused
+            while True:
+                candidate_num = f"{today_prefix}{next_seq:04d}"
+                cursor.execute("SELECT id FROM sales_transactions WHERE invoice_number = %s;", (candidate_num,))
+                if not cursor.fetchone():
+                    final_invoice_num = candidate_num
+                    break
+                next_seq += 1
 
             if target_tx_id:
                 # Update draft to completed
@@ -2420,6 +2470,19 @@ def compare_models_endpoint():
     try:
         comparison = ml_engine.compare_models(task)
         return jsonify({"status": "success", "comparison": comparison})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route("/api/models/cross-validate", methods=["GET", "POST"])
+@require_role("instructor", "admin")
+def cross_validate_endpoint():
+    data = request.get_json(silent=True) or {}
+    task = request.args.get("task") or data.get("task", "sales")
+    algorithm = request.args.get("algorithm") or data.get("algorithm", "random_forest")
+
+    try:
+        cv_results = ml_engine.perform_10_fold_cv(task=task, algorithm=algorithm)
+        return jsonify({"status": "success", "data": cv_results, **cv_results})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
 

@@ -250,5 +250,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload)
     });
+  },
+  get10FoldCrossValidation: (task = 'sales', algorithm = 'random_forest') => {
+    return apiRequest(`/models/cross-validate?task=${encodeURIComponent(task)}&algorithm=${encodeURIComponent(algorithm)}`);
   }
 };

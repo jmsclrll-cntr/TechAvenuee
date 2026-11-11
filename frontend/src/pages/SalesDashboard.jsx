@@ -20,7 +20,8 @@ import {
   Calendar,
   Lock,
   Unlock,
-  UserCheck
+  UserCheck,
+  Download
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
@@ -193,6 +194,159 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
     } catch (err) {
       alert('Error fetching receipt');
     }
+  };
+
+  // Save Receipt as PDF function (styled 80mm thermal receipt format)
+  const handleSaveReceiptPdf = (receipt) => {
+    if (!receipt) return;
+    const printWindow = window.open('', '_blank', 'width=450,height=700');
+    if (!printWindow) {
+      alert('Please allow popups to save or print receipt.');
+      return;
+    }
+
+    const itemsHtml = (receipt.items || []).map(item => `
+      <tr>
+        <td style="padding: 4px 0; font-weight: 600;">
+          ${item.name || item.product_name}
+          <div style="font-size: 9px; color: #666; font-weight: normal;">${item.sku || ''}</div>
+        </td>
+        <td style="padding: 4px 0; text-align: center;">${item.quantity}</td>
+        <td style="padding: 4px 0; text-align: right;">₱${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right; font-weight: bold;">₱${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      </tr>
+    `).join('');
+
+    const subtotalNet = Number(receipt.subtotal || (Number(receipt.total_amount) / 1.12));
+    const vatVal = Number(receipt.vat_amount || (Number(receipt.total_amount) - subtotalNet));
+    const discountVal = Number(receipt.discount_amount || 0);
+    const discountPctVal = Number(receipt.discount_pct || 0);
+
+    const docContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>receipt_${receipt.invoice_number}.pdf</title>
+        <style>
+          @page {
+            size: 80mm auto;
+            margin: 4mm;
+          }
+          body {
+            font-family: 'Courier New', Courier, monospace, -apple-system, sans-serif;
+            font-size: 11px;
+            color: #111;
+            margin: 0;
+            padding: 8px;
+            width: 72mm;
+            background: #fff;
+          }
+          .text-center { text-align: center; }
+          .text-right { text-align: right; }
+          .bold { font-weight: bold; }
+          .border-b { border-bottom: 1px dashed #888; padding-bottom: 6px; margin-bottom: 6px; }
+          .border-t { border-top: 1px dashed #888; padding-top: 6px; margin-top: 6px; }
+          table { width: 100%; border-collapse: collapse; font-size: 10px; }
+          th { border-bottom: 1px solid #444; padding-bottom: 3px; font-size: 9px; text-transform: uppercase; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+          .total-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; margin: 4px 0; }
+          .footer { text-align: center; font-size: 9px; color: #555; margin-top: 10px; }
+          @media print {
+            body { width: 100%; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="text-center border-b">
+          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">TECH AVENUE</div>
+          <div style="font-size: 9px; font-weight: bold;">COMPUTER & ACCESSORIES STORE</div>
+          <div style="font-size: 8px; color: #444;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
+          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 10px; font-weight: bold; margin-top: 4px; text-transform: uppercase;">Official Transaction Receipt</div>
+        </div>
+
+        <div class="border-b" style="font-size: 10px;">
+          <div class="row"><span>Receipt No:</span><span class="bold">${receipt.invoice_number}</span></div>
+          <div class="row"><span>Date & Time:</span><span>${receipt.created_at || new Date().toLocaleString()}</span></div>
+          <div class="row"><span>Cashier:</span><span>${receipt.cashier || user?.full_name || 'Sales Staff'}</span></div>
+          <div class="row"><span>Customer:</span><span>${receipt.customer_name || 'Walk-in Customer'}</span></div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">Item</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Price</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <div class="border-t" style="font-size: 10px;">
+          <div class="row">
+            <span>Subtotal (Net of VAT):</span>
+            <span>₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
+            <span>12% Output VAT:</span>
+            <span>₱${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          ${discountVal > 0 ? `
+            <div class="row" style="color: #059669;">
+              <span>Discount (${discountPctVal}%):</span>
+              <span>-₱${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          ` : ''}
+          <div class="total-row border-t border-b">
+            <span>TOTAL AMOUNT DUE:</span>
+            <span>₱${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
+            <span>Payment Method:</span>
+            <span class="bold">${receipt.payment_method || 'Cash'}</span>
+          </div>
+          ${(receipt.payment_method === 'Cash' || !receipt.payment_method) ? `
+            <div class="row">
+              <span>Amount Tendered:</span>
+              <span>₱${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="row bold">
+              <span>Change:</span>
+              <span>₱${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          ` : `
+            <div class="row">
+              <span>Payment Ref / Auth:</span>
+              <span>${receipt.payment_reference || 'N/A'}</span>
+            </div>
+          `}
+        </div>
+
+        <div class="footer">
+          <div class="bold">THANK YOU FOR YOUR PURCHASE!</div>
+          <div>Items eligible for 7-day warranty/replacement with this receipt.</div>
+          <div style="font-size: 8px; margin-top: 4px;">*** THIS SERVES AS AN OFFICIAL RECEIPT ***</div>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.document.title = "receipt_" + "${receipt.invoice_number}" + ".pdf";
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(docContent);
+    printWindow.document.close();
   };
 
   // Shift Management
@@ -1037,100 +1191,136 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             {/* Store Receipt Header */}
             <div className="text-center space-y-1 pb-3 border-b border-dashed border-gray-300 dark:border-darkbg-border">
               <h3 className="font-extrabold text-base tracking-wider text-navy dark:text-white">TECH AVENUE</h3>
-              <p className="text-[11px] text-gray-500">Computer & Accessories Store Management</p>
-              <p className="text-[10px] text-gray-400">Cyberzone Tech Hub, Metro Manila, Philippines</p>
-              <p className="text-[10px] text-gray-400">VAT Reg TIN: 401-889-223-000</p>
+              <p className="text-[11px] text-gray-500 font-semibold uppercase">Computer & Accessories Store Management</p>
+              <p className="text-[10px] text-gray-400">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</p>
+              <p className="text-[10px] text-gray-400">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</p>
+              <div className="mt-1 pt-1 border-t border-gray-200 dark:border-darkbg-border">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-navy dark:text-greige">Official Transaction Receipt</span>
+              </div>
             </div>
 
             {/* Receipt Meta */}
             <div className="space-y-1 text-[11px] text-gray-600 dark:text-gray-400 pb-2 border-b border-dashed border-gray-300 dark:border-darkbg-border">
               <div className="flex justify-between">
-                <span>Invoice #:</span>
-                <span className="font-bold text-gray-900 dark:text-white">{activeReceipt.invoice_number}</span>
+                <span>Receipt / OR #:</span>
+                <span className="font-bold font-mono text-gray-900 dark:text-white">{activeReceipt.invoice_number}</span>
               </div>
               <div className="flex justify-between">
                 <span>Date & Time:</span>
-                <span>{activeReceipt.created_at}</span>
+                <span>{activeReceipt.created_at || new Date().toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span>Cashier:</span>
-                <span>{activeReceipt.cashier}</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-200">{activeReceipt.cashier || user?.full_name || 'Cashier'}</span>
               </div>
               <div className="flex justify-between">
                 <span>Customer:</span>
-                <span>{activeReceipt.customer_name}</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-200">{activeReceipt.customer_name || 'Walk-in Customer'}</span>
               </div>
             </div>
 
-            {/* Receipt Line Items */}
+            {/* Receipt Line Items Table */}
             <div className="space-y-2 py-2 border-b border-dashed border-gray-300 dark:border-darkbg-border">
-              <div className="flex justify-between font-bold text-gray-500 uppercase text-[10px]">
-                <span>Description</span>
-                <span>Qty x Price</span>
-                <span>Total</span>
-              </div>
-              {(activeReceipt.items || []).map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center text-[11px]">
-                  <div className="max-w-[170px] truncate">
-                    <p className="font-semibold text-gray-900 dark:text-white">{item.name}</p>
-                    <p className="text-[9px] text-gray-400">{item.sku}</p>
-                  </div>
-                  <span className="text-gray-500">{item.quantity} @ {Number(item.unit_price).toLocaleString()}</span>
-                  <span className="font-bold font-mono">PHP {Number(item.total_price).toLocaleString()}</span>
-                </div>
-              ))}
+              <table className="w-full text-[11px]">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-darkbg-border text-gray-500 font-bold uppercase text-[9px]">
+                    <th className="text-left pb-1">Product Description</th>
+                    <th className="text-center pb-1">Qty</th>
+                    <th className="text-right pb-1">Unit Price</th>
+                    <th className="text-right pb-1">Line Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border">
+                  {(activeReceipt.items || []).map((item, idx) => (
+                    <tr key={idx} className="py-1">
+                      <td className="py-1.5 pr-2">
+                        <p className="font-semibold text-gray-900 dark:text-white">{item.name || item.product_name}</p>
+                        <p className="text-[9px] text-gray-400">{item.sku}</p>
+                      </td>
+                      <td className="text-center py-1.5 text-gray-600 dark:text-gray-300">{item.quantity}</td>
+                      <td className="text-right py-1.5 font-mono text-gray-600 dark:text-gray-300">
+                        ₱{Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="text-right py-1.5 font-bold font-mono text-gray-900 dark:text-white">
+                        ₱{Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
-            {/* Totals */}
+            {/* Totals Breakdown */}
             <div className="space-y-1 text-xs pt-1">
               <div className="flex justify-between text-gray-500">
-                <span>Subtotal (Net):</span>
-                <span>PHP {Number(activeReceipt.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span>Subtotal (Net of VAT):</span>
+                <span className="font-mono">₱{Number(activeReceipt.subtotal || (Number(activeReceipt.total_amount) / 1.12)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between text-gray-500">
-                <span>VAT (12%):</span>
-                <span>PHP {Number(activeReceipt.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span>12% Output VAT:</span>
+                <span className="font-mono">₱{Number(activeReceipt.vat_amount || (Number(activeReceipt.total_amount) - (Number(activeReceipt.total_amount) / 1.12))).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-gray-900 dark:text-white pt-1 border-t border-gray-200 dark:border-darkbg-border">
-                <span>TOTAL AMOUNT:</span>
-                <span>PHP {Number(activeReceipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              {Number(activeReceipt.discount_amount) > 0 && (
+                <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
+                  <span>Discount ({activeReceipt.discount_pct || 0}%):</span>
+                  <span className="font-mono">-₱{Number(activeReceipt.discount_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm font-black text-gray-900 dark:text-white pt-1.5 border-t border-gray-200 dark:border-darkbg-border">
+                <span>TOTAL AMOUNT DUE:</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400">₱{Number(activeReceipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between text-gray-500 pt-1">
                 <span>Payment Method:</span>
-                <span className="font-semibold uppercase">{activeReceipt.payment_method}</span>
+                <span className="font-bold uppercase text-gray-800 dark:text-gray-200">{activeReceipt.payment_method || 'Cash'}</span>
               </div>
-              {activeReceipt.payment_method === 'Cash' && (
+              {(activeReceipt.payment_method === 'Cash' || !activeReceipt.payment_method) ? (
                 <>
                   <div className="flex justify-between text-gray-500">
                     <span>Amount Tendered:</span>
-                    <span>PHP {Number(activeReceipt.amount_tendered).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    <span className="font-mono">₱{Number(activeReceipt.amount_tendered || activeReceipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between text-emerald-600 font-bold">
                     <span>Change:</span>
-                    <span>PHP {Number(activeReceipt.change_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    <span className="font-mono">₱{Number(activeReceipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </>
+              ) : (
+                <div className="flex justify-between text-gray-500">
+                  <span>Reference / Auth Code:</span>
+                  <span className="font-mono">{activeReceipt.payment_reference || 'N/A'}</span>
+                </div>
               )}
             </div>
 
             {/* Footer Message */}
             <div className="text-center pt-3 border-t border-dashed border-gray-300 dark:border-darkbg-border text-[10px] text-gray-400 space-y-1">
-              <p>Thank you for purchasing at TECH AVENUE!</p>
+              <p className="font-semibold text-gray-700 dark:text-gray-300">Thank you for your purchase!</p>
               <p>Items eligible for 7-day replacement with this receipt.</p>
+              <p className="text-[9px] uppercase tracking-wider text-gray-400 font-mono">*** THIS SERVES AS AN OFFICIAL RECEIPT ***</p>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3">
-              <button
-                onClick={() => window.print()}
-                className="px-3 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold flex items-center gap-1.5"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                Print Receipt
-              </button>
+            <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleSaveReceiptPdf(activeReceipt)}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Save as PDF
+                </button>
+                <button
+                  onClick={() => handleSaveReceiptPdf(activeReceipt)}
+                  className="px-3 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  Print
+                </button>
+              </div>
               <button
                 onClick={() => setIsReceiptModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-300 text-xs font-semibold"
+                className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-200"
               >
                 Close
               </button>
