@@ -1171,27 +1171,42 @@ def get_pos_eligible_drafts():
 @require_role("admin", "sales_personnel", "instructor")
 def pos_checkout():
     """
-    Atomic Point of Sale Checkout:
+    Atomic Point of Sale Checkout (Cash-Only):
+    - Cash is the ONLY accepted payment method (Card/GCash strictly rejected).
     - Supports finalizing an existing draft (draft_id) or direct cart checkout.
-    - Locks & verifies product stock availability in MySQL.
+    - Locks & verifies product stock availability in MySQL with FOR UPDATE.
     - Deducts inventory ONLY upon successful payment.
-    - Sets transaction status to 'completed', assigns invoice number INV-YYYYMMDD-XXXX.
+    - Sets transaction status to 'completed', assigns sequential receipt number OR-YYYYMMDD-XXXX.
     - Updates cashier shift collections atomically.
     - Rolls back on any error.
+    - Prevents double-submission duplicate transactions.
     """
     user = get_current_user()
     data = request.get_json() or {}
     
     draft_id = data.get("draft_id")
     items = data.get("items", [])
-    payment_method = data.get("payment_method", "Cash")
-    amount_tendered = float(data.get("amount_tendered", 0))
-    customer_name = data.get("customer_name", "Walk-in Customer").strip() or "Walk-in Customer"
-    payment_reference = data.get("payment_reference", None)
-    discount_pct = float(data.get("discount_pct", 0.0))
+    payment_method = (data.get("payment_method") or "Cash").strip()
+    
+    # Strictly reject non-cash payment methods
+    if payment_method != "Cash":
+        return jsonify({
+            "status": "error",
+            "message": "Invalid payment method. TechAvenue POS processes Cash transactions only."
+        }), 400
 
-    if payment_method not in ["Cash", "Card", "GCash"]:
-        return jsonify({"status": "error", "message": "Invalid payment method"}), 400
+    try:
+        amount_tendered = float(data.get("amount_tendered", 0))
+    except (ValueError, TypeError):
+        amount_tendered = 0.0
+
+    customer_name = (data.get("customer_name") or "").strip() or "Walk-in Customer"
+    notes = (data.get("notes") or "").strip()
+    
+    try:
+        discount_pct = float(data.get("discount_pct", 0.0))
+    except (ValueError, TypeError):
+        discount_pct = 0.0
 
     conn = get_db_connection()
     try:
@@ -1243,20 +1258,25 @@ def pos_checkout():
 
                 discount_amount = float(draft["discount_amount"])
                 discount_pct = float(draft["discount_pct"])
-                net_subtotal = float(draft["subtotal"])
-                vat_amount = float(draft["vat_amount"])
                 total_amount = float(draft["total_amount"])
+                # Philippine retail: total is VAT-inclusive
+                net_subtotal = round(total_amount / 1.12, 2)
+                vat_amount = round(total_amount - net_subtotal, 2)
                 target_tx_id = draft["id"]
 
             else:
                 # Direct cart checkout
                 if not items or len(items) == 0:
                     conn.rollback()
-                    return jsonify({"status": "error", "message": "Shopping cart is empty"}), 400
+                    return jsonify({"status": "error", "message": "Shopping cart is empty. Add at least one product."}), 400
 
                 for itm in items:
                     prod_id = itm.get("product_id")
-                    qty = int(itm.get("quantity", 1))
+                    try:
+                        qty = int(itm.get("quantity", 1))
+                    except (ValueError, TypeError):
+                        qty = 1
+
                     if qty <= 0:
                         conn.rollback()
                         return jsonify({"status": "error", "message": "Quantity must be greater than zero"}), 400
@@ -1289,27 +1309,42 @@ def pos_checkout():
                     })
 
                 discount_amount = round(gross_subtotal * (discount_pct / 100.0), 2)
-                net_subtotal = round(gross_subtotal - discount_amount, 2)
-                vat_amount = round(net_subtotal * 0.12, 2)
-                total_amount = round(net_subtotal + vat_amount, 2)
+                discounted_total = round(max(0.0, gross_subtotal - discount_amount), 2)
+                net_subtotal = round(discounted_total / 1.12, 2)
+                vat_amount = round(discounted_total - net_subtotal, 2)
+                total_amount = discounted_total
                 target_tx_id = None
 
-            # Payment validation
-            if payment_method == "Cash" and amount_tendered < total_amount:
+            # Payment validation: Cash tendered must cover total amount due
+            if amount_tendered < total_amount:
                 conn.rollback()
                 return jsonify({
                     "status": "error",
-                    "message": f"Amount tendered (PHP {amount_tendered:,.2f}) is less than total amount (PHP {total_amount:,.2f})"
+                    "message": f"Amount tendered (PHP {amount_tendered:,.2f}) is less than total amount due (PHP {total_amount:,.2f})"
                 }), 400
 
-            change_amount = round(max(0.0, amount_tendered - total_amount), 2) if payment_method == "Cash" else 0.0
+            change_amount = round(max(0.0, amount_tendered - total_amount), 2)
+
+            # Prevent double-click duplicates within 3 seconds
+            cursor.execute("""
+                SELECT id, invoice_number FROM sales_transactions 
+                WHERE user_id = %s AND customer_name = %s AND total_amount = %s AND status = 'completed'
+                  AND created_at >= NOW() - INTERVAL 3 SECOND
+                ORDER BY id DESC LIMIT 1;
+            """, (user["id"], customer_name, total_amount))
+            recent_dup = cursor.fetchone()
+            if recent_dup:
+                conn.rollback()
+                return jsonify({
+                    "status": "error",
+                    "message": f"Duplicate transaction detected. Receipt {recent_dup['invoice_number']} was just generated."
+                }), 409
 
             cursor.execute("SELECT id FROM shifts WHERE status = 'active' ORDER BY id DESC LIMIT 1;")
             shift_row = cursor.fetchone()
             shift_id = shift_row["id"] if shift_row else None
 
             # Dynamic & Safe Sequential OR Number Generation
-            # Extracts maximum numeric sequence for today to prevent duplicates
             today_prefix = datetime.datetime.now().strftime("OR-%Y%m%d-")
             cursor.execute("""
                 SELECT invoice_number 
@@ -1330,7 +1365,6 @@ def pos_checkout():
             else:
                 next_seq = 1
 
-            # Fallback collision check: verify candidate number is unused
             while True:
                 candidate_num = f"{today_prefix}{next_seq:04d}"
                 cursor.execute("SELECT id FROM sales_transactions WHERE invoice_number = %s;", (candidate_num,))
@@ -1339,22 +1373,28 @@ def pos_checkout():
                     break
                 next_seq += 1
 
+            now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
             if target_tx_id:
                 # Update draft to completed
                 cursor.execute("""
                     UPDATE sales_transactions 
                     SET invoice_number = %s, user_id = %s, customer_name = %s,
-                        amount_tendered = %s, change_amount = %s, payment_method = %s,
-                        payment_reference = %s, status = 'completed', shift_id = %s
+                        subtotal = %s, vat_amount = %s, total_amount = %s,
+                        discount_amount = %s, discount_pct = %s,
+                        amount_tendered = %s, change_amount = %s, payment_method = 'Cash',
+                        payment_reference = NULL, status = 'completed', shift_id = %s,
+                        notes = %s, created_at = NOW()
                     WHERE id = %s;
-                """, (final_invoice_num, user["id"], customer_name, amount_tendered, change_amount, payment_method, payment_reference, shift_id, target_tx_id))
+                """, (final_invoice_num, user["id"], customer_name, net_subtotal, vat_amount, total_amount,
+                      discount_amount, discount_pct, amount_tendered, change_amount, shift_id, notes, target_tx_id))
             else:
                 # Insert completed transaction
                 cursor.execute("""
                     INSERT INTO sales_transactions 
-                    (invoice_number, user_id, customer_name, subtotal, vat_amount, total_amount, discount_amount, discount_pct, amount_tendered, change_amount, payment_method, payment_reference, status, shift_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'completed', %s);
-                """, (final_invoice_num, user["id"], customer_name, net_subtotal, vat_amount, total_amount, discount_amount, discount_pct, amount_tendered, change_amount, payment_method, payment_reference, shift_id))
+                    (invoice_number, user_id, customer_name, subtotal, vat_amount, total_amount, discount_amount, discount_pct, amount_tendered, change_amount, payment_method, payment_reference, status, shift_id, notes)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'Cash', NULL, 'completed', %s, %s);
+                """, (final_invoice_num, user["id"], customer_name, net_subtotal, vat_amount, total_amount, discount_amount, discount_pct, amount_tendered, change_amount, shift_id, notes))
                 target_tx_id = cursor.lastrowid
 
                 for v in validated_items:
@@ -1377,34 +1417,37 @@ def pos_checkout():
                 cursor.execute("""
                     INSERT INTO inventory_movements (reference_number, product_id, movement_type, quantity, previous_stock, new_stock, reason, user_id)
                     VALUES (%s, %s, 'sale', %s, %s, %s, %s, %s);
-                """, (ref_mov, v["product_id"], -v["quantity"], v["stock_quantity"], new_stock, f"POS Sale: {final_invoice_num}", user["id"]))
+                """, (ref_mov, v["product_id"], -v["quantity"], v["stock_quantity"], new_stock, f"POS Cash Sale: {final_invoice_num}", user["id"]))
 
-            # Update active shift
+            # Update active shift collections
             if shift_id:
-                col_name = "cash_sales" if payment_method == "Cash" else ("card_sales" if payment_method == "Card" else "gcash_sales")
-                cursor.execute(f"""
+                cursor.execute("""
                     UPDATE shifts 
                     SET total_sales = total_sales + %s,
                         total_transactions = total_transactions + 1,
-                        {col_name} = {col_name} + %s
+                        cash_sales = cash_sales + %s
                     WHERE id = %s;
                 """, (total_amount, total_amount, shift_id))
 
             cursor.execute("""
                 INSERT INTO activity_logs (user_id, action, details)
                 VALUES (%s, 'POS_CHECKOUT', %s);
-            """, (user["id"], f"Completed checkout {final_invoice_num} for PHP {total_amount:,.2f} via {payment_method}"))
+            """, (user["id"], f"Completed cash checkout {final_invoice_num} for PHP {total_amount:,.2f}"))
 
             conn.commit()
 
             receipt = {
+                "id": target_tx_id,
                 "transaction_id": target_tx_id,
                 "invoice_number": final_invoice_num,
-                "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "receipt_number": final_invoice_num,
+                "created_at": now_str,
+                "transaction_date": now_str,
                 "cashier": user["full_name"],
+                "cashier_name": user["full_name"],
                 "customer_name": customer_name,
-                "payment_method": payment_method,
-                "payment_reference": payment_reference,
+                "payment_method": "Cash",
+                "payment_reference": None,
                 "gross_subtotal": gross_subtotal,
                 "discount_amount": discount_amount,
                 "discount_pct": discount_pct,
@@ -1414,9 +1457,12 @@ def pos_checkout():
                 "total_amount": total_amount,
                 "amount_tendered": amount_tendered,
                 "change_amount": change_amount,
+                "status": "completed",
                 "items": [{
+                    "product_id": v["product_id"],
                     "sku": v["sku"],
                     "name": v["name"],
+                    "product_name": v["name"],
                     "quantity": v["quantity"],
                     "unit_price": v["unit_price"],
                     "total_price": v["total_price"]
@@ -1425,8 +1471,9 @@ def pos_checkout():
 
             return jsonify({
                 "status": "success",
-                "message": "Payment confirmed and checkout completed successfully",
-                "receipt": receipt
+                "message": "Cash payment verified and checkout completed successfully",
+                "receipt": receipt,
+                "transaction": receipt
             }), 201
 
     except Exception as e:
@@ -1435,25 +1482,31 @@ def pos_checkout():
     finally:
         conn.close()
 
-# ----------------- SALES HISTORY & SHIFTS -----------------
 @app.route("/api/sales", methods=["GET"])
 def get_sales_history():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT t.id, t.invoice_number, t.customer_name, t.subtotal, t.vat_amount, 
-                       t.total_amount, t.discount_amount, t.discount_pct, t.payment_method, 
-                       t.status, t.created_at, u.full_name as cashier,
+                SELECT t.id, t.id as transaction_id, t.invoice_number, t.invoice_number as receipt_number,
+                       t.customer_name, t.subtotal, t.vat_amount, 
+                       t.total_amount, t.discount_amount, t.discount_pct, 
+                       t.amount_tendered, t.change_amount, t.payment_method, 
+                       t.status, t.created_at, t.created_at as transaction_date,
+                       u.full_name as cashier, u.full_name as cashier_name,
                        (SELECT COUNT(*) FROM sales_items WHERE transaction_id = t.id) as item_count
                 FROM sales_transactions t
                 JOIN users u ON t.user_id = u.id
                 WHERE t.status = 'completed'
                 ORDER BY t.id DESC
-                LIMIT 100;
+                LIMIT 200;
             """)
             transactions = cursor.fetchall()
-            return jsonify({"status": "success", "transactions": transactions})
+            return jsonify({
+                "status": "success",
+                "transactions": transactions,
+                "receipts": transactions
+            })
     finally:
         conn.close()
 
@@ -1463,7 +1516,9 @@ def get_receipt(tx_id):
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT t.*, u.full_name as cashier
+                SELECT t.*, t.id as transaction_id, t.invoice_number as receipt_number,
+                       u.full_name as cashier, u.full_name as cashier_name,
+                       t.created_at as transaction_date
                 FROM sales_transactions t
                 JOIN users u ON t.user_id = u.id
                 WHERE t.id = %s;
@@ -1473,7 +1528,8 @@ def get_receipt(tx_id):
                 return jsonify({"status": "error", "message": "Transaction not found"}), 404
 
             cursor.execute("""
-                SELECT si.quantity, si.unit_price, si.total_price, p.sku, p.name, p.image_url
+                SELECT si.product_id, si.quantity, si.unit_price, si.total_price, 
+                       p.sku, p.name, p.name as product_name, p.image_url
                 FROM sales_items si
                 JOIN products p ON si.product_id = p.id
                 WHERE si.transaction_id = %s;
@@ -1481,7 +1537,11 @@ def get_receipt(tx_id):
             items = cursor.fetchall()
             tx["items"] = items
 
-            return jsonify({"status": "success", "receipt": tx})
+            return jsonify({
+                "status": "success",
+                "receipt": tx,
+                "transaction": tx
+            })
     finally:
         conn.close()
 

@@ -3,9 +3,7 @@ import {
   ShoppingCart, 
   Search, 
   Trash2, 
-  CreditCard, 
   Banknote, 
-  Smartphone, 
   CheckCircle2, 
   AlertCircle, 
   Printer, 
@@ -13,15 +11,14 @@ import {
   RotateCcw, 
   Plus, 
   Minus, 
-  Layers, 
   ArrowRight,
   ShieldCheck,
   Receipt as ReceiptIcon,
   X
 } from 'lucide-react';
-import Modal, { ConfirmDialog } from '../components/Modal';
+import Modal from '../components/Modal';
+import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import { api } from '../api';
-import logoImg from '../assets/logo.png';
 
 export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavigateToNewTransaction }) {
   const [products, setProducts] = useState([]);
@@ -30,14 +27,12 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Active Sale / Cart state
+  // Active Sale / Cart state (Strictly Cash Only)
   const [cart, setCart] = useState([]);
   const [activeDraft, setActiveDraft] = useState(null);
   const [customerName, setCustomerName] = useState('Walk-in Customer');
   const [discountPct, setDiscountPct] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState('Cash'); // 'Cash', 'Card', 'GCash'
   const [amountTendered, setAmountTendered] = useState('');
-  const [paymentReference, setPaymentReference] = useState('');
   const [notes, setNotes] = useState('');
 
   // Checkout & Receipt modal state
@@ -112,7 +107,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     if (!draft) return;
 
     let fullDraft = draft;
-    // If draft items are not populated in the summary object, fetch the full draft details from backend
     if (!draft.items || draft.items.length === 0) {
       const draftIdentifier = draft.id || draft.draft_id;
       if (draftIdentifier) {
@@ -152,7 +146,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     showFeedback(`Loaded Draft ${draftNumber} for customer ${fullDraft.customer_name || 'Walk-in Customer'}!`);
   };
 
-
   const handleUnloadDraft = () => {
     setActiveDraft(null);
     setCustomerName('Walk-in Customer');
@@ -160,7 +153,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     setNotes('');
     setCart([]);
     if (onClearDraft) onClearDraft();
-    showFeedback('Cleared draft. Started fresh direct sale.', 'info');
+    showFeedback('Cleared draft. Switched to fresh direct sale.', 'info');
   };
 
   // Cart operations
@@ -216,48 +209,55 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
   const clearCart = () => {
     setCart([]);
     setActiveDraft(null);
+    setAmountTendered('');
+    setCustomerName('Walk-in Customer');
+    setDiscountPct(0);
     if (onClearDraft) onClearDraft();
   };
 
-  // Calculation logic with 12% Philippine VAT standard
+  // Calculation logic with 12% Philippine VAT standard (prices are VAT-inclusive)
   const grossSubtotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
   const discountAmount = grossSubtotal * (Number(discountPct) / 100);
   const discountedTotal = Math.max(0, grossSubtotal - discountAmount);
   
-  // In the Philippines standard: prices are VAT-inclusive (12%)
+  // Philippine VAT standard: Net of VAT = Total / 1.12
   const vatExclusiveSubtotal = +(discountedTotal / 1.12).toFixed(2);
   const vatAmount = +(discountedTotal - vatExclusiveSubtotal).toFixed(2);
   const totalAmountDue = discountedTotal;
 
-  // Tender & Change calculation
+  // Tender & Change calculation (Cash-only)
   const numericTendered = parseFloat(amountTendered) || 0;
-  const changeDue = paymentMethod === 'Cash' ? Math.max(0, numericTendered - totalAmountDue) : 0;
-  const isTenderInsufficient = paymentMethod === 'Cash' && numericTendered < totalAmountDue;
+  const changeDue = Math.max(0, numericTendered - totalAmountDue);
+  const isTenderInsufficient = numericTendered < totalAmountDue;
 
-  // Checkout submission
+  // Complete Checkout submission
   const handleCheckout = async () => {
+    // 1. Validate cart contains at least one product
     if (cart.length === 0) {
-      showFeedback('Cart is empty. Add at least one product to checkout.', 'error');
+      showFeedback('Shopping cart is empty. Add at least one product to checkout.', 'error');
       return;
     }
 
-    if (paymentMethod === 'Cash') {
-      if (numericTendered < totalAmountDue) {
-        showFeedback(`Amount tendered (PHP ${numericTendered.toFixed(2)}) is less than total due (PHP ${totalAmountDue.toFixed(2)}).`, 'error');
-        return;
-      }
-    } else if (paymentMethod === 'Card' || paymentMethod === 'GCash') {
-      if (!paymentReference.trim()) {
-        showFeedback(`Please provide reference / authorization code for ${paymentMethod} payment.`, 'error');
-        return;
-      }
+    // 2. Validate customer name
+    const validCustomerName = customerName.trim() || 'Walk-in Customer';
+
+    // 3. Validate amount tendered
+    if (!amountTendered || isNaN(numericTendered) || numericTendered <= 0) {
+      showFeedback('Please enter the cash amount tendered by the customer.', 'error');
+      return;
     }
 
-    // Verify stock availability on client side before hitting backend
+    // 4. Ensure amount tendered >= total amount due
+    if (numericTendered < totalAmountDue) {
+      showFeedback(`Amount tendered (₱${numericTendered.toFixed(2)}) is less than total amount due (₱${totalAmountDue.toFixed(2)}).`, 'error');
+      return;
+    }
+
+    // 5. Verify product stock availability client-side before submission
     for (const item of cart) {
       const liveProd = products.find(p => p.id === item.product_id);
       if (liveProd && item.quantity > liveProd.stock_quantity) {
-        showFeedback(`Cannot checkout: "${item.name}" only has ${liveProd.stock_quantity} units in stock.`, 'error');
+        showFeedback(`Cannot checkout: "${item.name}" only has ${liveProd.stock_quantity} units available.`, 'error');
         return;
       }
     }
@@ -266,11 +266,10 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     try {
       const payload = {
         draft_id: activeDraft ? activeDraft.id : null,
-        customer_name: customerName,
-        payment_method: paymentMethod,
-        amount_tendered: paymentMethod === 'Cash' ? numericTendered : totalAmountDue,
+        customer_name: validCustomerName,
+        payment_method: 'Cash', // Strictly Cash
+        amount_tendered: numericTendered,
         change_amount: changeDue,
-        payment_reference: paymentReference,
         discount_amount: discountAmount,
         discount_pct: Number(discountPct),
         notes: notes,
@@ -284,22 +283,27 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
       const res = await api.posCheckout(payload);
 
       if (res.status === 'success') {
-        setCompletedTransaction(res.transaction);
-        setIsReceiptModalOpen(true);
-        showFeedback(`Payment verified! Invoice ${res.transaction.invoice_number} successfully recorded in MySQL.`);
+        const receiptData = res.receipt || res.transaction;
+        if (receiptData) {
+          // Immediately set completed transaction data and open official receipt modal
+          setCompletedTransaction(receiptData);
+          setIsReceiptModalOpen(true);
+          showFeedback(`Payment verified! Official Receipt ${receiptData.invoice_number} saved to MySQL.`);
 
-        // Reset POS State
-        setCart([]);
-        setActiveDraft(null);
-        setAmountTendered('');
-        setPaymentReference('');
-        setNotes('');
-        setCustomerName('Walk-in Customer');
-        setDiscountPct(0);
-        if (onClearDraft) onClearDraft();
+          // Reset cart & POS inputs
+          setCart([]);
+          setActiveDraft(null);
+          setAmountTendered('');
+          setNotes('');
+          setCustomerName('Walk-in Customer');
+          setDiscountPct(0);
+          if (onClearDraft) onClearDraft();
 
-        // Refresh products catalog & drafts in background
-        loadInitialData();
+          // Refresh products catalog & drafts in background
+          loadInitialData();
+        } else {
+          showFeedback('Checkout saved, but receipt data was not returned.', 'error');
+        }
       } else {
         showFeedback(res.message || 'Checkout failed.', 'error');
       }
@@ -314,7 +318,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
   // Filter products
   const categories = ['All', 'Laptops', 'Desktops', 'Components', 'Accessories', 'Networking'];
   const filteredProducts = products.filter(p => {
-    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory || p.category_name === selectedCategory;
     const matchesSearch = !searchQuery || 
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -322,158 +326,9 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     return matchesCategory && matchesSearch;
   });
 
-  const handleSaveReceiptPdf = (receipt) => {
-    if (!receipt) return;
-    const printWindow = window.open('', '_blank', 'width=450,height=700');
-    if (!printWindow) {
-      alert('Please allow popups to save or print receipt.');
-      return;
-    }
-
-    const itemsHtml = (receipt.items || []).map(item => `
-      <tr>
-        <td style="padding: 4px 0; font-weight: 600;">
-          ${item.product_name || item.name}
-          <div style="font-size: 9px; color: #666; font-weight: normal;">${item.sku || ''}</div>
-        </td>
-        <td style="padding: 4px 0; text-align: center;">${item.quantity}</td>
-        <td style="padding: 4px 0; text-align: right;">₱${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-        <td style="padding: 4px 0; text-align: right; font-weight: bold;">₱${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-      </tr>
-    `).join('');
-
-    const subtotalNet = Number(receipt.subtotal || (Number(receipt.total_amount) / 1.12));
-    const vatVal = Number(receipt.vat_amount || (Number(receipt.total_amount) - subtotalNet));
-    const discountVal = Number(receipt.discount_amount || 0);
-    const discountPctVal = Number(receipt.discount_pct || 0);
-
-    const docContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>receipt_${receipt.invoice_number}.pdf</title>
-        <style>
-          @page { size: 80mm auto; margin: 4mm; }
-          body {
-            font-family: 'Courier New', Courier, monospace, -apple-system, sans-serif;
-            font-size: 11px;
-            color: #111;
-            margin: 0;
-            padding: 8px;
-            width: 72mm;
-            background: #fff;
-          }
-          .text-center { text-align: center; }
-          .bold { font-weight: bold; }
-          .border-b { border-bottom: 1px dashed #888; padding-bottom: 6px; margin-bottom: 6px; }
-          .border-t { border-top: 1px dashed #888; padding-top: 6px; margin-top: 6px; }
-          table { width: 100%; border-collapse: collapse; font-size: 10px; }
-          th { border-bottom: 1px solid #444; padding-bottom: 3px; font-size: 9px; text-transform: uppercase; }
-          .row { display: flex; justify-content: space-between; margin-bottom: 2px; }
-          .total-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; margin: 4px 0; }
-          .footer { text-align: center; font-size: 9px; color: #555; margin-top: 10px; }
-          @media print { body { width: 100%; } }
-        </style>
-      </head>
-      <body>
-        <div class="text-center border-b">
-          <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">TECH AVENUE</div>
-          <div style="font-size: 9px; font-weight: bold;">COMPUTER & ACCESSORIES STORE</div>
-          <div style="font-size: 8px; color: #444;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
-          <div style="font-size: 10px; font-weight: bold; margin-top: 4px; text-transform: uppercase;">Official Transaction Receipt</div>
-        </div>
-
-        <div class="border-b" style="font-size: 10px;">
-          <div class="row"><span>Receipt No:</span><span class="bold">${receipt.invoice_number}</span></div>
-          <div class="row"><span>Date & Time:</span><span>${receipt.created_at || receipt.transaction_date || new Date().toLocaleString()}</span></div>
-          <div class="row"><span>Cashier:</span><span>${receipt.cashier_name || receipt.cashier || user?.full_name || 'Cashier'}</span></div>
-          <div class="row"><span>Customer:</span><span>${receipt.customer_name || 'Walk-in Customer'}</span></div>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align: left;">Item</th>
-              <th style="text-align: center;">Qty</th>
-              <th style="text-align: right;">Price</th>
-              <th style="text-align: right;">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemsHtml}
-          </tbody>
-        </table>
-
-        <div class="border-t" style="font-size: 10px;">
-          <div class="row">
-            <span>Subtotal (Net of VAT):</span>
-            <span>₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-          </div>
-          <div class="row">
-            <span>12% Output VAT:</span>
-            <span>₱${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-          </div>
-          ${discountVal > 0 ? `
-            <div class="row" style="color: #059669;">
-              <span>Discount (${discountPctVal}%):</span>
-              <span>-₱${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-          ` : ''}
-          <div class="total-row border-t border-b">
-            <span>TOTAL AMOUNT DUE:</span>
-            <span>₱${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-          </div>
-          <div class="row">
-            <span>Payment Method:</span>
-            <span class="bold">${receipt.payment_method || 'Cash'}</span>
-          </div>
-          ${(receipt.payment_method === 'Cash' || !receipt.payment_method) ? `
-            <div class="row">
-              <span>Amount Tendered:</span>
-              <span>₱${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-            <div class="row bold">
-              <span>Change:</span>
-              <span>₱${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-          ` : `
-            <div class="row">
-              <span>Payment Ref / Auth:</span>
-              <span>${receipt.payment_reference || 'N/A'}</span>
-            </div>
-          `}
-        </div>
-
-        <div class="footer">
-          <div class="bold">THANK YOU FOR YOUR PURCHASE!</div>
-          <div>Items eligible for 7-day replacement with this receipt.</div>
-          <div style="font-size: 8px; margin-top: 4px;">*** THIS SERVES AS AN OFFICIAL RECEIPT ***</div>
-        </div>
-
-        <script>
-          window.onload = function() {
-            window.document.title = "receipt_" + "${receipt.invoice_number}" + ".pdf";
-            window.print();
-          };
-        </script>
-      </body>
-      </html>
-    `;
-
-    printWindow.document.open();
-    printWindow.document.write(docContent);
-    printWindow.document.close();
-  };
-
-  const printReceipt = () => {
-    handleSaveReceiptPdf(completedTransaction);
-  };
-
   return (
     <div className="p-6 space-y-6">
-      {/* Page Title & Status Header */}
+      {/* Page Title & Register Status Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200 dark:border-darkbg-border">
         <div>
           <div className="flex items-center gap-3">
@@ -481,12 +336,13 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
               <ShoppingCart className="w-7 h-7 text-navy dark:text-greige" />
               Point of Sale (POS Checkout)
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 border border-green-300 dark:border-green-700">
-              Live Register
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Cash Register Ready
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Complete customer checkouts, accept Cash / Card / GCash, atomically decrement MySQL inventory, and issue official receipts.
+            Over-the-counter cash checkout, automated MySQL inventory deduction, and instant official transaction receipts.
           </p>
         </div>
 
@@ -519,7 +375,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
             ? 'bg-red-50 dark:bg-red-950/60 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800' 
             : feedback.type === 'info'
             ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800'
-            : 'bg-green-50 dark:bg-green-950/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800'
+            : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800'
         }`}>
           <div className="flex items-center gap-3">
             {feedback.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle2 className="w-5 h-5 shrink-0" />}
@@ -548,7 +404,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                 </span>
               </div>
               <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-                Customer: <strong>{activeDraft.customer_name || 'Walk-in'}</strong> • Created {formatDateTime(activeDraft.transaction_date || activeDraft.created_at)} • Draft will be completed in MySQL upon payment.
+                Customer: <strong>{activeDraft.customer_name || 'Walk-in Customer'}</strong> • Created {formatDateTime(activeDraft.transaction_date || activeDraft.created_at)} • Stock will be deducted upon cash payment.
               </p>
             </div>
           </div>
@@ -561,7 +417,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
         </div>
       )}
 
-      {/* Main Grid: Catalog (Left) + Checkout / Payment Panel (Right) */}
+      {/* Main Grid: Catalog (Left) + Current Sale Cart & Checkout Panel (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left 7 Columns: Product Selection & Catalog */}
@@ -639,7 +495,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                         {/* SKU & Category badge */}
                         <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
                           <span className="font-mono">{p.sku}</span>
-                          <span className="truncate max-w-[80px]">{p.category}</span>
+                          <span className="truncate max-w-[80px]">{p.category || p.category_name}</span>
                         </div>
 
                         {/* Name */}
@@ -659,7 +515,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                               ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' 
                               : p.stock_quantity <= (p.reorder_level || 5)
                               ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                              : 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+                              : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
                           }`}>
                             {p.stock_quantity} in stock
                           </span>
@@ -697,7 +553,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
           </div>
         </div>
 
-        {/* Right 5 Columns: Cart, Totals, Payment & Final Checkout */}
+        {/* Right 5 Columns: Current Sale Cart, Pricing Breakdown & Cash Checkout */}
         <div className="lg:col-span-5 space-y-4">
           <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
             
@@ -725,7 +581,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
-                  Customer Name
+                  Customer Name *
                 </label>
                 <input
                   type="text"
@@ -802,7 +658,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                         </button>
                       </div>
 
-                      <span className="text-xs font-black text-gray-900 dark:text-white w-20 text-right">
+                      <span className="text-xs font-black text-gray-900 dark:text-white w-20 text-right font-mono">
                         PHP {(item.unit_price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
 
@@ -810,7 +666,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                         type="button"
                         onClick={() => removeFromCart(item.product_id)}
                         className="text-gray-400 hover:text-red-500 p-1"
-                        title="Remove"
+                        title="Remove Item"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -821,95 +677,92 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
             </div>
 
             {/* Price Calculations */}
-            <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl space-y-1.5 text-xs border border-gray-200 dark:border-darkbg-border">
+            <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl space-y-1.5 text-xs border border-gray-200 dark:border-darkbg-border font-sans">
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Subtotal (Net of VAT)</span>
-                <span>PHP {vatExclusiveSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span className="font-mono">PHP {vatExclusiveSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
 
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>12% Output VAT</span>
-                <span>PHP {vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span className="font-mono">PHP {vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
 
               {discountAmount > 0 && (
-                <div className="flex justify-between text-green-600 dark:text-green-400 font-semibold">
+                <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
                   <span>Discount ({discountPct}%)</span>
-                  <span>- PHP {discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span className="font-mono">- PHP {discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </div>
               )}
 
               <div className="pt-2 border-t border-gray-200 dark:border-darkbg-border flex justify-between items-baseline font-black text-base text-navy dark:text-greige">
                 <span>Total Amount Due</span>
-                <span>PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400">
+                  PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </span>
               </div>
             </div>
 
-            {/* Payment Method Selector */}
+            {/* Payment Section: STRICTLY CASH ONLY (Card and GCash completely removed) */}
             <div className="space-y-3 pt-1">
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-200">
-                Payment Method
-              </label>
-              
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'Cash', label: 'Cash', icon: Banknote },
-                  { id: 'Card', label: 'Card', icon: CreditCard },
-                  { id: 'GCash', label: 'GCash', icon: Smartphone }
-                ].map(m => {
-                  const Icon = m.icon;
-                  const isSelected = paymentMethod === m.id;
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setPaymentMethod(m.id)}
-                      className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border text-xs font-bold transition ${
-                        isSelected
-                          ? 'border-navy bg-navy text-white dark:border-greige dark:bg-greige dark:text-navy shadow'
-                          : 'border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{m.label}</span>
-                    </button>
-                  );
-                })}
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1.5">
+                  <Banknote className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  Payment Method
+                </label>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                  Cash Only
+                </span>
               </div>
 
-              {/* Payment Details Based on Method */}
-              {paymentMethod === 'Cash' ? (
-                <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkbg-border space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                      Amount Tendered (PHP)
-                    </label>
-                    {/* Quick Tender Presets */}
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setAmountTendered(totalAmountDue.toString())}
-                        className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white"
-                      >
-                        Exact
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAmountTendered((Math.ceil(totalAmountDue / 500) * 500).toString())}
-                        className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white"
-                      >
-                        Round 500
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAmountTendered((Math.ceil(totalAmountDue / 1000) * 1000).toString())}
-                        className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white"
-                      >
-                        Round 1000
-                      </button>
-                    </div>
+              {/* Cash Indicator Card */}
+              <div className="p-3 bg-emerald-50/50 dark:bg-darkbg rounded-xl border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-lg">
+                    <Banknote className="w-5 h-5" />
                   </div>
+                  <div>
+                    <span className="text-xs font-bold text-gray-900 dark:text-white">Cash</span>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400">Over-the-counter cash tender</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">Accepted</span>
+              </div>
 
+              {/* Cash Amount Tendered & Quick Presets */}
+              <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkbg-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                    Amount Tendered (PHP) *
+                  </label>
+                  {/* Quick Tender Presets */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setAmountTendered(totalAmountDue > 0 ? totalAmountDue.toString() : '')}
+                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
+                    >
+                      Exact
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAmountTendered(totalAmountDue > 0 ? (Math.ceil(totalAmountDue / 500) * 500).toString() : '')}
+                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
+                    >
+                      Round 500
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAmountTendered(totalAmountDue > 0 ? (Math.ceil(totalAmountDue / 1000) * 1000).toString() : '')}
+                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
+                    >
+                      Round 1000
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-sm font-bold text-gray-400">₱</span>
                   <input
                     type="number"
                     step="0.01"
@@ -917,37 +770,24 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                     placeholder="0.00"
                     value={amountTendered}
                     onChange={(e) => setAmountTendered(e.target.value)}
-                    className="w-full px-3 py-2 text-sm font-mono font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
+                    className="w-full pl-7 pr-3 py-2 text-sm font-mono font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
                   />
+                </div>
 
-                  {/* Change Calculation Display */}
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                      Change Due:
-                    </span>
-                    <span className={`text-sm font-black font-mono ${
-                      isTenderInsufficient ? 'text-red-500' : 'text-green-600 dark:text-green-400'
-                    }`}>
-                      {isTenderInsufficient 
-                        ? `Short by PHP ${(totalAmountDue - numericTendered).toLocaleString('en-US', { minimumFractionDigits: 2 })}` 
-                        : `PHP ${changeDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    </span>
-                  </div>
+                {/* Change Calculation Display */}
+                <div className="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-darkbg-border">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                    Change Due:
+                  </span>
+                  <span className={`text-sm font-black font-mono ${
+                    isTenderInsufficient ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'
+                  }`}>
+                    {isTenderInsufficient 
+                      ? `Short by PHP ${(totalAmountDue - numericTendered).toLocaleString('en-US', { minimumFractionDigits: 2 })}` 
+                      : `PHP ${changeDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                  </span>
                 </div>
-              ) : (
-                <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkbg-border space-y-2">
-                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                    {paymentMethod === 'Card' ? 'Card Reference / Authorization Code' : 'GCash Reference Number'}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={paymentMethod === 'Card' ? 'e.g. AUTH-98231 (Terminal Ref)' : 'e.g. 100982374612'}
-                    value={paymentReference}
-                    onChange={(e) => setPaymentReference(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
-                  />
-                </div>
-              )}
+              </div>
             </div>
 
             {/* Complete Checkout Button */}
@@ -955,16 +795,16 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
               type="button"
               disabled={isCheckingOut || cart.length === 0 || isTenderInsufficient}
               onClick={handleCheckout}
-              className={`w-full py-3 px-4 rounded-xl text-sm font-black tracking-wide flex items-center justify-center gap-2 shadow-lg transition ${
+              className={`w-full py-3.5 px-4 rounded-xl text-sm font-black tracking-wide flex items-center justify-center gap-2 shadow-lg transition-all ${
                 isCheckingOut || cart.length === 0 || isTenderInsufficient
                   ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
-                  : 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/30'
+                  : 'bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-emerald-600/30'
               }`}
             >
               {isCheckingOut ? (
                 <>
                   <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                  <span>Processing Payment in MySQL...</span>
+                  <span>Processing Cash Checkout in MySQL...</span>
                 </>
               ) : (
                 <>
@@ -982,10 +822,10 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
         isOpen={isDraftsModalOpen}
         onClose={() => setIsDraftsModalOpen(false)}
         title="Resume Eligible Transaction Draft"
-        size="lg"
+        maxWidth="max-w-xl"
       >
         <div className="space-y-4">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Select a saved draft created in <strong>New Transaction</strong> to load its line items, customer, and discounts into this POS checkout session.
           </p>
 
@@ -1014,7 +854,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                       </span>
                     </div>
                     <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 mt-1">
-                      Customer: {d.customer_name || 'Walk-in'} • {d.item_count || d.items?.length || 0} items
+                      Customer: {d.customer_name || 'Walk-in Customer'} • {d.item_count || d.items?.length || 0} items
                     </p>
                     <p className="text-[10px] text-gray-400">
                       Created: {formatDateTime(d.transaction_date || d.created_at)}
@@ -1045,180 +885,12 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
         </div>
       </Modal>
 
-      {/* MODAL 2: Printable Official Receipt */}
-      <Modal
+      {/* MODAL 2: OFFICIAL TRANSACTION RECEIPT (Dark Navy Theme, Immediate Display) */}
+      <OfficialReceiptModal
         isOpen={isReceiptModalOpen}
         onClose={() => setIsReceiptModalOpen(false)}
-        title="Official Transaction Receipt"
-        size="md"
-      >
-        {completedTransaction && (
-          <div className="space-y-4">
-            {/* The printable receipt container */}
-            <div 
-              id="printable-receipt"
-              className="p-6 bg-white dark:bg-white text-gray-900 rounded-xl border border-gray-300 font-sans shadow-sm"
-              style={{ minHeight: '400px' }}
-            >
-              {/* Receipt Header */}
-              <div className="text-center pb-4 border-b border-dashed border-gray-400">
-                <div className="w-12 h-12 mx-auto mb-1 flex items-center justify-center">
-                  <img src={logoImg} alt="Tech Avenue" className="max-h-full max-w-full object-contain" />
-                </div>
-                <h2 className="text-base font-black tracking-wider uppercase text-gray-900">
-                  TECH AVENUE
-                </h2>
-                <p className="text-[11px] text-gray-600 uppercase font-semibold">
-                  Computer and Accessories Store
-                </p>
-                <p className="text-[10px] text-gray-500">
-                  Unit 402, Tech Avenue Cyber Plaza, Metro Manila
-                </p>
-                <p className="text-[10px] text-gray-500">
-                  TIN: 402-881-992-000 • Tel: (02) 8821-4920
-                </p>
-              </div>
-
-              {/* Receipt Meta */}
-              <div className="py-3 border-b border-dashed border-gray-300 text-[11px] space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Invoice No:</span>
-                  <span className="font-mono font-bold text-gray-900">{completedTransaction.invoice_number}</span>
-                </div>
-                {completedTransaction.transaction_number && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Ref No:</span>
-                    <span className="font-mono text-gray-700">{completedTransaction.transaction_number}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Date & Time:</span>
-                  <span className="text-gray-900">{new Date(completedTransaction.transaction_date).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Cashier:</span>
-                  <span className="font-medium text-gray-900">{completedTransaction.cashier_name || user?.full_name || 'Cashier'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Customer:</span>
-                  <span className="font-medium text-gray-900">{completedTransaction.customer_name || 'Walk-in Customer'}</span>
-                </div>
-              </div>
-
-              {/* Receipt Items Table */}
-              <div className="py-3 border-b border-dashed border-gray-300">
-                <table className="w-full text-[11px]">
-                  <thead>
-                    <tr className="border-b border-gray-300 text-gray-600 font-bold">
-                      <th className="text-left pb-1">Item</th>
-                      <th className="text-center pb-1">Qty</th>
-                      <th className="text-right pb-1">Price</th>
-                      <th className="text-right pb-1">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {(completedTransaction.items || []).map((it, idx) => (
-                      <tr key={idx} className="py-1">
-                        <td className="py-1 pr-1 font-medium">{it.product_name}</td>
-                        <td className="text-center py-1">{it.quantity}</td>
-                        <td className="text-right py-1">PHP {Number(it.unit_price).toFixed(2)}</td>
-                        <td className="text-right py-1 font-bold">PHP {(it.quantity * it.unit_price).toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Receipt Totals Breakdown */}
-              <div className="py-3 border-b border-dashed border-gray-400 text-[11px] space-y-1">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal (Net of VAT)</span>
-                  <span>PHP {(Number(completedTransaction.total_amount) / 1.12).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>12% Output VAT</span>
-                  <span>PHP {(Number(completedTransaction.total_amount) - (Number(completedTransaction.total_amount) / 1.12)).toFixed(2)}</span>
-                </div>
-                {Number(completedTransaction.discount_amount) > 0 && (
-                  <div className="flex justify-between text-green-700 font-semibold">
-                    <span>Discount</span>
-                    <span>- PHP {Number(completedTransaction.discount_amount).toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-sm font-black pt-1 border-t border-gray-300 text-gray-900">
-                  <span>TOTAL AMOUNT</span>
-                  <span>PHP {Number(completedTransaction.total_amount).toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Payment Details */}
-              <div className="py-3 text-[11px] space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Payment Method:</span>
-                  <span className="font-bold uppercase text-gray-900">{completedTransaction.payment_method}</span>
-                </div>
-                {completedTransaction.payment_method === 'Cash' ? (
-                  <>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Amount Tendered:</span>
-                      <span className="font-mono text-gray-900">PHP {Number(completedTransaction.amount_tendered || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold">
-                      <span className="text-gray-600">Change Due:</span>
-                      <span className="font-mono text-green-700">PHP {Number(completedTransaction.change_amount || 0).toFixed(2)}</span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Reference No:</span>
-                    <span className="font-mono text-gray-900">{completedTransaction.payment_reference || 'N/A'}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Receipt Footer */}
-              <div className="text-center pt-3 border-t border-dashed border-gray-300 text-[10px] text-gray-500 space-y-0.5">
-                <p className="font-bold text-gray-700">Thank you for shopping at TECH AVENUE!</p>
-                <p>Items may be returned or exchanged within 7 days with this official receipt.</p>
-                <p className="font-mono text-[9px] text-gray-400 mt-2">
-                  *** OFFICIAL RECEIPT • SYSTEM GENERATED ***
-                </p>
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex items-center justify-between pt-2">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleSaveReceiptPdf(completedTransaction)}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 shadow transition"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  Save as PDF
-                </button>
-                <button
-                  type="button"
-                  onClick={printReceipt}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-navy text-white rounded-lg text-xs font-bold hover:bg-navy-dark shadow transition"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  Print
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsReceiptModalOpen(false)}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg text-xs font-semibold hover:bg-gray-300"
-              >
-                Done / Start Next Sale
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+        receipt={completedTransaction}
+      />
     </div>
   );
 }
-

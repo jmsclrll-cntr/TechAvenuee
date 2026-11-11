@@ -28,6 +28,7 @@ import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '.
 import Modal from '../components/Modal';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { api } from '../api';
+import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import PointOfSale from './PointOfSale';
 import NewTransaction from './NewTransaction';
 
@@ -52,6 +53,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
   // Modals
   const [activeReceipt, setActiveReceipt] = useState(null);
+  const [receiptSearchQuery, setReceiptSearchQuery] = useState('');
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(null);
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
@@ -88,7 +90,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeTab]);
 
   // Cart operations
   const addToCart = (product) => {
@@ -187,12 +189,28 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
   const handleViewReceipt = async (transactionId) => {
     try {
       const res = await api.getReceipt(transactionId);
-      if (res.status === 'success') {
-        setActiveReceipt(res.receipt);
+      const receiptData = res.receipt || res.transaction;
+      if (receiptData) {
+        setActiveReceipt(receiptData);
         setIsReceiptModalOpen(true);
+      } else {
+        alert('Could not retrieve receipt data for transaction #' + transactionId);
       }
     } catch (err) {
-      alert('Error fetching receipt');
+      console.error('Error fetching receipt:', err);
+      alert('Error fetching receipt: ' + err.message);
+    }
+  };
+
+  const handlePrintReceiptById = async (transactionId) => {
+    try {
+      const res = await api.getReceipt(transactionId);
+      const receiptData = res.receipt || res.transaction;
+      if (receiptData) {
+        handleSaveReceiptPdf(receiptData);
+      }
+    } catch (err) {
+      alert('Failed to load receipt: ' + err.message);
     }
   };
 
@@ -964,42 +982,133 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
-      {/* VIEW: RECEIPTS ARCHIVE */}
+      {/* VIEW: RECEIPTS SECTION (MySQL Official Transaction Records) */}
       {activeTab === 'receipts' && (
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Digital Receipts Lookup</h2>
-            <p className="text-xs text-gray-500">Search customer receipts by invoice number or customer name</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-100 dark:border-darkbg-border">
+            <div>
+              <div className="flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-navy dark:text-greige" />
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Official Receipts Ledger</h2>
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
+                  {salesHistory.length} Recorded
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Saved MySQL cash transactions. View official receipts, download PDFs, or print customer copies.
+              </p>
+            </div>
+
+            {/* Search filter */}
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by OR#, Customer, Cashier..."
+                value={receiptSearchQuery}
+                onChange={(e) => setReceiptSearchQuery(e.target.value)}
+                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {salesHistory.map((s) => (
-              <div key={s.id} className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{s.invoice_number}</span>
-                  <span className="text-[10px] text-gray-400">{s.created_at?.substring(0, 10)}</span>
-                </div>
-                <div className="text-xs space-y-1 text-gray-600 dark:text-gray-300">
-                  <p>Customer: <strong>{s.customer_name}</strong></p>
-                  <p>Payment: <strong>{s.payment_method}</strong></p>
-                  <p className="text-sm font-bold text-emerald-600 font-mono pt-1">
-                    PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleViewReceipt(s.id)}
-                  className="w-full mt-2 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold flex items-center justify-center gap-1.5"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  View & Print Receipt
-                </button>
-              </div>
-            ))}
+          {/* Receipts Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+                <tr>
+                  <th className="py-3 px-3">Receipt / OR #</th>
+                  <th className="py-3 px-3">Tx ID</th>
+                  <th className="py-3 px-3">Date & Time</th>
+                  <th className="py-3 px-3">Cashier</th>
+                  <th className="py-3 px-3">Customer</th>
+                  <th className="py-3 px-3 text-right">Total Amount</th>
+                  <th className="py-3 px-3 text-center">Payment</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-3 text-center">Receipt Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+                {salesHistory
+                  .filter(s => {
+                    if (!receiptSearchQuery) return true;
+                    const q = receiptSearchQuery.toLowerCase();
+                    const invoice = (s.invoice_number || '').toLowerCase();
+                    const customer = (s.customer_name || '').toLowerCase();
+                    const cashier = (s.cashier || s.cashier_name || '').toLowerCase();
+                    return invoice.includes(q) || customer.includes(q) || cashier.includes(q);
+                  })
+                  .map((s) => (
+                    <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50 transition">
+                      <td className="py-3 px-3 font-mono font-bold text-navy dark:text-blue-400">
+                        {s.invoice_number}
+                      </td>
+                      <td className="py-3 px-3 font-mono text-gray-500">
+                        #{s.id}
+                      </td>
+                      <td className="py-3 px-3 text-gray-500 whitespace-nowrap">
+                        {s.created_at || s.transaction_date}
+                      </td>
+                      <td className="py-3 px-3 font-medium text-gray-700 dark:text-gray-300">
+                        {s.cashier || s.cashier_name || 'Cashier'}
+                      </td>
+                      <td className="py-3 px-3 font-semibold text-gray-900 dark:text-white">
+                        {s.customer_name || 'Walk-in Customer'}
+                      </td>
+                      <td className="py-3 px-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                          <Banknote className="w-3 h-3" />
+                          {s.payment_method || 'Cash'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          Completed
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {/* 1. View Receipt */}
+                          <button
+                            onClick={() => handleViewReceipt(s.id)}
+                            className="px-2.5 py-1 rounded-lg bg-navy hover:bg-navy-light text-white text-[11px] font-semibold flex items-center gap-1 shadow-sm transition"
+                            title="View Official Receipt"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>View</span>
+                          </button>
+
+                          {/* 2. Download PDF */}
+                          <button
+                            onClick={() => handlePrintReceiptById(s.id)}
+                            className="p-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition"
+                            title="Download PDF"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 3. Print */}
+                          <button
+                            onClick={() => handlePrintReceiptById(s.id)}
+                            className="p-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white shadow-sm transition"
+                            title="Print Receipt"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* VIEW: PRODUCT LOOKUP */}
+{/* VIEW: PRODUCT LOOKUP */}
       {activeTab === 'product_lookup' && (
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div>
@@ -1184,152 +1293,14 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
-      {/* MODAL: DIGITAL RECEIPT */}
-      <Modal isOpen={isReceiptModalOpen} onClose={() => setIsReceiptModalOpen(false)} title="Official Store Receipt" maxWidth="max-w-md">
-        {activeReceipt && (
-          <div className="space-y-4 text-xs font-mono">
-            {/* Store Receipt Header */}
-            <div className="text-center space-y-1 pb-3 border-b border-dashed border-gray-300 dark:border-darkbg-border">
-              <h3 className="font-extrabold text-base tracking-wider text-navy dark:text-white">TECH AVENUE</h3>
-              <p className="text-[11px] text-gray-500 font-semibold uppercase">Computer & Accessories Store Management</p>
-              <p className="text-[10px] text-gray-400">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</p>
-              <p className="text-[10px] text-gray-400">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</p>
-              <div className="mt-1 pt-1 border-t border-gray-200 dark:border-darkbg-border">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-navy dark:text-greige">Official Transaction Receipt</span>
-              </div>
-            </div>
+      {/* OFFICIAL TRANSACTION RECEIPT MODAL (Dark Navy Theme) */}
+      <OfficialReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        receipt={activeReceipt}
+      />
 
-            {/* Receipt Meta */}
-            <div className="space-y-1 text-[11px] text-gray-600 dark:text-gray-400 pb-2 border-b border-dashed border-gray-300 dark:border-darkbg-border">
-              <div className="flex justify-between">
-                <span>Receipt / OR #:</span>
-                <span className="font-bold font-mono text-gray-900 dark:text-white">{activeReceipt.invoice_number}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Date & Time:</span>
-                <span>{activeReceipt.created_at || new Date().toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Cashier:</span>
-                <span className="font-semibold text-gray-900 dark:text-gray-200">{activeReceipt.cashier || user?.full_name || 'Cashier'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Customer:</span>
-                <span className="font-semibold text-gray-900 dark:text-gray-200">{activeReceipt.customer_name || 'Walk-in Customer'}</span>
-              </div>
-            </div>
-
-            {/* Receipt Line Items Table */}
-            <div className="space-y-2 py-2 border-b border-dashed border-gray-300 dark:border-darkbg-border">
-              <table className="w-full text-[11px]">
-                <thead>
-                  <tr className="border-b border-gray-200 dark:border-darkbg-border text-gray-500 font-bold uppercase text-[9px]">
-                    <th className="text-left pb-1">Product Description</th>
-                    <th className="text-center pb-1">Qty</th>
-                    <th className="text-right pb-1">Unit Price</th>
-                    <th className="text-right pb-1">Line Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border">
-                  {(activeReceipt.items || []).map((item, idx) => (
-                    <tr key={idx} className="py-1">
-                      <td className="py-1.5 pr-2">
-                        <p className="font-semibold text-gray-900 dark:text-white">{item.name || item.product_name}</p>
-                        <p className="text-[9px] text-gray-400">{item.sku}</p>
-                      </td>
-                      <td className="text-center py-1.5 text-gray-600 dark:text-gray-300">{item.quantity}</td>
-                      <td className="text-right py-1.5 font-mono text-gray-600 dark:text-gray-300">
-                        ₱{Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td className="text-right py-1.5 font-bold font-mono text-gray-900 dark:text-white">
-                        ₱{Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Totals Breakdown */}
-            <div className="space-y-1 text-xs pt-1">
-              <div className="flex justify-between text-gray-500">
-                <span>Subtotal (Net of VAT):</span>
-                <span className="font-mono">₱{Number(activeReceipt.subtotal || (Number(activeReceipt.total_amount) / 1.12)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>12% Output VAT:</span>
-                <span className="font-mono">₱{Number(activeReceipt.vat_amount || (Number(activeReceipt.total_amount) - (Number(activeReceipt.total_amount) / 1.12))).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              </div>
-              {Number(activeReceipt.discount_amount) > 0 && (
-                <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
-                  <span>Discount ({activeReceipt.discount_pct || 0}%):</span>
-                  <span className="font-mono">-₱{Number(activeReceipt.discount_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm font-black text-gray-900 dark:text-white pt-1.5 border-t border-gray-200 dark:border-darkbg-border">
-                <span>TOTAL AMOUNT DUE:</span>
-                <span className="font-mono text-emerald-600 dark:text-emerald-400">₱{Number(activeReceipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              </div>
-              <div className="flex justify-between text-gray-500 pt-1">
-                <span>Payment Method:</span>
-                <span className="font-bold uppercase text-gray-800 dark:text-gray-200">{activeReceipt.payment_method || 'Cash'}</span>
-              </div>
-              {(activeReceipt.payment_method === 'Cash' || !activeReceipt.payment_method) ? (
-                <>
-                  <div className="flex justify-between text-gray-500">
-                    <span>Amount Tendered:</span>
-                    <span className="font-mono">₱{Number(activeReceipt.amount_tendered || activeReceipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between text-emerald-600 font-bold">
-                    <span>Change:</span>
-                    <span className="font-mono">₱{Number(activeReceipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                </>
-              ) : (
-                <div className="flex justify-between text-gray-500">
-                  <span>Reference / Auth Code:</span>
-                  <span className="font-mono">{activeReceipt.payment_reference || 'N/A'}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Footer Message */}
-            <div className="text-center pt-3 border-t border-dashed border-gray-300 dark:border-darkbg-border text-[10px] text-gray-400 space-y-1">
-              <p className="font-semibold text-gray-700 dark:text-gray-300">Thank you for your purchase!</p>
-              <p>Items eligible for 7-day replacement with this receipt.</p>
-              <p className="text-[9px] uppercase tracking-wider text-gray-400 font-mono">*** THIS SERVES AS AN OFFICIAL RECEIPT ***</p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleSaveReceiptPdf(activeReceipt)}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  Save as PDF
-                </button>
-                <button
-                  onClick={() => handleSaveReceiptPdf(activeReceipt)}
-                  className="px-3 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  Print
-                </button>
-              </div>
-              <button
-                onClick={() => setIsReceiptModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-200"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
-
-      {/* MODAL: OPEN SHIFT */}
+{/* MODAL: OPEN SHIFT */}
       <Modal isOpen={isShiftModalOpen} onClose={() => setIsShiftModalOpen(false)} title="Open Cashier Register Shift">
         <div className="space-y-4 text-xs">
           <p className="text-gray-600 dark:text-gray-300">
