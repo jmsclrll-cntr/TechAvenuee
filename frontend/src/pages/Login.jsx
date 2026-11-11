@@ -4,8 +4,8 @@ import {
   User,
   Eye,
   EyeOff,
-  Sun,
-  Moon,
+  Maximize2,
+  Minimize2,
   ArrowRight,
   AlertCircle,
   ShieldCheck,
@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import workstationBg from '../assets/workstation-bg.svg';
-import TextSizeControl from '../components/TextSizeControl';
 import { api } from '../api';
 
 const COMPUTER_BACKGROUNDS = [
@@ -48,6 +47,76 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Full Screen Mode state
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Sync fullscreen state with browser events (F11, Esc, button clicks)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(
+        Boolean(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        )
+      );
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      const docEl = document.documentElement;
+      const isCurrentlyFullscreen = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+
+      if (!isCurrentlyFullscreen) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          await docEl.webkitRequestFullscreen();
+        } else if (docEl.mozRequestFullScreen) {
+          await docEl.mozRequestFullScreen();
+        } else if (docEl.msRequestFullscreen) {
+          await docEl.msRequestFullscreen();
+        }
+        localStorage.setItem('techavenue_fullscreen', 'true');
+        localStorage.setItem('techavenue_sidebar_collapsed', 'true');
+        setIsFullscreen(true);
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          await document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          await document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          await document.msExitFullscreen();
+        }
+        localStorage.setItem('techavenue_fullscreen', 'false');
+        setIsFullscreen(false);
+      }
+    } catch (err) {
+      console.warn('Fullscreen toggle request was not completed:', err);
+    }
+  };
 
   // Automatic Background slideshow state
   const [bgIndex, setBgIndex] = useState(0);
@@ -94,6 +163,23 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
       return;
     }
 
+    // Automatically transition to full screen mode synchronously during user click interaction
+    try {
+      const docEl = document.documentElement;
+      if (!document.fullscreenElement) {
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen().catch(() => {});
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen().catch(() => {});
+        }
+      }
+      localStorage.setItem('techavenue_fullscreen', 'true');
+      localStorage.setItem('techavenue_sidebar_collapsed', 'true');
+      setIsFullscreen(true);
+    } catch {
+      // Non-blocking fallback
+    }
+
     setLoading(true);
 
     try {
@@ -101,6 +187,8 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
       if (res && res.status === 'success') {
         localStorage.setItem('techavenue_token', res.token);
         localStorage.setItem('techavenue_user', JSON.stringify(res.user));
+        localStorage.setItem('techavenue_fullscreen', 'true');
+        localStorage.setItem('techavenue_sidebar_collapsed', 'true');
         onLoginSuccess(res.user);
       } else {
         setError(res?.message || 'Login failed. Please check your credentials.');
@@ -117,13 +205,13 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 overflow-hidden select-none bg-slate-950">
+    <div className="relative min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 py-10 sm:py-14 overflow-x-hidden overflow-y-auto select-none bg-slate-950">
 
       {/* ========================================================================= */}
-      {/* 1. FULL-SCREEN HIGH-TECH COMPUTER FIELD BACKGROUND (CLEAN & IMMERSIVE)    */}
+      {/* 1. FULL-SCREEN HIGH-TECH COMPUTER FIELD BACKGROUND (FIXED & IMMERSIVE)    */}
       {/* ========================================================================= */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-out"
+        className="fixed inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-out pointer-events-none"
         style={{ backgroundImage: `url(${currentBg.src || workstationBg})` }}
       >
         <img
@@ -142,49 +230,38 @@ export default function Login({ onLoginSuccess, darkMode, setDarkMode }) {
 
       {/* Dynamic Pre-Transition Holographic Sweep Effect */}
       <div
-        className={`absolute inset-0 z-0 bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent pointer-events-none transition-transform duration-700 ease-in-out ${isTransitioning ? 'translate-x-full opacity-100' : '-translate-x-full opacity-0'
+        className={`fixed inset-0 z-0 bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent pointer-events-none transition-transform duration-700 ease-in-out ${isTransitioning ? 'translate-x-full opacity-100' : '-translate-x-full opacity-0'
           }`}
       />
 
       {/* Balanced Dark Transparent Overlay for Contrast and Readability */}
-      <div className="absolute inset-0 z-0 bg-slate-950/30 backdrop-blur-[0.5px] bg-gradient-to-t from-slate-950/80 via-slate-950/25 to-slate-950/70 pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-slate-950/30 backdrop-blur-[0.5px] bg-gradient-to-t from-slate-950/80 via-slate-950/25 to-slate-950/70 pointer-events-none" />
 
       {/* Ambient Cyan & Blue Glow Highlights */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-cyan-400/20 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/25 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
+      <div className="fixed -top-24 -left-24 w-96 h-96 bg-cyan-400/20 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
+      <div className="fixed -bottom-24 -right-24 w-96 h-96 bg-blue-600/25 rounded-full blur-[90px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
 
-      {/* Top-Right Option Bar: Text Size Control (User Preferences) & Theme Toggle */}
-      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-2.5">
-        {/* User Text Size Scaler */}
-        <div className="bg-slate-900/80 backdrop-blur-xl rounded-xl border border-white/20 p-1 shadow-xl">
-          <TextSizeControl />
-        </div>
-
-        {/* Theme Toggle */}
+      {/* Top-Right Option Bar: Minimal Full Screen Toggle Icon */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center">
         <button
           type="button"
-          onClick={() => setDarkMode(!darkMode)}
-          className="group flex items-center gap-2.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-xl border border-white/20 hover:border-cyan-400/50 bg-slate-900/80 hover:bg-slate-800/90 backdrop-blur-xl text-xs sm:text-sm font-semibold text-slate-100 hover:text-white shadow-xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-400/40 active:scale-95"
-          aria-label="Toggle color theme"
+          onClick={toggleFullscreen}
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/15 hover:border-cyan-400/50 bg-slate-900/70 hover:bg-slate-800/90 backdrop-blur-md text-slate-300 hover:text-cyan-300 flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-cyan-500/20 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+          aria-label={isFullscreen ? 'Exit full screen mode' : 'Enter full screen mode'}
+          title={isFullscreen ? 'Exit Full Screen (Esc)' : 'Full Screen Mode'}
         >
-          {darkMode ? (
-            <>
-              <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
-              <span>Light mode</span>
-            </>
+          {isFullscreen ? (
+            <Minimize2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-cyan-300 transition-transform hover:scale-110" />
           ) : (
-            <>
-              <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-300 group-hover:-rotate-12 transition-transform duration-300" />
-              <span>Dark mode</span>
-            </>
+            <Maximize2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-cyan-400 transition-transform hover:scale-110" />
           )}
         </button>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. CENTERED GLASSMORPHISM CARD (NO SHADOWBOX)                             */}
+      {/* 2. CENTERED GLASSMORPHISM CARD                                            */}
       {/* ========================================================================= */}
-      <div className="relative z-10 w-full max-w-[480px] sm:max-w-[500px] bg-slate-950/85 dark:bg-slate-950/90 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-cyan-500/35 p-7 sm:p-10 space-y-7 transition-all duration-300 hover:border-cyan-400/45 shadow-none">
+      <div className="relative z-10 w-full max-w-[480px] sm:max-w-[500px] bg-slate-950/85 dark:bg-slate-950/90 backdrop-blur-3xl rounded-3xl border border-white/20 dark:border-cyan-500/35 p-7 sm:p-10 space-y-7 transition-all duration-300 hover:border-cyan-400/45 shadow-none my-auto">
 
         {/* Subtle Cyan Top Edge Highlight Line */}
         <div className="absolute top-0 inset-x-12 h-px bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent pointer-events-none" />

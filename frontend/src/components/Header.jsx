@@ -15,7 +15,9 @@ import {
   ZoomOut, 
   RotateCcw, 
   SlidersHorizontal,
-  BookOpen
+  BookOpen,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { useTextSize } from '../context/TextSizeContext';
 
@@ -88,6 +90,79 @@ export default function Header({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Synchronized Full Screen mode state for Dashboard
+  const [isFullscreen, setIsFullscreen] = useState(() => {
+    return Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  });
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      const isFs = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+      setIsFullscreen(isFs);
+    };
+
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    document.addEventListener('mozfullscreenchange', handleFsChange);
+    document.addEventListener('MSFullscreenChange', handleFsChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+      document.removeEventListener('mozfullscreenchange', handleFsChange);
+      document.removeEventListener('MSFullscreenChange', handleFsChange);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      const docEl = document.documentElement;
+      const isCurrentlyFs = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+
+      if (!isCurrentlyFs) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          await docEl.webkitRequestFullscreen();
+        } else if (docEl.mozRequestFullScreen) {
+          await docEl.mozRequestFullScreen();
+        } else if (docEl.msRequestFullscreen) {
+          await docEl.msRequestFullscreen();
+        }
+        localStorage.setItem('techavenue_fullscreen', 'true');
+        if (setSidebarCollapsed) setSidebarCollapsed(true);
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          await document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          await document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          await document.msExitFullscreen();
+        }
+        localStorage.setItem('techavenue_fullscreen', 'false');
+      }
+    } catch (err) {
+      console.warn('Fullscreen toggle failed:', err);
+    }
+  };
 
   const getGreeting = () => {
     switch (role) {
@@ -338,6 +413,23 @@ export default function Header({
                 <Moon className="w-4 h-4 text-navy" />
                 <span className="hidden sm:inline">Dark mode</span>
               </>
+            )}
+          </button>
+
+          {/* ========================================================================= */}
+          {/* MINIMAL FULL SCREEN TOGGLE BUTTON                                         */}
+          {/* ========================================================================= */}
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="p-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200 transition-all shadow-sm cursor-pointer"
+            title={isFullscreen ? 'Exit Full Screen (Esc)' : 'Full Screen Mode'}
+            aria-label={isFullscreen ? 'Exit Full Screen' : 'Full Screen Mode'}
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-4 h-4 text-navy dark:text-cyan-300" />
+            ) : (
+              <Maximize2 className="w-4 h-4 text-navy dark:text-cyan-400" />
             )}
           </button>
 
