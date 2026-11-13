@@ -421,24 +421,6 @@ export default function UserManualModal({
             }
           ],
           navTab: 'compare'
-        },
-        {
-          id: 'inventory_overview',
-          title: '4. Inventory & Supplier Educational Overview',
-          summary: 'Inspect product catalog and authorized hardware supply chain structure.',
-          steps: [
-            {
-              step: '4.1 Click Any Catalog Row for Details',
-              detail:
-                'Click any item row in the "Inventory Overview" table to inspect the product specifications, realistic imagery, and authorized distributor metadata.'
-            },
-            {
-              step: '4.2 Supplier Information Table',
-              detail:
-                'Review the Authorized Hardware Suppliers table below the inventory overview to understand supply chain logistics and fulfillment lead times.'
-            }
-          ],
-          navTab: 'inventory_overview'
         }
       ]
     }
