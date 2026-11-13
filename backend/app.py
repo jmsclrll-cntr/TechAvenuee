@@ -992,9 +992,10 @@ def save_draft():
                 })
 
             discount_amount = round(gross_subtotal * (discount_pct / 100.0), 2)
-            net_subtotal = round(gross_subtotal - discount_amount, 2)
-            vat_amount = round(net_subtotal * 0.12, 2) # 12% VAT
-            total_amount = round(net_subtotal + vat_amount, 2)
+            discounted_total = round(max(0.0, gross_subtotal - discount_amount), 2)
+            net_subtotal = round(discounted_total / 1.12, 2)
+            vat_amount = round(discounted_total - net_subtotal, 2)
+            total_amount = discounted_total
 
             draft_ref = f"DFT-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}-{secrets.token_hex(2).upper()}"
 
@@ -1077,9 +1078,10 @@ def update_draft(draft_id):
                 })
 
             discount_amount = round(gross_subtotal * (discount_pct / 100.0), 2)
-            net_subtotal = round(gross_subtotal - discount_amount, 2)
-            vat_amount = round(net_subtotal * 0.12, 2)
-            total_amount = round(net_subtotal + vat_amount, 2)
+            discounted_total = round(max(0.0, gross_subtotal - discount_amount), 2)
+            net_subtotal = round(discounted_total / 1.12, 2)
+            vat_amount = round(discounted_total - net_subtotal, 2)
+            total_amount = discounted_total
 
             cursor.execute("""
                 UPDATE sales_transactions 
@@ -1221,106 +1223,75 @@ def pos_checkout():
         with conn.cursor() as cursor:
             validated_items = []
             gross_subtotal = 0.0
+            target_tx_id = None
 
+            # 1. If draft_id is provided, verify it exists and is an active draft
             if draft_id:
-                # Checkout from existing draft
                 cursor.execute("SELECT * FROM sales_transactions WHERE id = %s AND status = 'draft' FOR UPDATE;", (draft_id,))
                 draft = cursor.fetchone()
                 if not draft:
                     conn.rollback()
                     return jsonify({"status": "error", "message": "Draft not found or already completed"}), 404
-
-                cursor.execute("""
-                    SELECT si.product_id, si.quantity, si.unit_price, si.total_price,
-                           p.sku, p.name, p.stock_quantity, p.reorder_level
-                    FROM sales_items si
-                    JOIN products p ON si.product_id = p.id
-                    WHERE si.transaction_id = %s FOR UPDATE;
-                """, (draft_id,))
-                draft_items = cursor.fetchall()
-
-                if not draft_items:
-                    conn.rollback()
-                    return jsonify({"status": "error", "message": "Draft has no line items"}), 400
-
-                for itm in draft_items:
-                    if itm["stock_quantity"] < itm["quantity"]:
-                        conn.rollback()
-                        return jsonify({
-                            "status": "error",
-                            "message": f"Insufficient stock for '{itm['name']}'. Requested: {itm['quantity']}, Available: {itm['stock_quantity']}"
-                        }), 400
-
-                    gross_subtotal += float(itm["total_price"])
-                    validated_items.append({
-                        "product_id": itm["product_id"],
-                        "name": itm["name"],
-                        "sku": itm["sku"],
-                        "quantity": itm["quantity"],
-                        "unit_price": float(itm["unit_price"]),
-                        "total_price": float(itm["total_price"]),
-                        "stock_quantity": itm["stock_quantity"],
-                        "reorder_level": itm["reorder_level"]
-                    })
-
-                discount_amount = float(draft["discount_amount"])
-                discount_pct = float(draft["discount_pct"])
-                total_amount = float(draft["total_amount"])
-                # Philippine retail: total is VAT-inclusive
-                net_subtotal = round(total_amount / 1.12, 2)
-                vat_amount = round(total_amount - net_subtotal, 2)
                 target_tx_id = draft["id"]
 
-            else:
-                # Direct cart checkout
-                if not items or len(items) == 0:
+            # 2. Determine checkout line items: prefer items submitted from active cart, fall back to draft items if items array is empty
+            checkout_items = items
+            if (not checkout_items or len(checkout_items) == 0) and draft_id:
+                cursor.execute("""
+                    SELECT si.product_id, si.quantity
+                    FROM sales_items si
+                    WHERE si.transaction_id = %s FOR UPDATE;
+                """, (draft_id,))
+                checkout_items = cursor.fetchall()
+
+            if not checkout_items or len(checkout_items) == 0:
+                conn.rollback()
+                return jsonify({"status": "error", "message": "Shopping cart is empty. Add at least one product."}), 400
+
+            for itm in checkout_items:
+                prod_id = itm.get("product_id")
+                try:
+                    qty = int(itm.get("quantity", 1))
+                except (ValueError, TypeError):
+                    qty = 1
+
+                if qty <= 0:
                     conn.rollback()
-                    return jsonify({"status": "error", "message": "Shopping cart is empty. Add at least one product."}), 400
+                    return jsonify({"status": "error", "message": "Quantity must be greater than zero"}), 400
 
-                for itm in items:
-                    prod_id = itm.get("product_id")
-                    try:
-                        qty = int(itm.get("quantity", 1))
-                    except (ValueError, TypeError):
-                        qty = 1
+                cursor.execute("SELECT * FROM products WHERE id = %s FOR UPDATE;", (prod_id,))
+                prod = cursor.fetchone()
+                if not prod:
+                    conn.rollback()
+                    return jsonify({"status": "error", "message": f"Product ID {prod_id} not found"}), 404
 
-                    if qty <= 0:
-                        conn.rollback()
-                        return jsonify({"status": "error", "message": "Quantity must be greater than zero"}), 400
+                if prod["stock_quantity"] < qty:
+                    conn.rollback()
+                    return jsonify({
+                        "status": "error",
+                        "message": f"Insufficient stock for '{prod['name']}'. Requested: {qty}, Available: {prod['stock_quantity']}"
+                    }), 400
 
-                    cursor.execute("SELECT * FROM products WHERE id = %s FOR UPDATE;", (prod_id,))
-                    prod = cursor.fetchone()
-                    if not prod:
-                        conn.rollback()
-                        return jsonify({"status": "error", "message": f"Product ID {prod_id} not found"}), 404
+                unit_price = float(prod["selling_price"])
+                line_total = round(unit_price * qty, 2)
+                gross_subtotal += line_total
+                validated_items.append({
+                    "product_id": prod["id"],
+                    "name": prod["name"],
+                    "sku": prod["sku"],
+                    "quantity": qty,
+                    "unit_price": unit_price,
+                    "total_price": line_total,
+                    "stock_quantity": prod["stock_quantity"],
+                    "reorder_level": prod["reorder_level"]
+                })
 
-                    if prod["stock_quantity"] < qty:
-                        conn.rollback()
-                        return jsonify({
-                            "status": "error",
-                            "message": f"Insufficient stock for '{prod['name']}'. Requested: {qty}, Available: {prod['stock_quantity']}"
-                        }), 400
-
-                    unit_price = float(prod["selling_price"])
-                    line_total = round(unit_price * qty, 2)
-                    gross_subtotal += line_total
-                    validated_items.append({
-                        "product_id": prod["id"],
-                        "name": prod["name"],
-                        "sku": prod["sku"],
-                        "quantity": qty,
-                        "unit_price": unit_price,
-                        "total_price": line_total,
-                        "stock_quantity": prod["stock_quantity"],
-                        "reorder_level": prod["reorder_level"]
-                    })
-
-                discount_amount = round(gross_subtotal * (discount_pct / 100.0), 2)
-                discounted_total = round(max(0.0, gross_subtotal - discount_amount), 2)
-                net_subtotal = round(discounted_total / 1.12, 2)
-                vat_amount = round(discounted_total - net_subtotal, 2)
-                total_amount = discounted_total
-                target_tx_id = None
+            # Calculate standard VAT-inclusive Philippine retail pricing
+            discount_amount = round(gross_subtotal * (discount_pct / 100.0), 2)
+            discounted_total = round(max(0.0, gross_subtotal - discount_amount), 2)
+            net_subtotal = round(discounted_total / 1.12, 2)
+            vat_amount = round(discounted_total - net_subtotal, 2)
+            total_amount = discounted_total
 
             # Payment validation: Cash tendered must cover total amount due
             if amount_tendered < total_amount:
@@ -1395,6 +1366,14 @@ def pos_checkout():
                     WHERE id = %s;
                 """, (final_invoice_num, user["id"], customer_name, net_subtotal, vat_amount, total_amount,
                       discount_amount, discount_pct, amount_tendered, change_amount, shift_id, notes, target_tx_id))
+
+                # Update sales_items to match actual purchased items
+                cursor.execute("DELETE FROM sales_items WHERE transaction_id = %s;", (target_tx_id,))
+                for v in validated_items:
+                    cursor.execute("""
+                        INSERT INTO sales_items (transaction_id, product_id, quantity, unit_price, total_price)
+                        VALUES (%s, %s, %s, %s, %s);
+                    """, (target_tx_id, v["product_id"], v["quantity"], v["unit_price"], v["total_price"]))
             else:
                 # Insert completed transaction
                 cursor.execute("""

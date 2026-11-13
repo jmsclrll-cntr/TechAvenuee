@@ -51,6 +51,12 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const discountAmount = Number(receipt.discount_amount || 0);
   const discountPct = Number(receipt.discount_pct || 0);
   
+  // Gross Total (Subtotal before discount)
+  const grossTotal = Number(receipt.gross_total || receipt.gross_subtotal || 0) || 
+    (items.length > 0 
+      ? items.reduce((sum, item) => sum + Number(item.total_price || (Number(item.quantity || 1) * Number(item.unit_price || 0))), 0)
+      : (totalAmount + discountAmount));
+  
   // Subtotal Net of VAT (12%)
   const subtotalNet = receipt.subtotal != null 
     ? Number(receipt.subtotal) 
@@ -184,6 +190,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
         </table>
 
         <div class="border-t-dashed" style="font-size: 10.5px;">
+          <div class="row">
+            <span>Subtotal (Before Discount):</span>
+            <span class="font-mono">₱${grossTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
           <div class="row">
             <span>Subtotal (Net of VAT):</span>
             <span class="font-mono">₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -387,6 +397,13 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
           {/* 4. Payment Summary Breakdown */}
           <div className="py-3 border-b border-dashed border-slate-700 space-y-2 text-xs">
+            <div className="flex justify-between items-center text-slate-300 font-semibold">
+              <span>Subtotal (Before Discount):</span>
+              <span className="font-mono text-white">
+                ₱{grossTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+
             <div className="flex justify-between items-center text-slate-400">
               <span>Subtotal (Net of VAT):</span>
               <span className="font-mono text-slate-200">

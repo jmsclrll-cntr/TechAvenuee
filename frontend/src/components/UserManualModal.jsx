@@ -287,11 +287,11 @@ export default function UserManualModal({
 
     sales_personnel: {
       roleTitle: 'Sales Personnel Guide',
-      roleBadge: 'POS Terminal, Checkout, Customer Lookup & Shift Reconciliation',
+      roleBadge: 'POS Terminal, Checkout, Customer Lookup & Sales Records',
       icon: ShoppingCart,
       color: 'from-emerald-600 to-teal-700',
       description:
-        'The Sales Personnel account runs the Point of Sale (POS) terminal, issues official receipts, performs customer price lookups, and balances the cashier register drawer at shift close.',
+        'The Sales Personnel account runs the Point of Sale (POS) terminal, issues official receipts, performs customer price lookups, and tracks sales transaction history.',
       sections: [
         {
           id: 'pos',
@@ -341,13 +341,13 @@ export default function UserManualModal({
         },
         {
           id: 'receipts',
-          title: '3. Receipts & Sales History',
+          title: '3. Sales History & Receipts',
           summary: 'Reprint past receipts, verify customer transactions, and check invoice status.',
           steps: [
             {
               step: '3.1 Search Invoices',
               detail:
-                'In "Sales History" or "Receipts", locate past orders by Invoice number or customer name.'
+                'In "Sales History & Receipts", locate past orders by Invoice number, customer name, cashier, or payment method.'
             },
             {
               step: '3.2 Print or Inspect',
@@ -356,29 +356,6 @@ export default function UserManualModal({
             }
           ],
           navTab: 'sales_history'
-        },
-        {
-          id: 'shift_summary',
-          title: '4. Cashier Shift Management & Reconciliation',
-          summary: 'Start shifts, monitor drawer collections, and reconcile at day close.',
-          steps: [
-            {
-              step: '4.1 Starting Cash',
-              detail:
-                'When starting your shift, enter opening float cash (default PHP 3,000.00) in the Shift Modal.'
-            },
-            {
-              step: '4.2 Shift Summary View',
-              detail:
-                'Navigate to "Shift Summary" to see real-time cash collections, GCash receipts, card totals, and transaction counts.'
-            },
-            {
-              step: '4.3 Close & Reconcile Shift',
-              detail:
-                'Click "Close Shift & Reconcile" when your duty ends to lock the register ledger and submit the audit sheet to the Store Administrator.'
-            }
-          ],
-          navTab: 'shift_summary'
         }
       ]
     },

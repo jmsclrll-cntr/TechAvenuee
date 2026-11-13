@@ -14,7 +14,8 @@ import {
   SlidersHorizontal,
   BookOpen,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Menu
 } from 'lucide-react';
 import { useTextSize } from '../context/TextSizeContext';
 
@@ -27,7 +28,8 @@ export default function Header({
   lowStockCount = 0, 
   sidebarCollapsed, 
   setSidebarCollapsed,
-  onOpenManual
+  onOpenManual,
+  onToggleMobileMenu
 }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showTextSizeDropdown, setShowTextSizeDropdown] = useState(false);
@@ -176,14 +178,25 @@ export default function Header({
   });
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md border-b border-gray-200 dark:border-darkbg-border px-6 py-3.5 transition-colors">
-      <div className="flex items-center justify-between gap-4">
-        {/* Left: Sidebar Toggle + Role Greeting & Dynamic Subtext */}
-        <div className="flex items-center gap-3">
-          {/* Sidebar Toggle / Auto-Hide Mode Button */}
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md border-b border-gray-200 dark:border-darkbg-border px-3 sm:px-6 py-2 sm:py-3.5 transition-colors">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-4">
+        {/* Left: Sidebar Toggle / Hamburger + Role Greeting & Dynamic Subtext */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          {/* Mobile Drawer Trigger (< lg) */}
+          <button
+            type="button"
+            onClick={onToggleMobileMenu}
+            className="lg:hidden p-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200 transition-all shadow-sm cursor-pointer shrink-0"
+            title="Open navigation menu"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+
+          {/* Desktop Sidebar Toggle / Auto-Hide Mode Button (lg+) */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`p-2 rounded-lg border transition-all shadow-sm cursor-pointer ${
+            className={`hidden lg:inline-flex p-2 rounded-lg border transition-all shadow-sm cursor-pointer shrink-0 ${
               sidebarCollapsed
                 ? 'border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-500 hover:text-navy dark:hover:text-cyan-400'
                 : 'border-navy/30 dark:border-cyan-400/30 bg-navy/10 dark:bg-cyan-500/15 text-navy dark:text-cyan-300'
@@ -197,44 +210,45 @@ export default function Header({
             )}
           </button>
 
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <h1 className="text-sm sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white tracking-tight truncate">
                 {greeting.prefix}{' '}
                 <span className="text-navy dark:text-cyan-300">{greeting.name}</span>
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-navy/10 text-navy dark:bg-darkbg-hover dark:text-greige border border-navy/20 dark:border-darkbg-border">
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-navy/10 text-navy dark:bg-darkbg-hover dark:text-greige border border-navy/20 dark:border-darkbg-border shrink-0">
                 <ShieldCheck className="w-3.5 h-3.5 text-navy dark:text-greige" />
                 {role ? role.replace('_', ' ').toUpperCase() : 'USER'}
               </span>
             </div>
 
-            <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {formattedDate} • {formattedTime}
+            <div className="flex items-center gap-2 sm:gap-3 mt-0.5 text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+              <span className="flex items-center gap-1 truncate">
+                <Clock className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden md:inline">{formattedDate} • </span>
+                <span>{formattedTime}</span>
               </span>
 
               {/* Sales Personnel Shift Indicator */}
               {role === 'sales_personnel' && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Cashier: {user?.full_name || 'Active'} • {shiftInfo ? `Shift #${shiftInfo.id} Active` : 'Shift Active'}
+                <span className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400">
+                  • Active
                 </span>
               )}
 
               {/* Instructor Inspection Indicator */}
               {role === 'instructor' && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium">
-                  Operational Inspection & Audit Mode
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium text-[11px]">
+                  Inspection & Audit Mode
                 </span>
               )}
 
-              {/* Low-Stock Notification Badge */}
-              {lowStockCount > 0 && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-medium">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  {lowStockCount} items below reorder level
+              {/* Low-Stock Notification Badge (Restricted to non-sales roles) */}
+              {role !== 'sales_personnel' && lowStockCount > 0 && (
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-medium text-[11px]">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">{lowStockCount} items below reorder</span>
+                  <span className="sm:hidden">{lowStockCount} low stock</span>
                 </span>
               )}
             </div>
@@ -242,7 +256,7 @@ export default function Header({
         </div>
 
         {/* Right: Actions, Text Size Popover, Theme Toggle, Notifications, Profile */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* ========================================================================= */}
           {/* TEXT SIZE BUTTON WITH COMPACT POPOVER (Positioned next to Light Mode)     */}
           {/* ========================================================================= */}

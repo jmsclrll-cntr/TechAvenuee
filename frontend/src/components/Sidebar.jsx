@@ -28,7 +28,8 @@ import {
   ChevronLeft,
   Pin,
   PinOff,
-  BookOpen
+  BookOpen,
+  X
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
@@ -43,7 +44,9 @@ export default function Sidebar({
   onTogglePin,
   onMouseEnter,
   onMouseLeave,
-  onOpenManual
+  onOpenManual,
+  mobileOpen = false,
+  onCloseMobile
 }) {
   const [predictionExpanded, setPredictionExpanded] = useState(true);
 
@@ -63,12 +66,9 @@ export default function Sidebar({
       case 'sales_personnel':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'pos', label: 'Market / Point of Sale', icon: ShoppingCart },
-          { id: 'new_transaction', label: 'New Transaction', icon: PlusCircle },
-          { id: 'sales_history', label: 'Sales History', icon: History },
-          { id: 'receipts', label: 'Receipts', icon: Receipt },
+          { id: 'pos', label: 'Point of Sale & Drafts', icon: ShoppingCart },
+          { id: 'sales_history', label: 'Sales History & Receipts', icon: History },
           { id: 'product_lookup', label: 'Product Lookup', icon: Search },
-          { id: 'shift_summary', label: 'Shift Summary', icon: UserCheck },
           { id: 'profile', label: 'My Profile', icon: User }
         ];
 
@@ -140,198 +140,240 @@ export default function Sidebar({
   };
 
   return (
-    <aside
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`relative shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white z-40 select-none overflow-hidden ${
-        collapsed ? 'w-0 border-r-0 opacity-0 pointer-events-none' : 'w-64 opacity-100'
-      }`}
-    >
-      {/* Top Section */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Brand Logo & Header with Pin/Auto-Hide Control */}
-        <div className="p-4 sm:p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
-              <img 
-                src={logoImg} 
-                alt="Tech Avenue Logo" 
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentNode.innerHTML = '<svg class="w-6 h-6 text-greige" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>';
-                }}
-              />
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          onClick={onCloseMobile}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"
+        />
+      )}
+
+      <aside
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        className={`fixed inset-y-0 left-0 z-50 lg:static lg:z-40 h-screen bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white select-none overflow-hidden ${
+          mobileOpen 
+            ? 'w-72 translate-x-0 opacity-100' 
+            : '-translate-x-full lg:translate-x-0 ' + (collapsed ? 'lg:w-0 lg:border-r-0 lg:opacity-0 lg:pointer-events-none' : 'lg:w-64 lg:opacity-100')
+        }`}
+      >
+        {/* Top Section */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Brand Logo & Header with Pin/Auto-Hide Control & Mobile Close */}
+          <div className="p-4 sm:p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
+                <img 
+                  src={logoImg} 
+                  alt="Tech Avenue Logo" 
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentNode.innerHTML = '<svg class="w-6 h-6 text-greige" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>';
+                  }}
+                />
+              </div>
+              <div>
+                <span className="font-extrabold text-base tracking-wider text-white flex items-center gap-1.5">
+                  TECH AVENUE
+                </span>
+                <p className="text-[10px] text-greige tracking-wide font-medium uppercase">
+                  Computer & Accessories
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="font-extrabold text-base tracking-wider text-white flex items-center gap-1.5">
-                TECH AVENUE
-              </span>
-              <p className="text-[10px] text-greige tracking-wide font-medium uppercase">
-                Computer & Accessories
-              </p>
+
+            <div className="flex items-center gap-1.5">
+              {/* Mobile Drawer Close Button */}
+              {onCloseMobile && (
+                <button
+                  type="button"
+                  onClick={onCloseMobile}
+                  className="lg:hidden p-1.5 rounded-lg border border-white/15 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                  title="Close Navigation Drawer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* Pin/Unpin Toggle Button (Desktop only) */}
+              {onTogglePin && (
+                <button
+                  type="button"
+                  onClick={onTogglePin}
+                  className={`hidden lg:flex p-1.5 rounded-lg border transition-all text-xs cursor-pointer ${
+                    isPinned
+                      ? 'border-cyan-400/30 bg-cyan-500/20 text-cyan-300'
+                      : 'border-white/15 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                  title={isPinned ? 'Sidebar is pinned open (Click to enable auto-hide on cursor touch)' : 'Sidebar is in auto-hide mode (Click to pin open)'}
+                >
+                  {isPinned ? (
+                    <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-300" />
+                  ) : (
+                    <PinOff className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Pin/Unpin Toggle Button */}
-          {onTogglePin && (
-            <button
-              type="button"
-              onClick={onTogglePin}
-              className={`p-1.5 rounded-lg border transition-all text-xs cursor-pointer ${
-                isPinned
-                  ? 'border-cyan-400/30 bg-cyan-500/20 text-cyan-300'
-                  : 'border-white/15 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-              title={isPinned ? 'Sidebar is pinned open (Click to enable auto-hide on cursor touch)' : 'Sidebar is in auto-hide mode (Click to pin open)'}
-            >
-              {isPinned ? (
-                <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-300" />
-              ) : (
-                <PinOff className="w-3.5 h-3.5" />
-              )}
-            </button>
-          )}
-        </div>
+          {/* Current Active Role Badge */}
+          <div className="px-5 py-2.5 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between shrink-0">
+            <span className="text-[11px] text-greige uppercase font-semibold tracking-wider">
+              Active Workspace
+            </span>
+            <span className="text-xs px-2 py-0.5 rounded font-bold bg-greige/20 text-greige border border-greige/30">
+              {getRoleDisplayName()}
+            </span>
+          </div>
 
-        {/* Current Active Role Badge */}
-        <div className="px-5 py-2.5 bg-navy-dark/40 dark:bg-darkbg/50 border-b border-navy-light/20 dark:border-darkbg-border flex items-center justify-between shrink-0">
-          <span className="text-[11px] text-greige uppercase font-semibold tracking-wider">
-            Active Workspace
-          </span>
-          <span className="text-xs px-2 py-0.5 rounded font-bold bg-greige/20 text-greige border border-greige/30">
-            {getRoleDisplayName()}
-          </span>
-        </div>
+          {/* Navigation Items - Scrollable Panel */}
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
 
-        {/* Navigation Items - Scrollable Panel */}
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
+              // Handle parent item with sub-items (Knowledge Analysis & Prediction)
+              if (item.isParent) {
+                const isChildActive = item.subItems.some(sub => sub.id === activeTab) || activeTab === item.id;
+                
+                return (
+                  <div key={item.id} className="space-y-1">
+                    <button
+                      onClick={() => {
+                        setPredictionExpanded(!predictionExpanded);
+                        setActiveTab(item.id);
+                        if (onCloseMobile) onCloseMobile();
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
+                        isChildActive
+                          ? 'bg-navy-light/80 text-white font-bold'
+                          : 'text-gray-300 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 truncate">
+                        <Icon className="w-4 h-4 shrink-0 text-greige" />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                      {predictionExpanded ? (
+                        <ChevronDown className="w-3.5 h-3.5 shrink-0 text-greige" />
+                      ) : (
+                        <ChevronRight className="w-3.5 h-3.5 shrink-0 text-gray-400" />
+                      )}
+                    </button>
 
-            // Handle parent item with sub-items (Knowledge Analysis & Prediction)
-            if (item.isParent) {
-              const isChildActive = item.subItems.some(sub => sub.id === activeTab) || activeTab === item.id;
-              
-              return (
-                <div key={item.id} className="space-y-1">
-                  <button
-                    onClick={() => {
-                      setPredictionExpanded(!predictionExpanded);
-                      setActiveTab(item.id);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left ${
-                      isChildActive
-                        ? 'bg-navy-light/80 text-white font-bold'
-                        : 'text-gray-300 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 truncate">
-                      <Icon className="w-4 h-4 shrink-0 text-greige" />
-                      <span className="truncate">{item.label}</span>
-                    </div>
-                    {predictionExpanded ? (
-                      <ChevronDown className="w-3.5 h-3.5 shrink-0 text-greige" />
-                    ) : (
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0 text-gray-400" />
+                    {/* Collapsible Sub-Items */}
+                    {predictionExpanded && (
+                      <div className="pl-6 space-y-1 border-l-2 border-greige/30 ml-4 py-1">
+                        {item.subItems.map((sub) => {
+                          const isSubActive = activeTab === sub.id;
+                          return (
+                            <button
+                              key={sub.id}
+                              onClick={() => {
+                                setActiveTab(sub.id);
+                                if (onCloseMobile) onCloseMobile();
+                              }}
+                              className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] transition-all text-left cursor-pointer ${
+                                isSubActive
+                                  ? 'bg-greige text-navy font-bold shadow-sm'
+                                  : 'text-gray-300 hover:text-white hover:bg-white/10'
+                              }`}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
+                              <span className="truncate">{sub.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     )}
-                  </button>
+                  </div>
+                );
+              }
 
-                  {/* Collapsible Sub-Items */}
-                  {predictionExpanded && (
-                    <div className="pl-6 space-y-1 border-l-2 border-greige/30 ml-4 py-1">
-                      {item.subItems.map((sub) => {
-                        const isSubActive = activeTab === sub.id;
-                        return (
-                          <button
-                            key={sub.id}
-                            onClick={() => setActiveTab(sub.id)}
-                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] transition-all text-left ${
-                              isSubActive
-                                ? 'bg-greige text-navy font-bold shadow-sm'
-                                : 'text-gray-300 hover:text-white hover:bg-white/10'
-                            }`}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
-                            <span className="truncate">{sub.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+              const isActive = activeTab === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    if (onCloseMobile) onCloseMobile();
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
+                    isActive
+                      ? 'bg-greige text-navy font-bold shadow-sm'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-navy' : 'text-greige'}`} />
+                  <span className="truncate">{item.label}</span>
+                </button>
               );
-            }
-
-            const isActive = activeTab === item.id;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left ${
-                  isActive
-                    ? 'bg-greige text-navy font-bold shadow-sm'
-                    : 'text-gray-300 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-navy' : 'text-greige'}`} />
-                <span className="truncate">{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Role Switcher & Logout Footer */}
-      <div className="p-4 border-t border-navy-light/40 dark:border-darkbg-border bg-navy-dark/60 dark:bg-darkbg/60 space-y-3">
-        <div>
-          <label className="block text-[10px] uppercase font-bold text-greige tracking-wider mb-1.5">
-            Role Switcher (Demo / Testing)
-          </label>
-          <select
-            value={role}
-            onChange={(e) => onSwitchRole(e.target.value)}
-            className="w-full text-xs bg-white/10 dark:bg-darkbg-card border border-white/20 dark:border-darkbg-border text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-greige cursor-pointer"
-          >
-            <option value="inventory_clerk" className="text-gray-900">Inventory Clerk</option>
-            <option value="sales_personnel" className="text-gray-900">Sales Personnel</option>
-            <option value="admin" className="text-gray-900">Admin</option>
-            <option value="instructor" className="text-gray-900">Instructor Account</option>
-          </select>
+            })}
+          </nav>
         </div>
 
-        <button
-          onClick={onOpenManual}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/20 transition-colors cursor-pointer"
-        >
-          <BookOpen className="w-3.5 h-3.5 text-greige" />
-          <span>User Manual & Guide</span>
-        </button>
+        {/* Role Switcher & Logout Footer */}
+        <div className="p-4 border-t border-navy-light/40 dark:border-darkbg-border bg-navy-dark/60 dark:bg-darkbg/60 space-y-3">
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-greige tracking-wider mb-1.5">
+              Role Switcher (Demo / Testing)
+            </label>
+            <select
+              value={role}
+              onChange={(e) => {
+                onSwitchRole(e.target.value);
+                if (onCloseMobile) onCloseMobile();
+              }}
+              className="w-full text-xs bg-white/10 dark:bg-darkbg-card border border-white/20 dark:border-darkbg-border text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-greige cursor-pointer"
+            >
+              <option value="inventory_clerk" className="text-gray-900">Inventory Clerk</option>
+              <option value="sales_personnel" className="text-gray-900">Sales Personnel</option>
+              <option value="admin" className="text-gray-900">Admin</option>
+              <option value="instructor" className="text-gray-900">Instructor Account</option>
+            </select>
+          </div>
 
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Sign Out</span>
-        </button>
-      </div>
+          <button
+            onClick={() => {
+              onOpenManual();
+              if (onCloseMobile) onCloseMobile();
+            }}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/20 transition-colors cursor-pointer"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-greige" />
+            <span>User Manual & Guide</span>
+          </button>
 
-      {/* ========================================================================= */}
-      {/* DIVIDING LINE HANDLE: Touching or clicking this border line collapses it  */}
-      {/* ========================================================================= */}
-      {onTogglePin && (
-        <button
-          type="button"
-          onClick={onTogglePin}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-12 rounded-full bg-navy border border-white/20 dark:border-cyan-400/40 text-white shadow-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150 z-50 cursor-pointer"
-          title="Click line to collapse into auto-hide mode"
-          aria-label="Collapse sidebar"
-        >
-          <ChevronLeft className="w-3 h-3 text-greige dark:text-cyan-300" />
-        </button>
-      )}
-    </aside>
+          <button
+            onClick={() => {
+              onLogout();
+              if (onCloseMobile) onCloseMobile();
+            }}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* DIVIDING LINE HANDLE: Touching or clicking this border line collapses it  */}
+        {/* ========================================================================= */}
+        {onTogglePin && (
+          <button
+            type="button"
+            onClick={onTogglePin}
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-12 rounded-full bg-navy border border-white/20 dark:border-cyan-400/40 text-white shadow-xl items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150 z-50 cursor-pointer"
+            title="Click line to collapse into auto-hide mode"
+            aria-label="Collapse sidebar"
+          >
+            <ChevronLeft className="w-3 h-3 text-greige dark:text-cyan-300" />
+          </button>
+        )}
+      </aside>
+    </>
   );
 }

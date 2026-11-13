@@ -41,6 +41,7 @@ function App() {
   });
 
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shiftInfo, setShiftInfo] = useState(null);
   const [lowStockCount, setLowStockCount] = useState(5);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
@@ -247,6 +248,8 @@ function App() {
         onMouseEnter={handleMouseEnterLine}
         onMouseLeave={handleMouseLeaveSidebar}
         onOpenManual={() => setIsManualModalOpen(true)}
+        mobileOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
       />
 
       {/* ========================================================================= */}
@@ -264,6 +267,7 @@ function App() {
           sidebarCollapsed={sidebarCollapsed}
           setSidebarCollapsed={setSidebarCollapsed}
           onOpenManual={() => setIsManualModalOpen(true)}
+          onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
         />
 
         {/* Dashboard Role Body */}
