@@ -750,6 +750,42 @@ def update_product(product_id):
     finally:
         conn.close()
 
+@app.route("/api/inventory/<int:product_id>", methods=["DELETE"])
+@require_role("admin", "inventory_clerk")
+def delete_product(product_id):
+    user = get_current_user()
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, name, sku FROM products WHERE id = %s;", (product_id,))
+            product = cursor.fetchone()
+            if not product:
+                return jsonify({"status": "error", "message": "Product not found"}), 404
+
+            # Remove associated foreign key records in order:
+            # 1. Product gallery images
+            cursor.execute("DELETE FROM product_images WHERE product_id = %s;", (product_id,))
+            # 2. Stock movements
+            cursor.execute("DELETE FROM stock_movements WHERE product_id = %s;", (product_id,))
+            # 3. Transaction items
+            cursor.execute("DELETE FROM transaction_items WHERE product_id = %s;", (product_id,))
+            # 4. Product record itself
+            cursor.execute("DELETE FROM products WHERE id = %s;", (product_id,))
+
+            cursor.execute("""
+                INSERT INTO activity_logs (user_id, action, details)
+                VALUES (%s, 'DELETE_PRODUCT', %s);
+            """, (user["id"], f"Deleted product {product['name']} ({product['sku']})"))
+
+            return jsonify({
+                "status": "success", 
+                "message": f"Product {product['name']} ({product['sku']}) deleted successfully"
+            })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        conn.close()
+
 @app.route("/api/inventory/stock-in", methods=["POST"])
 @require_role("admin", "inventory_clerk")
 def process_stock_in():

@@ -21,7 +21,6 @@ function App() {
   });
 
   // Sidebar collapsed state persisted in localStorage
-  // When true: dashboard is fullscreen, sidebar auto-hides & reveals when cursor touches the left line
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return localStorage.getItem('techavenue_sidebar_collapsed') === 'true';
@@ -29,10 +28,6 @@ function App() {
       return false;
     }
   });
-
-  // Hover state for automatic reveal on cursor touch
-  const [isSidebarHovered, setIsSidebarHovered] = useState(false);
-  const hoverTimeoutRef = useRef(null);
 
   // User & Authentication state
   const [user, setUser] = useState(() => {
@@ -64,33 +59,6 @@ function App() {
       // Ignore localStorage errors
     }
   }, [sidebarCollapsed]);
-
-  // Mouse hover handlers for automatic show/hide when cursor touches the edge line
-  const handleMouseEnterLine = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    setIsSidebarHovered(true);
-  };
-
-  const handleMouseLeaveSidebar = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    // Small 220ms grace period so cursor movement between edge/tabs doesn't flicker
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsSidebarHovered(false);
-    }, 220);
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Listen for invalid auth
   useEffect(() => {
@@ -143,8 +111,8 @@ function App() {
     return (
       <Login
         onLoginSuccess={(u) => {
-          // Ensure dashboard loads in full-width fullscreen mode
-          setSidebarCollapsed(true);
+          // Ensure dashboard starts with visible fixed sidebar
+          setSidebarCollapsed(false);
           try {
             if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
               document.documentElement.requestFullscreen().catch(() => {});
@@ -158,10 +126,6 @@ function App() {
       />
     );
   }
-
-  // Determine if sidebar is currently visible
-  // Either permanently pinned (!sidebarCollapsed) or auto-revealed via cursor hover
-  const isSidebarVisible = !sidebarCollapsed || isSidebarHovered;
 
   // Render Role Dashboard based on authenticated user's role
   const renderDashboardContent = () => {
@@ -212,28 +176,9 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-gray-100 flex overflow-hidden transition-colors select-none">
+    <div className="relative h-screen bg-slate-100/90 dark:bg-darkbg text-slate-900 dark:text-gray-100 flex overflow-hidden transition-colors select-none">
       {/* ========================================================================= */}
-      {/* 1. SENSOR LINE: Triggers automatic show when cursor touches left edge     */}
-      {/* ========================================================================= */}
-      {sidebarCollapsed && !isSidebarHovered && (
-        <div
-          onMouseEnter={handleMouseEnterLine}
-          className="absolute left-0 top-0 bottom-0 w-3 z-50 cursor-pointer group flex items-center justify-center"
-          title="Move cursor here to reveal navigation menu"
-        >
-          {/* Subtle vertical indicator line */}
-          <div className="w-1 h-full bg-navy/30 dark:bg-cyan-500/30 group-hover:bg-navy dark:group-hover:bg-cyan-400 group-hover:w-1.5 transition-all duration-200" />
-
-          {/* Floating chevron pill handle */}
-          <div className="absolute left-0.5 top-1/2 -translate-y-1/2 py-3 px-0.5 rounded-r-md bg-navy dark:bg-cyan-600 text-white shadow-lg opacity-40 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-            <ChevronRight className="w-3 h-3 text-white" />
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 2. SIDEBAR PANEL: Automatically hides & shows on cursor touch            */}
+      {/* 1. SIDEBAR PANEL: Fixed sidebar, toggles on minimize/toggle button        */}
       {/* ========================================================================= */}
       <Sidebar
         role={user.role}
@@ -241,16 +186,13 @@ function App() {
         setActiveTab={setActiveTab}
         onLogout={handleLogout}
         onSwitchRole={handleSwitchRole}
-        collapsed={!isSidebarVisible}
-        isPinned={!sidebarCollapsed}
-        onTogglePin={() => setSidebarCollapsed(!sidebarCollapsed)}
-        onMouseEnter={handleMouseEnterLine}
-        onMouseLeave={handleMouseLeaveSidebar}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         onOpenManual={() => setIsManualModalOpen(true)}
       />
 
       {/* ========================================================================= */}
-      {/* 3. MAIN WORKSPACE / DASHBOARD CONTENT                                     */}
+      {/* 2. MAIN WORKSPACE / DASHBOARD CONTENT                                     */}
       {/* ========================================================================= */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden transition-all duration-300">
         {/* Top Header with theme toggle and live info */}
@@ -264,6 +206,9 @@ function App() {
           sidebarCollapsed={sidebarCollapsed}
           setSidebarCollapsed={setSidebarCollapsed}
           onOpenManual={() => setIsManualModalOpen(true)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onLogout={handleLogout}
         />
 
         {/* Dashboard Role Body */}

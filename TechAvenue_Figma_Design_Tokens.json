@@ -1,0 +1,114 @@
+{
+  "project": "TechAvenue Computer & Accessories Store Management System",
+  "canvas": {
+    "dimensions": { "width": 6000, "height": 2400 },
+    "colorSpace": "sRGB"
+  },
+  "designTokens": {
+    "colors": {
+      "navy": "#1E3A5F",
+      "navyLight": "#2A4B7C",
+      "darkbg": "#0F172A",
+      "darkbgCard": "#1E293B",
+      "darkbgHover": "#334155",
+      "cyanAccent": "#06B6D4",
+      "cyanGlow": "#22D3EE",
+      "emeraldSuccess": "#10B981",
+      "amberWarning": "#F59E0B",
+      "roseDanger": "#EF4444",
+      "slateBorderLight": "#E2E8F0",
+      "slateBorderDark": "#334155"
+    },
+    "typography": {
+      "fontFamily": "Inter, -apple-system, sans-serif",
+      "monoFamily": "JetBrains Mono, Fira Code, monospace",
+      "fontSize": {
+        "title": 24,
+        "section": 18,
+        "kpiValue": 20,
+        "body": 13,
+        "smallBadge": 11
+      }
+    }
+  },
+  "frames": [
+    {
+      "id": "Frame_1",
+      "name": "Admin - Dashboard (Overview)",
+      "resolution": "1440x900",
+      "components": [
+        "Fixed Sidebar (240px)",
+        "Header Bar with Toggle Button & Greeting",
+        "Compact Toolbar (Greeting + Sync Data + Export CSV)",
+        "Underline Tab Bar (All Overview / Sales / Inventory / AI / Activity)",
+        "4 KPI StatCards (Daily Sales, Monthly Revenue, Total Products, Low-Stock Alerts)",
+        "Daily & Monthly Sales Trend vs Projected Line Chart",
+        "Inventory Status Distribution Donut Chart",
+        "Recent Sales Transactions Empty State Card",
+        "Low-Stock Alert Products Table with + Restock shortcut"
+      ]
+    },
+    {
+      "id": "Frame_2",
+      "name": "Admin - Master Inventory Catalog",
+      "resolution": "1440x900",
+      "components": [
+        "Catalog Header & Add New Product CTA",
+        "Search Bar with Clear (X) Button",
+        "Category Dropdown Filter",
+        "Results Counter ('Showing 11 items')",
+        "Inventory Table with 9 Columns (SKU, Image + Name, Brand, Cost, Retail, Margin % Cyan Pill, Stock, Status, Edit/Delete Action Buttons)"
+      ]
+    },
+    {
+      "id": "Frame_3",
+      "name": "Sales Personnel - POS Terminal",
+      "resolution": "1440x900",
+      "components": [
+        "Barcode / SKU Scanner Search Bar",
+        "Product Grid Cards (3-column responsive)",
+        "Sticky Right Order Cart Panel (35% width)",
+        "Itemized Cart Rows with Steppers (+/-)",
+        "Subtotal, VAT (12%), Grand Total calculation in PHP (₱)",
+        "Payment Method Toggle (Cash, GCash, Maya, Card)",
+        "Complete Sale & Print Receipt Primary CTA"
+      ]
+    },
+    {
+      "id": "Frame_4",
+      "name": "Modals & Profile Overlay",
+      "resolution": "1440x900",
+      "components": [
+        "Edit Product Modal with Cost, Retail, Margin calculation, and Delete Product button",
+        "Layout 3 Profile Card Popup with Cyan gradient banner, 54px overlapping avatar, Dark Mode switch, Fullscreen toggle, Text scaling stepper, and Sign Out button",
+        "Top-Right Floating Toast Notification (Green Success / Red Error)"
+      ]
+    }
+  ],
+  "prototypeFlows": [
+    {
+      "from": "Frame_1.Sidebar.Inventory",
+      "to": "Frame_2",
+      "trigger": "On click",
+      "action": "Navigate to"
+    },
+    {
+      "from": "Frame_2.Table.EditButton",
+      "to": "Frame_4.EditModal",
+      "trigger": "On click",
+      "action": "Open overlay (Centered, Background dimmed 60%)"
+    },
+    {
+      "from": "Frame_1.Header.Avatar",
+      "to": "Frame_4.ProfileCard",
+      "trigger": "On click",
+      "action": "Open overlay (Manual position directly under avatar)"
+    },
+    {
+      "from": "Frame_1.Sidebar.Sales",
+      "to": "Frame_3",
+      "trigger": "On click",
+      "action": "Navigate to"
+    }
+  ]
+}

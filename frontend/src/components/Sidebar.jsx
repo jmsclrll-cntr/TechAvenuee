@@ -14,8 +14,6 @@ import {
   UserCheck,
   Users,
   BarChart3,
-  Settings,
-  User,
   LogOut,
   BrainCircuit,
   Database,
@@ -25,9 +23,7 @@ import {
   Save,
   ChevronDown,
   ChevronRight,
-  ChevronLeft,
-  Pin,
-  PinOff,
+  PanelLeftClose,
   BookOpen
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
@@ -39,10 +35,7 @@ export default function Sidebar({
   onLogout,
   onSwitchRole,
   collapsed,
-  isPinned,
-  onTogglePin,
-  onMouseEnter,
-  onMouseLeave,
+  onToggleCollapse,
   onOpenManual
 }) {
   const [predictionExpanded, setPredictionExpanded] = useState(true);
@@ -56,8 +49,7 @@ export default function Sidebar({
           { id: 'stock_in', label: 'Stock In / Restocking', icon: ArrowDownLeft },
           { id: 'stock_out', label: 'Stock Out', icon: ArrowUpRight },
           { id: 'movements', label: 'Stock Movement History', icon: History },
-          { id: 'suppliers', label: 'Suppliers', icon: Truck },
-          { id: 'profile', label: 'My Profile', icon: User }
+          { id: 'suppliers', label: 'Suppliers', icon: Truck }
         ];
 
       case 'sales_personnel':
@@ -68,8 +60,7 @@ export default function Sidebar({
           { id: 'sales_history', label: 'Sales History', icon: History },
           { id: 'receipts', label: 'Receipts', icon: Receipt },
           { id: 'product_lookup', label: 'Product Lookup', icon: Search },
-          { id: 'shift_summary', label: 'Shift Summary', icon: UserCheck },
-          { id: 'profile', label: 'My Profile', icon: User }
+          { id: 'shift_summary', label: 'Shift Summary', icon: UserCheck }
         ];
 
       case 'admin':
@@ -91,9 +82,7 @@ export default function Sidebar({
               { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
               { id: 'pred_best_selling', label: 'Best-Selling Products' }
             ]
-          },
-          { id: 'settings', label: 'Settings', icon: Settings },
-          { id: 'profile', label: 'My Profile', icon: User }
+          }
         ];
 
       case 'instructor':
@@ -118,8 +107,7 @@ export default function Sidebar({
           { id: 'evaluate', label: 'Model Evaluation', icon: Award },
           { id: 'compare', label: 'Model Comparison', icon: GitCompare },
           { id: 'saved_models', label: 'Saved Models', icon: Save },
-          { id: 'prediction_history', label: 'Prediction History', icon: History },
-          { id: 'profile', label: 'My Profile', icon: User }
+          { id: 'prediction_history', label: 'Prediction History', icon: History }
         ];
 
       default:
@@ -141,15 +129,13 @@ export default function Sidebar({
 
   return (
     <aside
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
       className={`relative shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white z-40 select-none overflow-hidden ${
         collapsed ? 'w-0 border-r-0 opacity-0 pointer-events-none' : 'w-64 opacity-100'
       }`}
     >
       {/* Top Section */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Brand Logo & Header with Pin/Auto-Hide Control */}
+        {/* Brand Logo & Header with Close/Minimize Sidebar Button */}
         <div className="p-4 sm:p-5 border-b border-navy-light/40 dark:border-darkbg-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 flex items-center justify-center p-1.5 shrink-0 overflow-hidden shadow-inner">
@@ -172,26 +158,6 @@ export default function Sidebar({
               </p>
             </div>
           </div>
-
-          {/* Pin/Unpin Toggle Button */}
-          {onTogglePin && (
-            <button
-              type="button"
-              onClick={onTogglePin}
-              className={`p-1.5 rounded-lg border transition-all text-xs cursor-pointer ${
-                isPinned
-                  ? 'border-cyan-400/30 bg-cyan-500/20 text-cyan-300'
-                  : 'border-white/15 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-              title={isPinned ? 'Sidebar is pinned open (Click to enable auto-hide on cursor touch)' : 'Sidebar is in auto-hide mode (Click to pin open)'}
-            >
-              {isPinned ? (
-                <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-300" />
-              ) : (
-                <PinOff className="w-3.5 h-3.5" />
-              )}
-            </button>
-          )}
         </div>
 
         {/* Current Active Role Badge */}
@@ -317,21 +283,6 @@ export default function Sidebar({
           <span>Sign Out</span>
         </button>
       </div>
-
-      {/* ========================================================================= */}
-      {/* DIVIDING LINE HANDLE: Touching or clicking this border line collapses it  */}
-      {/* ========================================================================= */}
-      {onTogglePin && (
-        <button
-          type="button"
-          onClick={onTogglePin}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-12 rounded-full bg-navy border border-white/20 dark:border-cyan-400/40 text-white shadow-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150 z-50 cursor-pointer"
-          title="Click line to collapse into auto-hide mode"
-          aria-label="Collapse sidebar"
-        >
-          <ChevronLeft className="w-3 h-3 text-greige dark:text-cyan-300" />
-        </button>
-      )}
     </aside>
   );
 }

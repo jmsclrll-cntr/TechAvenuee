@@ -93,7 +93,7 @@ export function ResponsiveLineChart({
   return (
     <div className="w-full">
       {title && (
-        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">{title}</h4>
+        <h4 className="text-sm font-bold text-slate-800 dark:text-gray-100 mb-3">{title}</h4>
       )}
       <div className="relative w-full overflow-hidden">
         <svg
@@ -142,7 +142,7 @@ export function ResponsiveLineChart({
                 x={padLeft - 6}
                 y={tick.y + 4}
                 textAnchor="end"
-                className="fill-gray-400 dark:fill-gray-500"
+                className="fill-slate-600 dark:fill-gray-400 font-semibold"
                 style={{ fontSize: 10, fontFamily: 'inherit' }}
               >
                 {formatYLabel(tick.val)}
@@ -232,8 +232,8 @@ export function ResponsiveLineChart({
                 x={p.x}
                 y={height - 8}
                 textAnchor="middle"
-                className="fill-gray-500 dark:fill-gray-400"
-                style={{ fontSize: 10.5, fontFamily: 'inherit', fontWeight: 500 }}
+                className="fill-slate-700 dark:fill-gray-300 font-bold"
+                style={{ fontSize: 10.5, fontFamily: 'inherit', fontWeight: 600 }}
               >
                 {p.label}
               </text>
@@ -340,7 +340,7 @@ export function ResponsiveBarChart({
   return (
     <div className="w-full">
       {title && (
-        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">{title}</h4>
+        <h4 className="text-sm font-bold text-slate-800 dark:text-gray-100 mb-3">{title}</h4>
       )}
       <div className="relative w-full overflow-hidden">
         <svg
@@ -369,7 +369,7 @@ export function ResponsiveBarChart({
                 <text
                   x={padX - 6} y={tick.y + 4}
                   textAnchor="end"
-                  className="fill-gray-400 dark:fill-gray-500"
+                  className="fill-slate-600 dark:fill-gray-400 font-semibold"
                   style={{ fontSize: 10 }}
                 >
                   {formatYLabel(tick.val)}
@@ -422,8 +422,8 @@ export function ResponsiveBarChart({
                 <text
                   x={x + barW / 2} y={y - 7}
                   textAnchor="middle"
-                  className="fill-gray-700 dark:fill-gray-200"
-                  style={{ fontSize: 10, fontWeight: 600 }}
+                  className="fill-slate-800 dark:fill-gray-100 font-bold"
+                  style={{ fontSize: 10, fontWeight: 700 }}
                 >
                   {formatYLabel(val)}
                 </text>
@@ -432,8 +432,8 @@ export function ResponsiveBarChart({
                 <text
                   x={x + barW / 2} y={height - 7}
                   textAnchor="middle"
-                  className="fill-gray-500 dark:fill-gray-400"
-                  style={{ fontSize: 9.5, fontWeight: 500 }}
+                  className="fill-slate-700 dark:fill-gray-300 font-bold"
+                  style={{ fontSize: 9.5, fontWeight: 600 }}
                 >
                   {String(d[xKey] ?? '').length > 10
                     ? String(d[xKey]).substring(0, 9) + '…'
@@ -510,7 +510,7 @@ export function ResponsiveDonutChart({
   return (
     <div className="w-full">
       {title && (
-        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">{title}</h4>
+        <h4 className="text-sm font-bold text-slate-800 dark:text-gray-100 mb-3">{title}</h4>
       )}
       <div className="flex flex-col sm:flex-row items-center justify-around gap-4">
         {/* Donut */}
@@ -548,16 +548,16 @@ export function ResponsiveDonutChart({
                 <span className="text-base font-black leading-tight" style={{ color: slices[hoveredIdx]?.color }}>
                   {slices[hoveredIdx]?.pct}%
                 </span>
-                <span className="text-[9px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider leading-snug">
+                <span className="text-[10px] text-slate-600 dark:text-gray-300 font-bold uppercase tracking-wider leading-snug">
                   {slices[hoveredIdx]?.[labelKey]}
                 </span>
               </>
             ) : (
               <>
-                <span className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
+                <span className="text-xl font-black text-slate-900 dark:text-white leading-tight">
                   {total.toLocaleString()}
                 </span>
-                <span className="text-[9px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">
+                <span className="text-[10px] text-slate-600 dark:text-gray-300 font-bold uppercase tracking-wider">
                   {centerLabel}
                 </span>
               </>
@@ -581,16 +581,16 @@ export function ResponsiveDonutChart({
                   transform: hoveredIdx === i ? 'scale(1.4)' : 'scale(1)',
                 }}
               />
-              <span className="flex-1 truncate text-gray-600 dark:text-gray-300">{s[labelKey]}</span>
-              <span className="font-bold text-gray-800 dark:text-gray-100 shrink-0">{s.val}</span>
+              <span className="flex-1 truncate text-slate-700 dark:text-gray-200 font-semibold">{s[labelKey]}</span>
+              <span className="font-black text-slate-900 dark:text-gray-100 shrink-0">{s.val}</span>
               {/* Mini progress bar */}
-              <div className="w-14 h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden shrink-0">
+              <div className="w-14 h-1.5 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden shrink-0">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{ width: `${s.pct}%`, backgroundColor: s.color }}
                 />
               </div>
-              <span className="text-gray-400 dark:text-gray-500 shrink-0 w-8 text-right">{s.pct}%</span>
+              <span className="text-slate-500 dark:text-gray-400 font-bold shrink-0 w-8 text-right">{s.pct}%</span>
             </div>
           ))}
         </div>

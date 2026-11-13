@@ -21,7 +21,6 @@ import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal, { ConfirmDialog } from '../components/Modal';
 import { api } from '../api';
-import SupplierTable from '../components/SupplierTable';
 import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
@@ -268,7 +267,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <ResponsiveBarChart
                 title="Stock Distribution by Category"
                 data={charts.category_distribution || []}
@@ -277,7 +276,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 barColor="#1E3A5F"
               />
             </div>
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <ResponsiveLineChart
                 title="Inventory Movement Trends (Past 7 Days)"
                 data={charts.movement_trends || []}
@@ -288,7 +287,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 strokeColor2="#EF4444"
               />
             </div>
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <ResponsiveDonutChart
                 title="Low-Stock vs In-Stock Ratio"
                 data={charts.stock_status || []}
@@ -302,11 +301,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           {/* Tables Row: Low-Stock Alerts & Recent Inventory Movements */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Low-Stock Alerts Table */}
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Low-Stock Alerts</h3>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Low-Stock Alerts</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -321,7 +320,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
+                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">SKU</th>
                       <th className="py-2.5 px-3">Product Name</th>
@@ -332,7 +331,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
+                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                     {(tables.low_stock_alerts || []).slice(0, 5).map((prod) => (
                       <tr key={prod.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2 px-3 font-mono font-medium text-navy dark:text-blue-400">{prod.sku}</td>
@@ -361,11 +360,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             {/* Recent Inventory Movements Table */}
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-navy dark:text-greige" />
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Recent Inventory Movements</h3>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Recent Inventory Movements</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('movements')}
@@ -377,7 +376,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
+                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">Ref #</th>
                       <th className="py-2.5 px-3">Product</th>
@@ -387,7 +386,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3">Processed By</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
+                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                     {(tables.recent_movements || []).slice(0, 5).map((m, idx) => (
                       <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2 px-3 font-mono font-medium text-[11px] text-gray-500">{m.reference_number}</td>
@@ -417,13 +416,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: INVENTORY / CATALOG TABLE */}
       {activeTab === 'inventory' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                 Product Inventory Management
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-slate-500 dark:text-gray-400">
                 Full warehouse and showroom product catalog
               </p>
             </div>
@@ -438,13 +437,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by SKU, Name, or Brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+              className="text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -454,7 +453,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+              className="text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
             >
               <option value="">All Stock Statuses</option>
               <option value="in_stock">In Stock</option>
@@ -464,7 +463,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Products Table */}
-          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-darkbg-border">
             <table className="w-full table-fixed text-xs" style={{ tableLayout: 'fixed' }}>
               <colgroup>
                 <col style={{ width: '10%' }} />
@@ -475,7 +474,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 <col style={{ width: '8%' }} />
                 <col style={{ width: '11%' }} />
               </colgroup>
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-200 uppercase font-bold text-sm tracking-wide border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-slate-100 dark:bg-darkbg text-slate-800 dark:text-gray-200 uppercase font-extrabold text-sm tracking-wide border-b border-slate-200 dark:border-darkbg-border">
                 <tr>
                   <th className="py-3.5 px-3 text-center align-middle">SKU</th>
                   <th className="py-3.5 px-3 text-left align-middle">Product Name</th>
@@ -486,7 +485,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3.5 px-3 text-center align-middle">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {products.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="py-8 text-center align-middle text-gray-400 text-xs">
@@ -507,7 +506,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                       <td className="py-3 px-3 text-center align-middle font-mono font-bold text-navy dark:text-blue-400 group-hover:underline truncate">{p.sku}</td>
                       <td className="py-3 px-3 text-left align-middle font-medium">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                          <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
                             <img
                               src={p.image_url || '/products/desktop.svg'}
                               alt={p.name}
@@ -538,11 +537,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: STOCK IN / RESTOCKING TAB */}
       {activeTab === 'stock_in' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Stock In / Restocking Console</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Receive warehouse deliveries, purchase orders, and supplier shipments</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Stock In / Restocking Console</h2>
+              <p className="text-xs text-slate-500 dark:text-gray-400">Receive warehouse deliveries, purchase orders, and supplier shipments</p>
             </div>
           </div>
 
@@ -583,10 +582,10 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: STOCK OUT TAB */}
       {activeTab === 'stock_out' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Authorized Stock-Out Console</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Process non-sale stock reductions: damaged units, RMA returns, display models, or inter-branch transfers</p>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Authorized Stock-Out Console</h2>
+            <p className="text-xs text-slate-500 dark:text-gray-400">Process non-sale stock reductions: damaged units, RMA returns, display models, or inter-branch transfers</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
@@ -624,16 +623,16 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'movements' && (
         <div className="space-y-4">
           {/* Top Header & Tab Switching Buttons */}
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Stock Movement Audit Trail</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Stock Movement Audit Trail</h2>
+              <p className="text-xs text-slate-500 dark:text-gray-400">
                 Track incoming stock replenishments and inventory deductions across the warehouse
               </p>
             </div>
 
             {/* Toggle Buttons */}
-            <div className="inline-flex p-1 rounded-xl bg-gray-100 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border text-xs font-bold">
+            <div className="inline-flex p-1 rounded-xl bg-gray-100 dark:bg-darkbg border border-slate-200 dark:border-darkbg-border text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setMovementTab('stock_in')}
@@ -670,7 +669,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Conditional View: Table 1 (Stock In History) */}
           {movementTab === 'stock_in' && (
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-darkbg-border">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
@@ -678,12 +677,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-gray-900 dark:text-white">Stock In History</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Restocking and warehouse receiving entries</p>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">Restocking and warehouse receiving entries</p>
                   </div>
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+              <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-darkbg-border">
                 <table className="w-full table-fixed text-center text-xs">
                   <colgroup>
                     <col className="w-[28%]" />
@@ -737,7 +736,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Conditional View: Table 2 (Stock Out History) */}
           {movementTab === 'stock_out' && (
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-darkbg-border">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-red-500/10 text-red-600">
@@ -745,12 +744,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-gray-900 dark:text-white">Stock Out History</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Warehouse item reductions and stock disbursements</p>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">Warehouse item reductions and stock disbursements</p>
                   </div>
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+              <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-darkbg-border">
                 <table className="w-full table-fixed text-center text-xs">
                   <colgroup>
                     <col className="w-[28%]" />
@@ -806,11 +805,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SUPPLIERS TAB */}
       {activeTab === 'suppliers' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Authorized Supplier Management</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Authorized hardware distributors and logistics partners</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Authorized Supplier Management</h2>
+              <p className="text-xs text-slate-500 dark:text-gray-400">Authorized hardware distributors and logistics partners</p>
             </div>
             <button
               onClick={() => setIsSupplierModalOpen(true)}
@@ -823,14 +822,14 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
             {suppliers.map((s) => (
-              <div key={s.id} className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2">
+              <div key={s.id} className="p-4 rounded-xl border border-slate-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-lg bg-navy/10 dark:bg-darkbg-hover text-navy dark:text-greige">
                     <Truck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-gray-900 dark:text-white">{s.name}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Contact: {s.contact_person || 'N/A'}</p>
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white">{s.name}</h3>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">Contact: {s.contact_person || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="text-xs space-y-1 text-gray-600 dark:text-gray-300 pt-2 border-t border-gray-100 dark:border-darkbg-border">
@@ -846,7 +845,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: MY PROFILE */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-navy text-white text-2xl font-bold flex items-center justify-center shadow-md">
               {user?.full_name?.charAt(0) || 'C'}
@@ -892,7 +891,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="e.g. LAP-ROG-005"
                 value={newProduct.sku}
                 onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -903,7 +902,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="e.g. ASUS, Logitech, Corsair"
                 value={newProduct.brand}
                 onChange={(e) => setNewProduct({ ...newProduct, brand: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
           </div>
@@ -916,7 +915,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="e.g. ASUS ROG Strix B760-F Gaming WiFi Motherboard"
               value={newProduct.name}
               onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
 
@@ -926,7 +925,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <select
                 value={newProduct.category_id}
                 onChange={(e) => setNewProduct({ ...newProduct, category_id: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -942,7 +941,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Cost per unit"
                 value={newProduct.cost_price}
                 onChange={(e) => setNewProduct({ ...newProduct, cost_price: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
           </div>
@@ -955,7 +954,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 min="0"
                 value={newProduct.stock_quantity}
                 onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -965,7 +964,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 min="1"
                 value={newProduct.reorder_level}
                 onChange={(e) => setNewProduct({ ...newProduct, reorder_level: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -976,7 +975,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Initial retail"
                 value={newProduct.selling_price}
                 onChange={(e) => setNewProduct({ ...newProduct, selling_price: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
           </div>
@@ -988,7 +987,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="Specs, warranty period, package contents..."
               value={newProduct.description}
               onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             ></textarea>
           </div>
 
@@ -1020,7 +1019,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               required
               value={editProduct.name || ''}
               onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
 
@@ -1032,7 +1031,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={editProduct.brand || ''}
                 onChange={(e) => setEditProduct({ ...editProduct, brand: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -1040,7 +1039,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <select
                 value={editProduct.category_id || 1}
                 onChange={(e) => setEditProduct({ ...editProduct, category_id: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -1058,7 +1057,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={editProduct.cost_price || 0}
                 onChange={(e) => setEditProduct({ ...editProduct, cost_price: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -1068,7 +1067,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={editProduct.reorder_level || 5}
                 onChange={(e) => setEditProduct({ ...editProduct, reorder_level: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
           </div>
@@ -1087,7 +1086,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               rows="2"
               value={editProduct.description || ''}
               onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             ></textarea>
           </div>
 
@@ -1112,7 +1111,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       {/* MODAL: STOCK IN (WITH CONFIRMATION DIALOG) */}
       <Modal isOpen={isStockInModalOpen} onClose={() => setIsStockInModalOpen(false)} title={`Stock In Delivery: ${selectedProduct?.name}`}>
         <div className="space-y-4 text-xs">
-          <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border flex items-center justify-between">
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-slate-200 dark:border-darkbg-border flex items-center justify-between">
             <div>
               <p className="font-mono text-xs text-navy dark:text-blue-400 font-bold">{selectedProduct?.sku}</p>
               <p className="text-gray-500">Current On-Hand Stock: <strong>{selectedProduct?.stock_quantity} units</strong></p>
@@ -1129,7 +1128,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={stockActionData.quantity}
                 onChange={(e) => setStockActionData({ ...stockActionData, quantity: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-bold text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-bold text-sm"
               />
             </div>
             <div>
@@ -1137,7 +1136,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <select
                 value={stockActionData.supplier_id}
                 onChange={(e) => setStockActionData({ ...stockActionData, supplier_id: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               >
                 <option value="">Select Supplier (Optional)</option>
                 {suppliers.map((s) => (
@@ -1154,7 +1153,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="e.g. PO-2026-9901 / ASUS Phils delivery"
               value={stockActionData.notes}
               onChange={(e) => setStockActionData({ ...stockActionData, notes: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
 
@@ -1205,7 +1204,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={stockActionData.quantity}
                 onChange={(e) => setStockActionData({ ...stockActionData, quantity: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-bold text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-bold text-sm"
               />
             </div>
             <div>
@@ -1213,7 +1212,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <select
                 value={stockActionData.reason}
                 onChange={(e) => setStockActionData({ ...stockActionData, reason: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               >
                 <option value="Damaged in transit / unboxing">Damaged in transit / unboxing</option>
                 <option value="Customer Warranty RMA Replacement">Customer Warranty RMA Replacement</option>
@@ -1261,7 +1260,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="e.g. MSI Philippines Distribution"
               value={newSupplier.name}
               onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -1272,7 +1271,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Account Manager"
                 value={newSupplier.contact_person}
                 onChange={(e) => setNewSupplier({ ...newSupplier, contact_person: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
             <div>
@@ -1282,7 +1281,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="+63 2 8xxx xxxx"
                 value={newSupplier.phone}
                 onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
               />
             </div>
           </div>
@@ -1293,7 +1292,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="orders@supplier.ph"
               value={newSupplier.email}
               onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
           <div>
@@ -1303,7 +1302,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               placeholder="Office / Warehouse Location"
               value={newSupplier.address}
               onChange={(e) => setNewSupplier({ ...newSupplier, address: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
             />
           </div>
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">

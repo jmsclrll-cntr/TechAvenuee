@@ -29,7 +29,6 @@ import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart, ModelComparisonBarChart } from '../components/Charts';
 import Modal from '../components/Modal';
 import { api } from '../api';
-import SupplierTable from '../components/SupplierTable';
 import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
@@ -430,7 +429,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                 <tr>
                   <th className="py-2.5 px-3">Product Description</th>
                   <th className="py-2.5 px-2">SKU</th>
@@ -442,7 +441,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {overviewProducts
                   .filter(p => !overviewSearch || p.name.toLowerCase().includes(overviewSearch.toLowerCase()) || p.sku.toLowerCase().includes(overviewSearch.toLowerCase()))
                   .map(p => (
@@ -485,17 +484,6 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               </tbody>
             </table>
           </div>
-
-          {/* Supplier Information Table */}
-          <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border">
-            <SupplierTable
-              suppliers={suppliers}
-              title="Verified Suppliers & Distribution Partners"
-              subtitle="Inspection and audit of registered hardware suppliers and supply-chain sources"
-              canAdd={false}
-              role="instructor"
-            />
-          </div>
         </div>
       )}
 
@@ -527,7 +515,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                 <tr>
                   <th className="py-2.5 px-3">Invoice Number</th>
                   <th className="py-2.5 px-3">Date & Time</th>
@@ -537,7 +525,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {overviewSales
                   .filter(s => !overviewSearch || (s.invoice_number && s.invoice_number.toLowerCase().includes(overviewSearch.toLowerCase())) || (s.customer_name && s.customer_name.toLowerCase().includes(overviewSearch.toLowerCase())))
                   .map(s => (
@@ -1126,7 +1114,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                             <th className="py-2.5 px-3 text-center">Status</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+                        <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                           {cvResult.folds.map((f) => (
                             <tr key={f.fold} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                               <td className="py-2 px-3 font-bold text-navy dark:text-blue-400">Fold #{f.fold}</td>
@@ -1281,7 +1269,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         <th className="py-3 px-4 text-center">Variance / Winner</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+                    <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                       <tr>
                         <td className="py-3 px-4 font-semibold">R² — Coefficient of Determination</td>
                         <td className="py-3 px-4 font-mono font-bold">{comparisonResult.linear_regression.r2_score}</td>
@@ -1344,7 +1332,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {savedModels.map((m, idx) => (
                   <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                     <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{m.filename}</td>
@@ -1391,7 +1379,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3">Date/Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {predictionHistory.map((h) => (
                   <tr key={h.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                     <td className="py-2.5 px-3 font-mono text-gray-400">#{h.id}</td>

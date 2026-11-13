@@ -34,21 +34,21 @@ export default function StatCard({ title, value, subtitle, icon: Icon, badgeColo
   };
 
   return (
-    <div className="group relative bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-slate-600 transition-all duration-200 flex flex-col justify-between overflow-hidden">
+    <div className="group relative bg-white dark:bg-darkbg-card border border-slate-200/90 dark:border-darkbg-border rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 flex flex-col justify-between overflow-hidden">
       
       {/* Top row: Label & Icon */}
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <p className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-gray-300">
             {title}
           </p>
-          <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight break-words">
+          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight break-words">
             {value}
           </h3>
         </div>
 
         {Icon && (
-          <div className={`p-3 rounded-xl border shrink-0 transition-transform duration-200 group-hover:scale-105 shadow-sm ${getIconContainerStyle()}`}>
+          <div className={`p-3 rounded-xl border shrink-0 transition-transform duration-200 group-hover:scale-105 shadow-xs ${getIconContainerStyle()}`}>
             <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         )}
@@ -56,14 +56,14 @@ export default function StatCard({ title, value, subtitle, icon: Icon, badgeColo
 
       {/* Bottom row: Subtitle & Trend */}
       {(subtitle || trend) && (
-        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-darkbg-border/60 flex items-center justify-between gap-2">
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border/60 flex items-center justify-between gap-2">
           {subtitle && (
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 line-clamp-1">
+            <span className="text-xs font-semibold text-slate-600 dark:text-gray-400 line-clamp-1">
               {subtitle}
             </span>
           )}
           {trend && (
-            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${getBadgeStyle()}`}>
+            <span className={`text-[11px] font-black px-2 py-0.5 rounded-full border whitespace-nowrap shadow-2xs ${getBadgeStyle()}`}>
               {trend}
             </span>
           )}

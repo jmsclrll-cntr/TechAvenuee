@@ -73,6 +73,9 @@ export const api = {
     method: "PUT",
     body: JSON.stringify(productData)
   }),
+  deleteProduct: (id) => apiRequest(`/inventory/${id}`, {
+    method: "DELETE"
+  }),
   uploadProductImage: (id, formData) => apiRequest(`/products/${id}/image`, {
     method: "POST",
     body: formData

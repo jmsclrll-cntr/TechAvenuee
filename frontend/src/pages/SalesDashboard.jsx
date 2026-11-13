@@ -546,7 +546,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Receipt className="w-4 h-4 text-navy dark:text-blue-400" />
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Recent Completed Transactions</h3>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Recent Completed Transactions</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('sales_history')}
@@ -558,7 +558,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
+                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">Invoice #</th>
                       <th className="py-2.5 px-3">Date/Time</th>
@@ -568,7 +568,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
+                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                     {(tables.recent_transactions || []).slice(0, 5).map((t) => (
                       <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2.5 px-3 font-mono font-medium text-navy dark:text-blue-400">{t.invoice_number}</td>
@@ -605,13 +605,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Best-Selling Items Today</h3>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Best-Selling Items Today</h3>
                 </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
+                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">Product Name</th>
                       <th className="py-2.5 px-3">SKU</th>
@@ -619,7 +619,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Gross Revenue</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
+                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                     {(tables.best_selling_today || []).map((p, idx) => (
                       <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2.5 px-3 font-medium truncate max-w-[170px]">{p.name}</td>
@@ -743,7 +743,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-darkbg-border pb-3">
               <div>
-                <h3 className="font-bold text-sm text-gray-900 dark:text-white">Active Customer Cart</h3>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Active Customer Cart</h3>
                 <p className="text-[11px] text-gray-400">{cart.length} unique items added</p>
               </div>
               {cart.length > 0 && (
@@ -924,14 +924,14 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Completed Sales Transactions</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Completed Sales Transactions</h2>
               <p className="text-xs text-gray-500">Historical transaction ledger saved directly into MySQL database</p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
                 <tr>
                   <th className="py-3 px-3">Invoice Number</th>
                   <th className="py-3 px-3">Date & Time</th>
@@ -945,7 +945,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
+              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {salesHistory.map((s) => (
                   <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                     <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{s.invoice_number}</td>
@@ -989,12 +989,12 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             <div>
               <div className="flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-navy dark:text-greige" />
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Official Receipts Ledger</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Official Receipts Ledger</h2>
                 <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
                   {salesHistory.length} Recorded
                 </span>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                 Saved MySQL cash transactions. View official receipts, download PDFs, or print customer copies.
               </p>
             </div>
@@ -1112,7 +1112,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'product_lookup' && (
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customer Product & Price Lookup</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Customer Product & Price Lookup</h2>
             <p className="text-xs text-gray-500">Quickly check specifications, availability, and retail price during customer consultations</p>
           </div>
 
@@ -1176,7 +1176,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Cashier Shift Summary</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Cashier Shift Summary</h2>
               <p className="text-xs text-gray-500">Register drawer balance and shift reconciliation</p>
             </div>
             {currentShift ? (
