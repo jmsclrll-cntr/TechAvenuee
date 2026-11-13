@@ -56,7 +56,6 @@ export default function Sidebar({
           { id: 'stock_in', label: 'Stock In / Restocking', icon: ArrowDownLeft },
           { id: 'stock_out', label: 'Stock Out', icon: ArrowUpRight },
           { id: 'movements', label: 'Stock Movement History', icon: History },
-          { id: 'low_stock', label: 'Low-Stock Alerts', icon: AlertTriangle },
           { id: 'suppliers', label: 'Suppliers', icon: Truck },
           { id: 'profile', label: 'My Profile', icon: User }
         ];

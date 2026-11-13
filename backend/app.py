@@ -864,11 +864,18 @@ def get_inventory_movements():
             cursor.execute("""
                 SELECT m.id, m.reference_number, m.product_id, p.name as product_name, p.sku, p.image_url,
                        m.movement_type, m.quantity, m.previous_stock, m.new_stock, m.reason,
-                       s.name as supplier_name, u.full_name as processed_by, m.created_at
+                       COALESCE(s.name, prod_sup.name, 'Primary Distributor') as supplier_name, 
+                       u.full_name as processed_by, m.created_at
                 FROM inventory_movements m
                 JOIN products p ON m.product_id = p.id
                 JOIN users u ON m.user_id = u.id
                 LEFT JOIN suppliers s ON m.supplier_id = s.id
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN suppliers prod_sup ON (
+                    prod_sup.supplied_categories LIKE CONCAT('%%', c.name, '%%')
+                    OR prod_sup.supplied_categories LIKE CONCAT('%%', c.code, '%%')
+                )
+                GROUP BY m.id
                 ORDER BY m.id DESC
                 LIMIT 100;
             """)

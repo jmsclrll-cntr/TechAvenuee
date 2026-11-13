@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Package, 
-  Boxes, 
-  AlertTriangle, 
-  XCircle, 
-  RefreshCw, 
+import {
+  Package,
+  Boxes,
+  AlertTriangle,
+  XCircle,
+  RefreshCw,
   CircleDollarSign,
   Plus,
   Search,
@@ -25,11 +25,31 @@ import SupplierTable from '../components/SupplierTable';
 import ProductDetailModal from '../components/ProductDetailModal';
 
 export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
+  const formatDateOnly = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      // Handles MySQL datetime ('YYYY-MM-DD HH:mm:ss' or 'YYYY-MM-DDTHH:mm:ss') or date strings with GMT/timezone
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) {
+        // Fallback: strip time or GMT if string formatted
+        return String(dateStr).split(' ')[0].split('T')[0];
+      }
+      return d.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    } catch {
+      return String(dateStr).split(' ')[0].split('T')[0];
+    }
+  };
+
   const [stats, setStats] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [movements, setMovements] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  const [movementTab, setMovementTab] = useState('stock_in'); // 'stock_in' | 'stock_out'
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -58,6 +78,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [newSupplier, setNewSupplier] = useState({ name: '', contact_person: '', email: '', phone: '', address: '' });
 
   const [notification, setNotification] = useState(null);
+  const [highlightedProductId, setHighlightedProductId] = useState(null);
 
   const showNotification = (msg, type = 'success') => {
     setNotification({ msg, type });
@@ -288,10 +309,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   <h3 className="font-bold text-sm text-gray-900 dark:text-white">Low-Stock Alerts</h3>
                 </div>
                 <button
-                  onClick={() => setActiveTab('low_stock')}
+                  onClick={() => {
+                    setStatusFilter('low_stock');
+                    setActiveTab('inventory');
+                  }}
                   className="text-xs text-navy dark:text-greige hover:underline font-semibold"
                 >
-                  View All Alerts
+                  View in Inventory
                 </button>
               </div>
 
@@ -369,13 +393,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                         <td className="py-2 px-3 font-mono font-medium text-[11px] text-gray-500">{m.reference_number}</td>
                         <td className="py-2 px-3 font-medium truncate max-w-[130px]">{m.product_name}</td>
                         <td className="py-2 px-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            m.movement_type === 'stock_in' 
-                              ? 'bg-emerald-500/10 text-emerald-600' 
-                              : m.movement_type === 'stock_out' 
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.movement_type === 'stock_in'
+                            ? 'bg-emerald-500/10 text-emerald-600'
+                            : m.movement_type === 'stock_out'
                               ? 'bg-red-500/10 text-red-600'
                               : 'bg-blue-500/10 text-blue-600'
-                          }`}>
+                            }`}>
                             {m.movement_type.toUpperCase()}
                           </span>
                         </td>
@@ -393,25 +416,16 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       )}
 
       {/* VIEW: INVENTORY / CATALOG TABLE */}
-      {(activeTab === 'inventory' || activeTab === 'low_stock') && (
+      {activeTab === 'inventory' && (
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                {activeTab === 'low_stock' ? 'Low-Stock Alerts & Reordering' : 'Product Inventory Management'}
+                Product Inventory Management
               </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {activeTab === 'low_stock' ? 'Items requiring immediate restocking to maintain service levels' : 'Full warehouse and showroom product catalog'}
+                Full warehouse and showroom product catalog
               </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-semibold shadow-sm transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                Add Product
-              </button>
             </div>
           </div>
 
@@ -450,133 +464,74 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Products Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+            <table className="w-full table-fixed text-xs" style={{ tableLayout: 'fixed' }}>
+              <colgroup>
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '30%' }} />
+                <col style={{ width: '13%' }} />
+                <col style={{ width: '14%' }} />
+                <col style={{ width: '14%' }} />
+                <col style={{ width: '8%' }} />
+                <col style={{ width: '11%' }} />
+              </colgroup>
+              <thead className="bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-200 uppercase font-bold text-sm tracking-wide border-b border-gray-200 dark:border-darkbg-border">
                 <tr>
-                  <th className="py-3 px-3">SKU</th>
-                  <th className="py-3 px-3">Product Name</th>
-                  <th className="py-3 px-3">Brand</th>
-                  <th className="py-3 px-3">Category</th>
-                  <th className="py-3 px-3 text-right">Cost Price</th>
-                  <th className="py-3 px-3 text-right">Selling Price</th>
-                  <th className="py-3 px-3 text-center">Stock</th>
-                  <th className="py-3 px-3 text-center">Reorder</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-3 text-right">Actions</th>
+                  <th className="py-3.5 px-3 text-center align-middle">SKU</th>
+                  <th className="py-3.5 px-3 text-left align-middle">Product Name</th>
+                  <th className="py-3.5 px-3 text-center align-middle">Brand</th>
+                  <th className="py-3.5 px-3 text-center align-middle">Category</th>
+                  <th className="py-3.5 px-3 text-center align-middle">Selling Price</th>
+                  <th className="py-3.5 px-3 text-center align-middle">Stock</th>
+                  <th className="py-3.5 px-3 text-center align-middle">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
                 {products.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="py-8 text-center text-gray-400 text-xs">
+                    <td colSpan="7" className="py-8 text-center align-middle text-gray-400 text-xs">
                       No matching products found.
                     </td>
                   </tr>
                 ) : (
-                  products.map((p) => (
-                    <tr 
-                      key={p.id} 
+                  products.map((p, idx) => (
+                    <tr
+                      key={p.id}
                       onClick={() => {
                         setViewProduct(p);
                         setIsViewModalOpen(true);
                       }}
-                      className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                      className={`${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} dark:bg-transparent hover:bg-blue-50/50 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group`}
                       title="Click to view full product & supplier specifications"
                     >
-                      <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400 group-hover:underline">{p.sku}</td>
-                      <td className="py-2.5 px-3 font-medium">
+                      <td className="py-3 px-3 text-center align-middle font-mono font-bold text-navy dark:text-blue-400 group-hover:underline truncate">{p.sku}</td>
+                      <td className="py-3 px-3 text-left align-middle font-medium">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
-                            <img 
-                              src={p.image_url || '/products/desktop.svg'} 
-                              alt={p.name} 
-                              className="max-h-full max-w-full object-contain" 
-                              onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
+                          <div className="w-8 h-8 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                            <img
+                              src={p.image_url || '/products/desktop.svg'}
+                              alt={p.name}
+                              className="max-h-full max-w-full object-contain"
+                              onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                             />
                           </div>
-                          <div>
-                            <span className="group-hover:text-navy dark:group-hover:text-blue-400 transition-colors font-bold block">{p.name}</span>
-                            {p.description && <p className="text-[10px] text-gray-400 truncate max-w-xs">{p.description}</p>}
-                          </div>
+                          <span className="group-hover:text-navy dark:group-hover:text-blue-400 transition-colors font-bold text-gray-900 dark:text-white truncate">{p.name}</span>
                         </div>
                       </td>
-                      <td className="py-2.5 px-3">{p.brand}</td>
-                      <td className="py-2.5 px-3">{p.category_name}</td>
-                      <td className="py-2.5 px-3 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-3 text-right font-mono font-semibold">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-3 text-center font-bold text-sm">
+                      <td className="py-3 px-3 text-center align-middle truncate">{p.brand}</td>
+                      <td className="py-3 px-3 text-center align-middle truncate">{p.category_name}</td>
+                      <td className="py-3 px-3 text-center align-middle font-mono font-semibold">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="py-3 px-3 text-center align-middle font-bold text-sm">
                         <span className={p.stock_quantity <= p.reorder_level ? 'text-red-500 font-extrabold' : 'text-emerald-600'}>
                           {p.stock_quantity}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-center text-gray-500">{p.reorder_level}</td>
-                      <td className="py-2.5 px-3 text-center">{getStatusBadge(p.status, p.stock_quantity, p.reorder_level)}</td>
-                      <td className="py-2.5 px-3 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {/* Stock In */}
-                          <button
-                            title="Stock In / Restock"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedProduct(p);
-                              setStockActionData({ quantity: 5, supplier_id: '', notes: 'Routine restock' });
-                              setIsStockInModalOpen(true);
-                            }}
-                            className="p-1.5 rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20"
-                          >
-                            <ArrowDownLeft className="w-3.5 h-3.5" />
-                          </button>
-
-                          {/* Stock Out */}
-                          <button
-                            title="Authorized Stock Out"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedProduct(p);
-                              setStockActionData({ quantity: 1, reason: 'Damaged / Store Transfer' });
-                              setIsStockOutModalOpen(true);
-                            }}
-                            className="p-1.5 rounded bg-red-500/10 text-red-600 hover:bg-red-500/20"
-                          >
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </button>
-
-                          {/* Edit Product (Clerk cannot change price) */}
-                          <button
-                            title="Edit Product Details"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditProduct(p);
-                              setIsEditModalOpen(true);
-                            }}
-                            className="p-1.5 rounded bg-navy/10 text-navy dark:text-blue-300 hover:bg-navy/20"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
+                      <td className="py-3 px-3 text-center align-middle">{getStatusBadge(p.status, p.stock_quantity, p.reorder_level)}</td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
-          </div>
-
-          {/* Supplier Information Table */}
-          <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border">
-            <SupplierTable
-              suppliers={suppliers}
-              title="Authorized Hardware Suppliers & Vendors"
-              subtitle="Direct manufacturer accounts, component distributors, and delivery partners for restocking"
-              canAdd={true}
-              onAdd={() => setIsSupplierModalOpen(true)}
-              onRestock={(supplier) => {
-                setStockActionData({ quantity: 10, supplier_id: supplier.id, notes: `Restock delivery from ${supplier.name}` });
-                setIsStockInModalOpen(true);
-              }}
-              role="inventory_clerk"
-            />
           </div>
         </div>
       )}
@@ -593,16 +548,19 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
             {products.map((p) => (
-              <div key={p.id} className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-darkbg/40 flex flex-col justify-between">
+              <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-gray-50/50 dark:bg-darkbg/40 flex flex-col justify-between ${highlightedProductId === p.id
+                  ? 'border-emerald-400 dark:border-emerald-500 ring-2 ring-emerald-400/60 shadow-lg shadow-emerald-200/50 dark:shadow-emerald-900/40 scale-[1.01]'
+                  : 'border-gray-200 dark:border-darkbg-border'
+                }`}>
                 <div>
                   <div className="flex items-start justify-between">
                     <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{p.sku}</span>
                     {getStatusBadge(p.status, p.stock_quantity, p.reorder_level)}
                   </div>
                   <h4 className="font-semibold text-sm mt-1 text-gray-900 dark:text-white line-clamp-1">{p.name}</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{p.brand} • {p.category_name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">{p.brand} • {p.category_name}</p>
                   <div className="mt-3 flex items-center justify-between text-xs">
-                    <span className="text-gray-500">Current Stock:</span>
+                    <span className="text-gray-500 dark:text-gray-300">Current Stock:</span>
                     <span className="font-bold text-gray-900 dark:text-white">{p.stock_quantity} units</span>
                   </div>
                 </div>
@@ -633,14 +591,17 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
             {products.filter(p => p.stock_quantity > 0).map((p) => (
-              <div key={p.id} className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-darkbg/40 flex flex-col justify-between">
+              <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-gray-50/50 dark:bg-darkbg/40 flex flex-col justify-between ${highlightedProductId === p.id
+                  ? 'border-red-400 dark:border-red-500 ring-2 ring-red-400/60 shadow-lg shadow-red-200/50 dark:shadow-red-900/40 scale-[1.01]'
+                  : 'border-gray-200 dark:border-darkbg-border'
+                }`}>
                 <div>
                   <div className="flex items-start justify-between">
                     <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{p.sku}</span>
                     <span className="text-xs font-bold text-emerald-600">{p.stock_quantity} available</span>
                   </div>
                   <h4 className="font-semibold text-sm mt-1 text-gray-900 dark:text-white line-clamp-1">{p.name}</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{p.brand} • {p.category_name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">{p.brand} • {p.category_name}</p>
                 </div>
                 <button
                   onClick={() => {
@@ -661,64 +622,185 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: STOCK MOVEMENT HISTORY */}
       {activeTab === 'movements' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="space-y-4">
+          {/* Top Header & Tab Switching Buttons */}
+          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">Stock Movement Audit Trail</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Complete historical record of all warehouse receipts, cashier sales, and adjustments</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Track incoming stock replenishments and inventory deductions across the warehouse
+              </p>
+            </div>
+
+            {/* Toggle Buttons */}
+            <div className="inline-flex p-1 rounded-xl bg-gray-100 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setMovementTab('stock_in')}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${movementTab === 'stock_in'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+              >
+                <ArrowDownLeft className="w-4 h-4" />
+                <span>Stock In History</span>
+                <span className={`ml-1 text-[10px] px-1.5 py-0.2 rounded-full ${movementTab === 'stock_in' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                  }`}>
+                  {movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMovementTab('stock_out')}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${movementTab === 'stock_out'
+                    ? 'bg-red-600 text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+              >
+                <ArrowUpRight className="w-4 h-4" />
+                <span>Stock Out History</span>
+                <span className={`ml-1 text-[10px] px-1.5 py-0.2 rounded-full ${movementTab === 'stock_out' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                  }`}>
+                  {movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).length}
+                </span>
+              </button>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
-                <tr>
-                  <th className="py-3 px-3">Reference #</th>
-                  <th className="py-3 px-3">Date & Time</th>
-                  <th className="py-3 px-3">Product Name</th>
-                  <th className="py-3 px-3">SKU</th>
-                  <th className="py-3 px-3 text-center">Movement</th>
-                  <th className="py-3 px-3 text-right">Quantity</th>
-                  <th className="py-3 px-3 text-center">Previous → New</th>
-                  <th className="py-3 px-3">Supplier / Reason</th>
-                  <th className="py-3 px-3">Processed By</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
-                {movements.map((m) => (
-                  <tr key={m.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                    <td className="py-2.5 px-3 font-mono font-semibold text-navy dark:text-blue-400">{m.reference_number}</td>
-                    <td className="py-2.5 px-3 text-gray-500">{m.created_at}</td>
-                    <td className="py-2.5 px-3 font-medium">{m.product_name}</td>
-                    <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">{m.sku}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        m.movement_type === 'stock_in' 
-                          ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' 
-                          : m.movement_type === 'stock_out' 
-                          ? 'bg-red-500/10 text-red-600 border border-red-500/20'
-                          : 'bg-blue-500/10 text-blue-600 border border-blue-500/20'
-                      }`}>
-                        {m.movement_type.replace('_', ' ').toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-bold text-sm">
-                      <span className={m.quantity > 0 ? 'text-emerald-600' : 'text-red-500'}>
-                        {m.quantity > 0 ? `+${m.quantity}` : m.quantity}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-center font-mono text-gray-500">
-                      {m.previous_stock} → {m.new_stock}
-                    </td>
-                    <td className="py-2.5 px-3 text-gray-600 dark:text-gray-300">
-                      {m.supplier_name ? `Supplier: ${m.supplier_name}` : m.reason || 'Standard operation'}
-                    </td>
-                    <td className="py-2.5 px-3 text-gray-700 dark:text-gray-300 font-medium">{m.processed_by}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Conditional View: Table 1 (Stock In History) */}
+          {movementTab === 'stock_in' && (
+            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-darkbg-border">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+                    <ArrowDownLeft className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white">Stock In History</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Restocking and warehouse receiving entries</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+                <table className="w-full table-fixed text-center text-xs">
+                  <colgroup>
+                    <col className="w-[28%]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[20%]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[16%]" />
+                  </colgroup>
+                  <thead className="bg-emerald-50 text-emerald-950 dark:bg-darkbg dark:text-gray-200 uppercase font-bold text-sm tracking-wide border-b border-emerald-200/60 dark:border-darkbg-border">
+                    <tr>
+                      <th className="py-3.5 px-3 text-center align-middle">Product Name</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Quantity Received</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Supplier</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Date</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Processed By</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-darkbg-border text-gray-900 dark:text-gray-200">
+                    {movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="py-8 text-center align-middle text-gray-500 text-xs">
+                          No restocking or receiving entries recorded yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).map((m, idx) => (
+                        <tr key={m.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'} dark:bg-transparent hover:bg-emerald-50/40 dark:hover:bg-darkbg-hover/50 transition-colors`}>
+                          <td className="py-3 px-3 text-center align-middle text-xs font-medium text-gray-900 dark:text-gray-200 truncate" title={m.product_name}>
+                            {m.product_name}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200">
+                            {Math.abs(m.quantity)}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200 truncate" title={m.supplier_name || 'Authorized Supplier'}>
+                            {m.supplier_name || 'Authorized Supplier'}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                            {formatDateOnly(m.created_at)}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200 truncate" title={m.processed_by}>
+                            {m.processed_by}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Conditional View: Table 2 (Stock Out History) */}
+          {movementTab === 'stock_out' && (
+            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-darkbg-border">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-red-500/10 text-red-600">
+                    <ArrowUpRight className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white">Stock Out History</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Warehouse item reductions and stock disbursements</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+                <table className="w-full table-fixed text-center text-xs">
+                  <colgroup>
+                    <col className="w-[28%]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[20%]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[16%]" />
+                  </colgroup>
+                  <thead className="bg-red-50 text-red-950 dark:bg-darkbg dark:text-gray-200 uppercase font-bold text-sm tracking-wide border-b border-red-200/60 dark:border-darkbg-border">
+                    <tr>
+                      <th className="py-3.5 px-3 text-center align-middle">Product Name</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Quantity Reduced</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Supplier</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Date</th>
+                      <th className="py-3.5 px-3 text-center align-middle">Processed By</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-darkbg-border text-gray-900 dark:text-gray-200">
+                    {movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="py-8 text-center align-middle text-gray-500 text-xs">
+                          No stock reduction entries recorded yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).map((m, idx) => (
+                        <tr key={m.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'} dark:bg-transparent hover:bg-red-50/40 dark:hover:bg-darkbg-hover/50 transition-colors`}>
+                          <td className="py-3 px-3 text-center align-middle text-xs font-medium text-gray-900 dark:text-gray-200 truncate" title={m.product_name}>
+                            {m.product_name}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200">
+                            {Math.abs(m.quantity)}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200 truncate" title={m.supplier_name || 'Authorized Supplier'}>
+                            {m.supplier_name || 'Authorized Supplier'}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                            {formatDateOnly(m.created_at)}
+                          </td>
+                          <td className="py-3 px-3 text-center align-middle text-xs text-gray-800 dark:text-gray-200 truncate" title={m.processed_by}>
+                            {m.processed_by}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1252,10 +1334,47 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
         product={viewProduct}
         suppliers={suppliers}
         role="clerk"
+        onEdit={(prod) => {
+          setIsViewModalOpen(false);
+          setEditProduct(prod);
+          setIsEditModalOpen(true);
+        }}
+        onAddStock={(prod) => {
+          setIsViewModalOpen(false);
+          setSelectedProduct(prod);
+          setStockActionData({ quantity: 5, supplier_id: '', notes: `Restock order for ${prod.name}` });
+          setIsStockInModalOpen(true);
+        }}
+        onRemoveStock={(prod) => {
+          setIsViewModalOpen(false);
+          setSelectedProduct(prod);
+          setStockActionData({ quantity: 1, reason: 'Damaged / Store Transfer' });
+          setIsStockOutModalOpen(true);
+        }}
         onRestock={(prod) => {
           setSelectedProduct(prod);
           setStockActionData({ quantity: 5, supplier_id: '', notes: `Restock order for ${prod.name}` });
           setIsStockInModalOpen(true);
+        }}
+        onNavigateStockIn={() => {
+          setIsViewModalOpen(false);
+          setViewProduct(null);
+          const pid = viewProduct?.id;
+          setActiveTab('stock_in');
+          if (pid) {
+            setHighlightedProductId(pid);
+            setTimeout(() => setHighlightedProductId(null), 3000);
+          }
+        }}
+        onNavigateStockOut={() => {
+          setIsViewModalOpen(false);
+          setViewProduct(null);
+          const pid = viewProduct?.id;
+          setActiveTab('stock_out');
+          if (pid) {
+            setHighlightedProductId(pid);
+            setTimeout(() => setHighlightedProductId(null), 3000);
+          }
         }}
       />
 

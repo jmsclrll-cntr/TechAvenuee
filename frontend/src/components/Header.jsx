@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, 
   Moon, 
-  Bell, 
   Clock, 
   ShieldCheck, 
   AlertTriangle, 
-  CheckCircle2, 
-  Truck, 
   PanelLeftClose, 
   PanelLeftOpen, 
   Type, 
@@ -33,11 +30,9 @@ export default function Header({
   onOpenManual
 }) {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showTextSizeDropdown, setShowTextSizeDropdown] = useState(false);
 
   const textSizeRef = useRef(null);
-  const notificationsRef = useRef(null);
 
   const {
     scalePercent,
@@ -71,15 +66,11 @@ export default function Header({
       if (textSizeRef.current && !textSizeRef.current.contains(e.target)) {
         setShowTextSizeDropdown(false);
       }
-      if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
-        setShowNotifications(false);
-      }
     }
 
     function handleKeyDown(e) {
       if (e.key === 'Escape') {
         setShowTextSizeDropdown(false);
-        setShowNotifications(false);
       }
     }
 
@@ -165,18 +156,11 @@ export default function Header({
   };
 
   const getGreeting = () => {
-    switch (role) {
-      case 'inventory_clerk':
-        return 'Welcome back, Inventory Clerk';
-      case 'sales_personnel':
-        return 'Welcome back, Sales Personnel';
-      case 'instructor':
-        return 'Welcome back, Instructor';
-      case 'admin':
-      default:
-        return 'Welcome back, Admin';
-    }
+    const name = user?.full_name || 'User';
+    return { prefix: 'Welcome back,', name };
   };
+
+  const greeting = getGreeting();
 
   const formattedDate = currentTime.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -216,7 +200,8 @@ export default function Header({
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-                {getGreeting()}
+                {greeting.prefix}{' '}
+                <span className="text-navy dark:text-cyan-300">{greeting.name}</span>
               </h1>
               <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-navy/10 text-navy dark:bg-darkbg-hover dark:text-greige border border-navy/20 dark:border-darkbg-border">
                 <ShieldCheck className="w-3.5 h-3.5 text-navy dark:text-greige" />
@@ -265,7 +250,7 @@ export default function Header({
             <button
               type="button"
               onClick={() => setShowTextSizeDropdown(!showTextSizeDropdown)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all shadow-sm cursor-pointer ${
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all shadow-sm cursor-pointer ${
                 showTextSizeDropdown
                   ? 'border-navy dark:border-cyan-400 bg-navy/10 dark:bg-cyan-500/15 text-navy dark:text-cyan-300 ring-2 ring-navy/20 dark:ring-cyan-500/20'
                   : 'border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200'
@@ -275,7 +260,6 @@ export default function Header({
               aria-expanded={showTextSizeDropdown}
             >
               <Type className="w-4 h-4 text-navy dark:text-cyan-400" />
-              <span className="hidden sm:inline">Text Size</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 font-bold">
                 {scalePercent}%
               </span>
@@ -388,11 +372,11 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenManual}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-navy/20 dark:border-blue-500/30 bg-navy/5 dark:bg-blue-500/10 hover:bg-navy/10 dark:hover:bg-blue-500/20 text-navy dark:text-blue-400 text-xs font-bold transition-all shadow-sm cursor-pointer"
+            className="p-2 rounded-lg border border-navy/20 dark:border-blue-500/30 bg-navy/5 dark:bg-blue-500/10 hover:bg-navy/10 dark:hover:bg-blue-500/20 text-navy dark:text-blue-400 transition-all shadow-sm cursor-pointer"
             title="Open Interactive System User Manual & Workflow Guides"
+            aria-label="User Manual"
           >
             <BookOpen className="w-4 h-4 text-navy dark:text-blue-400" />
-            <span className="hidden sm:inline">User Manual</span>
           </button>
 
           {/* ========================================================================= */}
@@ -400,19 +384,14 @@ export default function Header({
           {/* ========================================================================= */}
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200 text-xs font-medium transition-all shadow-sm cursor-pointer"
-            title="Toggle color theme"
+            className="p-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200 transition-all shadow-sm cursor-pointer"
+            title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label={darkMode ? 'Light Mode' : 'Dark Mode'}
           >
             {darkMode ? (
-              <>
-                <Sun className="w-4 h-4 text-amber-400" />
-                <span className="hidden sm:inline">Light mode</span>
-              </>
+              <Sun className="w-4 h-4 text-amber-400" />
             ) : (
-              <>
-                <Moon className="w-4 h-4 text-navy" />
-                <span className="hidden sm:inline">Dark mode</span>
-              </>
+              <Moon className="w-4 h-4 text-navy" />
             )}
           </button>
 
@@ -432,56 +411,6 @@ export default function Header({
               <Maximize2 className="w-4 h-4 text-navy dark:text-cyan-400" />
             )}
           </button>
-
-          {/* Notifications Dropdown */}
-          <div ref={notificationsRef} className="relative">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-700 dark:text-gray-200 transition-colors cursor-pointer"
-              title="Notifications"
-            >
-              <Bell className="w-4 h-4" />
-              {lowStockCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
-                  {lowStockCount}
-                </span>
-              )}
-            </button>
-
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-xl p-3 z-50">
-                <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-darkbg-border">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-white">Store Alerts</h4>
-                  <span className="text-[10px] text-gray-400">Real-time</span>
-                </div>
-                <div className="mt-2 space-y-2 max-h-60 overflow-y-auto">
-                  {lowStockCount > 0 && (
-                    <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold">Low-Stock Alert</p>
-                        <p className="text-[11px] text-amber-700 dark:text-amber-400">{lowStockCount} products are at or below reorder threshold.</p>
-                      </div>
-                    </div>
-                  )}
-                  <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold">POS System Ready</p>
-                      <p className="text-[11px] text-emerald-700 dark:text-emerald-400">MySQL Database and transaction engine operational.</p>
-                    </div>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-navy/5 dark:bg-darkbg-hover border border-navy/10 dark:border-darkbg-border text-xs text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                    <Truck className="w-4 h-4 text-navy dark:text-greige shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold">Purchasing System Online</p>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400">Purchase orders and stock receiving ready.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* User Profile Badge */}
           <div className="flex items-center gap-2.5 pl-2 border-l border-gray-200 dark:border-darkbg-border">
