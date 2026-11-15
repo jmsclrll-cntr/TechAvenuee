@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000/api";
+﻿const API_BASE = typeof window !== "undefined" && window.location.hostname ? `http://${window.location.hostname}:5000/api` : "http://127.0.0.1:5000/api";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("techavenue_token");

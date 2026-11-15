@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   X, 
   Printer, 
@@ -47,6 +47,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const items = receipt.items || [];
 
   // Financial calculations
+  const grossSubtotal = receipt.gross_subtotal != null ? Number(receipt.gross_subtotal) : (items.reduce((sum, item) => sum + (Number(item.quantity || 1) * Number(item.unit_price || 0)), 0) || (Number(receipt.total_amount || 0) + Number(receipt.discount_amount || 0)));
   const totalAmount = Number(receipt.total_amount || 0);
   const discountAmount = Number(receipt.discount_amount || 0);
   const discountPct = Number(receipt.discount_pct || 0);
@@ -89,10 +90,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             ${itemQty}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-family: monospace;">
-            ₱${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            â‚±${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-weight: 700; font-family: monospace;">
-            ₱${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            â‚±${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>
       `;
@@ -155,7 +156,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px; color: #0f172a;">TECH AVENUE</div>
           <div style="font-size: 9.5px; font-weight: 700; color: #334155; margin-top: 1px;">COMPUTER & ACCESSORIES STORE MANAGEMENT</div>
           <div style="font-size: 8.5px; color: #475569; margin-top: 2px;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000</div>
           <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; padding: 3px 0; background: #f1f5f9; border-radius: 4px;">
             Official Transaction Receipt
           </div>
@@ -185,23 +186,27 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
         <div class="border-t-dashed" style="font-size: 10.5px;">
           <div class="row">
+            <span>Subtotal (Before Discount):</span>
+            <span class="font-mono">₱${grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
             <span>Subtotal (Net of VAT):</span>
-            <span class="font-mono">₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">â‚±${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Output VAT (12%):</span>
-            <span class="font-mono">₱${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">â‚±${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           ${discountAmount > 0 ? `
             <div class="row" style="color: #b45309; font-weight: 600;">
               <span>Discount (${discountPct}%):</span>
-              <span class="font-mono">-₱${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span class="font-mono">-â‚±${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : ''}
 
           <div class="total-highlight border-double">
             <span>TOTAL AMOUNT DUE:</span>
-            <span class="font-mono">₱${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">â‚±${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
 
           <div class="row">
@@ -210,11 +215,11 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
           <div class="row">
             <span>Amount Tendered:</span>
-            <span class="font-mono">₱${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">â‚±${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="change-highlight">
             <span>Change:</span>
-            <span class="font-mono">₱${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">â‚±${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
 
@@ -290,7 +295,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines
             </p>
             <p className="text-[10px] text-slate-400">
-              Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000
+              Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000
             </p>
             <div className="pt-2">
               <span className="inline-block px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
@@ -372,10 +377,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                           {itemQty}
                         </td>
                         <td className="py-2.5 text-right font-mono text-slate-300 text-xs">
-                          ₱{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          â‚±{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-2.5 text-right font-mono font-bold text-white text-xs">
-                          ₱{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          â‚±{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </tr>
                     );
@@ -388,16 +393,22 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           {/* 4. Payment Summary Breakdown */}
           <div className="py-3 border-b border-dashed border-slate-700 space-y-2 text-xs">
             <div className="flex justify-between items-center text-slate-400">
+              <span>Subtotal (Before Discount):</span>
+              <span className="font-mono text-slate-200">
+                ₱{grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-slate-400">
               <span>Subtotal (Net of VAT):</span>
               <span className="font-mono text-slate-200">
-                ₱{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                â‚±{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
             <div className="flex justify-between items-center text-slate-400">
               <span>Output VAT (12%):</span>
               <span className="font-mono text-slate-200">
-                ₱{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                â‚±{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -405,7 +416,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               <div className="flex justify-between items-center text-amber-400 font-semibold">
                 <span>Discount ({discountPct}%):</span>
                 <span className="font-mono">
-                  -₱{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  -â‚±{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             )}
@@ -417,7 +428,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                   TOTAL AMOUNT DUE:
                 </span>
                 <span className="text-lg font-black font-mono text-emerald-400 tracking-tight">
-                  ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  â‚±{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
@@ -434,7 +445,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <div className="flex justify-between items-center text-slate-300">
               <span>Amount Tendered:</span>
               <span className="font-mono font-bold text-white text-xs">
-                ₱{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                â‚±{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -444,7 +455,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                 Change:
               </span>
               <span className="text-base font-black font-mono text-emerald-400">
-                ₱{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                â‚±{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>

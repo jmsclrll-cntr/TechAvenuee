@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   LayoutDashboard,
   Package,
@@ -55,12 +55,9 @@ export default function Sidebar({
       case 'sales_personnel':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'pos', label: 'Market / Point of Sale', icon: ShoppingCart },
-          { id: 'new_transaction', label: 'New Transaction', icon: PlusCircle },
-          { id: 'sales_history', label: 'Sales History', icon: History },
-          { id: 'receipts', label: 'Receipts', icon: Receipt },
-          { id: 'product_lookup', label: 'Product Lookup', icon: Search },
-          { id: 'shift_summary', label: 'Shift Summary', icon: UserCheck }
+          { id: 'pos', label: 'Point of Sale & Drafts', icon: ShoppingCart },
+          { id: 'sales_history', label: 'Sales History & Receipts', icon: History },
+          { id: 'product_lookup', label: 'Product Lookup', icon: Search }
         ];
 
       case 'admin':
@@ -128,11 +125,22 @@ export default function Sidebar({
   };
 
   return (
-    <aside
-      className={`relative shrink-0 h-screen sticky top-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white z-40 select-none overflow-hidden ${
-        collapsed ? 'w-0 border-r-0 opacity-0 pointer-events-none' : 'w-64 opacity-100'
-      }`}
-    >
+    <>
+      {/* Mobile Backdrop Overlay when sidebar is open (< lg) */}
+      {!collapsed && (
+        <div 
+          onClick={onToggleCollapse}
+          className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+        />
+      )}
+
+      <aside
+        className={`fixed lg:sticky top-0 left-0 h-screen shrink-0 bg-navy dark:bg-darkbg-card border-r border-navy-dark dark:border-darkbg-border flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl text-white z-50 select-none overflow-hidden ${
+          collapsed 
+            ? '-translate-x-full lg:translate-x-0 lg:w-0 lg:border-r-0 lg:opacity-0 lg:pointer-events-none w-64' 
+            : 'translate-x-0 w-64 opacity-100'
+        }`}
+      >
       {/* Top Section */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Brand Logo & Header with Close/Minimize Sidebar Button */}
@@ -284,5 +292,6 @@ export default function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }

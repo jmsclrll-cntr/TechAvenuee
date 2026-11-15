@@ -6,28 +6,30 @@ import {
   Banknote, 
   CheckCircle2, 
   AlertCircle, 
-  Printer, 
-  FileText, 
-  RotateCcw, 
   Plus, 
   Minus, 
   ArrowRight,
   ShieldCheck,
-  Receipt as ReceiptIcon,
+  FileText,
+  Save,
+  Clock,
   X
 } from 'lucide-react';
-import Modal from '../components/Modal';
+import Modal, { ConfirmDialog } from '../components/Modal';
 import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import { api } from '../api';
 
-export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavigateToNewTransaction }) {
+export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
   const [products, setProducts] = useState([]);
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Active Sale / Cart state (Strictly Cash Only)
+  // Unified Right Panel Mode: 'pos' (Current Sale Cart) or 'draft' (Draft Preparation)
+  const [panelMode, setPanelMode] = useState('pos');
+
+  // POS State (Current Sale Cart)
   const [cart, setCart] = useState([]);
   const [activeDraft, setActiveDraft] = useState(null);
   const [customerName, setCustomerName] = useState('Walk-in Customer');
@@ -35,14 +37,27 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
   const [amountTendered, setAmountTendered] = useState('');
   const [notes, setNotes] = useState('');
 
+  // Draft Preparation State
+  const [draftActiveId, setDraftActiveId] = useState(null);
+  const [draftReferenceNumber, setDraftReferenceNumber] = useState('');
+  const [draftCustomerName, setDraftCustomerName] = useState('Walk-in Customer');
+  const [draftDiscountPct, setDraftDiscountPct] = useState(0);
+  const [draftNotes, setDraftNotes] = useState('');
+  const [draftItems, setDraftItems] = useState([]);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+
   // Checkout & Receipt modal state
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
-  // Drafts selection modal
+  // Resume Drafts selection modal
   const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
+
+  // Confirmation dialog state
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({});
 
   const showFeedback = (msg, type = 'success') => {
     setFeedback({ msg, type });
@@ -63,7 +78,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
       if (draftsRes.status === 'success') {
         setDrafts(draftsRes.drafts);
 
-        // If an initialDraftId was passed from New Transaction, load it automatically
         if (initialDraftId) {
           const target = draftsRes.drafts.find(d => d.id === initialDraftId);
           if (target) {
@@ -83,7 +97,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     loadInitialData();
   }, [initialDraftId]);
 
-  // Safe Date Formatter helper
   const formatDateTime = (dateStr) => {
     if (!dateStr) return 'Recently';
     try {
@@ -102,7 +115,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     }
   };
 
-  // Robust draft loading & cart hydration handler
+  // Resume a saved draft into Current Sale Cart
   const applyDraftToCart = async (draft, productCatalog = products) => {
     if (!draft) return;
 
@@ -126,8 +139,8 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     setDiscountPct(Number(fullDraft.discount_pct || 0));
     setNotes(fullDraft.notes || '');
 
-    const draftItems = fullDraft.items || [];
-    const cartItems = draftItems.map(item => {
+    const itemsFromDraft = fullDraft.items || [];
+    const cartItems = itemsFromDraft.map(item => {
       const liveProd = (productCatalog || []).find(p => p.id === item.product_id);
       return {
         product_id: item.product_id,
@@ -141,6 +154,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     });
 
     setCart(cartItems);
+    setPanelMode('pos');
 
     const draftNumber = fullDraft.transaction_number || fullDraft.reference_number || fullDraft.invoice_number || `DFT-${fullDraft.id || fullDraft.draft_id}`;
     showFeedback(`Loaded Draft ${draftNumber} for customer ${fullDraft.customer_name || 'Walk-in Customer'}!`);
@@ -156,7 +170,16 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     showFeedback('Cleared draft. Switched to fresh direct sale.', 'info');
   };
 
-  // Cart operations
+  // Add product to Cart or Draft based on active panelMode
+  const handleProductClick = (product) => {
+    if (panelMode === 'pos') {
+      addToCart(product);
+    } else {
+      addToDraft(product);
+    }
+  };
+
+  // POS Cart operations
   const addToCart = (product) => {
     if (product.stock_quantity <= 0) {
       showFeedback(`"${product.name}" is completely out of stock!`, 'error');
@@ -186,7 +209,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     }
   };
 
-  const updateQuantity = (productId, newQty) => {
+  const updateCartQuantity = (productId, newQty) => {
     if (newQty <= 0) {
       removeFromCart(productId);
       return;
@@ -215,45 +238,208 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     if (onClearDraft) onClearDraft();
   };
 
-  // Calculation logic with 12% Philippine VAT standard (prices are VAT-inclusive)
+  // Draft operations
+  const addToDraft = (product) => {
+    const existingIndex = draftItems.findIndex(i => i.product_id === product.id);
+    if (existingIndex > -1) {
+      const updated = [...draftItems];
+      updated[existingIndex].quantity += 1;
+      setDraftItems(updated);
+    } else {
+      setDraftItems([...draftItems, {
+        product_id: product.id,
+        name: product.name,
+        sku: product.sku,
+        brand: product.brand,
+        unit_price: Number(product.selling_price),
+        available_stock: product.stock_quantity,
+        image_url: product.image_url,
+        quantity: 1
+      }]);
+    }
+  };
+
+  const updateDraftQuantity = (productId, newQty) => {
+    const q = parseInt(newQty, 10);
+    if (isNaN(q) || q <= 0) {
+      removeDraftItem(productId);
+      return;
+    }
+    setDraftItems(draftItems.map(i => i.product_id === productId ? { ...i, quantity: q } : i));
+  };
+
+  const removeDraftItem = (productId) => {
+    setDraftItems(draftItems.filter(i => i.product_id !== productId));
+  };
+
+  const resetDraftForm = () => {
+    setDraftActiveId(null);
+    setDraftReferenceNumber('');
+    setDraftCustomerName('Walk-in Customer');
+    setDraftDiscountPct(0);
+    setDraftNotes('');
+    setDraftItems([]);
+  };
+
+  const handleLoadDraftForEditing = async (draftId) => {
+    try {
+      const res = await api.getDraftDetail(draftId);
+      if (res.status === 'success') {
+        const d = res.draft;
+        setDraftActiveId(d.id);
+        setDraftReferenceNumber(d.invoice_number || d.reference_number || `DFT-${d.id}`);
+        setDraftCustomerName(d.customer_name || 'Walk-in Customer');
+        setDraftDiscountPct(Number(d.discount_pct || 0));
+        setDraftNotes(d.notes || '');
+        setDraftItems((d.items || []).map(i => ({
+          product_id: i.product_id,
+          name: i.name,
+          sku: i.sku,
+          brand: i.brand,
+          unit_price: Number(i.unit_price),
+          available_stock: i.available_stock,
+          image_url: i.image_url,
+          quantity: i.quantity
+        })));
+        setPanelMode('draft');
+        setIsDraftsModalOpen(false);
+        showFeedback(`Loaded draft ${d.invoice_number || d.reference_number || d.id} into Draft Preparation.`);
+      }
+    } catch (err) {
+      showFeedback(`Error loading draft: ${err.message}`, 'error');
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (draftItems.length === 0) {
+      showFeedback('Please add at least one product line item to save this draft.', 'error');
+      return;
+    }
+
+    setIsSavingDraft(true);
+    try {
+      const payload = {
+        items: draftItems.map(i => ({ product_id: i.product_id, quantity: i.quantity })),
+        customer_name: draftCustomerName.trim() || 'Walk-in Customer',
+        discount_pct: Number(draftDiscountPct),
+        notes: draftNotes
+      };
+
+      if (draftActiveId) {
+        await api.updateDraft(draftActiveId, payload);
+        showFeedback(`Draft ${draftReferenceNumber} updated successfully.`);
+      } else {
+        const res = await api.saveDraft(payload);
+        setDraftActiveId(res.draft_id);
+        setDraftReferenceNumber(res.reference_number);
+        showFeedback(`Draft ${res.reference_number} saved (Inventory untouched).`);
+      }
+      loadInitialData();
+    } catch (err) {
+      showFeedback(`Save draft failed: ${err.message}`, 'error');
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
+  const handleProceedDraftToPos = () => {
+    if (draftItems.length === 0) {
+      showFeedback('Cannot proceed to POS: draft has no items.', 'error');
+      return;
+    }
+
+    const overStock = draftItems.filter(i => i.quantity > i.available_stock);
+    if (overStock.length > 0) {
+      showFeedback(`Warning: Some item(s) exceed warehouse stock: ${overStock.map(o => o.name).join(', ')}. Adjust quantities before checkout.`, 'error');
+      return;
+    }
+
+    handleSaveDraft().then(() => {
+      // Transfer draft items into active cart
+      const cartFormatted = draftItems.map(item => ({
+        product_id: item.product_id,
+        name: item.name,
+        sku: item.sku,
+        unit_price: item.unit_price,
+        quantity: item.quantity,
+        image_url: item.image_url,
+        max_stock: item.available_stock
+      }));
+      setCart(cartFormatted);
+      setCustomerName(draftCustomerName);
+      setDiscountPct(draftDiscountPct);
+      setNotes(draftNotes);
+      setActiveDraft({
+        id: draftActiveId,
+        reference_number: draftReferenceNumber,
+        customer_name: draftCustomerName
+      });
+      setPanelMode('pos');
+      showFeedback('Draft items transferred to Current Sale Cart. Ready for checkout.');
+    });
+  };
+
+  const handleCancelDraftClick = (draft) => {
+    setConfirmConfig({
+      title: 'Cancel Transaction Draft',
+      message: `Are you sure you want to cancel draft ${draft.reference_number || draft.invoice_number || draft.id} for customer "${draft.customer_name}"? This draft will be archived and will not proceed to checkout.`,
+      action: async () => {
+        try {
+          await api.cancelDraft(draft.id);
+          showFeedback(`Draft ${draft.reference_number || draft.invoice_number || draft.id} has been cancelled.`);
+          if (draftActiveId === draft.id) {
+            resetDraftForm();
+          }
+          setIsConfirmOpen(false);
+          loadInitialData();
+        } catch (err) {
+          showFeedback(`Cancellation error: ${err.message}`, 'error');
+        }
+      },
+      style: 'danger'
+    });
+    setIsConfirmOpen(true);
+  };
+
+  // Financial calculations for POS Cart
   const grossSubtotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
   const discountAmount = grossSubtotal * (Number(discountPct) / 100);
   const discountedTotal = Math.max(0, grossSubtotal - discountAmount);
-  
-  // Philippine VAT standard: Net of VAT = Total / 1.12
   const vatExclusiveSubtotal = +(discountedTotal / 1.12).toFixed(2);
   const vatAmount = +(discountedTotal - vatExclusiveSubtotal).toFixed(2);
   const totalAmountDue = discountedTotal;
 
-  // Tender & Change calculation (Cash-only)
+  // Tender & Change calculation
   const numericTendered = parseFloat(amountTendered) || 0;
   const changeDue = Math.max(0, numericTendered - totalAmountDue);
   const isTenderInsufficient = numericTendered < totalAmountDue;
 
-  // Complete Checkout submission
+  // Financial calculations for Draft Preparation
+  const draftGrossSubtotal = draftItems.reduce((acc, cur) => acc + (cur.unit_price * cur.quantity), 0);
+  const draftDiscountAmount = Math.round(draftGrossSubtotal * (Number(draftDiscountPct) / 100.0) * 100) / 100;
+  const draftNetSubtotal = Math.round((draftGrossSubtotal - draftDiscountAmount) * 100) / 100;
+  const draftVatAmount = Math.round(draftNetSubtotal * 0.12 * 100) / 100;
+  const draftTotalAmount = Math.round((draftNetSubtotal + draftVatAmount) * 100) / 100;
+
+  // Checkout submission
   const handleCheckout = async () => {
-    // 1. Validate cart contains at least one product
     if (cart.length === 0) {
       showFeedback('Shopping cart is empty. Add at least one product to checkout.', 'error');
       return;
     }
 
-    // 2. Validate customer name
     const validCustomerName = customerName.trim() || 'Walk-in Customer';
 
-    // 3. Validate amount tendered
     if (!amountTendered || isNaN(numericTendered) || numericTendered <= 0) {
       showFeedback('Please enter the cash amount tendered by the customer.', 'error');
       return;
     }
 
-    // 4. Ensure amount tendered >= total amount due
     if (numericTendered < totalAmountDue) {
       showFeedback(`Amount tendered (₱${numericTendered.toFixed(2)}) is less than total amount due (₱${totalAmountDue.toFixed(2)}).`, 'error');
       return;
     }
 
-    // 5. Verify product stock availability client-side before submission
     for (const item of cart) {
       const liveProd = products.find(p => p.id === item.product_id);
       if (liveProd && item.quantity > liveProd.stock_quantity) {
@@ -267,7 +453,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
       const payload = {
         draft_id: activeDraft ? activeDraft.id : null,
         customer_name: validCustomerName,
-        payment_method: 'Cash', // Strictly Cash
+        payment_method: 'Cash',
         amount_tendered: numericTendered,
         change_amount: changeDue,
         discount_amount: discountAmount,
@@ -285,12 +471,10 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
       if (res.status === 'success') {
         const receiptData = res.receipt || res.transaction;
         if (receiptData) {
-          // Immediately set completed transaction data and open official receipt modal
           setCompletedTransaction(receiptData);
           setIsReceiptModalOpen(true);
           showFeedback(`Payment verified! Official Receipt ${receiptData.invoice_number} saved to MySQL.`);
 
-          // Reset cart & POS inputs
           setCart([]);
           setActiveDraft(null);
           setAmountTendered('');
@@ -299,7 +483,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
           setDiscountPct(0);
           if (onClearDraft) onClearDraft();
 
-          // Refresh products catalog & drafts in background
           loadInitialData();
         } else {
           showFeedback('Checkout saved, but receipt data was not returned.', 'error');
@@ -315,10 +498,11 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
     }
   };
 
-  // Filter products
-  const categories = ['All', 'Laptops', 'Desktops', 'Components', 'Accessories', 'Networking'];
+  // Dynamic categories from database
+  const dynamicCategories = ['All', ...new Set(products.map(p => p.category_name || p.category).filter(Boolean))];
   const filteredProducts = products.filter(p => {
-    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory || p.category_name === selectedCategory;
+    const catName = p.category_name || p.category;
+    const matchesCategory = selectedCategory === 'All' || catName === selectedCategory;
     const matchesSearch = !searchQuery || 
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -334,7 +518,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-black text-navy dark:text-white tracking-tight flex items-center gap-2">
               <ShoppingCart className="w-7 h-7 text-navy dark:text-greige" />
-              Point of Sale (POS Checkout)
+              Point of Sale & Drafts
             </h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -342,29 +526,20 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Over-the-counter cash checkout, automated MySQL inventory deduction, and instant official transaction receipts.
+            Over-the-counter cash checkout, draft quotations preparation, and instant official transaction receipts.
           </p>
         </div>
 
-        {/* Top actions */}
+        {/* Top actions: Enlarge Resume Saved Draft button */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setIsDraftsModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm transition"
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-extrabold rounded-xl border border-blue-400/40 dark:border-blue-500/40 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/60 shadow-md transition-all active:scale-95 cursor-pointer"
           >
-            <FileText className="w-4 h-4 text-blue-500" />
-            Resume Saved Draft ({drafts.length})
+            <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span>Resume Saved Draft ({drafts.length})</span>
           </button>
-
-          {onNavigateToNewTransaction && (
-            <button
-              onClick={onNavigateToNewTransaction}
-              className="flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg bg-greige text-navy hover:bg-greige-light shadow-sm transition"
-            >
-              <RotateCcw className="w-4 h-4" />
-              New Transaction (Drafts)
-            </button>
-          )}
         </div>
       </div>
 
@@ -388,7 +563,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
       )}
 
       {/* Active Draft Alert Banner */}
-      {activeDraft && (
+      {activeDraft && panelMode === 'pos' && (
         <div className="p-3.5 bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-800 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg text-blue-700 dark:text-blue-300">
@@ -417,29 +592,29 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
         </div>
       )}
 
-      {/* Main Grid: Catalog (Left) + Current Sale Cart & Checkout Panel (Right) */}
+      {/* Main Grid: Catalog (Left) + Unified Right Panel (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left 7 Columns: Product Selection & Catalog */}
         <div className="lg:col-span-7 space-y-4">
           <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-4 shadow-sm">
             
-            {/* Search & Category Filter */}
+            {/* Search & Dynamic Category Filter */}
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search products by name, SKU, or brand..."
+                  placeholder="Search products by name or brand..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
                 />
               </div>
 
-              {/* Category Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                {categories.map(cat => (
+              {/* Dynamic Category Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+                {dynamicCategories.map(cat => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
@@ -455,7 +630,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
               </div>
             </div>
 
-            {/* Product Cards Grid */}
+            {/* Product Cards Grid: Clean cards without SKU and without category label */}
             {loading ? (
               <div className="p-12 text-center text-xs text-gray-500">
                 <div className="animate-spin w-6 h-6 border-2 border-navy border-t-transparent rounded-full mx-auto mb-2"></div>
@@ -468,9 +643,11 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[560px] overflow-y-auto pr-1">
                 {filteredProducts.map(p => {
-                  const inCartItem = cart.find(i => i.product_id === p.id);
+                  const inCartItem = panelMode === 'pos' 
+                    ? cart.find(i => i.product_id === p.id)
+                    : draftItems.find(i => i.product_id === p.id);
                   const isOutOfStock = p.stock_quantity <= 0;
-                  const isMaxedInCart = inCartItem && inCartItem.quantity >= p.stock_quantity;
+                  const isMaxedInCart = panelMode === 'pos' && inCartItem && inCartItem.quantity >= p.stock_quantity;
 
                   return (
                     <div 
@@ -492,19 +669,13 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                           />
                         </div>
 
-                        {/* SKU & Category badge */}
-                        <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
-                          <span className="font-mono">{p.sku}</span>
-                          <span className="truncate max-w-[80px]">{p.category || p.category_name}</span>
-                        </div>
-
-                        {/* Name */}
+                        {/* Name (SKU and category label removed) */}
                         <h4 className="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug" title={p.name}>
                           {p.name}
                         </h4>
                       </div>
 
-                      {/* Price & Stock & Add Button */}
+                      {/* Price & Stock & Action Button */}
                       <div className="mt-3 pt-2 border-t border-gray-200 dark:border-darkbg-border">
                         <div className="flex items-baseline justify-between mb-2">
                           <span className="text-xs font-black text-navy dark:text-greige">
@@ -524,7 +695,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                         <button
                           type="button"
                           disabled={isOutOfStock || isMaxedInCart}
-                          onClick={() => addToCart(p)}
+                          onClick={() => handleProductClick(p)}
                           className={`w-full py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition ${
                             isOutOfStock
                               ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
@@ -541,8 +712,8 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
                             : isMaxedInCart 
                             ? `Max (${inCartItem.quantity})` 
                             : inCartItem 
-                            ? `Add More (${inCartItem.quantity})` 
-                            : 'Add to Cart'}
+                            ? (panelMode === 'pos' ? `Add More (${inCartItem.quantity})` : `In Draft (${inCartItem.quantity})`)
+                            : (panelMode === 'pos' ? 'Add to Cart' : 'Add to Draft')}
                         </button>
                       </div>
                     </div>
@@ -553,343 +724,580 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft, onNavi
           </div>
         </div>
 
-        {/* Right 5 Columns: Current Sale Cart, Pricing Breakdown & Cash Checkout */}
+        {/* Right 5 Columns: UNIFIED RIGHT PANEL (DUAL-MODE) */}
         <div className="lg:col-span-5 space-y-4">
           <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
             
-            {/* Header of Checkout */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-darkbg-border">
-              <div className="flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-navy dark:text-greige" />
-                <h3 className="text-sm font-black text-gray-900 dark:text-white">
-                  Current Sale Cart ({cart.reduce((s, i) => s + i.quantity, 0)} items)
-                </h3>
-              </div>
-              {cart.length > 0 && (
-                <button
-                  type="button"
-                  onClick={clearCart}
-                  className="text-[11px] text-red-600 hover:text-red-700 dark:text-red-400 flex items-center gap-1 font-semibold"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  Clear Cart
-                </button>
-              )}
+            {/* Segmented Toggle at the top of Unified Panel */}
+            <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-darkbg rounded-xl border border-slate-200 dark:border-darkbg-border">
+              <button
+                type="button"
+                onClick={() => setPanelMode('pos')}
+                className={`py-2 px-3 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  panelMode === 'pos'
+                    ? 'bg-white dark:bg-darkbg-card text-navy dark:text-cyan-400 shadow-sm'
+                    : 'text-slate-600 dark:text-gray-400 hover:text-navy dark:hover:text-white'
+                }`}
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span>Current Sale Cart ({cart.reduce((s, i) => s + i.quantity, 0)})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPanelMode('draft')}
+                className={`py-2 px-3 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  panelMode === 'draft'
+                    ? 'bg-white dark:bg-darkbg-card text-navy dark:text-cyan-400 shadow-sm'
+                    : 'text-slate-600 dark:text-gray-400 hover:text-navy dark:hover:text-white'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Draft Preparation ({draftItems.reduce((s, i) => s + i.quantity, 0)})</span>
+              </button>
             </div>
 
-            {/* Customer Name & Discount */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
-                  Customer Name *
-                </label>
-                <input
-                  type="text"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="e.g. Walk-in Customer"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
-                  Discount (%)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={discountPct}
-                  onChange={(e) => setDiscountPct(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
-                />
-              </div>
-            </div>
-
-            {/* Cart Line Items */}
-            <div className="space-y-2 max-h-56 overflow-y-auto pr-1 divide-y divide-gray-100 dark:divide-darkbg-border">
-              {cart.length === 0 ? (
-                <div className="py-8 text-center text-xs text-gray-400">
-                  <ShoppingCart className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                  Cart is empty. Select products from the catalog or load a saved draft.
+            {/* ========================================================= */}
+            {/* MODE 1: CURRENT SALE CART (Immediate Checkout)            */}
+            {/* ========================================================= */}
+            {panelMode === 'pos' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-darkbg-border">
+                  <div className="flex items-center gap-2">
+                    <ShoppingCart className="w-4 h-4 text-navy dark:text-greige" />
+                    <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                      Active Customer Order
+                    </h3>
+                  </div>
+                  {cart.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={clearCart}
+                      className="text-[11px] text-red-600 hover:text-red-700 dark:text-red-400 flex items-center gap-1 font-semibold"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Clear Cart
+                    </button>
+                  )}
                 </div>
-              ) : (
-                cart.map(item => (
-                  <div key={item.product_id} className="pt-2 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center">
-                        <img 
-                          src={item.image_url || '/products/default.svg'} 
-                          alt={item.name} 
-                          className="max-h-full max-w-full object-contain"
-                          onError={(e) => { e.target.src = '/products/default.svg'; }}
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate" title={item.name}>
-                          {item.name}
-                        </p>
-                        <p className="text-[10px] text-gray-400 font-mono">
-                          {item.sku} • PHP {item.unit_price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                        </p>
-                      </div>
+
+                {/* Customer Name & Discount */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                      Customer Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="e.g. Walk-in Customer"
+                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                      Discount (%)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={discountPct}
+                      onChange={(e) => setDiscountPct(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
+                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                    />
+                  </div>
+                </div>
+
+                {/* Cart Line Items */}
+                <div className="space-y-2 max-h-52 overflow-y-auto pr-1 divide-y divide-gray-100 dark:divide-darkbg-border">
+                  {cart.length === 0 ? (
+                    <div className="py-7 text-center text-xs text-gray-400">
+                      <ShoppingCart className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                      Cart is empty. Select products from the catalog or load a saved draft.
                     </div>
+                  ) : (
+                    cart.map(item => (
+                      <div key={item.product_id} className="pt-2 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center">
+                            <img 
+                              src={item.image_url || '/products/default.svg'} 
+                              alt={item.name} 
+                              className="max-h-full max-w-full object-contain"
+                              onError={(e) => { e.target.src = '/products/default.svg'; }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate" title={item.name}>
+                              {item.name}
+                            </p>
+                            <p className="text-[10px] text-gray-400 font-mono">
+                              PHP {item.unit_price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </p>
+                          </div>
+                        </div>
 
-                    {/* Quantity controls */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <div className="flex items-center border border-gray-300 dark:border-darkbg-border rounded-lg bg-gray-50 dark:bg-darkbg">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                          className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="w-7 text-center text-xs font-bold">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                          className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
+                        {/* Quantity controls */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center border border-gray-300 dark:border-darkbg-border rounded-lg bg-gray-50 dark:bg-darkbg">
+                            <button
+                              type="button"
+                              onClick={() => updateCartQuantity(item.product_id, item.quantity - 1)}
+                              className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-7 text-center text-xs font-bold">
+                              {item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => updateCartQuantity(item.product_id, item.quantity + 1)}
+                              className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          <span className="text-xs font-black text-gray-900 dark:text-white w-20 text-right font-mono">
+                            PHP {(item.unit_price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => removeFromCart(item.product_id)}
+                            className="text-gray-400 hover:text-red-500 p-1"
+                            title="Remove Item"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
+                    ))
+                  )}
+                </div>
 
-                      <span className="text-xs font-black text-gray-900 dark:text-white w-20 text-right font-mono">
-                        PHP {(item.unit_price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </span>
+                {/* Price Calculations with Subtotal (Before Discount) */}
+                <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl space-y-1.5 text-xs border border-gray-200 dark:border-darkbg-border font-sans">
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal (Before Discount)</span>
+                    <span className="font-mono">PHP {grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
 
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
+                      <span>Discount ({discountPct}%)</span>
+                      <span className="font-mono">- PHP {discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal (Net of VAT)</span>
+                    <span className="font-mono">PHP {vatExclusiveSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
+
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>12% Output VAT</span>
+                    <span className="font-mono">PHP {vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
+
+                  <div className="pt-2 border-t border-gray-200 dark:border-darkbg-border flex justify-between items-baseline font-black text-base text-navy dark:text-greige">
+                    <span>Total Amount Due</span>
+                    <span className="font-mono text-emerald-600 dark:text-emerald-400">
+                      PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Compact Minimalist Payment Method (Cash Accepted) */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-gray-400">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Banknote className="w-3.5 h-3.5 text-slate-500 dark:text-gray-400" />
+                      Payment Method
+                    </span>
+                    <span className="font-semibold text-slate-700 dark:text-gray-300">
+                      Cash
+                    </span>
+                  </div>
+
+                  {/* Cash Amount Tendered & Single "Exact" Preset */}
+                  <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkbg-border space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                        Amount Tendered (PHP) *
+                      </label>
                       <button
                         type="button"
-                        onClick={() => removeFromCart(item.product_id)}
-                        className="text-gray-400 hover:text-red-500 p-1"
-                        title="Remove Item"
+                        onClick={() => setAmountTendered(totalAmountDue > 0 ? totalAmountDue.toString() : '')}
+                        className="px-2.5 py-0.5 text-[11px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition cursor-pointer"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        Exact
                       </button>
                     </div>
+
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-sm font-bold text-gray-400">₱</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={amountTendered}
+                        onChange={(e) => setAmountTendered(e.target.value)}
+                        className="w-full pl-7 pr-3 py-2 text-sm font-mono font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
+                      />
+                    </div>
+
+                    {/* Change Calculation Display */}
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-darkbg-border">
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                        Change Due:
+                      </span>
+                      <span className={`text-sm font-black font-mono ${
+                        isTenderInsufficient ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'
+                      }`}>
+                        {isTenderInsufficient 
+                          ? `Short by PHP ${(totalAmountDue - numericTendered).toLocaleString('en-US', { minimumFractionDigits: 2 })}` 
+                          : `PHP ${changeDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                      </span>
+                    </div>
                   </div>
-                ))
-              )}
-            </div>
-
-            {/* Price Calculations */}
-            <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl space-y-1.5 text-xs border border-gray-200 dark:border-darkbg-border font-sans">
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Subtotal (Net of VAT)</span>
-                <span className="font-mono">PHP {vatExclusiveSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-              </div>
-
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>12% Output VAT</span>
-                <span className="font-mono">PHP {vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-              </div>
-
-              {discountAmount > 0 && (
-                <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
-                  <span>Discount ({discountPct}%)</span>
-                  <span className="font-mono">- PHP {discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </div>
-              )}
 
-              <div className="pt-2 border-t border-gray-200 dark:border-darkbg-border flex justify-between items-baseline font-black text-base text-navy dark:text-greige">
-                <span>Total Amount Due</span>
-                <span className="font-mono text-emerald-600 dark:text-emerald-400">
-                  PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                </span>
+                {/* Complete Checkout Button */}
+                <button
+                  type="button"
+                  disabled={isCheckingOut || cart.length === 0 || isTenderInsufficient}
+                  onClick={handleCheckout}
+                  className={`w-full py-3.5 px-4 rounded-xl text-sm font-black tracking-wide flex items-center justify-center gap-2 shadow-lg transition-all ${
+                    isCheckingOut || cart.length === 0 || isTenderInsufficient
+                      ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
+                      : 'bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-emerald-600/30 cursor-pointer'
+                  }`}
+                >
+                  {isCheckingOut ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                      <span>Processing Cash Checkout in MySQL...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-5 h-5" />
+                      <span>Complete Checkout • PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
+            )}
 
-            {/* Payment Section: STRICTLY CASH ONLY (Card and GCash completely removed) */}
-            <div className="space-y-3 pt-1">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center gap-1.5">
-                  <Banknote className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  Payment Method
-                </label>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
-                  Cash Only
-                </span>
-              </div>
-
-              {/* Cash Indicator Card */}
-              <div className="p-3 bg-emerald-50/50 dark:bg-darkbg rounded-xl border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-lg">
-                    <Banknote className="w-5 h-5" />
+            {/* ========================================================= */}
+            {/* MODE 2: DRAFT PREPARATION (Save Quotations/Drafts)        */}
+            {/* ========================================================= */}
+            {panelMode === 'draft' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-darkbg-border">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-navy dark:text-greige" />
+                    <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                      {draftActiveId ? `Editing Draft: ${draftReferenceNumber}` : 'Prepare Quotation / Draft'}
+                    </h3>
                   </div>
+                  {draftItems.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={resetDraftForm}
+                      className="text-[11px] text-gray-500 hover:text-red-500 dark:text-gray-400 font-semibold"
+                    >
+                      Reset Form
+                    </button>
+                  )}
+                </div>
+
+                {/* Customer Name & Discount */}
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="text-xs font-bold text-gray-900 dark:text-white">Cash</span>
-                    <p className="text-[10px] text-gray-500 dark:text-gray-400">Over-the-counter cash tender</p>
+                    <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                      Customer Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={draftCustomerName}
+                      onChange={(e) => setDraftCustomerName(e.target.value)}
+                      placeholder="e.g. Walk-in Customer"
+                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                      Discount (%)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={draftDiscountPct}
+                      onChange={(e) => setDraftDiscountPct(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
+                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                    />
                   </div>
                 </div>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">Accepted</span>
-              </div>
 
-              {/* Cash Amount Tendered & Quick Presets */}
-              <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl border border-gray-200 dark:border-darkbg-border space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                    Amount Tendered (PHP) *
+                {/* Draft Notes */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                    Quotation Notes / Terms
                   </label>
-                  {/* Quick Tender Presets */}
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setAmountTendered(totalAmountDue > 0 ? totalAmountDue.toString() : '')}
-                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
-                    >
-                      Exact
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAmountTendered(totalAmountDue > 0 ? (Math.ceil(totalAmountDue / 500) * 500).toString() : '')}
-                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
-                    >
-                      Round 500
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAmountTendered(totalAmountDue > 0 ? (Math.ceil(totalAmountDue / 1000) * 1000).toString() : '')}
-                      className="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 dark:bg-gray-700 hover:bg-navy hover:text-white transition"
-                    >
-                      Round 1000
-                    </button>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-sm font-bold text-gray-400">₱</span>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    value={amountTendered}
-                    onChange={(e) => setAmountTendered(e.target.value)}
-                    className="w-full pl-7 pr-3 py-2 text-sm font-mono font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy"
+                    type="text"
+                    value={draftNotes}
+                    onChange={(e) => setDraftNotes(e.target.value)}
+                    placeholder="e.g. Valid for 7 days. Quote for PC upgrade package."
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
                   />
                 </div>
 
-                {/* Change Calculation Display */}
-                <div className="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-darkbg-border">
-                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                    Change Due:
-                  </span>
-                  <span className={`text-sm font-black font-mono ${
-                    isTenderInsufficient ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'
-                  }`}>
-                    {isTenderInsufficient 
-                      ? `Short by PHP ${(totalAmountDue - numericTendered).toLocaleString('en-US', { minimumFractionDigits: 2 })}` 
-                      : `PHP ${changeDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                  </span>
+                {/* Draft Line Items */}
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1 divide-y divide-gray-100 dark:divide-darkbg-border">
+                  {draftItems.length === 0 ? (
+                    <div className="py-7 text-center text-xs text-gray-400">
+                      <FileText className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                      No items in draft. Select products from the left catalog to prepare quotation.
+                    </div>
+                  ) : (
+                    draftItems.map(item => (
+                      <div key={item.product_id} className="pt-2 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate" title={item.name}>
+                            {item.name}
+                          </p>
+                          <p className="text-[10px] text-gray-400 font-mono">
+                            PHP {item.unit_price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center border border-gray-300 dark:border-darkbg-border rounded-lg bg-gray-50 dark:bg-darkbg">
+                            <button
+                              type="button"
+                              onClick={() => updateDraftQuantity(item.product_id, item.quantity - 1)}
+                              className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-7 text-center text-xs font-bold">
+                              {item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => updateDraftQuantity(item.product_id, item.quantity + 1)}
+                              className="p-1 text-gray-500 hover:text-navy dark:hover:text-white"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          <span className="text-xs font-black text-gray-900 dark:text-white w-20 text-right font-mono">
+                            PHP {(item.unit_price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => removeDraftItem(item.product_id)}
+                            className="text-gray-400 hover:text-red-500 p-1"
+                            title="Remove Item"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Draft Price Calculations */}
+                <div className="p-3 bg-gray-50 dark:bg-darkbg rounded-xl space-y-1.5 text-xs border border-gray-200 dark:border-darkbg-border font-sans">
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal (Before Discount)</span>
+                    <span className="font-mono">PHP {draftGrossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
+
+                  {draftDiscountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
+                      <span>Discount ({draftDiscountPct}%)</span>
+                      <span className="font-mono">- PHP {draftDiscountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal (Net of VAT)</span>
+                    <span className="font-mono">PHP {draftNetSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
+
+                  <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>12% Output VAT</span>
+                    <span className="font-mono">PHP {draftVatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </div>
+
+                  <div className="pt-2 border-t border-gray-200 dark:border-darkbg-border flex justify-between items-baseline font-black text-base text-navy dark:text-greige">
+                    <span>Quotation Total</span>
+                    <span className="font-mono text-blue-600 dark:text-blue-400">
+                      PHP {draftTotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Draft Actions: Single Primary Action is "Save Draft" */}
+                <div className="space-y-2 pt-1">
+                  <button
+                    type="button"
+                    disabled={isSavingDraft || draftItems.length === 0}
+                    onClick={handleSaveDraft}
+                    className="w-full py-3 rounded-xl bg-navy hover:bg-navy-light text-white text-xs font-black shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isSavingDraft ? 'Saving Draft in MySQL...' : (draftActiveId ? 'Update Draft' : 'Save Draft')}</span>
+                  </button>
+
+                  {/* Below Draft Preparation: Two Neutral Options */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsDraftsModalOpen(true)}
+                      className="py-2.5 px-3 text-xs font-bold rounded-xl border border-slate-300 dark:border-darkbg-border bg-white dark:bg-darkbg text-slate-700 dark:text-gray-200 hover:bg-slate-100 dark:hover:bg-darkbg-hover transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Saved Drafts ({drafts.length})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={draftItems.length === 0}
+                      onClick={handleProceedDraftToPos}
+                      className="py-2.5 px-3 text-xs font-bold rounded-xl border border-slate-300 dark:border-darkbg-border bg-white dark:bg-darkbg text-slate-700 dark:text-gray-200 hover:bg-slate-100 dark:hover:bg-darkbg-hover transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-40"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Proceed to POS</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Complete Checkout Button */}
-            <button
-              type="button"
-              disabled={isCheckingOut || cart.length === 0 || isTenderInsufficient}
-              onClick={handleCheckout}
-              className={`w-full py-3.5 px-4 rounded-xl text-sm font-black tracking-wide flex items-center justify-center gap-2 shadow-lg transition-all ${
-                isCheckingOut || cart.length === 0 || isTenderInsufficient
-                  ? 'bg-gray-300 dark:bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
-                  : 'bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-emerald-600/30'
-              }`}
-            >
-              {isCheckingOut ? (
-                <>
-                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                  <span>Processing Cash Checkout in MySQL...</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="w-5 h-5" />
-                  <span>Complete Checkout • PHP {totalAmountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                </>
-              )}
-            </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* MODAL 1: Select Draft to Resume */}
+      {/* MODAL: RESUME SAVED DRAFTS (Large, consistent typography) */}
       <Modal
         isOpen={isDraftsModalOpen}
         onClose={() => setIsDraftsModalOpen(false)}
-        title="Resume Eligible Transaction Draft"
-        maxWidth="max-w-xl"
+        title="Resume Saved Draft"
+        maxWidth="max-w-2xl"
       >
         <div className="space-y-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Select a saved draft created in <strong>New Transaction</strong> to load its line items, customer, and discounts into this POS checkout session.
+          <p className="text-sm text-slate-600 dark:text-gray-300">
+            Select a saved customer quotation/draft to load directly into the POS cart or edit its line items:
           </p>
 
           {drafts.length === 0 ? (
-            <div className="p-8 text-center text-xs text-gray-500 border border-dashed rounded-xl">
+            <div className="p-10 text-center text-sm font-medium text-slate-500 border border-dashed border-slate-300 dark:border-darkbg-border rounded-xl">
               No saved draft transactions found in MySQL.
             </div>
           ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
               {drafts.map(d => (
                 <div
                   key={d.id}
-                  className="p-3.5 rounded-xl border border-gray-200 dark:border-darkbg-border hover:border-navy dark:hover:border-greige flex items-center justify-between transition cursor-pointer"
-                  onClick={() => {
-                    applyDraftToCart(d);
-                    setIsDraftsModalOpen(false);
-                  }}
+                  className="p-4 rounded-xl border border-slate-200 dark:border-darkbg-border hover:border-navy dark:hover:border-cyan-400 bg-white dark:bg-darkbg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition shadow-xs hover:shadow-md"
                 >
-                  <div>
+                  <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-xs text-navy dark:text-greige">
+                      <span className="font-mono font-bold text-sm text-navy dark:text-cyan-400">
                         {d.transaction_number || d.reference_number || d.invoice_number || `DFT-${d.id}`}
                       </span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-darkbg-border">
                         Draft
                       </span>
                     </div>
-                    <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 mt-1">
-                      Customer: {d.customer_name || 'Walk-in Customer'} • {d.item_count || d.items?.length || 0} items
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                      Customer: {d.customer_name || 'Walk-in Customer'}
                     </p>
-                    <p className="text-[10px] text-gray-400">
-                      Created: {formatDateTime(d.transaction_date || d.created_at)}
+                    <p className="text-xs text-slate-500 dark:text-gray-400">
+                      Created: {formatDateTime(d.transaction_date || d.created_at)} • {d.item_count || d.items?.length || 0} line items
                     </p>
                   </div>
 
-                  <div className="text-right">
-                    <p className="text-sm font-black text-navy dark:text-white">
-                      PHP {Number(d.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </p>
-                    <span className="text-xs text-blue-600 dark:text-blue-400 font-bold flex items-center gap-1 justify-end mt-1">
-                      Load into POS <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-darkbg-border">
+                    <div className="text-left sm:text-right">
+                      <p className="text-base font-black text-slate-900 dark:text-white font-mono">
+                        PHP {Number(d.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleLoadDraftForEditing(d.id);
+                        }}
+                        className="px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 dark:border-darkbg-border bg-slate-50 dark:bg-darkbg text-slate-700 dark:text-gray-200 hover:bg-slate-100 transition cursor-pointer"
+                        title="Edit in Draft Preparation"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          applyDraftToCart(d);
+                          setIsDraftsModalOpen(false);
+                        }}
+                        className="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-navy hover:bg-navy-light text-white transition flex items-center gap-1 cursor-pointer shadow-xs"
+                      >
+                        <span>Load POS</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end pt-2 border-t border-slate-200 dark:border-darkbg-border">
             <button
               onClick={() => setIsDraftsModalOpen(false)}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-300"
+              className="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 hover:bg-slate-200 cursor-pointer"
             >
-              Cancel
+              Close
             </button>
           </div>
         </div>
       </Modal>
 
-      {/* MODAL 2: OFFICIAL TRANSACTION RECEIPT (Dark Navy Theme, Immediate Display) */}
+      {/* MODAL: OFFICIAL TRANSACTION RECEIPT */}
       <OfficialReceiptModal
         isOpen={isReceiptModalOpen}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => {
+          setIsReceiptModalOpen(false);
+          setCompletedTransaction(null);
+        }}
         receipt={completedTransaction}
+      />
+
+      {/* CONFIRMATION DIALOG */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmConfig.action}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmText="Confirm"
+        type={confirmConfig.style}
       />
     </div>
   );

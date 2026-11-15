@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, 
   Clock, 
@@ -202,7 +202,7 @@ export default function Header({
   const capitalizedRole = roleDisplay.charAt(0).toUpperCase() + roleDisplay.slice(1);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md border-b border-gray-200 dark:border-darkbg-border px-6 py-3.5 transition-colors">
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md border-b border-gray-200 dark:border-darkbg-border px-3 sm:px-6 py-2.5 sm:py-3.5 transition-colors">
       <div className="flex items-center justify-between gap-4">
         {/* Left: Sidebar Toggle + Role Greeting & Dynamic Subtext */}
         <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export default function Header({
           </button>
 
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white tracking-tight line-clamp-1">
               {greeting.prefix}{' '}
               <span className="text-navy dark:text-cyan-300">{greeting.name}</span>
             </h1>
@@ -233,9 +233,9 @@ export default function Header({
             <div className="flex items-center gap-3 mt-0.5 text-xs text-slate-600 dark:text-gray-300 font-semibold">
               {/* Sales Personnel Shift Indicator */}
               {role === 'sales_personnel' && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-500/20">
+                <span className="flex items-center gap-1.5 text-slate-500 dark:text-gray-400 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Cashier: {user?.full_name || 'Active'} • {shiftInfo ? `Shift #${shiftInfo.id} Active` : 'Shift Active'}
+                  Active
                 </span>
               )}
 
