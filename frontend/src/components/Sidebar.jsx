@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   LayoutDashboard,
   Package,
@@ -12,6 +12,7 @@ import {
   Receipt,
   Search,
   UserCheck,
+  User,
   Users,
   BarChart3,
   LogOut,
@@ -85,23 +86,8 @@ export default function Sidebar({
       case 'instructor':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'inventory_overview', label: 'Inventory Overview', icon: Package },
-          { id: 'sales_overview', label: 'Sales Overview', icon: Receipt },
-          { 
-            id: 'predictions', 
-            label: 'Knowledge Analysis & Prediction', 
-            icon: BrainCircuit,
-            isParent: true,
-            subItems: [
-              { id: 'pred_demand', label: 'Product Demand Prediction' },
-              { id: 'pred_sales', label: 'Sales Prediction' },
-              { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
-              { id: 'pred_best_selling', label: 'Best-Selling Products' }
-            ]
-          },
           { id: 'datasets', label: 'Dataset Explorer', icon: Database },
-          { id: 'train', label: 'Model Training', icon: Cpu },
-          { id: 'evaluate', label: 'Model Evaluation', icon: Award },
+          { id: 'train', label: 'Model Training & Evaluation', icon: Cpu },
           { id: 'compare', label: 'Model Comparison', icon: GitCompare },
           { id: 'saved_models', label: 'Saved Models', icon: Save },
           { id: 'prediction_history', label: 'Prediction History', icon: History }
