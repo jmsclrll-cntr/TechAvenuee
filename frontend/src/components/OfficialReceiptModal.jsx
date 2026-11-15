@@ -1,10 +1,10 @@
-﻿import React from 'react';
-import { 
-  X, 
-  Printer, 
-  Download, 
-  CheckCircle2, 
-  ShieldCheck, 
+import React from 'react';
+import {
+  X,
+  Printer,
+  Download,
+  CheckCircle2,
+  ShieldCheck,
   Banknote,
   Receipt as ReceiptIcon
 } from 'lucide-react';
@@ -18,7 +18,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const transactionId = receipt.transaction_id || receipt.id || 'N/A';
   const cashierName = receipt.cashier || receipt.cashier_name || 'Cashier';
   const customerName = receipt.customer_name || 'Walk-in Customer';
-  
+
   // Format Date and Time
   let formattedDate = 'Recently';
   const rawDate = receipt.created_at || receipt.transaction_date;
@@ -47,21 +47,26 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const items = receipt.items || [];
 
   // Financial calculations
-  const grossSubtotal = receipt.gross_subtotal != null ? Number(receipt.gross_subtotal) : (items.reduce((sum, item) => sum + (Number(item.quantity || 1) * Number(item.unit_price || 0)), 0) || (Number(receipt.total_amount || 0) + Number(receipt.discount_amount || 0)));
   const totalAmount = Number(receipt.total_amount || 0);
   const discountAmount = Number(receipt.discount_amount || 0);
   const discountPct = Number(receipt.discount_pct || 0);
-  
+
+  // Gross Total (Subtotal before discount)
+  const grossTotal = Number(receipt.gross_total || receipt.gross_subtotal || 0) ||
+    (items.length > 0
+      ? items.reduce((sum, item) => sum + Number(item.total_price || (Number(item.quantity || 1) * Number(item.unit_price || 0))), 0)
+      : (totalAmount + discountAmount));
+
   // Subtotal Net of VAT (12%)
-  const subtotalNet = receipt.subtotal != null 
-    ? Number(receipt.subtotal) 
+  const subtotalNet = receipt.subtotal != null
+    ? Number(receipt.subtotal)
     : +(totalAmount / 1.12).toFixed(2);
-    
+
   // 12% Output VAT
-  const vatAmount = receipt.vat_amount != null 
-    ? Number(receipt.vat_amount) 
+  const vatAmount = receipt.vat_amount != null
+    ? Number(receipt.vat_amount)
     : +(totalAmount - subtotalNet).toFixed(2);
-    
+
   const amountTendered = Number(receipt.amount_tendered || totalAmount);
   const changeAmount = Number(receipt.change_amount || Math.max(0, amountTendered - totalAmount));
 
@@ -90,10 +95,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             ${itemQty}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-family: monospace;">
-            â‚±${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₱${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-weight: 700; font-family: monospace;">
-            â‚±${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₱${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>
       `;
@@ -156,7 +161,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px; color: #0f172a;">TECH AVENUE</div>
           <div style="font-size: 9.5px; font-weight: 700; color: #334155; margin-top: 1px;">COMPUTER & ACCESSORIES STORE MANAGEMENT</div>
           <div style="font-size: 8.5px; color: #475569; margin-top: 2px;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
           <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; padding: 3px 0; background: #f1f5f9; border-radius: 4px;">
             Official Transaction Receipt
           </div>
@@ -187,26 +192,26 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
         <div class="border-t-dashed" style="font-size: 10.5px;">
           <div class="row">
             <span>Subtotal (Before Discount):</span>
-            <span class="font-mono">₱${grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${grossTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Subtotal (Net of VAT):</span>
-            <span class="font-mono">â‚±${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Output VAT (12%):</span>
-            <span class="font-mono">â‚±${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           ${discountAmount > 0 ? `
             <div class="row" style="color: #b45309; font-weight: 600;">
               <span>Discount (${discountPct}%):</span>
-              <span class="font-mono">-â‚±${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span class="font-mono">-₱${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : ''}
 
           <div class="total-highlight border-double">
             <span>TOTAL AMOUNT DUE:</span>
-            <span class="font-mono">â‚±${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
 
           <div class="row">
@@ -215,11 +220,11 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
           <div class="row">
             <span>Amount Tendered:</span>
-            <span class="font-mono">â‚±${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="change-highlight">
             <span>Change:</span>
-            <span class="font-mono">â‚±${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
 
@@ -246,7 +251,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div 
+      <div
         className="w-full max-w-lg bg-[#0F172A] text-slate-100 rounded-2xl shadow-2xl border border-slate-700/80 overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
         style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)' }}
       >
@@ -274,13 +279,13 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
         {/* Scrollable Receipt Body (Dark Navy Theme) */}
         <div className="p-6 overflow-y-auto space-y-4 font-sans text-xs">
-          
+
           {/* 1. Store Information Header */}
           <div className="text-center pb-4 border-b border-dashed border-slate-700 space-y-1">
             <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center p-1 bg-white/5 rounded-xl border border-slate-700/60 shadow-inner">
-              <img 
-                src={logoImg} 
-                alt="Tech Avenue" 
+              <img
+                src={logoImg}
+                alt="Tech Avenue"
                 className="max-h-full max-w-full object-contain filter drop-shadow"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
@@ -295,7 +300,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines
             </p>
             <p className="text-[10px] text-slate-400">
-              Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000
+              Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000
             </p>
             <div className="pt-2">
               <span className="inline-block px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
@@ -377,10 +382,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                           {itemQty}
                         </td>
                         <td className="py-2.5 text-right font-mono text-slate-300 text-xs">
-                          â‚±{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₱{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-2.5 text-right font-mono font-bold text-white text-xs">
-                          â‚±{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₱{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </tr>
                     );
@@ -392,23 +397,24 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
           {/* 4. Payment Summary Breakdown */}
           <div className="py-3 border-b border-dashed border-slate-700 space-y-2 text-xs">
-            <div className="flex justify-between items-center text-slate-400">
+            <div className="flex justify-between items-center text-slate-300 font-semibold">
               <span>Subtotal (Before Discount):</span>
-              <span className="font-mono text-slate-200">
-                ₱{grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="font-mono text-white">
+                ₱{grossTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
+
             <div className="flex justify-between items-center text-slate-400">
               <span>Subtotal (Net of VAT):</span>
               <span className="font-mono text-slate-200">
-                â‚±{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
             <div className="flex justify-between items-center text-slate-400">
               <span>Output VAT (12%):</span>
               <span className="font-mono text-slate-200">
-                â‚±{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -416,7 +422,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               <div className="flex justify-between items-center text-amber-400 font-semibold">
                 <span>Discount ({discountPct}%):</span>
                 <span className="font-mono">
-                  -â‚±{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  -₱{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             )}
@@ -428,7 +434,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                   TOTAL AMOUNT DUE:
                 </span>
                 <span className="text-lg font-black font-mono text-emerald-400 tracking-tight">
-                  â‚±{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
@@ -445,7 +451,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <div className="flex justify-between items-center text-slate-300">
               <span>Amount Tendered:</span>
               <span className="font-mono font-bold text-white text-xs">
-                â‚±{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -455,7 +461,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                 Change:
               </span>
               <span className="text-base font-black font-mono text-emerald-400">
-                â‚±{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>

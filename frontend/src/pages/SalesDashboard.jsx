@@ -1,17 +1,17 @@
-﻿import React, { useState, useEffect } from 'react';
-import { 
-  ShoppingCart, 
-  CircleDollarSign, 
-  Receipt, 
-  PackageCheck, 
-  Clock, 
-  TrendingUp, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  Search, 
-  CreditCard, 
-  Banknote, 
+import React, { useState, useEffect } from 'react';
+import {
+  ShoppingCart,
+  CircleDollarSign,
+  Receipt,
+  PackageCheck,
+  Clock,
+  TrendingUp,
+  Plus,
+  Minus,
+  Trash2,
+  Search,
+  CreditCard,
+  Banknote,
   Smartphone,
   CheckCircle2,
   AlertCircle,
@@ -21,7 +21,8 @@ import {
   Lock,
   Unlock,
   UserCheck,
-  Download
+  Download,
+  History
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
@@ -36,7 +37,6 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
   const [stats, setStats] = useState(null);
   const [posProducts, setPosProducts] = useState([]);
   const [salesHistory, setSalesHistory] = useState([]);
-  const [currentShift, setCurrentShift] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loadedDraftId, setLoadedDraftId] = useState(null);
@@ -45,23 +45,20 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchProduct, setSearchProduct] = useState('');
-  const [salesHistorySearch, setSalesHistorySearch] = useState('');
-  const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'week', 'month', 'custom'
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [amountTendered, setAmountTendered] = useState('');
   const [paymentReference, setPaymentReference] = useState('');
   const [customerName, setCustomerName] = useState('Walk-in Customer');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // Modals
+  // Modals & Sales History Filters
   const [activeReceipt, setActiveReceipt] = useState(null);
   const [receiptSearchQuery, setReceiptSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'week', 'month', 'custom'
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(null);
-  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
-  const [shiftStartingCash, setShiftStartingCash] = useState(3000);
 
   // Product Lookup state
   const [lookupQuery, setLookupQuery] = useState('');
@@ -72,18 +69,16 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, posRes, salesRes, shiftRes, suppliersRes] = await Promise.all([
+      const [statsRes, posRes, salesRes, suppliersRes] = await Promise.all([
         api.getDashboardStats('sales_personnel'),
         api.getPosProducts(),
         api.getSalesHistory(),
-        api.getCurrentShift(),
         api.getSuppliers()
       ]);
 
       if (statsRes.status === 'success') setStats(statsRes.data);
       if (posRes.status === 'success') setPosProducts(posRes.products);
-      if (salesRes.status === 'success') setSalesHistory(salesRes.transactions);
-      if (shiftRes.status === 'success') setCurrentShift(shiftRes.shift);
+      if (salesRes.status === 'success') setSalesHistory(salesRes.transactions || salesRes.sales || salesRes.data || []);
       if (suppliersRes.status === 'success') setSuppliers(suppliersRes.suppliers || []);
     } catch (err) {
       console.error('Error fetching sales data:', err);
@@ -104,7 +99,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         alert(`Cannot add more than available stock (${product.stock_quantity} units)`);
         return;
       }
-      setCart(cart.map(item => 
+      setCart(cart.map(item =>
         item.product_id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       ));
     } else {
@@ -234,8 +229,8 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div style="font-size: 9px; color: #666; font-weight: normal;">${item.sku || ''}</div>
         </td>
         <td style="padding: 4px 0; text-align: center;">${item.quantity}</td>
-        <td style="padding: 4px 0; text-align: right;">â‚±${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-        <td style="padding: 4px 0; text-align: right; font-weight: bold;">â‚±${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right;">₱${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right; font-weight: bold;">₱${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       </tr>
     `).join('');
 
@@ -243,6 +238,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
     const vatVal = Number(receipt.vat_amount || (Number(receipt.total_amount) - subtotalNet));
     const discountVal = Number(receipt.discount_amount || 0);
     const discountPctVal = Number(receipt.discount_pct || 0);
+    const grossVal = (receipt.items || []).reduce((sum, item) => sum + Number(item.total_price || (item.quantity * item.unit_price)), 0) || (Number(receipt.total_amount || 0) + discountVal);
 
     const docContent = `
       <!DOCTYPE html>
@@ -285,7 +281,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">TECH AVENUE</div>
           <div style="font-size: 9px; font-weight: bold;">COMPUTER & ACCESSORIES STORE</div>
           <div style="font-size: 8px; color: #444;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
           <div style="font-size: 10px; font-weight: bold; margin-top: 4px; text-transform: uppercase;">Official Transaction Receipt</div>
         </div>
 
@@ -312,22 +308,26 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
         <div class="border-t" style="font-size: 10px;">
           <div class="row">
+            <span>Subtotal (Before Discount):</span>
+            <span>₱${grossVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div class="row">
             <span>Subtotal (Net of VAT):</span>
-            <span>â‚±${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>12% Output VAT:</span>
-            <span>â‚±${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           ${discountVal > 0 ? `
             <div class="row" style="color: #059669;">
               <span>Discount (${discountPctVal}%):</span>
-              <span>-â‚±${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>-₱${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : ''}
           <div class="total-row border-t border-b">
             <span>TOTAL AMOUNT DUE:</span>
-            <span>â‚±${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Payment Method:</span>
@@ -336,11 +336,11 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           ${(receipt.payment_method === 'Cash' || !receipt.payment_method) ? `
             <div class="row">
               <span>Amount Tendered:</span>
-              <span>â‚±${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>₱${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <div class="row bold">
               <span>Change:</span>
-              <span>â‚±${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>₱${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : `
             <div class="row">
@@ -371,88 +371,77 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
     printWindow.document.close();
   };
 
-  // Shift Management
-  const handleOpenShift = async () => {
-    try {
-      await api.openShift(shiftStartingCash);
-      setIsShiftModalOpen(false);
-      loadData();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  const handleCloseShift = async () => {
-    if (!window.confirm('Are you sure you want to close this shift and reconcile register totals?')) return;
-    try {
-      await api.closeShift();
-      loadData();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  // Category filtering
-  const categoriesList = ['All', ...new Set(posProducts.map(p => p.category_name))];
-  const filteredProducts = posProducts.filter(p => {
-    const matchesCat = selectedCategory === 'All' || p.category_name === selectedCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchProduct.toLowerCase()) || 
-                          p.sku.toLowerCase().includes(searchProduct.toLowerCase());
-    return matchesCat && matchesSearch;
-  });
-
-    // Date filtering logic for Sales History
-  const filteredSalesHistory = salesHistory.filter(s => {
-    // Search query check
-    if (salesHistorySearch) {
-      const q = salesHistorySearch.toLowerCase();
-      const matchesSearch = (s.invoice_number || '').toLowerCase().includes(q) ||
-                            (s.customer_name || '').toLowerCase().includes(q) ||
-                            (s.cashier || s.cashier_name || '').toLowerCase().includes(q);
-      if (!matchesSearch) return false;
-    }
-
-    // Date range check
+  // Date filter helper
+  const isDateInFilter = (dateString) => {
     if (dateFilter === 'all') return true;
+    if (!dateString) return false;
 
-    const rawDate = s.created_at || s.transaction_date;
-    if (!rawDate) return true;
-    const txDate = new Date(rawDate);
-    if (isNaN(txDate.getTime())) return true;
+    const txDate = new Date(dateString);
+    if (isNaN(txDate.getTime())) return true; // keep if invalid date format
 
     const now = new Date();
 
     if (dateFilter === 'today') {
-      return txDate.toDateString() === now.toDateString();
+      return (
+        txDate.getFullYear() === now.getFullYear() &&
+        txDate.getMonth() === now.getMonth() &&
+        txDate.getDate() === now.getDate()
+      );
     }
 
     if (dateFilter === 'week') {
-      const startOfWeek = new Date(now);
-      const day = now.getDay() || 7; // get current day of week (1=Mon ... 7=Sun)
-      if (day !== 1) startOfWeek.setHours(-24 * (day - 1));
-      startOfWeek.setHours(0, 0, 0, 0);
-      return txDate >= startOfWeek;
+      const day = (now.getDay() + 6) % 7; // Monday = 0
+      const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day, 0, 0, 0, 0);
+      return txDate >= startOfWeek && txDate <= now;
     }
 
     if (dateFilter === 'month') {
-      return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear();
+      return (
+        txDate.getFullYear() === now.getFullYear() &&
+        txDate.getMonth() === now.getMonth()
+      );
     }
 
     if (dateFilter === 'custom') {
       if (customStartDate) {
-        const start = new Date(customStartDate);
-        start.setHours(0, 0, 0, 0);
+        const start = new Date(customStartDate + 'T00:00:00');
         if (txDate < start) return false;
       }
       if (customEndDate) {
-        const end = new Date(customEndDate);
-        end.setHours(23, 59, 59, 999);
+        const end = new Date(customEndDate + 'T23:59:59');
         if (txDate > end) return false;
       }
       return true;
     }
 
     return true;
+  };
+
+  const filteredSalesHistory = (salesHistory || []).filter(s => {
+    // 1. Text search
+    if (receiptSearchQuery) {
+      const q = receiptSearchQuery.toLowerCase();
+      const invoice = (s.invoice_number || '').toLowerCase();
+      const customer = (s.customer_name || '').toLowerCase();
+      const cashier = (s.cashier || s.cashier_name || '').toLowerCase();
+      const payment = (s.payment_method || '').toLowerCase();
+      const idStr = String(s.id || '');
+      const matchesSearch = invoice.includes(q) || customer.includes(q) || cashier.includes(q) || payment.includes(q) || idStr.includes(q);
+      if (!matchesSearch) return false;
+    }
+
+    // 2. Date filter
+    const rawDate = s.created_at || s.transaction_date;
+    return isDateInFilter(rawDate);
+  });
+
+  // Category filtering
+  const categoriesList = ['All', ...new Set(posProducts.map(p => p.category_name))];
+  const filteredProducts = posProducts.filter(p => {
+    const matchesCat = selectedCategory === 'All' || p.category_name === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchProduct.toLowerCase()) ||
+      p.sku.toLowerCase().includes(searchProduct.toLowerCase());
+    return matchesCat && matchesSearch;
   });
 
   const cards = stats?.cards || {};
@@ -469,24 +458,27 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-xs font-bold uppercase tracking-wider text-greige">Register Ready â€¢ Live Operations</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-greige">Register Ready • Live Operations</span>
               </div>
               <h2 className="text-lg font-black tracking-tight mt-0.5">
                 Quick Sales Actions & Transaction Flow
               </h2>
               <p className="text-xs text-gray-300 mt-0.5">
-                Prepare draft customer quotations or immediately process checkout in Point of Sale & Drafts.
+                Process customer checkout or prepare transaction drafts in Point of Sale & Drafts.
               </p>
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
                 type="button"
-                onClick={() => setActiveTab('pos')}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-navy dark:bg-cyan-500 text-white dark:text-darkbg hover:bg-navy-light font-bold text-xs shadow-md transition"
+                onClick={() => {
+                  setLoadedDraftId(null);
+                  setActiveTab('pos');
+                }}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition cursor-pointer"
               >
                 <ShoppingCart className="w-4 h-4" />
-                <span>Point of Sale & Drafts</span>
+                <span>Open Point of Sale & Drafts</span>
               </button>
             </div>
           </div>
@@ -543,9 +535,9 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               badgeColor="blue"
             />
             <StatCard
-              title="Current Shift Sales"
-              value={`PHP ${(cards.current_shift_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle={currentShift ? `Shift #${currentShift.id} active` : 'No active shift'}
+              title="Active Quotation Drafts"
+              value={cards.active_drafts || 0}
+              subtitle="Pending customer quotations"
               icon={Clock}
               badgeColor="green"
             />
@@ -596,7 +588,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Receipt className="w-4 h-4 text-navy dark:text-blue-400" />
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Recent Completed Transactions</h3>
+                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Recent Completed Transactions</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('sales_history')}
@@ -608,7 +600,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">Invoice #</th>
                       <th className="py-2.5 px-3">Date/Time</th>
@@ -618,7 +610,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
+                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
                     {(tables.recent_transactions || []).slice(0, 5).map((t) => (
                       <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2.5 px-3 font-mono font-medium text-navy dark:text-blue-400">{t.invoice_number}</td>
@@ -655,13 +647,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Best-Selling Items Today</h3>
+                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">Best-Selling Items Today</h3>
                 </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                  <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 dark:text-gray-400 uppercase font-semibold border-b border-gray-100 dark:border-darkbg-border">
                     <tr>
                       <th className="py-2.5 px-3">Product Name</th>
                       <th className="py-2.5 px-3">SKU</th>
@@ -669,7 +661,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Gross Revenue</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
+                  <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-700 dark:text-gray-300">
                     {(tables.best_selling_today || []).map((p, idx) => (
                       <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
                         <td className="py-2.5 px-3 font-medium truncate max-w-[170px]">{p.name}</td>
@@ -688,23 +680,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
-      {/* VIEW: NEW TRANSACTION (SEPARATE FEATURE: DRAFTS PREPARATION & REVIEW) */}
-      {activeTab === 'new_transaction' && (
-        <NewTransaction
-          user={user}
-          onProceedToPos={(draftId) => {
-            setLoadedDraftId(draftId);
-            setActiveTab('pos');
-          }}
-        />
-      )}
-
-      {/* VIEW: POINT OF SALE (SEPARATE FEATURE: POS CHECKOUT, TENDER & OFFICIAL RECEIPT) */}
-      {activeTab === 'pos' && (
+      {/* VIEW: POINT OF SALE & DRAFTS (MERGED UNIFIED MODULE) */}
+      {(activeTab === 'pos' || activeTab === 'new_transaction') && (
         <PointOfSale
           user={user}
           initialDraftId={loadedDraftId}
           onClearDraft={() => setLoadedDraftId(null)}
+          initialMode={activeTab === 'new_transaction' ? 'draft' : 'cart'}
         />
       )}
 
@@ -741,11 +723,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-                    selectedCategory === cat
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${selectedCategory === cat
                       ? 'bg-navy text-white shadow-sm'
                       : 'bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkbg-hover'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -770,7 +751,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     <h4 className="font-semibold text-xs mt-1 text-gray-900 dark:text-white line-clamp-2 group-hover:text-navy dark:group-hover:text-blue-400">
                       {p.name}
                     </h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{p.brand} â€¢ {p.category_name}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{p.brand} • {p.category_name}</p>
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-gray-100 dark:border-darkbg-border flex items-center justify-between">
@@ -792,7 +773,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-darkbg-border pb-3">
               <div>
-                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Active Customer Cart</h3>
+                <h3 className="font-bold text-sm text-gray-900 dark:text-white">Active Customer Cart</h3>
                 <p className="text-[11px] text-gray-400">{cart.length} unique items added</p>
               </div>
               {cart.length > 0 && (
@@ -833,7 +814,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   >
                     <div className="flex-1 pr-2">
                       <p className="font-semibold text-gray-900 dark:text-white truncate">{item.name}</p>
-                      <p className="text-[10px] text-gray-400 font-mono">{item.sku} â€¢ PHP {item.unit_price.toLocaleString()}</p>
+                      <p className="text-[10px] text-gray-400 font-mono">{item.sku} • PHP {item.unit_price.toLocaleString()}</p>
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -892,11 +873,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     key={method}
                     type="button"
                     onClick={() => setPaymentMethod(method)}
-                    className={`py-2 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
-                      paymentMethod === method
+                    className={`py-2 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${paymentMethod === method
                         ? 'bg-navy text-white border-navy shadow-sm'
                         : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     {method === 'Cash' && <Banknote className="w-4 h-4" />}
                     {method === 'Card' && <CreditCard className="w-4 h-4" />}
@@ -968,225 +948,164 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
-      {/* VIEW: SALES HISTORY & RECEIPTS */}
+      {/* VIEW: SALES HISTORY & RECEIPTS (MERGED UNIFIED TAB) */}
       {(activeTab === 'sales_history' || activeTab === 'receipts') && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-2xl p-4 sm:p-6 shadow-sm space-y-5">
-          {/* Header Title & Dynamic Counter */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-gray-200 dark:border-darkbg-border">
+        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-4 sm:p-6 shadow-sm space-y-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-3 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                  Sales History & Receipts
-                </h2>
-                {/* Dynamic Transaction Counter Badge */}
-                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-navy/10 text-navy dark:bg-cyan-500/15 dark:text-cyan-300 border border-navy/20 dark:border-cyan-400/30">
-                  Showing {filteredSalesHistory.length} of {salesHistory.length} Transactions
+              <div className="flex items-center gap-2 flex-wrap">
+                <History className="w-5 h-5 text-navy dark:text-greige shrink-0" />
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Sales History & Receipts</h2>
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
+                  Showing {filteredSalesHistory.length} of {(salesHistory || []).length} Transactions
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
-                Historical transaction ledger and verified official receipts saved in MySQL
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Comprehensive ledger of saved transactions, official receipts, and payment audit logs.
               </p>
             </div>
 
-            {/* Quick Actions (e.g. Export / Jump to POS) */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveTab('pos')}
-                className="px-3.5 py-2 text-xs font-bold rounded-xl bg-navy hover:bg-navy-light text-white shadow-sm transition-all cursor-pointer"
-              >
-                + New Sale / POS
-              </button>
-            </div>
-          </div>
-
-          {/* Filter Toolbar: Search Bar + Date Range Dropdown & Custom Pickers */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50 dark:bg-darkbg p-3.5 rounded-xl border border-slate-200 dark:border-darkbg-border">
-            {/* Search Input */}
-            <div className="relative flex-1 min-w-[240px]">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search by OR#, customer, or cashier..."
-                value={salesHistorySearch}
-                onChange={(e) => setSalesHistorySearch(e.target.value)}
-                className="w-full text-xs pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-medium"
-              />
-              {salesHistorySearch && (
-                <button
-                  type="button"
-                  onClick={() => setSalesHistorySearch('')}
-                  className="absolute right-2.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-white"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* Date Range Selector Dropdown */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <div className="relative min-w-[200px]">
-                <Calendar className="w-4 h-4 absolute left-3 top-3 text-slate-400 pointer-events-none" />
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+              {/* Date Filter Dropdown */}
+              <div className="relative min-w-[180px]">
+                <Calendar className="w-4 h-4 absolute left-3 top-2.5 text-gray-400 pointer-events-none" />
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full text-xs pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-bold cursor-pointer"
+                  className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy appearance-none cursor-pointer"
                 >
                   <option value="all">All Transactions</option>
                   <option value="today">Today's Transactions</option>
                   <option value="week">This Week's Transactions</option>
                   <option value="month">This Month's Transactions</option>
-                  <option value="custom">Custom Date Range...</option>
+                  <option value="custom">Custom Date Range</option>
                 </select>
+                <div className="absolute right-2.5 top-3 pointer-events-none text-gray-400 text-[10px]">▼</div>
               </div>
 
-              {/* Custom Date Pickers (Shown only when 'custom' is selected) */}
+              {/* Custom Date Pickers when 'custom' is active */}
               {dateFilter === 'custom' && (
-                <div className="flex items-center gap-1.5 animate-in fade-in duration-200">
+                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-darkbg p-1 rounded-lg border border-gray-200 dark:border-darkbg-border">
                   <input
                     type="date"
                     value={customStartDate}
                     onChange={(e) => setCustomStartDate(e.target.value)}
-                    className="text-xs px-2.5 py-2 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white"
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
                     title="Start Date"
                   />
-                  <span className="text-xs text-slate-400 font-bold">to</span>
+                  <span className="text-xs text-gray-400">to</span>
                   <input
                     type="date"
                     value={customEndDate}
                     onChange={(e) => setCustomEndDate(e.target.value)}
-                    className="text-xs px-2.5 py-2 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white"
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
                     title="End Date"
                   />
+                  {(customStartDate || customEndDate) && (
+                    <button
+                      type="button"
+                      onClick={() => { setCustomStartDate(''); setCustomEndDate(''); }}
+                      className="text-[11px] text-gray-400 hover:text-red-500 px-1"
+                      title="Clear custom range"
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
               )}
 
-              {/* Reset Filters button */}
-              {(salesHistorySearch || dateFilter !== 'all') && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSalesHistorySearch('');
-                    setDateFilter('all');
-                    setCustomStartDate('');
-                    setCustomEndDate('');
-                  }}
-                  className="px-3 py-2 text-xs font-bold text-slate-600 dark:text-gray-300 hover:text-red-500 bg-white dark:bg-darkbg-card rounded-xl border border-slate-200 dark:border-darkbg-border transition-colors shrink-0"
-                >
-                  Reset
-                </button>
-              )}
+              {/* Search input */}
+              <div className="relative w-full sm:w-64">
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by OR#, Customer, Cashier..."
+                  value={receiptSearchQuery}
+                  onChange={(e) => setReceiptSearchQuery(e.target.value)}
+                  className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Desktop & Tablet Table (Horizontal Scrolling, responsive text & touch) */}
-          <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200 dark:border-darkbg-border">
-            <table className="w-full text-center text-xs font-sans">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 uppercase font-black text-sm border-b border-slate-200 dark:border-darkbg-border">
+          {/* Centralized Table with Consistent Sizing & White Font Forecolor */}
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-darkbg-border">
+            <table className="w-full">
+              <thead className="bg-slate-900/90 dark:bg-darkbg text-white uppercase font-extrabold text-sm tracking-wider border-b border-gray-200 dark:border-darkbg-border">
                 <tr>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Invoice Number</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Date & Time</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Customer</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Cashier</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Subtotal</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">12% VAT</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Total Amount</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Payment</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Status</th>
-                  <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Action</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Receipt / OR #</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Tx ID</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Date & Time</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Cashier</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Customer</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Subtotal</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">12% VAT</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Total Amount</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Payment</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Status</th>
+                  <th className="py-3.5 px-3 text-center align-middle text-sm font-bold">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-xs font-sans">
+              <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-xs">
                 {filteredSalesHistory.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-12 text-center text-slate-400 font-medium">
-                      No transactions match the selected date range and search criteria.
+                    <td colSpan="11" className="py-8 text-center text-gray-400 text-xs">
+                      No transactions match the selected filter and search criteria.
                     </td>
                   </tr>
                 ) : (
-                  filteredSalesHistory.map((s) => (
-                    <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50 transition-colors">
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans font-mono whitespace-nowrap">{s.invoice_number}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap">{s.created_at || s.transaction_date}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap font-medium">{s.customer_name || 'Walk-in Customer'}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap">{s.cashier || s.cashier_name || 'Cashier'}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans font-mono whitespace-nowrap">PHP {Number(s.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans font-mono whitespace-nowrap">PHP {Number(s.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans font-mono whitespace-nowrap font-bold text-emerald-400">PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap">{s.payment_method || 'Cash'}</td>
-                      <td className="py-3 px-3 text-center text-xs whitespace-nowrap">
+                  filteredSalesHistory.map((s, idx) => (
+                    <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-slate-900/40' : 'bg-slate-900/20'} dark:bg-transparent hover:bg-blue-50/10 dark:hover:bg-darkbg-hover/50 transition`}>
+                      <td className="py-3 px-3 text-center align-middle font-mono font-bold text-white text-xs">
+                        {s.invoice_number}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle font-mono text-white text-xs">
+                        #{s.id}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle text-white text-xs whitespace-nowrap">
+                        {s.created_at || s.transaction_date}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle text-white text-xs font-medium">
+                        {s.cashier || s.cashier_name || 'Cashier'}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle text-white text-xs font-medium">
+                        {s.customer_name || 'Walk-in Customer'}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle font-mono text-white text-xs">
+                        PHP {Number(s.subtotal || (Number(s.total_amount) / 1.12)).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle font-mono text-white text-xs">
+                        PHP {Number(s.vat_amount || (Number(s.total_amount) - (Number(s.total_amount) / 1.12))).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle font-mono font-bold text-white text-xs">
+                        PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle text-white text-xs font-medium">
+                        {s.payment_method || 'Cash'}
+                      </td>
+                      <td className="py-3 px-3 text-center align-middle">
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                           Completed
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-center text-xs whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={() => handleViewReceipt(s.id)}
-                          className="px-3.5 py-1.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-xs transition cursor-pointer active:scale-95"
-                        >
-                          View Receipt
-                        </button>
+                      <td className="py-3 px-3 text-center align-middle">
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => handleViewReceipt(s.id)}
+                            className="px-2.5 py-1 rounded-lg bg-navy hover:bg-navy-light text-white text-[11px] font-semibold flex items-center gap-1 shadow-sm transition cursor-pointer"
+                            title="View Official Receipt"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>View</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
-          </div>
-
-          {/* Mobile View: Stacked Transaction Cards (< 768px) */}
-          <div className="md:hidden space-y-3">
-            {filteredSalesHistory.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400 border border-dashed rounded-xl">
-                No transactions match the selected date range and search criteria.
-              </div>
-            ) : (
-              filteredSalesHistory.map((s) => (
-                <div
-                  key={s.id}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-darkbg-border bg-slate-50/60 dark:bg-darkbg space-y-2.5"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-xs text-navy dark:text-cyan-400">
-                      {s.invoice_number}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                      Completed
-                    </span>
-                  </div>
-
-                  <div className="text-xs space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Customer:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">{s.customer_name || 'Walk-in Customer'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Date & Time:</span>
-                      <span className="text-slate-700 dark:text-gray-300">{s.created_at || s.transaction_date}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Cashier:</span>
-                      <span className="text-slate-700 dark:text-gray-300">{s.cashier || s.cashier_name || 'Cashier'}</span>
-                    </div>
-                    <div className="flex justify-between items-baseline pt-1 border-t border-slate-200 dark:border-darkbg-border">
-                      <span className="text-slate-700 dark:text-gray-300 font-bold">Total Amount:</span>
-                      <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400">
-                        PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleViewReceipt(s.id)}
-                    className="w-full py-2 rounded-xl bg-navy hover:bg-navy-light text-white text-xs font-bold transition-all shadow-xs"
-                  >
-                    View Receipt
-                  </button>
-                </div>
-              ))
-            )}
           </div>
         </div>
       )}
@@ -1195,7 +1114,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'product_lookup' && (
         <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Customer Product & Price Lookup</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customer Product & Price Lookup</h2>
             <p className="text-xs text-gray-500">Quickly check specifications, availability, and retail price during customer consultations</p>
           </div>
 
@@ -1221,23 +1140,22 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 >
                   <div className="flex items-start justify-between">
                     <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{p.sku}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${
-                      p.stock_quantity === 0
+                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${p.stock_quantity === 0
                         ? 'bg-red-500/10 text-red-600'
                         : p.stock_quantity <= (p.reorder_level ?? 3)
                           ? 'bg-amber-500/10 text-amber-600'
                           : 'bg-emerald-500/10 text-emerald-600'
-                    }`}>
+                      }`}>
                       {p.stock_quantity === 0 ? 'Out of Stock' : `${p.stock_quantity} available`}
                     </span>
                   </div>
                   <h4 className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">{p.name}</h4>
-                  <p className="text-xs text-gray-500">{p.brand} â€¢ {p.category_name}</p>
+                  <p className="text-xs text-gray-500">{p.brand} • {p.category_name}</p>
                   <div className="flex items-end justify-between pt-2">
                     <p className="text-lg font-bold text-navy dark:text-greige font-mono">
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </p>
-                    <span className="text-xs text-gray-400 group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">View details â†’</span>
+                    <span className="text-xs text-gray-400 group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">View details →</span>
                   </div>
                 </div>
               ))}
@@ -1251,92 +1169,6 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             suppliers={suppliers}
             role="sales"
           />
-        </div>
-      )}
-
-      {/* VIEW: SHIFT SUMMARY */}
-      {activeTab === 'shift_summary' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-darkbg-border">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Cashier Shift Summary</h2>
-              <p className="text-xs text-gray-500">Register drawer balance and shift reconciliation</p>
-            </div>
-            {currentShift ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                ACTIVE SHIFT #{currentShift.id}
-              </span>
-            ) : (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">
-                NO ACTIVE SHIFT
-              </span>
-            )}
-          </div>
-
-          {currentShift ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                  <p className="text-gray-500">Starting Cash</p>
-                  <p className="text-base font-bold font-mono text-gray-900 dark:text-white">
-                    PHP {Number(currentShift.starting_cash).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                  <p className="text-gray-500">Cash Collections</p>
-                  <p className="text-base font-bold font-mono text-emerald-600">
-                    PHP {Number(currentShift.cash_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                  <p className="text-gray-500">Card Receipts</p>
-                  <p className="text-base font-bold font-mono text-blue-600">
-                    PHP {Number(currentShift.card_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                  <p className="text-gray-500">GCash Receipts</p>
-                  <p className="text-base font-bold font-mono text-blue-400">
-                    PHP {Number(currentShift.gcash_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                  <p className="text-gray-500">Transactions Count</p>
-                  <p className="text-base font-bold text-gray-900 dark:text-white">
-                    {currentShift.total_transactions}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold">Total Shift Sales</p>
-                  <p className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-300">
-                    PHP {Number(currentShift.total_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-100 dark:border-darkbg-border flex items-center justify-between">
-                <span className="text-xs text-gray-500">Shift Started: {currentShift.start_time}</span>
-                <button
-                  onClick={handleCloseShift}
-                  className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1.5"
-                >
-                  <Lock className="w-4 h-4" />
-                  Close Shift & Reconcile
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-8 space-y-3">
-              <p className="text-xs text-gray-500">No shift is currently active for this cashier station.</p>
-              <button
-                onClick={() => setIsShiftModalOpen(true)}
-                className="px-4 py-2 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold inline-flex items-center gap-1.5"
-              >
-                <Unlock className="w-4 h-4" />
-                Open New Cashier Shift
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -1366,7 +1198,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
             <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
               <span className="text-gray-500">Permissions:</span>
-              <span className="font-semibold text-emerald-600">POS Checkout, Customer Receipts, Shift Balancing</span>
+              <span className="font-semibold text-emerald-600">POS Checkout, Customer Receipts, Quotation Drafts</span>
             </div>
             <div className="flex justify-between py-2">
               <span className="text-gray-500">Restricted Features:</span>
@@ -1382,39 +1214,6 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         onClose={() => setIsReceiptModalOpen(false)}
         receipt={activeReceipt}
       />
-
-{/* MODAL: OPEN SHIFT */}
-      <Modal isOpen={isShiftModalOpen} onClose={() => setIsShiftModalOpen(false)} title="Open Cashier Register Shift">
-        <div className="space-y-4 text-xs">
-          <p className="text-gray-600 dark:text-gray-300">
-            Enter the verified cash drawer float amount before opening this sales station.
-          </p>
-          <div>
-            <label className="block font-semibold mb-1">Starting Float Cash (PHP) *</label>
-            <input
-              type="number"
-              min="0"
-              value={shiftStartingCash}
-              onChange={(e) => setShiftStartingCash(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-mono font-bold text-base"
-            />
-          </div>
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-            <button
-              onClick={() => setIsShiftModalOpen(false)}
-              className="px-4 py-2 rounded-lg text-gray-600 bg-gray-100 dark:bg-darkbg"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleOpenShift}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-            >
-              Start Shift
-            </button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }
