@@ -100,8 +100,7 @@ export default function Sidebar({
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { id: 'datasets', label: 'Dataset Explorer', icon: Database },
-          { id: 'train', label: 'Model Training', icon: Cpu },
-          { id: 'evaluate', label: 'Model Evaluation', icon: Award },
+          { id: 'train', label: 'Model Training & Evaluation', icon: Cpu },
           { id: 'compare', label: 'Model Comparison', icon: GitCompare },
           { id: 'saved_models', label: 'Saved Models', icon: Save },
           { id: 'prediction_history', label: 'Prediction History', icon: History },

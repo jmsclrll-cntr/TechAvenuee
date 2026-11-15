@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  X, 
-  Printer, 
-  Download, 
-  CheckCircle2, 
-  ShieldCheck, 
+import {
+  X,
+  Printer,
+  Download,
+  CheckCircle2,
+  ShieldCheck,
   Banknote,
   Receipt as ReceiptIcon
 } from 'lucide-react';
@@ -18,7 +18,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const transactionId = receipt.transaction_id || receipt.id || 'N/A';
   const cashierName = receipt.cashier || receipt.cashier_name || 'Cashier';
   const customerName = receipt.customer_name || 'Walk-in Customer';
-  
+
   // Format Date and Time
   let formattedDate = 'Recently';
   const rawDate = receipt.created_at || receipt.transaction_date;
@@ -50,23 +50,23 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   const totalAmount = Number(receipt.total_amount || 0);
   const discountAmount = Number(receipt.discount_amount || 0);
   const discountPct = Number(receipt.discount_pct || 0);
-  
+
   // Gross Total (Subtotal before discount)
-  const grossTotal = Number(receipt.gross_total || receipt.gross_subtotal || 0) || 
-    (items.length > 0 
+  const grossTotal = Number(receipt.gross_total || receipt.gross_subtotal || 0) ||
+    (items.length > 0
       ? items.reduce((sum, item) => sum + Number(item.total_price || (Number(item.quantity || 1) * Number(item.unit_price || 0))), 0)
       : (totalAmount + discountAmount));
-  
+
   // Subtotal Net of VAT (12%)
-  const subtotalNet = receipt.subtotal != null 
-    ? Number(receipt.subtotal) 
+  const subtotalNet = receipt.subtotal != null
+    ? Number(receipt.subtotal)
     : +(totalAmount / 1.12).toFixed(2);
-    
+
   // 12% Output VAT
-  const vatAmount = receipt.vat_amount != null 
-    ? Number(receipt.vat_amount) 
+  const vatAmount = receipt.vat_amount != null
+    ? Number(receipt.vat_amount)
     : +(totalAmount - subtotalNet).toFixed(2);
-    
+
   const amountTendered = Number(receipt.amount_tendered || totalAmount);
   const changeAmount = Number(receipt.change_amount || Math.max(0, amountTendered - totalAmount));
 
@@ -251,7 +251,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div 
+      <div
         className="w-full max-w-lg bg-[#0F172A] text-slate-100 rounded-2xl shadow-2xl border border-slate-700/80 overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
         style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)' }}
       >
@@ -279,13 +279,13 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
         {/* Scrollable Receipt Body (Dark Navy Theme) */}
         <div className="p-6 overflow-y-auto space-y-4 font-sans text-xs">
-          
+
           {/* 1. Store Information Header */}
           <div className="text-center pb-4 border-b border-dashed border-slate-700 space-y-1">
             <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center p-1 bg-white/5 rounded-xl border border-slate-700/60 shadow-inner">
-              <img 
-                src={logoImg} 
-                alt="Tech Avenue" 
+              <img
+                src={logoImg}
+                alt="Tech Avenue"
                 className="max-h-full max-w-full object-contain filter drop-shadow"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
