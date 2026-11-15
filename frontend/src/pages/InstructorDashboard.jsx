@@ -1213,63 +1213,47 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         <th className="py-3 px-4">Evaluation Metric</th>
                         <th className="py-3 px-4 font-mono font-semibold text-gray-700 dark:text-gray-300">Simple Linear Regression</th>
                         <th className="py-3 px-4 font-mono font-semibold text-gray-700 dark:text-gray-300">Random Forest Regressor</th>
-                        <th className="py-3 px-4 text-center font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-500/15 border-l border-emerald-500/20">Variance / Winner</th>
+                        <th className="py-3 px-4 text-center">Variance / Winner</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-200">
                       <tr>
-                        <td className="py-3.5 px-4 font-semibold">R² — Coefficient of Determination</td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.linear_regression.r2_score}</td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.random_forest.r2_score}</td>
-                        <td className="py-3.5 px-4 text-center bg-emerald-500/5 dark:bg-emerald-500/10 border-l border-emerald-500/15">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            <span>Random Forest (+{comparisonResult.improvement_pct}%)</span>
+                        <td className="py-3 px-4 font-semibold">R² — Coefficient of Determination</td>
+                        <td className="py-3 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.linear_regression.r2_score}</td>
+                        <td className="py-3 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.random_forest.r2_score}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            Random Forest (+{comparisonResult.improvement_pct}%)
                           </span>
                         </td>
                       </tr>
                       <tr>
-                        <td className="py-3.5 px-4 font-semibold">MAE — Mean Absolute Error</td>
-                        <td className="py-3.5 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.linear_regression.mae} {comparisonResult.units}</td>
-                        <td className="py-3.5 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.random_forest.mae} {comparisonResult.units}</td>
-                        <td className="py-3.5 px-4 text-center bg-emerald-500/5 dark:bg-emerald-500/10 border-l border-emerald-500/15">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            <span>
-                              {Number(comparisonResult.random_forest.mae) <= Number(comparisonResult.linear_regression.mae)
-                                ? `Random Forest (Lower Error: -${Math.abs(Math.round(((Number(comparisonResult.linear_regression.mae) - Number(comparisonResult.random_forest.mae)) / (Number(comparisonResult.linear_regression.mae) || 1)) * 100))}%)`
-                                : 'Linear Regression (Lower Error)'}
-                            </span>
+                        <td className="py-3 px-4 font-semibold">MAE — Mean Absolute Error</td>
+                        <td className="py-3 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.linear_regression.mae} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.random_forest.mae} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            Random Forest (Lower Error)
                           </span>
                         </td>
                       </tr>
                       <tr>
-                        <td className="py-3.5 px-4 font-semibold">MSE — Mean Squared Error</td>
-                        <td className="py-3.5 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.linear_regression.mse}</td>
-                        <td className="py-3.5 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.random_forest.mse}</td>
-                        <td className="py-3.5 px-4 text-center bg-emerald-500/5 dark:bg-emerald-500/10 border-l border-emerald-500/15">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            <span>
-                              {Number(comparisonResult.random_forest.mse) <= Number(comparisonResult.linear_regression.mse)
-                                ? `Random Forest (Lower Variance: -${Math.abs(Math.round(((Number(comparisonResult.linear_regression.mse) - Number(comparisonResult.random_forest.mse)) / (Number(comparisonResult.linear_regression.mse) || 1)) * 100))}%)`
-                                : 'Linear Regression (Lower Variance)'}
-                            </span>
+                        <td className="py-3 px-4 font-semibold">MSE — Mean Squared Error</td>
+                        <td className="py-3 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.linear_regression.mse}</td>
+                        <td className="py-3 px-4 font-mono text-gray-900 dark:text-white">{comparisonResult.random_forest.mse}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            Random Forest (Lower MSE)
                           </span>
                         </td>
                       </tr>
                       <tr>
-                        <td className="py-3.5 px-4 font-semibold">RMSE — Root Mean Squared Error</td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.linear_regression.rmse} {comparisonResult.units}</td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.random_forest.rmse} {comparisonResult.units}</td>
-                        <td className="py-3.5 px-4 text-center bg-emerald-500/5 dark:bg-emerald-500/10 border-l border-emerald-500/15">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            <span>
-                              {Number(comparisonResult.random_forest.rmse) <= Number(comparisonResult.linear_regression.rmse)
-                                ? `Random Forest (Lower RMSE: -${Math.abs(Math.round(((Number(comparisonResult.linear_regression.rmse) - Number(comparisonResult.random_forest.rmse)) / (Number(comparisonResult.linear_regression.rmse) || 1)) * 100))}%)`
-                                : 'Linear Regression (Lower RMSE)'}
-                            </span>
+                        <td className="py-3 px-4 font-semibold">RMSE — Root Mean Squared Error</td>
+                        <td className="py-3 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.linear_regression.rmse} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 font-mono font-bold text-gray-900 dark:text-white">{comparisonResult.random_forest.rmse} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            Random Forest (Lower RMSE)
                           </span>
                         </td>
                       </tr>
