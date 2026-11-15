@@ -67,6 +67,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const [isCvLoading, setIsCvLoading] = useState(false);
   const [cvResult, setCvResult] = useState(null);
   const [cvError, setCvError] = useState(null);
+  const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+
+  // Metric Tooltips State (collapsed by default)
+  const [expandedMetric, setExpandedMetric] = useState({});
+  const toggleMetric = (key) => {
+    setExpandedMetric(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // Saved Models & History
   const [savedModels, setSavedModels] = useState([]);
@@ -652,19 +659,66 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             {/* Feature Names & Data Types Attributes Table */}
             {currentDatasetMeta && (
               <div className="space-y-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                  Feature Schema & Attribute Types
-                </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                  {currentDatasetMeta.columns?.map((col) => (
-                    <div key={col.name} className="p-3 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-sm">
-                      <p className="font-mono font-bold text-navy dark:text-cyan-400 truncate text-sm" title={col.name}>
-                        {col.name}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 font-medium">Type: {col.type}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Unique: {col.unique_count}</p>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Feature Schema & Attribute Types
+                  </h4>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    {currentDatasetMeta.columns?.length || 0} Total Columns
+                  </span>
+                </div>
+                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg shadow-sm">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-100 dark:bg-darkbg-card text-slate-700 dark:text-gray-300 uppercase font-extrabold border-b border-gray-200 dark:border-darkbg-border">
+                      <tr>
+                        <th className="py-2.5 px-4">Column Name</th>
+                        <th className="py-2.5 px-4">Role</th>
+                        <th className="py-2.5 px-4">Data Type</th>
+                        <th className="py-2.5 px-4 text-center">Unique Values</th>
+                        <th className="py-2.5 px-4 text-center">Missing</th>
+                        <th className="py-2.5 px-4 text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+                      {currentDatasetMeta.columns?.map((col) => {
+                        const isTarget = col.name === currentDatasetMeta.target_variable;
+                        return (
+                          <tr key={col.name} className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                            <td className="py-2.5 px-4 font-mono font-bold text-navy dark:text-cyan-400">
+                              {col.name}
+                            </td>
+                            <td className="py-2.5 px-4">
+                              {isTarget ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                  Target Variable
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-darkbg-card dark:text-gray-300 border border-gray-200 dark:border-darkbg-border">
+                                  Feature
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-2.5 px-4 font-mono font-medium text-gray-700 dark:text-gray-300">
+                              <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 dark:bg-darkbg-card text-gray-700 dark:text-gray-300 font-mono">
+                                {col.type}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-4 text-center font-mono font-semibold text-gray-800 dark:text-gray-200">
+                              {col.unique_count?.toLocaleString() ?? '—'}
+                            </td>
+                            <td className="py-2.5 px-4 text-center font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                              0 (0%)
+                            </td>
+                            <td className="py-2.5 px-4 text-right">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
+                                Validated
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -865,24 +919,55 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 )}
               </div>
 
-              <div className="flex justify-end pt-2">
-                <button
-                  onClick={handleTrainModel}
-                  disabled={isTraining}
-                  className="px-5 py-2.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-md flex items-center gap-2"
-                >
-                  {isTraining ? (
-                    <>
-                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      Training in Backend Engine...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 fill-white" />
-                      Execute Model Training & Evaluation
-                    </>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                <div className="flex-1">
+                  {trainingSuccess && (
+                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                        <span>{trainingSuccess}</span>
+                      </div>
+                      <button onClick={() => setTrainingSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
+                    </div>
                   )}
-                </button>
+                  {trainingError && (
+                    <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
+                        <span>{trainingError}</span>
+                      </div>
+                      <button onClick={() => setTrainingError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                  <button
+                    onClick={() => setIsCvModalOpen(true)}
+                    className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-800 dark:text-gray-200 text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>10-Fold Cross-Validation</span>
+                  </button>
+
+                  <button
+                    onClick={handleTrainModel}
+                    disabled={isTraining}
+                    className="px-5 py-2.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {isTraining ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Training in Backend Engine...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 fill-white" />
+                        Execute Model Training & Evaluation
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -908,62 +993,94 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                 </div>
 
-                {/* The 4 Official Evaluation Metrics with Clear Descriptions (Strict Prompt Requirement) */}
+                {/* The 4 Official Evaluation Metrics with Toggleable Descriptions */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* R² */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-sm space-y-1">
+                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-emerald-200/60 dark:border-emerald-900/40 shadow-sm space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-bold text-gray-500 uppercase">R² — Determination</span>
-                      <Award className="w-4 h-4 text-emerald-500" />
+                      <button 
+                        onClick={() => toggleMetric('r2')} 
+                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-emerald-500 cursor-pointer"
+                        title="Toggle description"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-emerald-600">
+                    <p className="text-2xl font-bold font-mono text-emerald-500 dark:text-emerald-400">
                       {trainingResult.evaluation_metrics.r2_score}
                     </p>
-                    <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight pt-1">
-                      Measures how much variation in the target is explained by the model. Higher is generally better.
-                    </p>
+                    {expandedMetric['r2'] && (
+                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
+                        Measures how much variation in the target is explained by the model. Closer to 1.0 indicates superior fit.
+                      </p>
+                    )}
                   </div>
 
                   {/* MAE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-sm space-y-1">
+                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-cyan-200/60 dark:border-cyan-900/40 shadow-sm space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-bold text-gray-500 uppercase">MAE — Mean Absolute Error</span>
-                      <Info className="w-4 h-4 text-blue-500" />
+                      <button 
+                        onClick={() => toggleMetric('mae')} 
+                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-cyan-500 cursor-pointer"
+                        title="Toggle description"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
+                    <p className="text-2xl font-bold font-mono text-cyan-600 dark:text-cyan-400">
                       {trainingResult.evaluation_metrics.mae} {trainingResult.units}
                     </p>
-                    <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight pt-1">
-                      Measures the average absolute prediction error in the target variable's units. Lower is better.
-                    </p>
+                    {expandedMetric['mae'] && (
+                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
+                        Measures the average absolute prediction error in real target units. Lower values represent better precision.
+                      </p>
+                    )}
                   </div>
 
                   {/* MSE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-sm space-y-1">
+                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-amber-200/60 dark:border-amber-900/40 shadow-sm space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-bold text-gray-500 uppercase">MSE — Mean Squared Error</span>
-                      <Info className="w-4 h-4 text-amber-500" />
+                      <button 
+                        onClick={() => toggleMetric('mse')} 
+                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-amber-500 cursor-pointer"
+                        title="Toggle description"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
+                    <p className="text-2xl font-bold font-mono text-amber-500 dark:text-amber-400">
                       {trainingResult.evaluation_metrics.mse}
                     </p>
-                    <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight pt-1">
-                      Measures the average squared prediction error. Lower is better.
-                    </p>
+                    {expandedMetric['mse'] && (
+                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
+                        Measures the average squared difference between predictions and actual values. Lower is better.
+                      </p>
+                    )}
                   </div>
 
                   {/* RMSE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-sm space-y-1">
+                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-purple-200/60 dark:border-purple-900/40 shadow-sm space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-bold text-gray-500 uppercase">RMSE — Root Mean Squared</span>
-                      <Info className="w-4 h-4 text-purple-500" />
+                      <button 
+                        onClick={() => toggleMetric('rmse')} 
+                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-purple-500 cursor-pointer"
+                        title="Toggle description"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-purple-600">
+                    <p className="text-2xl font-bold font-mono text-purple-500 dark:text-purple-400">
                       {trainingResult.evaluation_metrics.rmse} {trainingResult.units}
                     </p>
-                    <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight pt-1">
-                      Measures the square root of MSE and penalizes larger errors more heavily. Lower is better.
-                    </p>
+                    {expandedMetric['rmse'] && (
+                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
+                        Square root of MSE in original units. Penalizes large outlier deviations heavily. Lower is better.
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -976,216 +1093,223 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       xKey="index"
                       yKey="actual"
                       yKey2="predicted"
-                      strokeColor="#1E3A5F"
-                      strokeColor2="#10B981"
+                      strokeColor="#10B981"
+                      strokeColor2="#F59E0B"
                     />
                   </div>
                 )}
               </div>
             )}
 
-            {/* 10-Fold Cross-Validation Section */}
-            <div className="pt-6 border-t border-gray-100 dark:border-darkbg-border space-y-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    10-Fold Cross-Validation Analysis & Empirical Breakdown
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    Partition data into 10 rotating folds to measure generalization consistency, eliminate hold-out bias, and verify model stability.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <select
-                    value={cvTask}
-                    onChange={(e) => setCvTask(e.target.value)}
-                    className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
-                  >
-                    <option value="sales">Sales Dataset (PHP)</option>
-                    <option value="demand">Demand Dataset (units)</option>
-                    <option value="slow_moving">Slow-Moving Dataset (days)</option>
-                    <option value="best_selling">Best-Sellers Dataset (units)</option>
-                  </select>
-
-                  <select
-                    value={cvAlgorithm}
-                    onChange={(e) => setCvAlgorithm(e.target.value)}
-                    className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
-                  >
-                    <option value="random_forest">Random Forest</option>
-                    <option value="linear_regression">Linear Regression</option>
-                  </select>
-
-                  <button
-                    onClick={() => handleRun10FoldCv()}
-                    disabled={isCvLoading}
-                    className="px-3.5 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    {isCvLoading ? (
-                      <>
-                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        Running 10 Folds...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-3.5 h-3.5 fill-white" />
-                        Run 10-Fold CV
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {cvError && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400">
-                  {cvError}
-                </div>
-              )}
-
-              {cvResult && (
-                <div className="space-y-4">
-                  {/* Summary Metric Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50">
-                      <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">
-                        Mean R² Score (± Std Dev)
-                      </span>
-                      <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-                        {cvResult.summary.mean_r2} <span className="text-xs text-gray-500">± {cvResult.summary.std_r2}</span>
-                      </p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">Overfitting check: {cvResult.summary.stability}</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50">
-                      <span className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">
-                        Mean MAE (± Std Dev)
-                      </span>
-                      <p className="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-0.5">
-                        {cvResult.summary.mean_mae.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
-                      </p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_mae} {cvResult.unit} across folds</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50">
-                      <span className="text-[10px] font-bold text-purple-800 dark:text-purple-400 uppercase tracking-wider">
-                        Mean RMSE (± Std Dev)
-                      </span>
-                      <p className="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-0.5">
-                        {cvResult.summary.mean_rmse.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
-                      </p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_rmse} {cvResult.unit} penalty deviation</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50">
-                      <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
-                        Dataset Partitioning
-                      </span>
-                      <p className="text-xl font-bold font-mono text-amber-700 dark:text-amber-400 mt-0.5">
-                        10 Folds × 10%
-                      </p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">{cvResult.total_samples} total instances evaluated</p>
-                    </div>
+            {/* 10-Fold Cross-Validation Pop-up Modal */}
+            <Modal
+              isOpen={isCvModalOpen}
+              onClose={() => setIsCvModalOpen(false)}
+              title="10-Fold Cross-Validation Empirical Matrix"
+              maxWidth="max-w-5xl"
+            >
+              <div className="space-y-5 p-1">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-darkbg-border">
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      Cross-Validation Performance Breakdown
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Evaluates generalization across 10 rotating folds to eliminate hold-out bias and verify model stability.
+                    </p>
                   </div>
 
-                  {/* Tabular Fold-by-Fold Breakdown */}
-                  <div className="border border-gray-200 dark:border-darkbg-border rounded-xl overflow-hidden shadow-sm">
-                    <div className="px-4 py-2.5 bg-gray-50 dark:bg-darkbg/70 border-b border-gray-200 dark:border-darkbg-border flex justify-between items-center text-xs">
-                      <span className="font-bold text-gray-700 dark:text-gray-300">
-                        {cvResult.algo_label} — Fold-by-Fold Performance Matrix ({cvResult.dataset_name})
-                      </span>
-                      <span className="text-[11px] text-gray-500 font-mono">
-                        Target: {cvResult.target_label}
-                      </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={cvTask}
+                      onChange={(e) => setCvTask(e.target.value)}
+                      className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold text-gray-900 dark:text-white"
+                    >
+                      <option value="sales">Sales Dataset (PHP)</option>
+                      <option value="demand">Demand Dataset (units)</option>
+                      <option value="slow_moving">Slow-Moving Dataset (days)</option>
+                      <option value="best_selling">Best-Sellers Dataset (units)</option>
+                    </select>
+
+                    <select
+                      value={cvAlgorithm}
+                      onChange={(e) => setCvAlgorithm(e.target.value)}
+                      className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold text-gray-900 dark:text-white"
+                    >
+                      <option value="random_forest">Random Forest</option>
+                      <option value="linear_regression">Linear Regression</option>
+                    </select>
+
+                    <button
+                      onClick={() => handleRun10FoldCv()}
+                      disabled={isCvLoading}
+                      className="px-3.5 py-1.5 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {isCvLoading ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          Running Folds...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3.5 h-3.5 fill-white" />
+                          Run 10-Fold CV
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {cvError && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400">
+                    {cvError}
+                  </div>
+                )}
+
+                {cvResult && (
+                  <div className="space-y-4">
+                    {/* Summary Metric Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Mean R² Score (± Std Dev)
+                        </span>
+                        <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                          {cvResult.summary.mean_r2} <span className="text-xs text-gray-500">± {cvResult.summary.std_r2}</span>
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">Stability: {cvResult.summary.stability}</p>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Mean MAE (± Std Dev)
+                        </span>
+                        <p className="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-0.5">
+                          {cvResult.summary.mean_mae.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_mae} {cvResult.unit}</p>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Mean RMSE (± Std Dev)
+                        </span>
+                        <p className="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-0.5">
+                          {cvResult.summary.mean_rmse.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_rmse} {cvResult.unit}</p>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Dataset Partitioning
+                        </span>
+                        <p className="text-xl font-bold font-mono text-gray-900 dark:text-white mt-0.5">
+                          10 Folds × 10%
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{cvResult.total_samples} instances evaluated</p>
+                      </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-gray-100/70 dark:bg-darkbg text-gray-500 uppercase font-semibold text-[11px] border-b border-gray-200 dark:border-darkbg-border">
-                          <tr>
-                            <th className="py-2.5 px-3">Fold Index</th>
-                            <th className="py-2.5 px-3">Train Samples (90%)</th>
-                            <th className="py-2.5 px-3">Test Samples (10%)</th>
-                            <th className="py-2.5 px-3 font-mono text-right">R² Score</th>
-                            <th className="py-2.5 px-3 font-mono text-right">MAE ({cvResult.unit})</th>
-                            <th className="py-2.5 px-3 font-mono text-right">MSE</th>
-                            <th className="py-2.5 px-3 font-mono text-right">RMSE ({cvResult.unit})</th>
-                            <th className="py-2.5 px-3 text-center">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
-                          {cvResult.folds.map((f) => (
-                            <tr key={f.fold} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                              <td className="py-2 px-3 font-bold text-navy dark:text-blue-400">Fold #{f.fold}</td>
-                              <td className="py-2 px-3 font-mono">{f.train_samples} rows</td>
-                              <td className="py-2 px-3 font-mono">{f.test_samples} rows</td>
-                              <td className="py-2 px-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                                {f.r2_score}
+                    {/* Clean Tabular Fold-by-Fold Matrix (white font & centered data) */}
+                    <div className="border border-gray-200 dark:border-darkbg-border rounded-xl overflow-hidden shadow-sm">
+                      <div className="px-4 py-2 bg-gray-50 dark:bg-darkbg/90 border-b border-gray-200 dark:border-darkbg-border flex justify-between items-center text-xs">
+                        <span className="font-bold text-gray-700 dark:text-gray-200">
+                          {cvResult.algo_label} ({cvResult.dataset_name})
+                        </span>
+                        <span className="text-[11px] text-gray-500 font-mono">
+                          Target: {cvResult.target_label}
+                        </span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead className="bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 uppercase font-semibold text-[11px] border-b border-gray-200 dark:border-darkbg-border">
+                            <tr>
+                              <th className="py-2.5 px-3 text-left">Fold Index</th>
+                              <th className="py-2.5 px-3 text-center">Train Samples (90%)</th>
+                              <th className="py-2.5 px-3 text-center">Test Samples (10%)</th>
+                              <th className="py-2.5 px-3 font-mono text-center">R² Score</th>
+                              <th className="py-2.5 px-3 font-mono text-center">MAE ({cvResult.unit})</th>
+                              <th className="py-2.5 px-3 font-mono text-center">MSE</th>
+                              <th className="py-2.5 px-3 font-mono text-center">RMSE ({cvResult.unit})</th>
+                              <th className="py-2.5 px-3 text-center">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-900 dark:text-white font-mono">
+                            {cvResult.folds.map((f) => (
+                              <tr key={f.fold} className="hover:bg-gray-50 dark:hover:bg-darkbg-hover/40 transition-colors">
+                                <td className="py-2 px-3 text-left font-bold text-gray-900 dark:text-white font-sans">Fold #{f.fold}</td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">{f.train_samples}</td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">{f.test_samples}</td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white font-bold">
+                                  {f.r2_score}
+                                </td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">
+                                  {f.mae.toLocaleString()}
+                                </td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">
+                                  {f.mse.toLocaleString()}
+                                </td>
+                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white font-bold">
+                                  {f.rmse.toLocaleString()}
+                                </td>
+                                <td className="py-2 px-3 text-center font-sans">
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                    Validated
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          <tfoot className="bg-gray-50 dark:bg-darkbg font-bold border-t border-gray-200 dark:border-darkbg-border text-gray-900 dark:text-white">
+                            <tr>
+                              <td className="py-2.5 px-3 text-left uppercase font-sans">Mean (Average)</td>
+                              <td className="py-2.5 px-3 text-center font-mono">—</td>
+                              <td className="py-2.5 px-3 text-center font-mono">—</td>
+                              <td className="py-2.5 px-3 text-center font-mono">
+                                {cvResult.summary.mean_r2}
                               </td>
-                              <td className="py-2 px-3 text-right font-mono">
-                                {f.mae.toLocaleString()}
+                              <td className="py-2.5 px-3 text-center font-mono">
+                                {cvResult.summary.mean_mae.toLocaleString()}
                               </td>
-                              <td className="py-2 px-3 text-right font-mono text-gray-500">
-                                {f.mse.toLocaleString()}
+                              <td className="py-2.5 px-3 text-center font-mono">—</td>
+                              <td className="py-2.5 px-3 text-center font-mono">
+                                {cvResult.summary.mean_rmse.toLocaleString()}
                               </td>
-                              <td className="py-2 px-3 text-right font-mono font-bold text-purple-600 dark:text-purple-400">
-                                {f.rmse.toLocaleString()}
-                              </td>
-                              <td className="py-2 px-3 text-center">
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
-                                  Validated
+                              <td className="py-2.5 px-3 text-center font-sans">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                                  Overall Mean
                                 </span>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-gray-50 dark:bg-darkbg/90 font-bold border-t-2 border-gray-300 dark:border-darkbg-border">
-                          <tr>
-                            <td className="py-2.5 px-3 uppercase text-navy dark:text-greige">Mean (Average)</td>
-                            <td className="py-2.5 px-3 font-mono">—</td>
-                            <td className="py-2.5 px-3 font-mono">—</td>
-                            <td className="py-2.5 px-3 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                              {cvResult.summary.mean_r2}
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-mono">
-                              {cvResult.summary.mean_mae.toLocaleString()}
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-mono text-gray-400">—</td>
-                            <td className="py-2.5 px-3 text-right font-mono text-purple-600 dark:text-purple-400">
-                              {cvResult.summary.mean_rmse.toLocaleString()}
-                            </td>
-                            <td className="py-2.5 px-3 text-center">
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600">
-                                Overall Average
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="py-2 px-3 uppercase text-gray-500 text-[10px]">Std Dev (± σ)</td>
-                            <td className="py-2 px-3 font-mono">—</td>
-                            <td className="py-2 px-3 font-mono">—</td>
-                            <td className="py-2 px-3 text-right font-mono text-gray-500 text-[11px]">
-                              ± {cvResult.summary.std_r2}
-                            </td>
-                            <td className="py-2 px-3 text-right font-mono text-gray-500 text-[11px]">
-                              ± {cvResult.summary.std_mae}
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-mono text-gray-400">—</td>
-                            <td className="py-2.5 px-3 text-right font-mono text-gray-500 text-[11px]">
-                              ± {cvResult.summary.std_rmse}
-                            </td>
-                            <td className="py-2 px-3 text-center text-[10px] text-gray-500">
-                              Variance Across Folds
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
+                            <tr>
+                              <td className="py-2 px-3 text-left uppercase text-gray-500 text-[10px] font-sans">Std Dev (± σ)</td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                                ± {cvResult.summary.std_r2}
+                              </td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                                ± {cvResult.summary.std_mae}
+                              </td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                                ± {cvResult.summary.std_rmse}
+                              </td>
+                              <td className="py-2 px-3 text-center text-[10px] text-gray-500 font-sans">
+                                Stability (± σ)
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </Modal>
           </div>
         </div>
       )}
@@ -1249,61 +1373,74 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             {/* Comparison Results */}
             {comparisonResult && (
               <div className="space-y-6 pt-4 border-t border-gray-100 dark:border-darkbg-border">
-                {/* Recommendation Box */}
-                <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-900 dark:text-purple-300 flex items-start gap-3">
-                  <Award className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-bold text-sm">Algorithmic Recommendation</h4>
-                    <p className="mt-1 leading-relaxed">{comparisonResult.recommendation}</p>
-                  </div>
-                </div>
-
                 {/* Side-by-Side Metric Comparison Table */}
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg shadow-sm">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-gray-50 dark:bg-darkbg text-gray-600 dark:text-gray-300 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+                    <thead className="bg-slate-100 dark:bg-darkbg-card text-slate-700 dark:text-gray-300 uppercase font-extrabold border-b border-gray-200 dark:border-darkbg-border">
                       <tr>
                         <th className="py-3 px-4">Evaluation Metric</th>
                         <th className="py-3 px-4 font-mono">Simple Linear Regression</th>
-                        <th className="py-3 px-4 font-mono text-emerald-600">Random Forest Regressor</th>
+                        <th className="py-3 px-4 font-mono">Random Forest Regressor</th>
                         <th className="py-3 px-4 text-center">Variance / Winner</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
-                      <tr>
+                    <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">R² — Coefficient of Determination</td>
-                        <td className="py-3 px-4 font-mono font-bold">{comparisonResult.linear_regression.r2_score}</td>
-                        <td className="py-3 px-4 font-mono font-bold text-emerald-600">{comparisonResult.random_forest.r2_score}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.r2_score}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.r2_score}</td>
                         <td className="py-3 px-4 text-center">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                             Random Forest (+{comparisonResult.improvement_pct}%)
                           </span>
                         </td>
                       </tr>
-                      <tr>
+                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">MAE — Mean Absolute Error</td>
-                        <td className="py-3 px-4 font-mono">{comparisonResult.linear_regression.mae} {comparisonResult.units}</td>
-                        <td className="py-3 px-4 font-mono text-emerald-600">{comparisonResult.random_forest.mae} {comparisonResult.units}</td>
-                        <td className="py-3 px-4 text-center text-gray-500 font-mono text-[11px]">Lower is Better</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.mae} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.mae} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
+                          Lower is Better
+                        </td>
                       </tr>
-                      <tr>
+                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">MSE — Mean Squared Error</td>
-                        <td className="py-3 px-4 font-mono">{comparisonResult.linear_regression.mse}</td>
-                        <td className="py-3 px-4 font-mono text-emerald-600">{comparisonResult.random_forest.mse}</td>
-                        <td className="py-3 px-4 text-center text-gray-500 font-mono text-[11px]">Lower is Better</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.mse}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.mse}</td>
+                        <td className="py-3 px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
+                          Lower is Better
+                        </td>
                       </tr>
-                      <tr>
+                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">RMSE — Root Mean Squared Error</td>
-                        <td className="py-3 px-4 font-mono font-bold">{comparisonResult.linear_regression.rmse} {comparisonResult.units}</td>
-                        <td className="py-3 px-4 font-mono font-bold text-emerald-600">{comparisonResult.random_forest.rmse} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.rmse} {comparisonResult.units}</td>
+                        <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.rmse} {comparisonResult.units}</td>
                         <td className="py-3 px-4 text-center">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                             Random Forest (Lower RMSE)
                           </span>
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                {/* Algorithmic Recommendation Callout Block - Positioned directly below the table */}
+                <div className="p-4 sm:p-5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-xs text-purple-950 dark:text-purple-200 flex items-start gap-3.5 shadow-xs">
+                  <div className="p-2 rounded-lg bg-purple-500/20 text-purple-600 dark:text-purple-300 shrink-0">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-purple-900 dark:text-purple-100 flex items-center gap-2">
+                      <span>Algorithmic Recommendation & Synthesis</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-200/50 dark:bg-purple-900/50 font-mono font-normal">
+                        Automated Decision Support
+                      </span>
+                    </h4>
+                    <p className="mt-1.5 leading-relaxed text-gray-700 dark:text-gray-300">
+                      {comparisonResult.recommendation}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
