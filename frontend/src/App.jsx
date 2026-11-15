@@ -222,9 +222,24 @@ function App() {
         isOpen={isManualModalOpen}
         onClose={() => setIsManualModalOpen(false)}
         initialRole={user.role}
-        onNavigateTab={(tab) => {
-          setActiveTab(tab);
+        onNavigateTab={async (tab, targetRole) => {
           setIsManualModalOpen(false);
+          if (targetRole && targetRole !== user.role) {
+            try {
+              const res = await api.switchRole(targetRole);
+              if (res.status === 'success') {
+                localStorage.setItem('techavenue_token', res.token);
+                localStorage.setItem('techavenue_user', JSON.stringify(res.user));
+                setUser(res.user);
+                setActiveTab(tab);
+              }
+            } catch (err) {
+              console.error('Role switch error:', err);
+              setActiveTab(tab);
+            }
+          } else {
+            setActiveTab(tab);
+          }
         }}
       />
     </div>
