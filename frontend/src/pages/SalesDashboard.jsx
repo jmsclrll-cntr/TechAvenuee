@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShoppingCart, 
   CircleDollarSign, 
@@ -465,17 +465,17 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
           {/* Quick Access Actions & Shift Status Bar */}
-          <div className="bg-gradient-to-r from-navy to-navy-dark dark:from-darkbg-card dark:to-darkbg p-5 rounded-2xl text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-[#1C1917] border border-[#292524] p-5 rounded-2xl text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-xs font-bold uppercase tracking-wider text-greige">Register Ready â€¢ Live Operations</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse"></span>
+                <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Register Ready &bull; Live Operations</span>
               </div>
-              <h2 className="text-lg font-black tracking-tight mt-0.5">
-                Quick Sales Actions & Transaction Flow
+              <h2 className="text-lg font-black tracking-tight mt-0.5 text-white">
+                Quick Sales Actions &amp; Transaction Flow
               </h2>
-              <p className="text-xs text-gray-300 mt-0.5">
-                Prepare draft customer quotations or immediately process checkout in Point of Sale & Drafts.
+              <p className="text-xs text-stone-400 mt-0.5">
+                Prepare draft customer quotations or immediately process checkout in Point of Sale &amp; Drafts.
               </p>
             </div>
 
@@ -483,10 +483,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <button
                 type="button"
                 onClick={() => setActiveTab('pos')}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-navy dark:bg-cyan-500 text-white dark:text-darkbg hover:bg-navy-light font-bold text-xs shadow-md transition"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#14B8A6] hover:bg-[#0F766E] text-white font-bold text-xs shadow-md transition"
               >
                 <ShoppingCart className="w-4 h-4" />
-                <span>Point of Sale & Drafts</span>
+                <span>Point of Sale &amp; Drafts</span>
               </button>
             </div>
           </div>
@@ -512,7 +512,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           )}
 
           {/* Top KPI Cards (6 cards required) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <StatCard
               title="Sales Today"
               value={`PHP ${(cards.sales_today || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
@@ -560,25 +560,25 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Charts Row (3 required) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
               <ResponsiveLineChart
                 title="Hourly Sales Trend Today (PHP)"
                 data={charts.hourly_sales || []}
                 xKey="hour"
                 yKey="sales"
-                strokeColor="#1E3A5F"
+                strokeColor="#14B8A6"
               />
             </div>
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
               <ResponsiveBarChart
                 title="Daily Transaction Count"
                 data={charts.daily_transactions || []}
                 xKey="day"
                 yKey="transactions"
-                barColor="#10B981"
+                barColor="#14B8A6"
               />
             </div>
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
               <ResponsiveDonutChart
                 title="Sales by Product Category"
                 data={charts.sales_by_category || []}
@@ -592,15 +592,15 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           {/* Tables Row: Recent Transactions & Best-Selling Items Today */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Transactions Table */}
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Receipt className="w-4 h-4 text-navy dark:text-blue-400" />
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Recent Completed Transactions</h3>
+                  <Receipt className="w-4 h-4 text-[#14B8A6]" />
+                  <h3 className="font-bold text-sm text-[#FAFAF9]">Recent Completed Transactions</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('sales_history')}
-                  className="text-xs text-navy dark:text-greige hover:underline font-semibold"
+                  className="text-xs text-[#14B8A6] hover:underline font-semibold"
                 >
                   View All History
                 </button>
@@ -608,7 +608,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                  <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold border-b border-[#292524]">
                     <tr>
                       <th className="py-2.5 px-3">Invoice #</th>
                       <th className="py-2.5 px-3">Date/Time</th>
@@ -618,14 +618,14 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
+                  <tbody className="divide-y divide-[#292524] text-stone-200">
                     {(tables.recent_transactions || []).slice(0, 5).map((t) => (
-                      <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                        <td className="py-2.5 px-3 font-mono font-medium text-navy dark:text-blue-400">{t.invoice_number}</td>
+                      <tr key={t.id} className="hover:bg-[#292524]/50">
+                        <td className="py-2.5 px-3 font-mono font-medium text-[#14B8A6]">{t.invoice_number}</td>
                         <td className="py-2.5 px-3 text-gray-500">{t.created_at?.substring(5, 16)}</td>
                         <td className="py-2.5 px-3 text-right font-mono font-bold">PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                         <td className="py-2.5 px-3 text-center">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-navy dark:text-greige">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-[#14B8A6]">
                             {t.payment_method}
                           </span>
                         </td>
@@ -637,7 +637,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                         <td className="py-2.5 px-3 text-right">
                           <button
                             onClick={() => handleViewReceipt(t.id)}
-                            className="p-1 rounded bg-gray-100 dark:bg-darkbg hover:bg-gray-200 dark:hover:bg-darkbg-hover text-navy dark:text-greige"
+                            className="p-1 rounded bg-[#141210] hover:bg-[#292524] text-[#14B8A6]"
                             title="View Receipt"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -651,17 +651,17 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             {/* Best-Selling Items Today Table */}
-            <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">Best-Selling Items Today</h3>
+                  <h3 className="font-bold text-sm text-[#FAFAF9]">Best-Selling Items Today</h3>
                 </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-400 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                  <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold border-b border-[#292524]">
                     <tr>
                       <th className="py-2.5 px-3">Product Name</th>
                       <th className="py-2.5 px-3">SKU</th>
@@ -669,12 +669,12 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3 text-right">Gross Revenue</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
+                  <tbody className="divide-y divide-[#292524] text-stone-200">
                     {(tables.best_selling_today || []).map((p, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
+                      <tr key={idx} className="hover:bg-[#292524]/50">
                         <td className="py-2.5 px-3 font-medium truncate max-w-[170px]">{p.name}</td>
                         <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">{p.sku}</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-navy dark:text-blue-400">{p.units_sold}</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-[#14B8A6]">{p.units_sold}</td>
                         <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                           PHP {Number(p.revenue).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </td>
@@ -712,11 +712,11 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       {false && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left: Product Catalog (7 cols) */}
-          <div className="lg:col-span-7 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
+          <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-navy dark:text-greige" />
+                <h2 className="text-base font-bold text-[#FAFAF9] flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5 text-[#14B8A6]" />
                   Point of Sale (POS) Catalog
                 </h2>
                 <p className="text-xs text-gray-500">Select items to add to the customer order</p>
@@ -730,7 +730,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   placeholder="Search products or SKU..."
                   value={searchProduct}
                   onChange={(e) => setSearchProduct(e.target.value)}
-                  className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-navy"
                 />
               </div>
             </div>
@@ -744,7 +744,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                     selectedCategory === cat
                       ? 'bg-navy text-white shadow-sm'
-                      : 'bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkbg-hover'
+                      : 'bg-[#141210] text-stone-300 hover:bg-[#292524]'
                   }`}
                 >
                   {cat}
@@ -758,23 +758,23 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 <div
                   key={p.id}
                   onClick={() => addToCart(p)}
-                  className="p-3.5 rounded-xl border border-gray-200 dark:border-darkbg-border hover:border-navy dark:hover:border-greige hover:shadow-md transition-all cursor-pointer bg-gray-50/50 dark:bg-darkbg/40 flex flex-col justify-between group"
+                  className="p-3.5 rounded-xl border border-[#292524] hover:border-[#14B8A6] hover:shadow-md transition-all cursor-pointer bg-[#141210]/40 flex flex-col justify-between group"
                 >
                   <div>
                     <div className="flex items-start justify-between">
-                      <span className="font-mono text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">{p.sku}</span>
+                      <span className="font-mono text-[10px] font-bold text-stone-500 uppercase">{p.sku}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/10 text-emerald-600">
                         {p.stock_quantity} in stock
                       </span>
                     </div>
-                    <h4 className="font-semibold text-xs mt-1 text-gray-900 dark:text-white line-clamp-2 group-hover:text-navy dark:group-hover:text-blue-400">
+                    <h4 className="font-semibold text-xs mt-1 text-[#FAFAF9] line-clamp-2 group-hover:text-[#14B8A6]">
                       {p.name}
                     </h4>
                     <p className="text-[10px] text-gray-400 mt-0.5">{p.brand} â€¢ {p.category_name}</p>
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-gray-100 dark:border-darkbg-border flex items-center justify-between">
-                    <span className="text-sm font-bold text-navy dark:text-greige">
+                    <span className="text-sm font-bold text-[#14B8A6]">
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                     <button
@@ -789,10 +789,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Right: Checkout & Cart Panel (5 cols) */}
-          <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm space-y-4">
+          <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-darkbg-border pb-3">
               <div>
-                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Active Customer Cart</h3>
+                <h3 className="font-bold text-sm text-[#FAFAF9]">Active Customer Cart</h3>
                 <p className="text-[11px] text-gray-400">{cart.length} unique items added</p>
               </div>
               {cart.length > 0 && (
@@ -808,13 +808,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Customer Details */}
             <div className="space-y-1 text-xs">
-              <label className="font-semibold text-gray-700 dark:text-gray-300">Customer Name / Account</label>
+              <label className="font-semibold text-stone-300">Customer Name / Account</label>
               <input
                 type="text"
                 placeholder="Walk-in Customer"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210]"
               />
             </div>
 
@@ -829,10 +829,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 cart.map((item) => (
                   <div
                     key={item.product_id}
-                    className="p-2.5 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border flex items-center justify-between text-xs"
+                    className="p-2.5 rounded-lg bg-[#141210] border border-[#292524] flex items-center justify-between text-xs"
                   >
                     <div className="flex-1 pr-2">
-                      <p className="font-semibold text-gray-900 dark:text-white truncate">{item.name}</p>
+                      <p className="font-semibold text-[#FAFAF9] truncate">{item.name}</p>
                       <p className="text-[10px] text-gray-400 font-mono">{item.sku} â€¢ PHP {item.unit_price.toLocaleString()}</p>
                     </div>
 
@@ -875,7 +875,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 <span>VAT (12%):</span>
                 <span className="font-mono">PHP {vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
-              <div className="flex justify-between text-base font-bold text-navy dark:text-white pt-1 border-t border-gray-200 dark:border-darkbg-border">
+              <div className="flex justify-between text-base font-bold text-[#14B8A6] dark:text-white pt-1 border-t border-[#292524]">
                 <span>Total Amount Due:</span>
                 <span className="font-mono text-emerald-600 dark:text-emerald-400">
                   PHP {totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -885,7 +885,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Payment Method Selector */}
             <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-darkbg-border">
-              <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Payment Method</label>
+              <label className="text-xs font-semibold text-stone-300">Payment Method</label>
               <div className="grid grid-cols-3 gap-2">
                 {['Cash', 'Card', 'GCash'].map((method) => (
                   <button
@@ -895,7 +895,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     className={`py-2 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
                       paymentMethod === method
                         ? 'bg-navy text-white border-navy shadow-sm'
-                        : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
+                        : 'bg-[#141210] text-stone-300 border-[#292524] hover:bg-gray-100'
                     }`}
                   >
                     {method === 'Cash' && <Banknote className="w-4 h-4" />}
@@ -909,7 +909,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Cash Tender & Change Calculations */}
             {paymentMethod === 'Cash' && (
-              <div className="space-y-2 text-xs bg-gray-50 dark:bg-darkbg p-3 rounded-lg border border-gray-200 dark:border-darkbg-border">
+              <div className="space-y-2 text-xs bg-[#141210] p-3 rounded-lg border border-[#292524]">
                 <div className="flex items-center justify-between">
                   <label className="font-semibold">Amount Tendered (PHP):</label>
                   <input
@@ -918,11 +918,11 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     placeholder="Enter cash given"
                     value={amountTendered}
                     onChange={(e) => setAmountTendered(e.target.value)}
-                    className="w-36 px-2.5 py-1.5 rounded border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-right font-mono font-bold"
+                    className="w-36 px-2.5 py-1.5 rounded border border-gray-300 dark:border-darkbg-border bg-[#1C1917] text-right font-mono font-bold"
                   />
                 </div>
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200 dark:border-darkbg-border">
-                  <span className="font-semibold text-gray-600 dark:text-gray-400">Change Due:</span>
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-[#292524]">
+                  <span className="font-semibold text-stone-400">Change Due:</span>
                   <span className="font-mono font-bold text-sm text-emerald-600">
                     PHP {changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </span>
@@ -933,7 +933,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             {/* Card / GCash Reference Input */}
             {(paymentMethod === 'Card' || paymentMethod === 'GCash') && (
               <div className="text-xs space-y-1">
-                <label className="font-semibold text-gray-700 dark:text-gray-300">
+                <label className="font-semibold text-stone-300">
                   {paymentMethod} Reference / Approval Code:
                 </label>
                 <input
@@ -941,7 +941,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   placeholder="e.g. GCASH-REF-88912 or Card Auth #991"
                   value={paymentReference}
                   onChange={(e) => setPaymentReference(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210]"
                 />
               </div>
             )}
@@ -970,16 +970,16 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SALES HISTORY & RECEIPTS */}
       {(activeTab === 'sales_history' || activeTab === 'receipts') && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-2xl p-4 sm:p-6 shadow-sm space-y-5">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-4 sm:p-6 shadow-sm space-y-5">
           {/* Header Title & Dynamic Counter */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-gray-200 dark:border-darkbg-border">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[#292524]">
             <div>
               <div className="flex flex-wrap items-center gap-2.5">
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                <h2 className="text-xl sm:text-2xl font-black text-[#FAFAF9] tracking-tight">
                   Sales History & Receipts
                 </h2>
                 {/* Dynamic Transaction Counter Badge */}
-                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-navy/10 text-navy dark:bg-cyan-500/15 dark:text-cyan-300 border border-navy/20 dark:border-cyan-400/30">
+                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#14B8A6]/10 text-[#14B8A6] dark:bg-cyan-500/15 dark:text-cyan-300 border border-navy/20 dark:border-cyan-400/30">
                   Showing {filteredSalesHistory.length} of {salesHistory.length} Transactions
                 </span>
               </div>
@@ -1001,7 +1001,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Filter Toolbar: Search Bar + Date Range Dropdown & Custom Pickers */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50 dark:bg-darkbg p-3.5 rounded-xl border border-slate-200 dark:border-darkbg-border">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50 dark:bg-darkbg p-3.5 rounded-xl border border-[#292524]">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[240px]">
               <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
@@ -1010,7 +1010,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by OR#, customer, or cashier..."
                 value={salesHistorySearch}
                 onChange={(e) => setSalesHistorySearch(e.target.value)}
-                className="w-full text-xs pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-medium"
+                className="w-full text-xs pl-9 pr-8 py-2.5 rounded-xl border border-[#292524] bg-[#1C1917] text-[#FAFAF9] focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-medium"
               />
               {salesHistorySearch && (
                 <button
@@ -1030,7 +1030,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full text-xs pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-bold cursor-pointer"
+                  className="w-full text-xs pl-9 pr-4 py-2.5 rounded-xl border border-[#292524] bg-[#1C1917] text-[#FAFAF9] focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-500/30 font-bold cursor-pointer"
                 >
                   <option value="all">All Transactions</option>
                   <option value="today">Today's Transactions</option>
@@ -1047,7 +1047,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     type="date"
                     value={customStartDate}
                     onChange={(e) => setCustomStartDate(e.target.value)}
-                    className="text-xs px-2.5 py-2 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white"
+                    className="text-xs px-2.5 py-2 rounded-xl border border-[#292524] bg-[#1C1917] text-[#FAFAF9]"
                     title="Start Date"
                   />
                   <span className="text-xs text-slate-400 font-bold">to</span>
@@ -1055,7 +1055,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     type="date"
                     value={customEndDate}
                     onChange={(e) => setCustomEndDate(e.target.value)}
-                    className="text-xs px-2.5 py-2 rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-slate-900 dark:text-white"
+                    className="text-xs px-2.5 py-2 rounded-xl border border-[#292524] bg-[#1C1917] text-[#FAFAF9]"
                     title="End Date"
                   />
                 </div>
@@ -1071,7 +1071,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     setCustomStartDate('');
                     setCustomEndDate('');
                   }}
-                  className="px-3 py-2 text-xs font-bold text-slate-600 dark:text-gray-300 hover:text-red-500 bg-white dark:bg-darkbg-card rounded-xl border border-slate-200 dark:border-darkbg-border transition-colors shrink-0"
+                  className="px-3 py-2 text-xs font-bold text-stone-300 hover:text-red-500 bg-[#1C1917] rounded-xl border border-[#292524] transition-colors shrink-0"
                 >
                   Reset
                 </button>
@@ -1080,9 +1080,9 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Desktop & Tablet Table (Horizontal Scrolling, responsive text & touch) */}
-          <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200 dark:border-darkbg-border">
+          <div className="hidden md:block overflow-x-auto rounded-xl border border-[#292524]">
             <table className="w-full text-center text-xs font-sans">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 uppercase font-black text-sm border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#141210] text-stone-300 uppercase font-black text-sm border-b border-[#292524]">
                 <tr>
                   <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Invoice Number</th>
                   <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Date & Time</th>
@@ -1096,7 +1096,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3.5 px-3 text-center text-sm font-black whitespace-nowrap">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-xs font-sans">
+              <tbody className="divide-y divide-[#292524] text-xs font-sans">
                 {filteredSalesHistory.length === 0 ? (
                   <tr>
                     <td colSpan={10} className="py-12 text-center text-slate-400 font-medium">
@@ -1105,7 +1105,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   </tr>
                 ) : (
                   filteredSalesHistory.map((s) => (
-                    <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50 transition-colors">
+                    <tr key={s.id} className="hover:bg-[#292524]/50 transition-colors">
                       <td className="py-3 px-3 text-center text-xs text-white font-sans font-mono whitespace-nowrap">{s.invoice_number}</td>
                       <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap">{s.created_at || s.transaction_date}</td>
                       <td className="py-3 px-3 text-center text-xs text-white font-sans whitespace-nowrap font-medium">{s.customer_name || 'Walk-in Customer'}</td>
@@ -1145,7 +1145,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               filteredSalesHistory.map((s) => (
                 <div
                   key={s.id}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-darkbg-border bg-slate-50/60 dark:bg-darkbg space-y-2.5"
+                  className="p-4 rounded-xl border border-[#292524] bg-[#141210] space-y-2.5"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-mono font-bold text-xs text-navy dark:text-cyan-400">
@@ -1159,18 +1159,18 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   <div className="text-xs space-y-1">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Customer:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">{s.customer_name || 'Walk-in Customer'}</span>
+                      <span className="font-bold text-[#FAFAF9]">{s.customer_name || 'Walk-in Customer'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date & Time:</span>
-                      <span className="text-slate-700 dark:text-gray-300">{s.created_at || s.transaction_date}</span>
+                      <span className="text-stone-300">{s.created_at || s.transaction_date}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Cashier:</span>
-                      <span className="text-slate-700 dark:text-gray-300">{s.cashier || s.cashier_name || 'Cashier'}</span>
+                      <span className="text-stone-300">{s.cashier || s.cashier_name || 'Cashier'}</span>
                     </div>
-                    <div className="flex justify-between items-baseline pt-1 border-t border-slate-200 dark:border-darkbg-border">
-                      <span className="text-slate-700 dark:text-gray-300 font-bold">Total Amount:</span>
+                    <div className="flex justify-between items-baseline pt-1 border-t border-[#292524]">
+                      <span className="text-stone-300 font-bold">Total Amount:</span>
                       <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400">
                         PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
@@ -1193,9 +1193,9 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: PRODUCT LOOKUP */}
       {activeTab === 'product_lookup' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Customer Product & Price Lookup</h2>
+            <h2 className="text-lg font-bold text-[#FAFAF9]">Customer Product & Price Lookup</h2>
             <p className="text-xs text-gray-500">Quickly check specifications, availability, and retail price during customer consultations</p>
           </div>
 
@@ -1206,7 +1206,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               placeholder="Search by SKU, product name, or brand..."
               value={lookupQuery}
               onChange={(e) => setLookupQuery(e.target.value)}
-              className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white"
+              className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
             />
           </div>
 
@@ -1217,10 +1217,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 <div
                   key={p.id}
                   onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
-                  className="p-4 rounded-xl border border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg/40 space-y-2 cursor-pointer hover:border-navy dark:hover:border-blue-500 hover:shadow-md transition-all duration-150 group"
+                  className="p-4 rounded-xl border border-[#292524] bg-[#141210]/40 space-y-2 cursor-pointer hover:border-[#14B8A6] hover:shadow-md transition-all duration-150 group"
                 >
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold text-navy dark:text-blue-400">{p.sku}</span>
+                    <span className="font-mono text-xs font-bold text-[#14B8A6]">{p.sku}</span>
                     <span className={`text-xs px-2 py-0.5 rounded font-bold ${
                       p.stock_quantity === 0
                         ? 'bg-red-500/10 text-red-600'
@@ -1231,13 +1231,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       {p.stock_quantity === 0 ? 'Out of Stock' : `${p.stock_quantity} available`}
                     </span>
                   </div>
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">{p.name}</h4>
+                  <h4 className="font-semibold text-sm text-[#FAFAF9] group-hover:text-[#14B8A6] transition-colors">{p.name}</h4>
                   <p className="text-xs text-gray-500">{p.brand} â€¢ {p.category_name}</p>
                   <div className="flex items-end justify-between pt-2">
-                    <p className="text-lg font-bold text-navy dark:text-greige font-mono">
+                    <p className="text-lg font-bold text-[#14B8A6] font-mono">
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </p>
-                    <span className="text-xs text-gray-400 group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">View details â†’</span>
+                    <span className="text-xs text-gray-400 group-hover:text-[#14B8A6] transition-colors">View details â†’</span>
                   </div>
                 </div>
               ))}
@@ -1256,10 +1256,10 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SHIFT SUMMARY */}
       {activeTab === 'shift_summary' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-6">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-darkbg-border">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Cashier Shift Summary</h2>
+              <h2 className="text-lg font-bold text-[#FAFAF9]">Cashier Shift Summary</h2>
               <p className="text-xs text-gray-500">Register drawer balance and shift reconciliation</p>
             </div>
             {currentShift ? (
@@ -1276,33 +1276,33 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           {currentShift ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                <div className="p-3 rounded-lg bg-[#141210] border border-[#292524]">
                   <p className="text-gray-500">Starting Cash</p>
-                  <p className="text-base font-bold font-mono text-gray-900 dark:text-white">
+                  <p className="text-base font-bold font-mono text-[#FAFAF9]">
                     PHP {Number(currentShift.starting_cash).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                <div className="p-3 rounded-lg bg-[#141210] border border-[#292524]">
                   <p className="text-gray-500">Cash Collections</p>
                   <p className="text-base font-bold font-mono text-emerald-600">
                     PHP {Number(currentShift.cash_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                <div className="p-3 rounded-lg bg-[#141210] border border-[#292524]">
                   <p className="text-gray-500">Card Receipts</p>
                   <p className="text-base font-bold font-mono text-blue-600">
                     PHP {Number(currentShift.card_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                <div className="p-3 rounded-lg bg-[#141210] border border-[#292524]">
                   <p className="text-gray-500">GCash Receipts</p>
                   <p className="text-base font-bold font-mono text-blue-400">
                     PHP {Number(currentShift.gcash_sales).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
+                <div className="p-3 rounded-lg bg-[#141210] border border-[#292524]">
                   <p className="text-gray-500">Transactions Count</p>
-                  <p className="text-base font-bold text-gray-900 dark:text-white">
+                  <p className="text-base font-bold text-[#FAFAF9]">
                     {currentShift.total_transactions}
                   </p>
                 </div>
@@ -1342,13 +1342,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: MY PROFILE */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-navy text-white text-2xl font-bold flex items-center justify-center shadow-md">
               {user?.full_name?.charAt(0) || 'S'}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.full_name}</h2>
+              <h2 className="text-xl font-bold text-[#FAFAF9]">{user?.full_name}</h2>
               <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                 ROLE: SALES PERSONNEL / CASHIER
               </span>
@@ -1358,11 +1358,11 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div className="space-y-3 text-xs border-t border-gray-100 dark:border-darkbg-border pt-4">
             <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
               <span className="text-gray-500">Cashier ID:</span>
-              <span className="font-bold text-gray-900 dark:text-white">{user?.username}</span>
+              <span className="font-bold text-[#FAFAF9]">{user?.username}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
               <span className="text-gray-500">Official Email:</span>
-              <span className="font-bold text-gray-900 dark:text-white">{user?.email}</span>
+              <span className="font-bold text-[#FAFAF9]">{user?.email}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
               <span className="text-gray-500">Permissions:</span>
@@ -1386,7 +1386,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 {/* MODAL: OPEN SHIFT */}
       <Modal isOpen={isShiftModalOpen} onClose={() => setIsShiftModalOpen(false)} title="Open Cashier Register Shift">
         <div className="space-y-4 text-xs">
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-stone-300">
             Enter the verified cash drawer float amount before opening this sales station.
           </p>
           <div>
@@ -1396,13 +1396,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               min="0"
               value={shiftStartingCash}
               onChange={(e) => setShiftStartingCash(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-mono font-bold text-base"
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] font-mono font-bold text-base"
             />
           </div>
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
             <button
               onClick={() => setIsShiftModalOpen(false)}
-              className="px-4 py-2 rounded-lg text-gray-600 bg-gray-100 dark:bg-darkbg"
+              className="px-4 py-2 rounded-lg text-gray-600 bg-[#141210]"
             >
               Cancel
             </button>

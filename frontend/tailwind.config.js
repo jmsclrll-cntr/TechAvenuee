@@ -24,10 +24,10 @@ export default {
           dark: '#1F2937'
         },
         darkbg: {
-          DEFAULT: '#1F2632',
-          card: '#2B3441',
-          hover: '#353F4F',
-          border: '#3A4556'
+          DEFAULT: '#141210',
+          card: '#1C1917',
+          hover: '#292524',
+          border: '#292524'
         },
         brand: {
           green: '#10B981',

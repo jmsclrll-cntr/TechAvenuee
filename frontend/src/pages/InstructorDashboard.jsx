@@ -299,29 +299,32 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
     <div className="p-6 space-y-6">
       {/* VIEW: MAIN DASHBOARD */}
       {activeTab === 'dashboard' && (
-        <div className="space-y-6">
-          {/* Top 8 Cards (Evaluation Metrics Displayed Only from Actual Calculation!) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
+        <div className="space-y-4 sm:space-y-5">
+          {/* Top 8 Cards (Compact size & warm neutral stone) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-3.5">
             <StatCard
               title="Daily Sales"
               value={`PHP ${(cards.total_daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
               subtitle="POS gross today"
               icon={CircleDollarSign}
-              badgeColor="green"
+              badgeColor="orange"
+              compact={true}
             />
             <StatCard
               title="Monthly Revenue"
               value={`PHP ${(cards.monthly_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
               subtitle="Store revenue"
               icon={TrendingUp}
-              badgeColor="green"
+              badgeColor="orange"
+              compact={true}
             />
             <StatCard
               title="Catalog Products"
               value={cards.total_products || 0}
               subtitle="Active inventory"
               icon={Package}
-              badgeColor="blue"
+              badgeColor="orange"
+              compact={true}
             />
             <StatCard
               title="Inventory Alerts"
@@ -329,79 +332,87 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               subtitle="Low/out of stock"
               icon={AlertTriangle}
               badgeColor="amber"
+              compact={true}
             />
             <StatCard
               title="Dataset Records"
               value={cards.dataset_record_count ? `${cards.dataset_record_count.toLocaleString()} rows` : '5,000 rows'}
               subtitle="Validated across 4 CSVs"
               icon={Database}
-              badgeColor="blue"
+              badgeColor="orange"
+              compact={true}
             />
             <StatCard
               title="Models Available"
               value={cards.models_available || 4}
               subtitle="Trained .joblib pipelines"
               icon={Cpu}
-              badgeColor="green"
+              badgeColor="orange"
+              compact={true}
             />
             <StatCard
               title="Latest Model R²"
               value={cards.latest_model_r2 ? Number(cards.latest_model_r2).toFixed(4) : '0.9412'}
               subtitle="Actual coefficient (test)"
               icon={Award}
-              badgeColor="green"
+              badgeColor="orange"
               trend="R² Verified"
+              compact={true}
             />
             <StatCard
               title="Evaluation Date"
               value={cards.latest_evaluation_date || '2026-10-29'}
               subtitle="Last scikit-learn run"
               icon={History}
-              badgeColor="blue"
+              badgeColor="orange"
+              compact={true}
             />
           </div>
 
-          {/* Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+          {/* Charts Row (Compact Height & Warm Orange Palette) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+            <div className="lg:col-span-8 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm">
               <ResponsiveLineChart
                 title="Sales Performance (Historical vs Forecasted Daily Revenue)"
                 data={charts.sales_performance || []}
                 xKey="period"
                 yKey="actual"
                 yKey2="forecast"
-                strokeColor="#1E3A5F"
-                strokeColor2="#10B981"
+                strokeColor="#F97316"
+                strokeColor2="#78716C"
+                height={200}
               />
             </div>
-            <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+            <div className="lg:col-span-4 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm">
               <ResponsiveBarChart
                 title="Machine Learning Training Datasets (Verified Records)"
                 data={charts.dataset_distribution || []}
                 xKey="dataset"
                 yKey="records"
-                barColor="#1E3A5F"
+                barColor="#F97316"
+                height={200}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-6 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+            <div className="lg:col-span-6 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm">
               <ResponsiveBarChart
                 title="Product Category Demand Trends (Units Demanded)"
                 data={(charts.demand_trends || []).map(d => ({ name: d.category, val: d.projected }))}
                 xKey="name"
                 yKey="val"
-                barColor="#8B5CF6"
+                barColor="#FB923C"
+                height={185}
               />
             </div>
-            <div className="lg:col-span-6 bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <div className="lg:col-span-6 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm">
+              <h4 className="text-xs font-bold text-[#FAFAF9] mb-2">
                 Comparative Performance: Linear Regression vs Random Forest
               </h4>
               <ModelComparisonBarChart
                 data={charts.model_comparison || []}
-                height={220}
+                height={185}
               />
             </div>
           </div>
@@ -410,14 +421,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: INVENTORY OVERVIEW */}
       {activeTab === 'inventory_overview' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-gray-100 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#292524] border-[#292524]">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Package className="w-5 h-5 text-navy dark:text-greige" />
+              <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
+                <Package className="w-5 h-5 text-[#F97316] dark:text-greige" />
                 Store Inventory Overview
               </h2>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-stone-400">
                 Operational inspection of showroom and warehouse stock levels, acquisition costs, and retail prices.
               </p>
             </div>
@@ -429,14 +440,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search products or SKU..."
                 value={overviewSearch}
                 onChange={(e) => setOverviewSearch(e.target.value)}
-                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white"
+                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917] bg-[#141210] text-[#FAFAF9] dark:text-white"
               />
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#1C1917] bg-[#141210] text-stone-300 uppercase font-extrabold border-b border-[#292524]">
                 <tr>
                   <th className="py-2.5 px-3">Product Description</th>
                   <th className="py-2.5 px-2">SKU</th>
@@ -448,7 +459,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {overviewProducts
                   .filter(p => !overviewSearch || p.name.toLowerCase().includes(overviewSearch.toLowerCase()) || p.sku.toLowerCase().includes(overviewSearch.toLowerCase()))
                   .map(p => (
@@ -458,21 +469,21 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         setViewProduct(p);
                         setIsViewModalOpen(true);
                       }}
-                      className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                      className="hover:bg-blue-50/40 hover:bg-[#292524]/80 transition-colors cursor-pointer group"
                       title="Click to view full product & supplier specifications"
                     >
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded bg-white dark:bg-darkbg border p-0.5 shrink-0 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded bg-[#1C1917] bg-[#141210] border p-0.5 shrink-0 flex items-center justify-center">
                             <img src={p.image_url || '/products/desktop.svg'} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/desktop.svg'; }} />
                           </div>
-                          <span className="font-bold text-gray-900 dark:text-white truncate max-w-[200px] group-hover:text-navy dark:group-hover:text-blue-400 transition-colors">{p.name}</span>
+                          <span className="font-bold text-[#FAFAF9] dark:text-white truncate max-w-[200px] group-hover:text-[#F97316] dark:group-hover:text-[#FB923C] transition-colors">{p.name}</span>
                         </div>
                       </td>
-                      <td className="py-2.5 px-2 font-mono text-gray-500 group-hover:underline">{p.sku}</td>
-                      <td className="py-2.5 px-2 text-gray-600 dark:text-gray-300">{p.category_name || p.category}</td>
+                      <td className="py-2.5 px-2 font-mono text-stone-400 group-hover:underline">{p.sku}</td>
+                      <td className="py-2.5 px-2 text-stone-400 dark:text-gray-300">{p.category_name || p.category}</td>
                       <td className="py-2.5 px-2 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-2 text-right font-mono font-bold text-navy dark:text-greige">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="py-2.5 px-2 text-right font-mono font-bold text-[#F97316] dark:text-greige">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-2 text-center font-bold">{p.stock_quantity}</td>
                       <td className="py-2.5 px-2 text-center text-gray-400">{p.reorder_level}</td>
                       <td className="py-2.5 px-3 text-center">
@@ -496,14 +507,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SALES OVERVIEW */}
       {activeTab === 'sales_overview' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-gray-100 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#292524] border-[#292524]">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-navy dark:text-greige" />
+              <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-[#F97316] dark:text-greige" />
                 Sales Transactions Overview
               </h2>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-stone-400">
                 Operational audit of register transactions and invoices stored in MySQL.
               </p>
             </div>
@@ -515,14 +526,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search invoice or customer..."
                 value={overviewSearch}
                 onChange={(e) => setOverviewSearch(e.target.value)}
-                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white"
+                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917] bg-[#141210] text-[#FAFAF9] dark:text-white"
               />
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#1C1917] bg-[#141210] text-stone-300 uppercase font-extrabold border-b border-[#292524]">
                 <tr>
                   <th className="py-2.5 px-3">Invoice Number</th>
                   <th className="py-2.5 px-3">Date & Time</th>
@@ -532,20 +543,20 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {overviewSales
                   .filter(s => !overviewSearch || (s.invoice_number && s.invoice_number.toLowerCase().includes(overviewSearch.toLowerCase())) || (s.customer_name && s.customer_name.toLowerCase().includes(overviewSearch.toLowerCase())))
                   .map(s => (
-                    <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg">
-                      <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-greige">{s.invoice_number}</td>
-                      <td className="py-2.5 px-3 text-gray-500">{new Date(s.created_at || s.transaction_date).toLocaleString()}</td>
-                      <td className="py-2.5 px-3 font-semibold text-gray-800 dark:text-gray-200">{s.customer_name || 'Walk-in'}</td>
+                    <tr key={s.id} className="hover:bg-[#1C1917]/50 dark:hover:bg-darkbg">
+                      <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-greige">{s.invoice_number}</td>
+                      <td className="py-2.5 px-3 text-stone-400">{new Date(s.created_at || s.transaction_date).toLocaleString()}</td>
+                      <td className="py-2.5 px-3 font-semibold text-[#FAFAF9] dark:text-gray-200">{s.customer_name || 'Walk-in'}</td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-navy/10 text-navy dark:text-greige">
+                        <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-navy/10 text-[#F97316] dark:text-greige">
                           {s.payment_method || 'Cash'}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-right font-black text-gray-900 dark:text-white">
+                      <td className="py-2.5 px-3 text-right font-black text-[#FAFAF9] dark:text-white">
                         PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </td>
                       <td className="py-2.5 px-3 text-center">
@@ -562,26 +573,26 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       )}
       {activeTab === 'datasets' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-6">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-6">
             {/* Header: Title, Subtitle, Dataset Selector & Download */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-darkbg-border">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#292524] border-[#292524]">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
-                  <Database className="w-6 h-6 text-navy dark:text-cyan-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2.5">
+                  <Database className="w-6 h-6 text-[#F97316] dark:text-[#FB923C]" />
                   Dataset Explorer & Inspection Suite
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 max-w-2xl leading-relaxed">
+                <p className="text-sm text-stone-400 dark:text-gray-300 mt-1 max-w-2xl leading-relaxed">
                   Inspect validated historical datasets. Each required dataset strictly maintains verified real records for training and predictive analytics.
                 </p>
               </div>
 
               {/* Dataset Selector & Download */}
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Dataset:</span>
+                <span className="text-sm font-semibold text-stone-200 dark:text-gray-300">Dataset:</span>
                 <select
                   value={selectedDataset}
                   onChange={(e) => setSelectedDataset(e.target.value)}
-                  className="text-sm px-3.5 py-2 rounded-xl border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
+                  className="text-sm px-3.5 py-2 rounded-xl border border-[#292524] border-[#292524] bg-[#1C1917] bg-[#141210] text-[#FAFAF9] dark:text-white font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
                 >
                   {datasets.map((d) => (
                     <option key={d.filename} value={d.filename}>
@@ -604,53 +615,53 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             {/* Dataset Metadata Summary Cards */}
             {currentDatasetMeta && (
               <div className="space-y-3">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-stone-200 dark:text-gray-300">
                   Dataset Summary & Health Metrics
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5">
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Total Records</p>
-                    <p className="text-2xl font-black font-mono text-navy dark:text-white mt-1">
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Total Records</p>
+                    <p className="text-2xl font-black font-mono text-[#F97316] dark:text-white mt-1">
                       {currentDatasetMeta.total_records.toLocaleString()}
                     </p>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">
                       ✓ &gt;= 1,000 Verified
                     </span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Features</p>
-                    <p className="text-2xl font-black font-mono text-navy dark:text-white mt-1">
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Features</p>
+                    <p className="text-2xl font-black font-mono text-[#F97316] dark:text-white mt-1">
                       {currentDatasetMeta.features_count}
                     </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Columns</span>
+                    <span className="text-xs text-stone-400 dark:text-gray-400 mt-1 inline-block">Columns</span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Target Variable</p>
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Target Variable</p>
                     <p className="text-base font-bold font-mono text-purple-600 dark:text-purple-400 mt-1 truncate" title={currentDatasetMeta.target_variable}>
                       {currentDatasetMeta.target_variable}
                     </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Supervised</span>
+                    <span className="text-xs text-stone-400 dark:text-gray-400 mt-1 inline-block">Supervised</span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Missing Values</p>
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Missing Values</p>
                     <p className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-1">
                       {currentDatasetMeta.missing_values}
                     </p>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">Clean / Complete</span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Completeness</p>
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Completeness</p>
                     <p className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-1">
                       {currentDatasetMeta.completeness_pct}%
                     </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Data Quality</span>
+                    <span className="text-xs text-stone-400 dark:text-gray-400 mt-1 inline-block">Data Quality</span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border col-span-2">
-                    <p className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Observation Range</p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-1 truncate">
+                  <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524] col-span-2">
+                    <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Observation Range</p>
+                    <p className="text-sm font-semibold text-[#FAFAF9] dark:text-gray-100 mt-1 truncate">
                       {currentDatasetMeta.date_range || 'Cross-sectional historical dataset'}
                     </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block">Validated Range</span>
+                    <span className="text-xs text-stone-400 dark:text-gray-400 mt-1 inline-block">Validated Range</span>
                   </div>
                 </div>
               </div>
@@ -658,18 +669,18 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Feature Names & Data Types Attributes Table */}
             {currentDatasetMeta && (
-              <div className="space-y-3 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+              <div className="space-y-3 pt-3 border-t border-[#292524] border-[#292524]">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-stone-200 dark:text-gray-300">
                     Feature Schema & Attribute Types
                   </h4>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <span className="text-xs font-medium text-stone-400 dark:text-gray-400">
                     {currentDatasetMeta.columns?.length || 0} Total Columns
                   </span>
                 </div>
-                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg shadow-sm">
+                <div className="overflow-x-auto rounded-xl border border-[#292524] bg-[#1C1917] bg-[#141210] shadow-sm">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-100 dark:bg-darkbg-card text-slate-700 dark:text-gray-300 uppercase font-extrabold border-b border-gray-200 dark:border-darkbg-border">
+                    <thead className="bg-[#1C1917] bg-[#1C1917] text-stone-300 dark:text-gray-300 uppercase font-extrabold border-b border-[#292524]">
                       <tr>
                         <th className="py-2.5 px-4">Column Name</th>
                         <th className="py-2.5 px-4">Role</th>
@@ -679,12 +690,12 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         <th className="py-2.5 px-4 text-right">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+                    <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                       {currentDatasetMeta.columns?.map((col) => {
                         const isTarget = col.name === currentDatasetMeta.target_variable;
                         return (
-                          <tr key={col.name} className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
-                            <td className="py-2.5 px-4 font-mono font-bold text-navy dark:text-cyan-400">
+                          <tr key={col.name} className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                            <td className="py-2.5 px-4 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">
                               {col.name}
                             </td>
                             <td className="py-2.5 px-4">
@@ -693,17 +704,17 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                                   Target Variable
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-darkbg-card dark:text-gray-300 border border-gray-200 dark:border-darkbg-border">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#1C1917] text-stone-300 bg-[#1C1917] dark:text-gray-300 border border-[#292524]">
                                   Feature
                                 </span>
                               )}
                             </td>
-                            <td className="py-2.5 px-4 font-mono font-medium text-gray-700 dark:text-gray-300">
-                              <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 dark:bg-darkbg-card text-gray-700 dark:text-gray-300 font-mono">
+                            <td className="py-2.5 px-4 font-mono font-medium text-stone-200 dark:text-gray-300">
+                              <span className="px-2 py-0.5 rounded text-[11px] bg-[#292524] bg-[#1C1917] text-stone-200 dark:text-gray-300 font-mono">
                                 {col.type}
                               </span>
                             </td>
-                            <td className="py-2.5 px-4 text-center font-mono font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-2.5 px-4 text-center font-mono font-semibold text-[#FAFAF9] dark:text-gray-200">
                               {col.unique_count?.toLocaleString() ?? '—'}
                             </td>
                             <td className="py-2.5 px-4 text-center font-mono text-emerald-600 dark:text-emerald-400 font-bold">
@@ -724,13 +735,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             )}
 
             {/* Searchable, Paginated Dataset Preview */}
-            <div className="space-y-4 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+            <div className="space-y-4 pt-3 border-t border-[#292524] border-[#292524]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                  <h4 className="text-base font-bold text-[#FAFAF9] dark:text-white">
                     Paginated Dataset Records (15 rows/page)
                   </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  <p className="text-xs text-stone-400 dark:text-gray-400 mt-0.5">
                     Inspect individual table records and feature observations.
                   </p>
                 </div>
@@ -745,31 +756,31 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       setPreviewSearch(e.target.value);
                       loadDatasetPreview(selectedDataset, 1, e.target.value);
                     }}
-                    className="w-full text-sm pl-10 pr-3.5 py-2 rounded-xl border border-gray-300 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
+                    className="w-full text-sm pl-10 pr-3.5 py-2 rounded-xl border border-[#292524] border-[#292524] bg-[#1C1917] bg-[#141210] text-[#FAFAF9] dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-cyan-400"
                   />
                 </div>
               </div>
 
               {loadingPreview ? (
-                <div className="py-16 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className="py-16 text-center text-sm font-medium text-stone-400 dark:text-gray-400">
                   Loading dataset rows from CSV...
                 </div>
               ) : previewData && previewData.rows ? (
                 <>
-                  <div className="overflow-x-auto max-h-[520px] border border-gray-200 dark:border-darkbg-border rounded-xl shadow-xs">
+                  <div className="overflow-x-auto max-h-[520px] border border-[#292524] rounded-xl shadow-xs">
                     <table className="w-full text-left text-sm font-mono">
-                      <thead className="bg-gray-100 dark:bg-darkbg text-gray-700 dark:text-gray-200 uppercase sticky top-0 font-bold border-b border-gray-200 dark:border-darkbg-border text-xs sm:text-sm tracking-wider">
+                      <thead className="bg-[#292524] bg-[#141210] text-stone-200 dark:text-gray-200 uppercase sticky top-0 font-bold border-b border-[#292524] text-xs sm:text-sm tracking-wider">
                         <tr>
                           {previewData.columns.map((c) => (
-                            <th key={c} className="py-3 px-4 whitespace-nowrap bg-gray-100 dark:bg-darkbg">
+                            <th key={c} className="py-3 px-4 whitespace-nowrap bg-[#292524] bg-[#141210]">
                               {c}
                             </th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-800 dark:text-gray-100">
+                      <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-[#FAFAF9] dark:text-gray-100">
                         {previewData.rows.map((row, idx) => (
-                          <tr key={idx} className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/60 transition-colors">
+                          <tr key={idx} className="hover:bg-blue-50/40 hover:bg-[#292524]/60 transition-colors">
                             {previewData.columns.map((c) => (
                               <td key={c} className="py-3 px-4 whitespace-nowrap text-xs sm:text-sm font-mono font-medium">
                                 {String(row[c])}
@@ -782,15 +793,15 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   </div>
 
                   {/* Pagination Controls */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600 dark:text-gray-300 pt-3 gap-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-between text-sm text-stone-400 dark:text-gray-300 pt-3 gap-3">
                     <span className="font-medium">
-                      Page <strong className="text-gray-900 dark:text-white">{previewData.page}</strong> of <strong className="text-gray-900 dark:text-white">{previewData.total_pages}</strong> ({previewData.total_rows.toLocaleString()} total matched rows)
+                      Page <strong className="text-[#FAFAF9] dark:text-white">{previewData.page}</strong> of <strong className="text-[#FAFAF9] dark:text-white">{previewData.total_pages}</strong> ({previewData.total_rows.toLocaleString()} total matched rows)
                     </span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => loadDatasetPreview(selectedDataset, previewPage - 1, previewSearch)}
                         disabled={previewPage <= 1}
-                        className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-darkbg-border disabled:opacity-35 hover:bg-gray-100 dark:hover:bg-darkbg-hover flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-lg border border-[#292524] border-[#292524] disabled:opacity-35 hover:bg-[#292524] hover:bg-[#292524] flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         <span>Previous</span>
@@ -798,7 +809,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       <button
                         onClick={() => loadDatasetPreview(selectedDataset, previewPage + 1, previewSearch)}
                         disabled={previewPage >= previewData.total_pages}
-                        className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-darkbg-border disabled:opacity-35 hover:bg-gray-100 dark:hover:bg-darkbg-hover flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-lg border border-[#292524] border-[#292524] disabled:opacity-35 hover:bg-[#292524] hover:bg-[#292524] flex items-center gap-1 font-semibold text-xs transition-colors cursor-pointer"
                       >
                         <span>Next</span>
                         <ChevronRight className="w-4 h-4" />
@@ -815,14 +826,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: MODEL TRAINING & EVALUATION */}
       {(activeTab === 'train' || activeTab === 'evaluate') && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-navy dark:text-greige" />
+                <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-[#F97316] dark:text-greige" />
                   Machine Learning Model Training & Evaluation Console
                 </h2>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-stone-400">
                   Execute real scikit-learn training pipelines with automated preprocessing, train/test split, and metric calculation.
                 </p>
               </div>
@@ -849,14 +860,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-gray-50/60 dark:bg-darkbg/40 border border-gray-200 dark:border-darkbg-border space-y-3">
+            <div className="p-4 rounded-xl bg-[#1C1917]/60 bg-[#141210]/40 border border-[#292524] space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <div>
                   <label className="block font-semibold mb-1">Target Task / Dataset</label>
                   <select
                     value={trainTask}
                     onChange={(e) => setTrainTask(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
+                    className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917] font-semibold"
                   >
                     <option value="sales">Daily Sales Revenue (tech_avenue_sales_dataset.csv)</option>
                     <option value="demand">Product Demand Units (tech_avenue_product_demand_dataset.csv)</option>
@@ -870,7 +881,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <select
                     value={trainAlgorithm}
                     onChange={(e) => setTrainAlgorithm(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold"
+                    className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917] font-semibold"
                   >
                     <option value="random_forest">Random Forest Regressor (Non-linear Ensemble)</option>
                     <option value="linear_regression">Simple Linear Regression (OLS)</option>
@@ -903,7 +914,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       max="300"
                       value={numTrees}
                       onChange={(e) => setNumTrees(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                      className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917]"
                     />
                   </div>
                 ) : (
@@ -913,7 +924,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       type="text"
                       disabled
                       value="True (Standard OLS)"
-                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-100 dark:bg-darkbg text-gray-500"
+                      className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#292524] bg-[#141210] text-stone-400"
                     />
                   </div>
                 )}
@@ -944,7 +955,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 <div className="flex items-center gap-2 justify-end">
                   <button
                     onClick={() => setIsCvModalOpen(true)}
-                    className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-800 dark:text-gray-200 text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer transition-colors"
+                    className="px-4 py-2.5 rounded-lg border border-[#292524] border-[#292524] bg-[#1C1917] bg-[#141210] hover:bg-[#292524] hover:bg-[#292524] text-[#FAFAF9] dark:text-gray-200 text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     <span>10-Fold Cross-Validation</span>
@@ -973,128 +984,129 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Training Results & Real Evaluation Metrics */}
             {trainingResult && (
-              <div className="space-y-6 pt-4 border-t border-gray-100 dark:border-darkbg-border">
+              <div className="space-y-6 pt-4 border-t border-[#292524] border-[#292524]">
                 {/* Meta Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
                   <div>
                     <span className="font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider text-[10px]">
                       Training Successfully Completed & Pipeline Saved
                     </span>
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mt-0.5">
+                    <h3 className="text-base font-bold text-[#FAFAF9] dark:text-white mt-0.5">
                       {trainingResult.model_name} on {trainingResult.dataset_name}
                     </h3>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
+                    <p className="text-[11px] text-stone-400 mt-0.5">
                       Train samples: {trainingResult.train_records} | Test evaluation set: {trainingResult.test_records} | Duration: {trainingResult.training_time_ms}ms
                     </p>
                   </div>
-                  <div className="text-right font-mono text-[11px] text-gray-500">
+                  <div className="text-right font-mono text-[11px] text-stone-400">
                     <p>File: {trainingResult.model_file}</p>
                     <p>Evaluated: {trainingResult.evaluated_at}</p>
                   </div>
                 </div>
 
-                {/* The 4 Official Evaluation Metrics with Toggleable Descriptions */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* The 4 Official Evaluation Metrics with Toggleable Descriptions - Compact & Warm Stone */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   {/* R² */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-emerald-200/60 dark:border-emerald-900/40 shadow-sm space-y-1">
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
                     <div className="flex justify-between items-start">
-                      <span className="text-xs font-bold text-gray-500 uppercase">R² — Determination</span>
+                      <span className="text-[10px] font-bold text-stone-400 uppercase">R² — Determination</span>
                       <button 
                         onClick={() => toggleMetric('r2')} 
-                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-emerald-500 cursor-pointer"
+                        className="p-0.5 rounded hover:bg-[#292524] text-[#F97316] cursor-pointer"
                         title="Toggle description"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-emerald-500 dark:text-emerald-400">
+                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#F97316]">
                       {trainingResult.evaluation_metrics.r2_score}
                     </p>
                     {expandedMetric['r2'] && (
-                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
-                        Measures how much variation in the target is explained by the model. Closer to 1.0 indicates superior fit.
+                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
+                        Measures variation explained by the model. Closer to 1.0 indicates superior fit.
                       </p>
                     )}
                   </div>
 
                   {/* MAE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-cyan-200/60 dark:border-cyan-900/40 shadow-sm space-y-1">
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
                     <div className="flex justify-between items-start">
-                      <span className="text-xs font-bold text-gray-500 uppercase">MAE — Mean Absolute Error</span>
+                      <span className="text-[10px] font-bold text-stone-400 uppercase">MAE — Absolute Error</span>
                       <button 
                         onClick={() => toggleMetric('mae')} 
-                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-cyan-500 cursor-pointer"
+                        className="p-0.5 rounded hover:bg-[#292524] text-[#FB923C] cursor-pointer"
                         title="Toggle description"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-cyan-600 dark:text-cyan-400">
+                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
                       {trainingResult.evaluation_metrics.mae} {trainingResult.units}
                     </p>
                     {expandedMetric['mae'] && (
-                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
-                        Measures the average absolute prediction error in real target units. Lower values represent better precision.
+                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
+                        Average absolute prediction error in real target units. Lower is better.
                       </p>
                     )}
                   </div>
 
                   {/* MSE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-amber-200/60 dark:border-amber-900/40 shadow-sm space-y-1">
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
                     <div className="flex justify-between items-start">
-                      <span className="text-xs font-bold text-gray-500 uppercase">MSE — Mean Squared Error</span>
+                      <span className="text-[10px] font-bold text-stone-400 uppercase">MSE — Squared Error</span>
                       <button 
                         onClick={() => toggleMetric('mse')} 
-                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-amber-500 cursor-pointer"
+                        className="p-0.5 rounded hover:bg-[#292524] text-[#FDBA74] cursor-pointer"
                         title="Toggle description"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-amber-500 dark:text-amber-400">
+                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FDBA74]">
                       {trainingResult.evaluation_metrics.mse}
                     </p>
                     {expandedMetric['mse'] && (
-                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
-                        Measures the average squared difference between predictions and actual values. Lower is better.
+                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
+                        Average squared difference between predictions and actual values. Lower is better.
                       </p>
                     )}
                   </div>
 
                   {/* RMSE */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-darkbg-card border border-purple-200/60 dark:border-purple-900/40 shadow-sm space-y-1">
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
                     <div className="flex justify-between items-start">
-                      <span className="text-xs font-bold text-gray-500 uppercase">RMSE — Root Mean Squared</span>
+                      <span className="text-[10px] font-bold text-stone-400 uppercase">RMSE — Root Mean Sq.</span>
                       <button 
                         onClick={() => toggleMetric('rmse')} 
-                        className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-darkbg text-purple-500 cursor-pointer"
+                        className="p-0.5 rounded hover:bg-[#292524] text-[#FB923C] cursor-pointer"
                         title="Toggle description"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-2xl font-bold font-mono text-purple-500 dark:text-purple-400">
+                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
                       {trainingResult.evaluation_metrics.rmse} {trainingResult.units}
                     </p>
                     {expandedMetric['rmse'] && (
-                      <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight pt-1 border-t border-gray-100 dark:border-darkbg-border">
-                        Square root of MSE in original units. Penalizes large outlier deviations heavily. Lower is better.
+                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
+                        Square root of MSE in original units. Penalizes large outlier deviations. Lower is better.
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* Actual vs Predicted Sample Evaluation Points Chart */}
+                {/* Actual vs Predicted Sample Evaluation Points Chart (Warm Orange Theme & Compact Height) */}
                 {trainingResult.sample_points && (
-                  <div className="p-5 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border shadow-sm">
+                  <div className="p-4 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm">
                     <ResponsiveLineChart
                       title={`Actual vs Predicted Evaluation Plot (${trainingResult.sample_points.length} Test Samples)`}
                       data={trainingResult.sample_points}
                       xKey="index"
                       yKey="actual"
                       yKey2="predicted"
-                      strokeColor="#10B981"
-                      strokeColor2="#F59E0B"
+                      strokeColor="#F97316"
+                      strokeColor2="#78716C"
+                      height={200}
                     />
                   </div>
                 )}
@@ -1109,13 +1121,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               maxWidth="max-w-5xl"
             >
               <div className="space-y-5 p-1">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-darkbg-border">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#292524] border-[#292524]">
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-amber-500" />
                       Cross-Validation Performance Breakdown
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-stone-400 dark:text-gray-400">
                       Evaluates generalization across 10 rotating folds to eliminate hold-out bias and verify model stability.
                     </p>
                   </div>
@@ -1124,7 +1136,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                     <select
                       value={cvTask}
                       onChange={(e) => setCvTask(e.target.value)}
-                      className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold text-gray-900 dark:text-white"
+                      className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#1C1917] font-semibold text-[#FAFAF9] dark:text-white"
                     >
                       <option value="sales">Sales Dataset (PHP)</option>
                       <option value="demand">Demand Dataset (units)</option>
@@ -1135,7 +1147,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                     <select
                       value={cvAlgorithm}
                       onChange={(e) => setCvAlgorithm(e.target.value)}
-                      className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card font-semibold text-gray-900 dark:text-white"
+                      className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#1C1917] font-semibold text-[#FAFAF9] dark:text-white"
                     >
                       <option value="random_forest">Random Forest</option>
                       <option value="linear_regression">Linear Regression</option>
@@ -1171,61 +1183,61 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <div className="space-y-4">
                     {/* Summary Metric Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="p-3 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                        <span className="text-[10px] font-bold text-stone-400 dark:text-gray-400 uppercase tracking-wider">
                           Mean R² Score (± Std Dev)
                         </span>
                         <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-                          {cvResult.summary.mean_r2} <span className="text-xs text-gray-500">± {cvResult.summary.std_r2}</span>
+                          {cvResult.summary.mean_r2} <span className="text-xs text-stone-400">± {cvResult.summary.std_r2}</span>
                         </p>
-                        <p className="text-[10px] text-gray-500 mt-0.5">Stability: {cvResult.summary.stability}</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">Stability: {cvResult.summary.stability}</p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="p-3 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                        <span className="text-[10px] font-bold text-stone-400 dark:text-gray-400 uppercase tracking-wider">
                           Mean MAE (± Std Dev)
                         </span>
-                        <p className="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-0.5">
-                          {cvResult.summary.mean_mae.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                        <p className="text-xl font-bold font-mono text-cyan-600 dark:text-[#FB923C] mt-0.5">
+                          {cvResult.summary.mean_mae.toLocaleString()} <span className="text-xs text-stone-400">{cvResult.unit}</span>
                         </p>
-                        <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_mae} {cvResult.unit}</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">± {cvResult.summary.std_mae} {cvResult.unit}</p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="p-3 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                        <span className="text-[10px] font-bold text-stone-400 dark:text-gray-400 uppercase tracking-wider">
                           Mean RMSE (± Std Dev)
                         </span>
                         <p className="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-0.5">
-                          {cvResult.summary.mean_rmse.toLocaleString()} <span className="text-xs text-gray-500">{cvResult.unit}</span>
+                          {cvResult.summary.mean_rmse.toLocaleString()} <span className="text-xs text-stone-400">{cvResult.unit}</span>
                         </p>
-                        <p className="text-[10px] text-gray-500 mt-0.5">± {cvResult.summary.std_rmse} {cvResult.unit}</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">± {cvResult.summary.std_rmse} {cvResult.unit}</p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-darkbg border border-gray-200 dark:border-darkbg-border">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="p-3 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
+                        <span className="text-[10px] font-bold text-stone-400 dark:text-gray-400 uppercase tracking-wider">
                           Dataset Partitioning
                         </span>
-                        <p className="text-xl font-bold font-mono text-gray-900 dark:text-white mt-0.5">
+                        <p className="text-xl font-bold font-mono text-[#FAFAF9] dark:text-white mt-0.5">
                           10 Folds × 10%
                         </p>
-                        <p className="text-[10px] text-gray-500 mt-0.5">{cvResult.total_samples} instances evaluated</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">{cvResult.total_samples} instances evaluated</p>
                       </div>
                     </div>
 
                     {/* Clean Tabular Fold-by-Fold Matrix (white font & centered data) */}
-                    <div className="border border-gray-200 dark:border-darkbg-border rounded-xl overflow-hidden shadow-sm">
-                      <div className="px-4 py-2 bg-gray-50 dark:bg-darkbg/90 border-b border-gray-200 dark:border-darkbg-border flex justify-between items-center text-xs">
-                        <span className="font-bold text-gray-700 dark:text-gray-200">
+                    <div className="border border-[#292524] rounded-xl overflow-hidden shadow-sm">
+                      <div className="px-4 py-2 bg-[#1C1917] bg-[#141210]/90 border-b border-[#292524] flex justify-between items-center text-xs">
+                        <span className="font-bold text-stone-200 dark:text-gray-200">
                           {cvResult.algo_label} ({cvResult.dataset_name})
                         </span>
-                        <span className="text-[11px] text-gray-500 font-mono">
+                        <span className="text-[11px] text-stone-400 font-mono">
                           Target: {cvResult.target_label}
                         </span>
                       </div>
 
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs">
-                          <thead className="bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 uppercase font-semibold text-[11px] border-b border-gray-200 dark:border-darkbg-border">
+                          <thead className="bg-[#292524] bg-[#141210] text-stone-400 dark:text-gray-300 uppercase font-semibold text-[11px] border-b border-[#292524]">
                             <tr>
                               <th className="py-2.5 px-3 text-left">Fold Index</th>
                               <th className="py-2.5 px-3 text-center">Train Samples (90%)</th>
@@ -1237,22 +1249,22 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                               <th className="py-2.5 px-3 text-center">Status</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-gray-900 dark:text-white font-mono">
+                          <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-[#FAFAF9] dark:text-white font-mono">
                             {cvResult.folds.map((f) => (
-                              <tr key={f.fold} className="hover:bg-gray-50 dark:hover:bg-darkbg-hover/40 transition-colors">
-                                <td className="py-2 px-3 text-left font-bold text-gray-900 dark:text-white font-sans">Fold #{f.fold}</td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">{f.train_samples}</td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">{f.test_samples}</td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white font-bold">
+                              <tr key={f.fold} className="hover:bg-[#1C1917] hover:bg-[#292524]/40 transition-colors">
+                                <td className="py-2 px-3 text-left font-bold text-[#FAFAF9] dark:text-white font-sans">Fold #{f.fold}</td>
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white">{f.train_samples}</td>
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white">{f.test_samples}</td>
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white font-bold">
                                   {f.r2_score}
                                 </td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white">
                                   {f.mae.toLocaleString()}
                                 </td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white">
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white">
                                   {f.mse.toLocaleString()}
                                 </td>
-                                <td className="py-2 px-3 text-center text-gray-900 dark:text-white font-bold">
+                                <td className="py-2 px-3 text-center text-[#FAFAF9] dark:text-white font-bold">
                                   {f.rmse.toLocaleString()}
                                 </td>
                                 <td className="py-2 px-3 text-center font-sans">
@@ -1263,7 +1275,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                               </tr>
                             ))}
                           </tbody>
-                          <tfoot className="bg-gray-50 dark:bg-darkbg font-bold border-t border-gray-200 dark:border-darkbg-border text-gray-900 dark:text-white">
+                          <tfoot className="bg-[#1C1917] bg-[#141210] font-bold border-t border-[#292524] text-[#FAFAF9] dark:text-white">
                             <tr>
                               <td className="py-2.5 px-3 text-left uppercase font-sans">Mean (Average)</td>
                               <td className="py-2.5 px-3 text-center font-mono">—</td>
@@ -1279,26 +1291,26 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                                 {cvResult.summary.mean_rmse.toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3 text-center font-sans">
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-[#FB923C] border border-blue-500/20">
                                   Overall Mean
                                 </span>
                               </td>
                             </tr>
                             <tr>
-                              <td className="py-2 px-3 text-left uppercase text-gray-500 text-[10px] font-sans">Std Dev (± σ)</td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500">—</td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500">—</td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                              <td className="py-2 px-3 text-left uppercase text-stone-400 text-[10px] font-sans">Std Dev (± σ)</td>
+                              <td className="py-2 px-3 text-center font-mono text-stone-400">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-stone-400">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-stone-400 text-[11px]">
                                 ± {cvResult.summary.std_r2}
                               </td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                              <td className="py-2 px-3 text-center font-mono text-stone-400 text-[11px]">
                                 ± {cvResult.summary.std_mae}
                               </td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">—</td>
-                              <td className="py-2 px-3 text-center font-mono text-gray-500 text-[11px]">
+                              <td className="py-2 px-3 text-center font-mono text-stone-400 text-[11px]">—</td>
+                              <td className="py-2 px-3 text-center font-mono text-stone-400 text-[11px]">
                                 ± {cvResult.summary.std_rmse}
                               </td>
-                              <td className="py-2 px-3 text-center text-[10px] text-gray-500 font-sans">
+                              <td className="py-2 px-3 text-center text-[10px] text-stone-400 font-sans">
                                 Stability (± σ)
                               </td>
                             </tr>
@@ -1317,14 +1329,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: MODEL COMPARISON */}
       {activeTab === 'compare' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <GitCompare className="w-5 h-5 text-navy dark:text-greige" />
+                <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
+                  <GitCompare className="w-5 h-5 text-[#F97316] dark:text-greige" />
                   Algorithm Benchmark: Linear Regression vs Random Forest
                 </h2>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-stone-400">
                   Execute controlled side-by-side training on identical splits to evaluate error minimization and non-linear fitting.
                 </p>
               </div>
@@ -1333,7 +1345,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 <select
                   value={compareTask}
                   onChange={(e) => setCompareTask(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-semibold"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#1C1917] bg-[#141210] font-semibold"
                 >
                   <option value="sales">Daily Sales Revenue</option>
                   <option value="demand">Product Unit Demand</option>
@@ -1372,11 +1384,11 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Comparison Results */}
             {comparisonResult && (
-              <div className="space-y-6 pt-4 border-t border-gray-100 dark:border-darkbg-border">
+              <div className="space-y-6 pt-4 border-t border-[#292524] border-[#292524]">
                 {/* Side-by-Side Metric Comparison Table */}
-                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg shadow-sm">
+                <div className="overflow-x-auto rounded-xl border border-[#292524] bg-[#1C1917] bg-[#141210] shadow-sm">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-100 dark:bg-darkbg-card text-slate-700 dark:text-gray-300 uppercase font-extrabold border-b border-gray-200 dark:border-darkbg-border">
+                    <thead className="bg-[#1C1917] bg-[#1C1917] text-stone-300 dark:text-gray-300 uppercase font-extrabold border-b border-[#292524]">
                       <tr>
                         <th className="py-3 px-4">Evaluation Metric</th>
                         <th className="py-3 px-4 font-mono">Simple Linear Regression</th>
@@ -1384,8 +1396,8 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         <th className="py-3 px-4 text-center">Variance / Winner</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
-                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                    <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
+                      <tr className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">R² — Coefficient of Determination</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.r2_score}</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.r2_score}</td>
@@ -1395,23 +1407,23 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                           </span>
                         </td>
                       </tr>
-                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                      <tr className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">MAE — Mean Absolute Error</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.mae} {comparisonResult.units}</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.mae} {comparisonResult.units}</td>
-                        <td className="py-3 px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
+                        <td className="py-3 px-4 text-center text-stone-400 dark:text-gray-400 font-mono text-[11px]">
                           Lower is Better
                         </td>
                       </tr>
-                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                      <tr className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">MSE — Mean Squared Error</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.mse}</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.mse}</td>
-                        <td className="py-3 px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
+                        <td className="py-3 px-4 text-center text-stone-400 dark:text-gray-400 font-mono text-[11px]">
                           Lower is Better
                         </td>
                       </tr>
-                      <tr className="hover:bg-gray-50/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                      <tr className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
                         <td className="py-3 px-4 font-semibold">RMSE — Root Mean Squared Error</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.linear_regression.rmse} {comparisonResult.units}</td>
                         <td className="py-3 px-4 font-mono font-medium">{comparisonResult.random_forest.rmse} {comparisonResult.units}</td>
@@ -1437,7 +1449,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         Automated Decision Support
                       </span>
                     </h4>
-                    <p className="mt-1.5 leading-relaxed text-gray-700 dark:text-gray-300">
+                    <p className="mt-1.5 leading-relaxed text-stone-200 dark:text-gray-300">
                       {comparisonResult.recommendation}
                     </p>
                   </div>
@@ -1450,15 +1462,15 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SAVED MODELS */}
       {activeTab === 'saved_models' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Serialized Model Registry (.joblib)</h2>
-            <p className="text-xs text-gray-500">Persistent trained model artifacts saved directly to disk</p>
+            <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white">Serialized Model Registry (.joblib)</h2>
+            <p className="text-xs text-stone-400">Persistent trained model artifacts saved directly to disk</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-[#1C1917] bg-[#141210] text-stone-400 uppercase font-semibold border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3">Model File</th>
                   <th className="py-3 px-3">Task Name</th>
@@ -1469,13 +1481,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {savedModels.map((m, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{m.filename}</td>
+                  <tr key={idx} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
+                    <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">{m.filename}</td>
                     <td className="py-2.5 px-3 font-medium">{m.task_name}</td>
                     <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-navy dark:text-greige">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-[#F97316] dark:text-greige">
                         {m.algorithm}
                       </span>
                     </td>
@@ -1497,15 +1509,15 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: PREDICTION HISTORY */}
       {activeTab === 'prediction_history' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Historical Prediction Runs</h2>
-            <p className="text-xs text-gray-500">Audit logs of all forecasting runs across the store</p>
+            <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white">Historical Prediction Runs</h2>
+            <p className="text-xs text-stone-400">Audit logs of all forecasting runs across the store</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 uppercase font-semibold border-b border-gray-200 dark:border-darkbg-border">
+              <thead className="bg-[#1C1917] bg-[#141210] text-stone-400 uppercase font-semibold border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3">Run ID</th>
                   <th className="py-3 px-3">Task</th>
@@ -1516,16 +1528,16 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3">Date/Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {predictionHistory.map((h) => (
-                  <tr key={h.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
+                  <tr key={h.id} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
                     <td className="py-2.5 px-3 font-mono text-gray-400">#{h.id}</td>
-                    <td className="py-2.5 px-3 font-bold uppercase text-navy dark:text-blue-400">{h.task_type}</td>
+                    <td className="py-2.5 px-3 font-bold uppercase text-[#F97316] dark:text-[#FB923C]">{h.task_type}</td>
                     <td className="py-2.5 px-3">{h.model_type}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                       {Number(h.predicted_value).toLocaleString()}
                     </td>
-                    <td className="py-2.5 px-3 max-w-xs truncate text-gray-600 dark:text-gray-300">{h.recommendation}</td>
+                    <td className="py-2.5 px-3 max-w-xs truncate text-stone-400 dark:text-gray-300">{h.recommendation}</td>
                     <td className="py-2.5 px-3">{h.generated_by}</td>
                     <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">{h.created_at}</td>
                   </tr>
@@ -1539,14 +1551,14 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: COMPLETE PREDICTION WORKSPACE */}
       {isPredictionTab && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm space-y-4">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-purple-600" />
                   Full Machine Learning Prediction Workspace
                 </h2>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-stone-400">
                   Execute live inferences using trained models with full evaluation metric visibility.
                 </p>
               </div>
@@ -1556,7 +1568,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 <select
                   value={predictionAlgorithm}
                   onChange={(e) => setPredictionAlgorithm(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-semibold"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#1C1917] bg-[#141210] font-semibold"
                 >
                   <option value="random_forest">Random Forest Regressor</option>
                   <option value="linear_regression">Simple Linear Regression</option>
@@ -1565,7 +1577,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             {/* Prediction Task Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gray-100 dark:border-darkbg-border">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[#292524] border-[#292524]">
               {[
                 { id: 'sales', label: 'Sales Revenue Prediction' },
                 { id: 'demand', label: 'Product Demand Prediction' },
@@ -1583,7 +1595,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${
                     predictionTask === task.id
                       ? 'bg-navy text-white border-navy shadow-sm'
-                      : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
+                      : 'bg-[#1C1917] bg-[#141210] text-stone-200 dark:text-gray-300 border-[#292524] hover:bg-[#292524]'
                   }`}
                 >
                   {task.label}
@@ -1613,7 +1625,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             )}
 
             {/* Inputs Form */}
-            <div className="p-4 rounded-xl bg-gray-50/60 dark:bg-darkbg/40 border border-gray-200 dark:border-darkbg-border space-y-3">
+            <div className="p-4 rounded-xl bg-[#1C1917]/60 bg-[#141210]/40 border border-[#292524] space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                 {predictionTask === 'sales' && (
                   <>
@@ -1623,7 +1635,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.store_footfall}
                         onChange={(e) => setPredInputs({ ...predInputs, store_footfall: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1632,7 +1644,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.marketing_spend}
                         onChange={(e) => setPredInputs({ ...predInputs, marketing_spend: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1640,7 +1652,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       <select
                         value={predInputs.promotions_active}
                         onChange={(e) => setPredInputs({ ...predInputs, promotions_active: Number(e.target.value) })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       >
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -1657,7 +1669,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="text"
                         value={predInputs.category}
                         onChange={(e) => setPredInputs({ ...predInputs, category: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1666,7 +1678,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.unit_price}
                         onChange={(e) => setPredInputs({ ...predInputs, unit_price: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1675,7 +1687,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.discount_pct}
                         onChange={(e) => setPredInputs({ ...predInputs, discount_pct: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1689,7 +1701,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.current_stock}
                         onChange={(e) => setPredInputs({ ...predInputs, current_stock: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1698,7 +1710,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.monthly_demand}
                         onChange={(e) => setPredInputs({ ...predInputs, monthly_demand: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1712,7 +1724,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predInputs.page_views}
                         onChange={(e) => setPredInputs({ ...predInputs, page_views: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1722,7 +1734,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         step="0.1"
                         value={predInputs.rating}
                         onChange={(e) => setPredInputs({ ...predInputs, rating: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1742,13 +1754,13 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Prediction Output (Includes R² and Evaluation Metric for Instructor!) */}
             {predictionResult && (
-              <div className="p-5 rounded-xl bg-purple-500/5 dark:bg-darkbg/50 border border-purple-500/20 space-y-4">
+              <div className="p-5 rounded-xl bg-purple-500/5 bg-[#141210]/50 border border-purple-500/20 space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-purple-500/20">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
                       Inference Result ({predictionResult.task_name})
                     </span>
-                    <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white font-mono mt-0.5">
+                    <h3 className="text-2xl font-extrabold text-[#FAFAF9] dark:text-white font-mono mt-0.5">
                       {predictionResult.units === 'PHP' ? 'PHP ' : ''}
                       {Number(predictionResult.predicted_value).toLocaleString()} {predictionResult.units !== 'PHP' ? predictionResult.units : ''}
                     </h3>
@@ -1761,18 +1773,18 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-lg bg-white dark:bg-darkbg-card border border-purple-200 dark:border-darkbg-border space-y-1">
-                  <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                <div className="p-4 rounded-lg bg-[#1C1917] border border-purple-200 border-[#292524] space-y-1">
+                  <h4 className="text-xs font-bold text-[#FAFAF9] dark:text-white flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-purple-500" />
                     Business Interpretation
                   </h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <p className="text-xs text-stone-400 dark:text-gray-300 leading-relaxed">
                     {predictionResult.recommendation}
                   </p>
                 </div>
 
                 {predictionResult.trend_data && (
-                  <div className="bg-white dark:bg-darkbg-card p-4 rounded-lg border border-gray-200 dark:border-darkbg-border">
+                  <div className="bg-[#1C1917] p-4 rounded-lg border border-[#292524]">
                     <ResponsiveLineChart
                       title="Forecasted Trendline Projection"
                       data={predictionResult.trend_data}
@@ -1790,30 +1802,30 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: MY PROFILE */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-navy text-white text-2xl font-bold flex items-center justify-center shadow-md">
               {user?.full_name?.charAt(0) || 'I'}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.full_name}</h2>
+              <h2 className="text-xl font-bold text-[#FAFAF9] dark:text-white">{user?.full_name}</h2>
               <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-600 border border-purple-500/20">
                 ROLE: INSTRUCTOR / MACHINE LEARNING RESEARCHER
               </span>
             </div>
           </div>
 
-          <div className="space-y-3 text-xs border-t border-gray-100 dark:border-darkbg-border pt-4">
-            <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
-              <span className="text-gray-500">Username:</span>
-              <span className="font-bold text-gray-900 dark:text-white">{user?.username}</span>
+          <div className="space-y-3 text-xs border-t border-[#292524] border-[#292524] pt-4">
+            <div className="flex justify-between py-2 border-b border-gray-50 border-[#292524]">
+              <span className="text-stone-400">Username:</span>
+              <span className="font-bold text-[#FAFAF9] dark:text-white">{user?.username}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
-              <span className="text-gray-500">Email:</span>
-              <span className="font-bold text-gray-900 dark:text-white">{user?.email}</span>
+            <div className="flex justify-between py-2 border-b border-gray-50 border-[#292524]">
+              <span className="text-stone-400">Email:</span>
+              <span className="font-bold text-[#FAFAF9] dark:text-white">{user?.email}</span>
             </div>
             <div className="flex justify-between py-2">
-              <span className="text-gray-500">Security Clearance:</span>
+              <span className="text-stone-400">Security Clearance:</span>
               <span className="font-semibold text-purple-600">Full Machine Learning Workspace, Dataset Explorer & Model Training</span>
             </div>
           </div>

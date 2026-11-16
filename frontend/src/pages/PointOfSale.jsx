@@ -513,19 +513,19 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
   return (
     <div className="p-6 space-y-6">
       {/* Page Title & Register Status Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200 dark:border-darkbg-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200 dark:border-[#292524]">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-black text-navy dark:text-white tracking-tight flex items-center gap-2">
-              <ShoppingCart className="w-7 h-7 text-navy dark:text-greige" />
-              Point of Sale & Drafts
+              <ShoppingCart className="w-7 h-7 text-[#F97316]" />
+              Point of Sale &amp; Drafts
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-[#292524] text-[#FB923C] border border-[#44403C] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#F97316] animate-pulse"></span>
               Cash Register Ready
             </span>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-stone-400 mt-1">
             Over-the-counter cash checkout, draft quotations preparation, and instant official transaction receipts.
           </p>
         </div>
@@ -535,9 +535,9 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
           <button
             type="button"
             onClick={() => setIsDraftsModalOpen(true)}
-            className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-extrabold rounded-xl border border-blue-400/40 dark:border-blue-500/40 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/60 shadow-md transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-extrabold rounded-xl border border-[#F97316]/40 bg-[#292524] text-[#FB923C] hover:bg-[#342F2D] shadow-md transition-all active:scale-95 cursor-pointer"
           >
-            <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <FileText className="w-4 h-4 text-[#F97316]" />
             <span>Resume Saved Draft ({drafts.length})</span>
           </button>
         </div>
@@ -633,7 +633,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
             {/* Product Cards Grid: Clean cards without SKU and without category label */}
             {loading ? (
               <div className="p-12 text-center text-xs text-gray-500">
-                <div className="animate-spin w-6 h-6 border-2 border-navy border-t-transparent rounded-full mx-auto mb-2"></div>
+                <div className="animate-spin w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full mx-auto mb-2"></div>
                 Loading POS Product Catalog from MySQL...
               </div>
             ) : filteredProducts.length === 0 ? (
@@ -655,12 +655,12 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                       className={`flex flex-col justify-between p-3 rounded-xl border transition-all text-left group ${
                         isOutOfStock
                           ? 'border-red-200 dark:border-red-900/40 bg-red-50/20 dark:bg-red-950/20 opacity-60'
-                          : 'border-gray-200 dark:border-darkbg-border bg-gray-50/50 dark:bg-darkbg hover:border-navy dark:hover:border-greige hover:shadow-md'
+                          : 'border-gray-200 dark:border-[#292524] bg-gray-50/50 dark:bg-[#1C1917] hover:border-[#F97316] hover:shadow-md'
                       }`}
                     >
                       <div>
                         {/* Thumbnail Image */}
-                        <div className="w-full h-24 bg-white dark:bg-darkbg-card rounded-lg border border-gray-200 dark:border-darkbg-border p-2 mb-2 flex items-center justify-center overflow-hidden">
+                        <div className="w-full h-24 bg-white dark:bg-[#292524] rounded-lg border border-gray-200 dark:border-[#383330] p-2 mb-2 flex items-center justify-center overflow-hidden">
                           <img
                             src={p.image_url || '/products/default.svg'}
                             alt={p.name}
@@ -676,9 +676,9 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                       </div>
 
                       {/* Price & Stock & Action Button */}
-                      <div className="mt-3 pt-2 border-t border-gray-200 dark:border-darkbg-border">
+                      <div className="mt-3 pt-2 border-t border-gray-200 dark:border-[#292524]">
                         <div className="flex items-baseline justify-between mb-2">
-                          <span className="text-xs font-black text-navy dark:text-greige">
+                          <span className="text-xs font-black text-[#F97316]">
                             PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </span>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
@@ -686,7 +686,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                               ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' 
                               : p.stock_quantity <= (p.reorder_level || 5)
                               ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                              : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                              : 'bg-[#292524] text-[#FB923C] border border-[#44403C]'
                           }`}>
                             {p.stock_quantity} in stock
                           </span>
@@ -702,8 +702,8 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                               : isMaxedInCart
                               ? 'bg-amber-200 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 cursor-not-allowed'
                               : inCartItem
-                              ? 'bg-navy text-white hover:bg-navy-dark dark:bg-greige dark:text-navy shadow-sm'
-                              : 'bg-white dark:bg-darkbg-card border border-navy/40 dark:border-greige/40 text-navy dark:text-greige hover:bg-navy hover:text-white dark:hover:bg-greige dark:hover:text-navy'
+                              ? 'bg-[#F97316] text-white hover:bg-[#EA580C] shadow-sm'
+                              : 'bg-white dark:bg-[#292524] border border-[#F97316]/40 text-[#F97316] hover:bg-[#F97316] hover:text-white'
                           }`}
                         >
                           <Plus className="w-3.5 h-3.5" />

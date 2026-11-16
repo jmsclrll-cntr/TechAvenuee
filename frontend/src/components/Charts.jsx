@@ -468,7 +468,7 @@ export function ResponsiveDonutChart({
     );
   }
 
-  const COLORS  = ['#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899', '#1E3A5F'];
+  const COLORS  = ['#F97316', '#FB923C', '#78716C', '#FDBA74', '#A8A29E', '#EA580C', '#292524'];
   const total   = data.reduce((s, d) => s + (Number(d[valueKey]) || 0), 0) || 1;
   const cx = 90, cy = 90, R = 64, r = 40;
 
@@ -493,9 +493,13 @@ export function ResponsiveDonutChart({
     const ly2 = cy + r * Math.sin(toRad(endA));
 
     const large = sweep > 180 ? 1 : 0;
+    // When a single slice represents 100% (sweep >= 359.9), SVG arc with same start/end points collapses into a degenerate figure.
+    // Render clean concentric circles using evenodd fill rule for flawless 100% donut rendering.
     const pathD = sweep >= 359.9
-      ? `M ${cx + R} ${cy} A ${R} ${R} 0 1 1 ${cx + R - 0.001} ${cy} Z M ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx + r - 0.001} ${cy} Z`
-      : `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${lx2} ${ly2} A ${r} ${r} 0 ${large} 0 ${lx1} ${ly1} Z`;
+      ? `M ${cx} ${cy - R} A ${R} ${R} 0 1 0 ${cx} ${cy + R} A ${R} ${R} 0 1 0 ${cx} ${cy - R} M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx} ${cy + r} A ${r} ${r} 0 1 1 ${cx} ${cy - r} Z`
+      : val <= 0
+        ? ''
+        : `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${lx2} ${ly2} A ${r} ${r} 0 ${large} 0 ${lx1} ${ly1} Z`;
 
     return {
       ...item,

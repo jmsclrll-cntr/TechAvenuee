@@ -1,27 +1,44 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Sun, 
-  Clock, 
-  ShieldCheck, 
-  AlertTriangle, 
-  PanelLeftClose, 
-  PanelLeftOpen, 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Sun,
+  Clock,
+  ShieldCheck,
+  AlertTriangle,
+  PanelLeftClose,
+  PanelLeftOpen,
   BookOpen,
   Maximize,
   ChevronDown,
   LogOut,
-  ExternalLink
+  ExternalLink,
+  LayoutDashboard,
+  Package,
+  Receipt,
+  Users,
+  Truck,
+  BarChart3,
+  BrainCircuit,
+  ChevronUp,
+  ArrowDownLeft,
+  ArrowUpRight,
+  History,
+  ShoppingCart,
+  Search,
+  Database,
+  Cpu,
+  GitCompare,
+  Save
 } from 'lucide-react';
 import { useTextSize } from '../context/TextSizeContext';
 
-export default function Header({ 
-  user, 
-  darkMode, 
-  setDarkMode, 
-  role, 
-  shiftInfo, 
-  lowStockCount = 0, 
-  sidebarCollapsed, 
+export default function Header({
+  user,
+  darkMode,
+  setDarkMode,
+  role,
+  shiftInfo,
+  lowStockCount = 0,
+  sidebarCollapsed,
   setSidebarCollapsed,
   onOpenManual,
   activeTab,
@@ -30,8 +47,79 @@ export default function Header({
 }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [predictionDropdownOpen, setPredictionDropdownOpen] = useState(false);
   const userMenuRef = useRef(null);
   const triggerButtonRef = useRef(null);
+  const predictionMenuRef = useRef(null);
+
+  const currentRole = user?.role || role || 'admin';
+
+  const getNavItems = () => {
+    switch (currentRole) {
+      case 'inventory_clerk':
+        return [
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'inventory', label: 'Inventory', icon: Package },
+          { id: 'stock_in', label: 'Stock In', icon: ArrowDownLeft },
+          { id: 'stock_out', label: 'Stock Out', icon: ArrowUpRight },
+          { id: 'movements', label: 'Movements', icon: History },
+          { id: 'suppliers', label: 'Suppliers', icon: Truck }
+        ];
+
+      case 'sales_personnel':
+        return [
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'pos', label: 'Point of Sale', icon: ShoppingCart },
+          { id: 'sales_history', label: 'Sales History', icon: History },
+          { id: 'product_lookup', label: 'Product Lookup', icon: Search }
+        ];
+
+      case 'instructor':
+        return [
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'datasets', label: 'Datasets', icon: Database },
+          { id: 'train', label: 'Training', icon: Cpu },
+          { id: 'compare', label: 'Compare', icon: GitCompare },
+          { id: 'saved_models', label: 'Saved Models', icon: Save },
+          { id: 'prediction_history', label: 'History', icon: History }
+        ];
+
+      case 'admin':
+      default:
+        return [
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'inventory', label: 'Inventory', icon: Package },
+          { id: 'sales', label: 'Sales', icon: Receipt },
+          { id: 'users', label: 'Users', icon: Users },
+          { id: 'purchasing', label: 'Suppliers', icon: Truck },
+          { id: 'reports', label: 'Reports', icon: BarChart3 }
+        ];
+    }
+  };
+
+  const navItems = getNavItems();
+
+  const predictionSubItems = [
+    { id: 'pred_demand', label: 'Product Demand Prediction' },
+    { id: 'pred_sales', label: 'Sales Prediction' },
+    { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
+    { id: 'pred_best_selling', label: 'Best-Selling Products' }
+  ];
+
+  const isPredictionActive = predictionSubItems.some(item => item.id === activeTab);
+
+  // Close prediction dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (predictionMenuRef.current && !predictionMenuRef.current.contains(e.target)) {
+        setPredictionDropdownOpen(false);
+        setHoveredId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const {
     scalePercent,
@@ -70,11 +158,10 @@ export default function Header({
     }
 
     function handleKeyDown(e) {
-      if (e.key === 'Escape' && showUserMenu) {
+      if (!showUserMenu) return;
+      if (e.key === 'Escape') {
         setShowUserMenu(false);
-        if (triggerButtonRef.current) {
-          triggerButtonRef.current.focus();
-        }
+        if (triggerButtonRef.current) triggerButtonRef.current.focus();
       }
     }
 
@@ -165,7 +252,6 @@ export default function Header({
   };
 
   const handleSignOutClick = () => {
-    // Check for potential unsaved work (form modifications) if flagged
     const hasUnsaved = window.__TECHAVENUE_UNSAVED_CHANGES__ === true;
     if (hasUnsaved) {
       const confirmed = window.confirm('You have unsaved changes that will be lost. Are you sure you want to sign out?');
@@ -175,26 +261,6 @@ export default function Header({
     if (onLogout) onLogout();
   };
 
-  const getGreeting = () => {
-    const name = user?.full_name || 'Carl Cantre';
-    return { prefix: 'Welcome back,', name };
-  };
-
-  const greeting = getGreeting();
-
-  const formattedDate = currentTime.toLocaleDateString('en-US', {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-
-  const formattedTime = currentTime.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-
   const userInitial = user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'C';
   const userName = user?.full_name || 'Carl Cantre';
   const userEmail = user?.email || (user?.username ? `${user.username}@techavenue.com` : 'admin@techavenue.com');
@@ -202,286 +268,315 @@ export default function Header({
   const capitalizedRole = roleDisplay.charAt(0).toUpperCase() + roleDisplay.slice(1);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-darkbg-card/95 backdrop-blur-md border-b border-gray-200 dark:border-darkbg-border px-3 sm:px-6 py-2.5 sm:py-3.5 transition-colors">
-      <div className="flex items-center justify-between gap-4">
-        {/* Left: Sidebar Toggle + Role Greeting & Dynamic Subtext */}
-        <div className="flex items-center gap-3">
-          {/* Sidebar Toggle / Auto-Hide Mode Button */}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`p-2 rounded-lg border transition-all shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb] ${
-              sidebarCollapsed
-                ? 'border-gray-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg hover:bg-gray-100 dark:hover:bg-darkbg-hover text-gray-500 hover:text-navy dark:hover:text-cyan-400'
-                : 'border-navy/30 dark:border-cyan-400/30 bg-navy/10 dark:bg-cyan-500/15 text-navy dark:text-cyan-300'
-            }`}
-            title={sidebarCollapsed ? 'Auto-Hide Mode: Hover left edge line to reveal navigation (Click to pin open)' : 'Navigation Pinned: Click to enable fullscreen auto-hide mode'}
-          >
-            {sidebarCollapsed ? (
-              <PanelLeftOpen className="w-4 h-4" />
-            ) : (
-              <PanelLeftClose className="w-4 h-4" />
-            )}
-          </button>
-
-          <div>
-            <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white tracking-tight line-clamp-1">
-              {greeting.prefix}{' '}
-              <span className="text-navy dark:text-cyan-300">{greeting.name}</span>
-            </h1>
-
-            {/* Subtext Indicators (Sales shift, Instructor audit, or Low-stock badge) */}
-            <div className="flex items-center gap-3 mt-0.5 text-xs text-slate-600 dark:text-gray-300 font-semibold">
-              {/* Sales Personnel Shift Indicator */}
-              {role === 'sales_personnel' && (
-                <span className="flex items-center gap-1.5 text-slate-500 dark:text-gray-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Active
-                </span>
-              )}
-
-              {/* Instructor Inspection Indicator */}
-              {role === 'instructor' && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-400 font-bold border border-blue-500/20">
-                  Operational Inspection & Audit Mode
-                </span>
-              )}
-
-              {/* Low-Stock Notification Badge */}
-              {lowStockCount > 0 && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold border border-amber-500/20">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  {lowStockCount} items below reorder level
-                </span>
-              )}
+    <header className="sticky top-0 z-30 transition-colors bg-[#1C1917] border-b border-[#292524] px-3 sm:px-6 py-2.5 shadow-md">
+      <div className="flex items-center justify-between gap-4 max-w-[1700px] mx-auto">
+        {/* Left: Brand / Logo */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#F97316] p-1.5 flex items-center justify-center shrink-0 shadow-lg shadow-orange-950/30">
+              <span className="font-black text-white text-xs">TA</span>
             </div>
+            <div className="hidden xl:block leading-tight select-none">
+              <span className="font-black text-sm tracking-tight text-white block">
+                TECH AVENUE
+              </span>
+              <span className="text-[10px] text-stone-400 font-semibold block uppercase tracking-wider">
+                Computer &amp; Accessories
+              </span>
+            </div>
+            <span className="hidden 2xl:inline-block ml-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#292524] text-[#FB923C] border border-[#44403C] capitalize">
+              {roleDisplay}
+            </span>
           </div>
+
+          {lowStockCount > 0 && currentRole !== 'admin' && (
+            <span className="hidden md:flex items-center gap-1 ml-2 px-2 py-0.5 rounded bg-amber-500/10 text-[#FB923C] font-bold border border-amber-500/20 text-xs">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              {lowStockCount} low stock
+            </span>
+          )}
         </div>
 
-        {/* Right: Consolidated User Profile & System Controls Dropdown (Layout 3: Profile Card) */}
-        <div ref={userMenuRef} className="relative">
-          {/* 1. TRIGGER BUTTON */}
+        {/* Navigation Bar for all roles (positioned beside brand, right before user profile) */}
+        <nav
+          aria-label="Main Navigation"
+          className="ml-auto flex items-center gap-2 sm:gap-2.5 overflow-visible"
+        >
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            const isHovered = hoveredId === item.id;
+            const isExpanded = isActive || isHovered;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onMouseEnter={() => setHoveredId(item.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                onClick={() => {
+                  if (setActiveTab) setActiveTab(item.id);
+                  setPredictionDropdownOpen(false);
+                }}
+                title={item.label}
+                className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${isExpanded
+                  ? 'px-3.5 sm:px-4.5 shadow-lg'
+                  : 'w-10 sm:w-11 px-0'
+                  } ${isActive
+                    ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
+                    : 'text-stone-300 hover:text-white hover:bg-white/10'
+                  }`}
+              >
+                {/* Icon: Always remains visible */}
+                <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
+
+                {/* Text: When clicked/active or hovered, remains visible alongside the icon */}
+                <span
+                  className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none ${isExpanded
+                    ? 'max-w-[260px] opacity-100 ml-2 inline-block'
+                    : 'max-w-0 opacity-0 ml-0 pointer-events-none'
+                    }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+
+          {/* For Admin: Add the Knowledge Analysis & Prediction Downward Dropdown */}
+          {currentRole === 'admin' && (
+            <>
+              {/* Separator Line */}
+              <div className="w-[1px] h-5 bg-[#292524] mx-1 shrink-0" />
+
+              <div ref={predictionMenuRef} className="relative shrink-0">
+                {(() => {
+                  const isHovered = hoveredId === 'predictions';
+                  const isExpanded = isPredictionActive || isHovered || predictionDropdownOpen;
+
+                  return (
+                    <button
+                      type="button"
+                      onMouseEnter={() => setHoveredId('predictions')}
+                      onMouseLeave={() => {
+                        if (!predictionDropdownOpen) {
+                          setHoveredId(null);
+                        }
+                      }}
+                      onClick={() => {
+                        setPredictionDropdownOpen(!predictionDropdownOpen);
+                        setHoveredId('predictions');
+                      }}
+                      title="Knowledge Analysis & Prediction"
+                      className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${isExpanded
+                        ? 'px-3.5 sm:px-4.5 shadow-lg'
+                        : 'w-10 sm:w-11 px-0'
+                        } ${isPredictionActive
+                          ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
+                          : 'text-stone-300 hover:text-white hover:bg-white/10'
+                        }`}
+                    >
+                      {/* Icon */}
+                      <BrainCircuit className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
+
+                      {/* Text & Chevron */}
+                      <span
+                        className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none flex items-center gap-1.5 ${isExpanded
+                          ? 'max-w-[300px] opacity-100 ml-2 inline-flex'
+                          : 'max-w-0 opacity-0 ml-0 pointer-events-none'
+                          }`}
+                      >
+                        <span>Prediction Modules</span>
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 transition-transform duration-200 ${predictionDropdownOpen ? 'rotate-180' : ''
+                            }`}
+                        />
+                      </span>
+                    </button>
+                  );
+                })()}
+
+                {/* Downward Submenu with Fade-in */}
+                {predictionDropdownOpen && (
+                  <div className="absolute top-full mt-2.5 right-0 w-72 rounded-2xl bg-[#1C1917]/98 backdrop-blur-xl border border-[#292524] shadow-[0_18px_45px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.08)] p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-3 py-1.5 text-[11px] uppercase font-bold tracking-wider text-stone-400 border-b border-[#292524]/70 mb-1.5">
+                      Prediction &amp; Intelligence
+                    </div>
+                    {predictionSubItems.map((sub) => {
+                      const isSubActive = activeTab === sub.id;
+                      return (
+                        <button
+                          key={sub.id}
+                          type="button"
+                          onClick={() => {
+                            if (setActiveTab) setActiveTab(sub.id);
+                            setPredictionDropdownOpen(false);
+                            setHoveredId(null);
+                          }}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${isSubActive
+                            ? 'bg-[#F97316] text-white shadow-md'
+                            : 'text-stone-300 hover:text-white hover:bg-white/10'
+                            }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSubActive ? 'bg-white' : 'bg-stone-500'
+                              }`}
+                          />
+                          <span>{sub.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </nav>
+
+        {/* Right: User Profile & System Controls Dropdown */}
+        <div ref={userMenuRef} className="relative shrink-0">
           <button
             ref={triggerButtonRef}
             type="button"
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl border transition-all cursor-pointer select-none group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb] ${
-              showUserMenu
-                ? 'bg-[#1d2531] border-[#38d2eb] ring-1 ring-[#38d2eb] text-[#38d2eb] shadow-md'
-                : 'bg-white dark:bg-[#1d2531] border-slate-300 dark:border-[#3a485c] hover:bg-slate-50 dark:hover:bg-[#253041] text-slate-800 dark:text-[#f0f4f8] shadow-xs'
-            }`}
+            className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl border transition-all cursor-pointer select-none group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] ${showUserMenu
+              ? 'bg-[#292524] border-[#F97316] text-white shadow-md'
+              : 'bg-[#1C1917] border-[#292524] hover:bg-[#292524] text-white'
+              }`}
             aria-haspopup="menu"
             aria-expanded={showUserMenu}
             aria-label="User Account Menu"
           >
             {/* Avatar with Green Online Dot */}
             <div className="relative">
-              <div className="w-8 h-8 rounded-full bg-[#2563eb] text-white flex items-center justify-center font-black text-xs uppercase shadow-sm shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#EA580C] text-white flex items-center justify-center font-black text-xs uppercase shadow-sm shrink-0">
                 {userInitial}
               </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-white dark:ring-[#1d2531]" />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-[#1C1917]" />
             </div>
 
             {/* Name and Role Label */}
             <div className="text-left leading-tight hidden xs:block sm:block">
-              <p className="text-xs font-bold text-slate-900 dark:text-[#f0f4f8] truncate max-w-[150px]">
+              <p className="text-xs font-bold text-[#FAFAF9] truncate max-w-[150px]">
                 {userName}
               </p>
-              <p className="text-[10px] font-medium text-slate-600 dark:text-[#a6b4c6] capitalize truncate">
+              <p className="text-[10px] font-medium text-stone-400 capitalize truncate">
                 {roleDisplay}
               </p>
             </div>
 
-            {/* Dropdown Chevron */}
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${
-              showUserMenu ? 'rotate-180 text-[#38d2eb]' : 'text-[#a6b4c6] group-hover:text-slate-800 dark:group-hover:text-[#f0f4f8]'
-            }`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-stone-400 group-hover:text-white transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''
+                }`}
+            />
           </button>
 
-          {/* ========================================================================= */}
-          {/* USER PROFILE CARD PANEL (LAYOUT 3)                                       */}
-          {/* ========================================================================= */}
+          {/* Profile Dropdown Menu */}
           {showUserMenu && (
             <>
-              {/* Mobile bottom-sheet overlay */}
-              <div 
+              <div
                 className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 sm:hidden animate-in fade-in duration-150"
                 onClick={() => setShowUserMenu(false)}
                 aria-hidden="true"
               />
 
               <div
+                className="absolute right-0 top-full mt-2.5 z-50 w-[310px] sm:w-[325px] rounded-2xl bg-[#1C1917] border border-[#292524] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-4 text-white animate-in fade-in slide-in-from-top-2 duration-150"
                 role="menu"
                 aria-orientation="vertical"
-                aria-label="User profile and settings"
-                className="fixed inset-x-0 bottom-0 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2.5 w-full sm:w-[340px] max-h-[88vh] sm:max-h-[min(650px,calc(100vh-80px))] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-[#1d2531] border border-[#3a485c] shadow-2xl z-50 transition-all motion-reduce:transition-none duration-150 animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-top-2 flex flex-col focus:outline-none"
-                style={{ fontSize: '13px' }}
               >
-                {/* 2. BANNER HEADER: Blue-to-cyan horizontal gradient (~86px tall) */}
-                <div className="relative h-[86px] w-full shrink-0 rounded-t-2xl bg-gradient-to-r from-[#1d4ed8] via-[#0284c7] to-[#38d2eb]">
-                  {/* Subtle inner gloss effect */}
-                  <div className="absolute inset-0 bg-white/10 opacity-40 mix-blend-overlay rounded-t-2xl pointer-events-none" />
-                </div>
-
-                {/* Main Card Content Body */}
-                <div className="relative px-5 pt-0 pb-5 flex flex-col items-center text-center">
-                  {/* 3. LARGE AVATAR (~54px) overlapping banner and panel body */}
-                  <div className="relative -mt-[27px] mb-2.5 shrink-0">
-                    <div className="w-[54px] h-[54px] rounded-full bg-[#2563eb] text-white flex items-center justify-center font-black text-xl uppercase shadow-lg ring-4 ring-[#1d2531]">
+                {/* User Identity Header */}
+                <div className="flex items-center gap-3 pb-3.5 border-b border-[#292524]">
+                  <div className="relative">
+                    <div className="w-11 h-11 rounded-full bg-[#EA580C] text-white flex items-center justify-center font-bold text-base shadow-inner shrink-0">
                       {userInitial}
                     </div>
-                    {/* Green online dot indicator */}
-                    <span 
-                      className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-[#10b981] ring-[2.5px] ring-[#1d2531]" 
+                    <span
+                      className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#10b981] ring-2 ring-[#1C1917]"
                       title="Online"
                     />
                   </div>
-
-                  {/* 4. CENTERED NAME, EMAIL, AND ROLE PILL BADGE */}
-                  <h2 className="text-[15px] font-bold text-[#f0f4f8] tracking-tight leading-tight">
-                    {userName}
-                  </h2>
-                  <p className="text-[12px] font-normal text-[#a6b4c6] mt-0.5 truncate max-w-[280px]">
-                    {userEmail}
-                  </p>
-                  <div className="mt-2 mb-3.5">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#113a48] text-[#38d2eb] border border-[#1b5368]">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-bold text-[#FAFAF9] truncate leading-snug">
+                      {userName}
+                    </h3>
+                    <p className="text-[11px] text-stone-400 truncate leading-snug">
+                      {userEmail}
+                    </p>
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#292524] text-[#FB923C] uppercase tracking-wide">
                       {capitalizedRole}
                     </span>
                   </div>
+                </div>
 
-                  {/* 5. "VIEW PROFILE" FULL-WIDTH BUTTON */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      if (setActiveTab) setActiveTab('profile');
-                    }}
-                    className="w-full py-2 px-3 rounded-[10px] border border-[#38d2eb] text-[#38d2eb] hover:bg-[#38d2eb]/10 active:bg-[#38d2eb]/20 text-[13px] font-semibold transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1d2531]"
-                  >
-                    View profile
-                  </button>
-
-                  {/* 6. SETTINGS ROWS */}
-                  <div className="w-full mt-4 space-y-1 text-left">
-                    {/* (a) Dark mode toggle switch */}
-                    <div className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-[#253041] transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <Sun className="w-4 h-4 text-[#a6b4c6] shrink-0" />
-                        <span className="text-[13px] font-medium text-[#f0f4f8]">Dark mode</span>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={darkMode}
-                        aria-label="Toggle dark mode"
-                        onClick={() => setDarkMode(!darkMode)}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb] ${
-                          darkMode ? 'bg-[#38d2eb]' : 'bg-[#2b3749]'
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                            darkMode ? 'translate-x-5' : 'translate-x-0 bg-[#8b9bb4]'
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    {/* (b) Full screen toggle switch */}
-                    <div className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-[#253041] transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <Maximize className="w-4 h-4 text-[#a6b4c6] shrink-0" />
-                        <span className="text-[13px] font-medium text-[#f0f4f8]">Full screen</span>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={isFullscreen}
-                        aria-label="Toggle full screen mode"
-                        onClick={toggleFullscreen}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb] ${
-                          isFullscreen ? 'bg-[#38d2eb]' : 'bg-[#2b3749]'
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow-md ring-0 transition duration-200 ease-in-out ${
-                            isFullscreen ? 'translate-x-5 bg-white' : 'translate-x-0 bg-[#8b9bb4]'
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    {/* (c) Text size compact stepper */}
-                    <div className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-[#253041] transition-colors group">
-                      <div className="flex items-center gap-3">
-                        {/* Custom crisp T icon */}
-                        <span className="w-4 h-4 text-[#a6b4c6] flex items-center justify-center font-serif text-[15px] font-semibold leading-none select-none">
-                          T
-                        </span>
-                        <span className="text-[13px] font-medium text-[#f0f4f8]">Text size</span>
-                      </div>
-                      
-                      <div className="flex items-center bg-[#131b26] border border-[#2e3b4d] rounded-lg px-1.5 py-1 gap-2 select-none shadow-inner">
-                        <button
-                          type="button"
-                          aria-label="Decrease text size"
-                          disabled={activeStepIdx === 0}
-                          onClick={handleDecreaseText}
-                          className="px-1.5 py-0.5 rounded text-[11px] font-bold text-[#a6b4c6] hover:text-[#f0f4f8] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 active:bg-white/10 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[#38d2eb]"
-                        >
-                          A-
-                        </button>
-                        
-                        <span 
-                          aria-live="polite" 
-                          className="text-[11px] font-bold font-mono text-[#38d2eb] min-w-[38px] text-center"
-                        >
-                          {activePercentDisplay}%
-                        </span>
-
-                        <button
-                          type="button"
-                          aria-label="Increase text size"
-                          disabled={activeStepIdx === TEXT_SCALE_STEPS.length - 1}
-                          onClick={handleIncreaseText}
-                          className="px-1.5 py-0.5 rounded text-[11px] font-bold text-[#a6b4c6] hover:text-[#f0f4f8] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 active:bg-white/10 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[#38d2eb]"
-                        >
-                          A+
-                        </button>
-                      </div>
-                    </div>
+                {/* System Settings & Fullscreen Controls */}
+                <div className="py-3 space-y-2.5 border-b border-[#292524]">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-300 font-semibold">Full Screen Mode</span>
+                    <button
+                      type="button"
+                      onClick={toggleFullscreen}
+                      className="px-2.5 py-1 rounded-lg bg-[#292524] hover:bg-[#44403C] text-xs font-bold text-stone-200 transition-colors"
+                    >
+                      {isFullscreen ? 'Exit Full Screen' : 'Go Full Screen'}
+                    </button>
                   </div>
 
-                  {/* 7. DIVIDER & SYSTEM GUIDE ROW */}
-                  <div className="w-full my-3 border-t border-[#3a485c]/60" />
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-300 font-semibold">Text Scaling</span>
+                    <div className="flex items-center gap-1.5 bg-[#141210] border border-[#292524] rounded-lg p-0.5">
+                      <button
+                        type="button"
+                        onClick={handleDecreaseText}
+                        disabled={activeStepIdx === 0}
+                        className="px-2 py-0.5 rounded text-xs font-bold text-stone-300 disabled:opacity-30 hover:bg-white/10"
+                      >
+                        A-
+                      </button>
+                      <span className="text-xs font-mono text-[#F97316] px-1 font-bold">
+                        {activePercentDisplay}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleIncreaseText}
+                        disabled={activeStepIdx === TEXT_SCALE_STEPS.length - 1}
+                        className="px-2 py-0.5 rounded text-xs font-bold text-stone-300 disabled:opacity-30 hover:bg-white/10"
+                      >
+                        A+
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
+                {/* System Guide & Manual */}
+                <div className="py-2.5 border-b border-[#292524]">
                   <button
                     type="button"
                     onClick={() => {
                       setShowUserMenu(false);
                       if (onOpenManual) onOpenManual();
                     }}
-                    className="w-full flex items-center justify-between py-2 px-2.5 rounded-lg text-left hover:bg-[#253041] transition-colors cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38d2eb]"
+                    className="w-full flex items-center justify-between py-1.5 px-2 rounded-lg text-left text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <BookOpen className="w-4 h-4 text-[#a6b4c6] group-hover:text-[#f0f4f8] transition-colors shrink-0" />
-                      <span className="text-[13px] font-medium text-[#f0f4f8]">System guide & manual</span>
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-[#F97316]" />
+                      <span>System Guide &amp; Manual</span>
                     </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#a6b4c6] group-hover:text-[#38d2eb] transition-colors shrink-0" />
+                    <ExternalLink className="w-3.5 h-3.5 text-stone-500" />
                   </button>
-
-                  {/* 8. FULL-WIDTH SIGN OUT BUTTON */}
-                  {onLogout && (
-                    <button
-                      type="button"
-                      onClick={handleSignOutClick}
-                      className="w-full mt-3 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[13px] font-semibold text-[#f87878] bg-[#3a1b22]/70 hover:bg-[#4a222b] active:bg-[#5a2834] border border-[#6d252f]/60 transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f87878]"
-                    >
-                      <LogOut className="w-4 h-4 text-[#f87878]" />
-                      <span>Sign out</span>
-                    </button>
-                  )}
                 </div>
+
+                {/* Sign Out Button */}
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={handleSignOutClick}
+                    className="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign out</span>
+                  </button>
+                )}
               </div>
             </>
           )}

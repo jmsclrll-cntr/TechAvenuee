@@ -441,13 +441,13 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
   return (
     <div className="p-6 space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200 dark:border-darkbg-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-200 dark:border-[#292524]">
         <div>
           <h1 className="text-2xl font-black text-navy dark:text-white tracking-tight flex items-center gap-2">
-            <Truck className="w-7 h-7 text-navy dark:text-greige" />
+            <Truck className="w-7 h-7 text-[#F97316]" />
             {clerkOnlyReceiving ? 'Authorized Stock Receiving' : 'Supplier & Purchasing Management'}
           </h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-stone-400 mt-1">
             {clerkOnlyReceiving 
               ? 'Receive verified vendor shipments against approved purchase orders and update physical inventory.'
               : 'End-to-end procurement lifecycle: manage verified vendors, draft purchase orders, and receive verified stock shipments.'}

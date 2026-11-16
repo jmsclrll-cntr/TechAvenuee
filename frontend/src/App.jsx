@@ -115,9 +115,9 @@ function App() {
           setSidebarCollapsed(false);
           try {
             if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-              document.documentElement.requestFullscreen().catch(() => {});
+              document.documentElement.requestFullscreen().catch(() => { });
             }
-          } catch {}
+          } catch { }
           setUser(u);
           setActiveTab('dashboard');
         }}
@@ -176,26 +176,16 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen bg-slate-100/90 dark:bg-darkbg text-slate-900 dark:text-gray-100 flex overflow-hidden transition-colors select-none">
+    <div className="relative h-screen text-slate-900 dark:text-gray-100 flex overflow-hidden transition-colors select-none bg-[#141210]">
       {/* ========================================================================= */}
-      {/* 1. SIDEBAR PANEL: Fixed sidebar, toggles on minimize/toggle button        */}
+      {/* 1. SIDEBAR PANEL: Removed (All roles use the sleek top navigation bar)     */}
       {/* ========================================================================= */}
-      <Sidebar
-        role={user.role}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onLogout={handleLogout}
-        onSwitchRole={handleSwitchRole}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        onOpenManual={() => setIsManualModalOpen(true)}
-      />
 
       {/* ========================================================================= */}
       {/* 2. MAIN WORKSPACE / DASHBOARD CONTENT                                     */}
       {/* ========================================================================= */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden transition-all duration-300">
-        {/* Top Header with theme toggle and live info */}
+        {/* Top Header with theme toggle, role navigation, and live info */}
         <Header
           user={user}
           darkMode={darkMode}
@@ -212,7 +202,7 @@ function App() {
         />
 
         {/* Dashboard Role Body */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-[#141210]">
           {renderDashboardContent()}
         </main>
       </div>

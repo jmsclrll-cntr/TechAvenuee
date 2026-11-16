@@ -448,9 +448,9 @@ def get_dashboard_stats():
                     "charts": {
                         "sales_trends": dynamic_sales_trend,
                         "inventory_status": [
-                            {"status": "In Stock", "count": total_products - low_stock_count - out_of_stock_count, "color": "#10B981"},
-                            {"status": "Low Stock", "count": low_stock_count, "color": "#F59E0B"},
-                            {"status": "Out of Stock", "count": out_of_stock_count, "color": "#EF4444"}
+                            {"status": "In Stock", "count": total_products - low_stock_count - out_of_stock_count, "color": "#A855F7"},
+                            {"status": "Low Stock", "count": low_stock_count, "color": "#C084FC"},
+                            {"status": "Out of Stock", "count": out_of_stock_count, "color": "#6B21A8"}
                         ],
                         "category_breakdown": [
                             {"name": c["name"], "stock": c["total_stock"]} for c in category_distribution

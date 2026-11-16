@@ -242,10 +242,10 @@ export default function NewTransaction({ onProceedToPos, user }) {
       )}
 
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-darkbg-border">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-[#292524]">
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <PlusCircle className="w-5 h-5 text-navy dark:text-greige" />
+            <PlusCircle className="w-5 h-5 text-[#F97316]" />
             New Transaction — Draft Preparation
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400">

@@ -44,16 +44,16 @@ aside {
 }
 
 .dark {
-  --bg-primary: #1F2632;
-  --bg-secondary: #2B3441;
-  --bg-card: #2B3441;
-  --bg-sidebar: #161C26;
-  --text-primary: #F9FAFB;
-  --text-secondary: #CFC8BE;
-  --text-muted: #9CA3AF;
-  --border-color: #374151;
-  --card-border: #3A4556;
-  --header-bg: #2B3441;
+  --bg-primary: #141210;
+  --bg-secondary: #1C1917;
+  --bg-card: #1C1917;
+  --bg-sidebar: #1C1917;
+  --text-primary: #FAFAF9;
+  --text-secondary: #A8A29E;
+  --text-muted: #78716C;
+  --border-color: #292524;
+  --card-border: #292524;
+  --header-bg: #1C1917;
 }
 
 body {

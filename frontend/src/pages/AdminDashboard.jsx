@@ -306,50 +306,12 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const tables = stats?.tables || {};
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1700px] mx-auto transition-colors">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-[1700px] mx-auto transition-colors bg-[#141210] min-h-full text-[#FAFAF9]">
       {/* VIEW: MAIN ADMIN DASHBOARD */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6 sm:space-y-8">
-          {/* Compact Dashboard Toolbar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-2xl px-5 py-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-navy/10 dark:bg-cyan-500/10 border border-navy/20 dark:border-cyan-500/20 p-1.5 shrink-0 flex items-center justify-center">
-                <img src={logoImg} alt="Tech Avenue" className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                  Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {(user?.full_name || user?.username || 'Administrator').split(' ')[0]}
-                </h1>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Live Store Operations
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                type="button"
-                onClick={loadData}
-                disabled={loading}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-darkbg hover:bg-slate-200 dark:hover:bg-darkbg-hover text-slate-700 dark:text-gray-200 text-xs font-bold border border-slate-200 dark:border-darkbg-border transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
-                title="Sync with database"
-              >
-                <Activity className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-500' : 'text-navy dark:text-cyan-400'}`} />
-                <span>{loading ? 'Syncing...' : 'Sync Data'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleExportReport}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Export Sales CSV</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Dashboard View Mode Selector â€” Underline Tab Bar */}
-          <div className="flex items-center gap-0 overflow-x-auto scrollbar-none border-b border-slate-200 dark:border-darkbg-border">
+          {/* Dashboard View Mode Selector — Centered Underline Tab Bar with Medium Text */}
+          <div className="flex items-center justify-center gap-1 sm:gap-3 overflow-x-auto scrollbar-none border-b border-[#292524] py-1">
             {[
               { id: 'all', label: 'All Overview', icon: LayoutGrid, count: 'Compact' },
               { id: 'sales', label: 'Sales & Revenue', icon: CircleDollarSign, count: `PHP ${(cards.total_daily_sales || 0).toLocaleString()}` },
@@ -364,216 +326,281 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   key={btn.id}
                   type="button"
                   onClick={() => setDashView(btn.id)}
-                  className={`relative flex items-center gap-2 px-5 py-3 text-xs font-bold transition-all shrink-0 cursor-pointer select-none ${
+                  className={`relative flex items-center gap-2 px-4 sm:px-6 py-2.5 text-sm sm:text-base font-semibold transition-all shrink-0 cursor-pointer select-none ${
                     isActive
-                      ? 'text-navy dark:text-cyan-400'
-                      : 'text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200'
+                      ? 'text-[#F97316] font-bold'
+                      : 'text-stone-400 hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-navy dark:text-cyan-400' : ''}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#F97316]' : ''}`} />
                   <span>{btn.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
+                  <span className={`text-xs px-2 py-0.5 rounded-md font-mono ${
                     isActive
-                      ? 'bg-navy/10 dark:bg-cyan-500/15 text-navy dark:text-cyan-300 font-bold'
-                      : 'bg-slate-100 dark:bg-darkbg text-slate-500 dark:text-gray-400'
+                      ? 'bg-[#F97316]/20 text-[#FDBA74] font-bold border border-[#F97316]/30'
+                      : 'bg-[#292524] text-stone-400'
                   }`}>
                     {btn.count}
                   </span>
                   {isActive && (
-                    <span className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-navy dark:bg-cyan-400"></span>
+                    <span className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-[#F97316]"></span>
                   )}
                 </button>
               );
             })}
           </div>
 
+          {/* Back button if user drilled down into a specific telemetry or sub-view */}
+          {dashView !== 'all' && (
+            <div className="flex items-center justify-between bg-[#1C1917] border border-[#292524] rounded-2xl px-5 py-3 text-white shadow-lg">
+              <button
+                type="button"
+                onClick={() => setDashView('all')}
+                className="flex items-center gap-2 text-xs font-bold text-[#F97316] hover:text-[#FB923C] cursor-pointer active:scale-95 transition-transform"
+              >
+                &larr; Back to Dashboard Overview
+              </button>
+              <span className="text-xs text-stone-400 font-semibold uppercase tracking-wider">
+                Viewing: {dashView.toUpperCase()}
+              </span>
+            </div>
+          )}
+
           {/* ========================================================================= */}
-          {/* GROUP 1: ALL OVERVIEW (Clean, balanced, non-scroll executive summary)     */}
+          {/* GROUP 1: ALL OVERVIEW (Warm Neutral + Orange Layout - Compact & Balanced)  */}
           {/* ========================================================================= */}
           {dashView === 'all' && (
-            <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-150">
-              {/* 4 Core Primary KPIs */}
-              <div>
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <h3 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-gray-500 dark:text-slate-500">
-                    Core Performance Indicators
-                  </h3>
-                  <span className="text-xs text-slate-500">Real-time store metrics</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                  <StatCard
-                    title="Daily Sales"
-                    value={`PHP ${(cards.total_daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    subtitle="Gross revenue today"
-                    icon={CircleDollarSign}
-                    badgeColor="green"
-                    trend="+12.4%"
-                  />
-                  <StatCard
-                    title="Monthly Revenue"
-                    value={`PHP ${(cards.monthly_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    subtitle="Current month"
-                    icon={TrendingUp}
-                    badgeColor="green"
-                  />
-                  <StatCard
-                    title="Total Products"
-                    value={cards.total_products || 0}
-                    subtitle="Registered catalog"
-                    icon={Package}
-                    badgeColor="blue"
-                  />
-                  <StatCard
-                    title="Low-Stock Alerts"
-                    value={cards.low_stock_products || 0}
-                    subtitle="At/below threshold"
-                    icon={AlertTriangle}
-                    badgeColor="amber"
-                    trend="Attention"
-                  />
+            <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-150">
+              {/* Top Hero Section: Welcome & Sales Trend Side-by-Side (Compact) */}
+              <div className="bg-[#1C1917] text-[#FAFAF9] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-lg">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                  
+                  {/* Left Column: Greeting, Live Badge, KPI Metrics & Action Buttons */}
+                  <div className="lg:col-span-5 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] animate-pulse"></span>
+                        <span className="text-[10px] uppercase font-extrabold tracking-wider text-orange-400">
+                          Live Store Operations
+                        </span>
+                      </div>
+
+                      <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight">
+                        Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'},
+                        <br />
+                        <span className="text-[#F97316]">{(user?.full_name || user?.username || 'Carl').split(' ')[0]}</span>
+                      </h1>
+                    </div>
+
+                    {/* Sales Metric Display */}
+                    <div className="space-y-2 pt-0.5">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="text-[9px] font-extrabold uppercase tracking-widest text-stone-400">
+                            Daily Sales &bull; Gross Revenue Today
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                            +12.4%
+                          </span>
+                        </div>
+                        <h2 className="text-lg sm:text-xl font-black font-mono text-white mt-0.5">
+                          PHP {(cards.total_daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </h2>
+                      </div>
+
+                      <div>
+                        <p className="text-[9px] font-extrabold uppercase tracking-widest text-stone-400">
+                          Monthly Revenue &bull; Current Month
+                        </p>
+                        <h3 className="text-sm sm:text-base font-black font-mono text-stone-200 mt-0.5">
+                          PHP {(cards.monthly_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Main Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                      <button
+                        type="button"
+                        onClick={handleExportReport}
+                        className="px-3 py-1.5 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white text-[11px] font-black shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                      >
+                        <Download className="w-3 h-3" />
+                        <span>Export Sales CSV</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={loadData}
+                        disabled={loading}
+                        className="px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#342F2D] text-stone-200 border border-[#44403C] text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+                        title="Sync with database"
+                      >
+                        <Activity className={`w-3 h-3 ${loading ? 'animate-spin text-[#F97316]' : 'text-stone-400'}`} />
+                        <span>{loading ? 'Syncing...' : 'Sync Data'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Compact Sales Trend Chart */}
+                  <div className="lg:col-span-7 bg-[#141210] border border-[#292524] rounded-lg p-3 flex flex-col justify-between">
+                    <ResponsiveLineChart
+                      title="Sales trend vs projected"
+                      data={charts.sales_trends || []}
+                      xKey="month"
+                      yKey="sales"
+                      yKey2="projected"
+                      strokeColor="#F97316"
+                      strokeColor2="#78716C"
+                      height={175}
+                    />
+                  </div>
+
                 </div>
               </div>
 
-              {/* Primary Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-8 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <ResponsiveLineChart
-                    title="Daily & Monthly Sales Trend vs Projected (PHP)"
-                    data={charts.sales_trends || []}
-                    xKey="month"
-                    yKey="sales"
-                    yKey2="projected"
-                    strokeColor="#1E3A5F"
-                    strokeColor2="#10B981"
-                  />
+              {/* Three-Column Bottom Grid: Total/Low-Stock Cards | Inventory Donut | AI Predictions Card */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                
+                {/* Left 3 cols: Total Products & Low-Stock Alerts Stack */}
+                <div className="lg:col-span-3 flex flex-col justify-between gap-3.5">
+                  {/* Total Products (Deep Warm Slate/Stone Card) */}
+                  <div 
+                    onClick={() => setActiveTab('inventory')}
+                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between hover:border-[#F97316]/40 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-[#FB923C]">
+                        Total Products
+                      </p>
+                      <Package className="w-4 h-4 text-[#F97316] group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div className="my-1.5">
+                      <span className="text-2xl sm:text-3xl font-black font-mono text-[#FAFAF9]">
+                        {cards.total_products || 0}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 font-medium">
+                      Registered catalog
+                    </p>
+                  </div>
+
+                  {/* Low-Stock Alerts (Deep Warm Amber/Orange Card) */}
+                  <div 
+                    onClick={() => setActiveTab('inventory')}
+                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between hover:border-[#EA580C]/40 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-[#FDBA74]">
+                        Low-Stock Alerts
+                      </p>
+                      <AlertTriangle className="w-4 h-4 text-[#F97316] group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div className="my-1.5">
+                      <span className="text-2xl sm:text-3xl font-black font-mono text-[#FFFBEB]">
+                        {cards.low_stock_products || 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] text-stone-400 font-medium">
+                        At/below threshold
+                      </p>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                        Attention
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="lg:col-span-4 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+
+                {/* Middle 5 cols: Inventory Status Distribution Donut */}
+                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] hover:border-[#F97316]/30 rounded-xl p-4 shadow-sm flex flex-col justify-between transition-colors">
                   <ResponsiveDonutChart
-                    title="Inventory Status Distribution"
-                    data={charts.inventory_status || []}
+                    title="Inventory status distribution"
+                    data={(charts.inventory_status || []).map((item) => {
+                      let color = '#F97316'; // Vibrant Orange for In Stock
+                      if (item.status === 'Low Stock') color = '#FB923C'; // Lighter Warm Amber/Orange for Low Stock
+                      if (item.status === 'Out of Stock') color = '#78716C'; // Neutral Stone for Out of Stock
+                      return { ...item, color };
+                    })}
                     valueKey="count"
                     labelKey="status"
                     centerLabel="Stock Status"
                   />
                 </div>
-              </div>
 
-              {/* Actionable Tables */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* 1. Recent Sales Transactions */}
-                <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <Receipt className="w-4 h-4 text-navy dark:text-blue-400" />
-                      <h3 className="font-black text-sm text-slate-900 dark:text-white">Recent Sales Transactions</h3>
+                {/* Right 4 cols: Warm Orange AI Predictions Card */}
+                <div className="lg:col-span-4 bg-gradient-to-br from-[#EA580C] to-[#C2410C] text-white rounded-xl p-4 sm:p-5 shadow-lg shadow-orange-950/30 flex flex-col justify-between relative overflow-hidden">
+                  {/* Background ambient pattern */}
+                  <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 blur-lg pointer-events-none"></div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-white/90" />
+                        <p className="text-[10px] font-black uppercase tracking-wider text-orange-100">
+                          AI Predictions
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-2xs">
+                        ML Models
+                      </span>
                     </div>
-                    <button
-                      onClick={() => setActiveTab('sales')}
-                      className="text-xs text-navy dark:text-cyan-400 hover:underline font-semibold"
-                    >
-                      View All
-                    </button>
+
+                    <div className="mt-2.5 mb-1">
+                      <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-mono">
+                        {cards.predicted_sales_growth || '+14.8%'}
+                      </h3>
+                      <p className="text-[11px] font-semibold text-orange-100 mt-0.5">
+                        Projected growth
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="overflow-x-auto">
-                    {(!tables.recent_sales || tables.recent_sales.length === 0) ? (
-                      <div className="py-8 text-center flex flex-col items-center justify-center text-slate-400">
-                        <Inbox className="w-10 h-10 mb-2 stroke-1 text-slate-400 dark:text-slate-500" />
-                        <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">No recent transactions recorded today</p>
-                        <button
-                          onClick={() => setActiveTab('sales')}
-                          className="mt-3 px-3 py-1.5 rounded-lg bg-navy/10 dark:bg-cyan-500/10 text-navy dark:text-cyan-400 text-xs font-bold hover:bg-navy/20 transition-colors"
-                        >
-                          View Sales History
-                        </button>
-                      </div>
-                    ) : (
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 uppercase font-extrabold text-[11px] border-b border-slate-200 dark:border-darkbg-border">
-                          <tr>
-                            <th className="py-2.5 px-3">Invoice #</th>
-                            <th className="py-2.5 px-3">Customer</th>
-                            <th className="py-2.5 px-3 text-right">Total</th>
-                            <th className="py-2.5 px-3 text-center">Payment</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200 font-medium">
-                          {tables.recent_sales.slice(0, 4).map((t) => (
-                            <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                              <td className="py-2.5 px-3 font-mono font-medium text-navy dark:text-blue-400">{t.invoice_number}</td>
-                              <td className="py-2.5 px-3">{t.customer_name}</td>
-                              <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
-                                PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                              </td>
-                              <td className="py-2.5 px-3 text-center">
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-navy dark:text-greige">
-                                  {t.payment_method}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
+                  {/* 4 Interactive Quick Links */}
+                  <div className="space-y-1.5 mt-3">
+                    {[
+                      { id: 'pred_demand', label: 'Product Demand Prediction' },
+                      { id: 'pred_sales', label: 'Sales Prediction' },
+                      { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
+                      { id: 'pred_best_selling', label: 'Best-Selling Products' }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActiveTab(item.id)}
+                        className="w-full text-left px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-white text-[11px] font-bold transition-all flex items-center justify-between cursor-pointer group active:scale-[0.98]"
+                      >
+                        <span>{item.label}</span>
+                        <span className="text-[10px] text-white/70 group-hover:text-white font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* 2. Low-Stock Alert Products */}
-                <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      <h3 className="font-black text-sm text-slate-900 dark:text-white">Low-Stock Alert Products</h3>
-                    </div>
-                    <button
-                      onClick={() => setActiveTab('inventory')}
-                      className="text-xs text-navy dark:text-cyan-400 hover:underline font-semibold"
-                    >
-                      Manage Stock
-                    </button>
-                  </div>
+              </div>
 
-                  <div className="overflow-x-auto">
-                    {(!tables.low_stock_products || tables.low_stock_products.length === 0) ? (
-                      <div className="py-8 text-center flex flex-col items-center justify-center text-slate-400">
-                        <CheckCircle2 className="w-10 h-10 mb-2 stroke-1 text-emerald-500" />
-                        <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Inventory levels healthy! No products at critical stock.</p>
-                      </div>
-                    ) : (
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 uppercase font-extrabold text-[11px] border-b border-slate-200 dark:border-darkbg-border">
-                          <tr>
-                            <th className="py-2.5 px-3">Product Name</th>
-                            <th className="py-2.5 px-3">SKU</th>
-                            <th className="py-2.5 px-3 text-center">Stock</th>
-                            <th className="py-2.5 px-3 text-center">Reorder</th>
-                            <th className="py-2.5 px-3 text-right">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200 font-medium">
-                          {tables.low_stock_products.slice(0, 4).map((p) => (
-                            <tr key={p.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                              <td className="py-2.5 px-3 font-medium truncate max-w-[150px]">{p.name}</td>
-                              <td className="py-2.5 px-3 font-mono text-[11px] text-navy dark:text-blue-400">{p.sku}</td>
-                              <td className="py-2.5 px-3 text-center font-bold text-red-500">{p.current_stock}</td>
-                              <td className="py-2.5 px-3 text-center text-slate-600 font-medium">{p.reorder_level}</td>
-                              <td className="py-2.5 px-3 text-right">
-                                <button
-                                  type="button"
-                                  onClick={() => setActiveTab('purchasing')}
-                                  className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 text-[10px] font-bold inline-flex items-center gap-1 transition-colors border border-amber-500/20 cursor-pointer"
-                                  title="Purchase / Restock item"
-                                >
-                                  <Plus className="w-3 h-3" />
-                                  Restock
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
+              {/* Bottom Store Activity Footer Bar */}
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-1.5">
+                    <Activity className="w-3.5 h-3.5 text-[#F97316]" />
+                    <h4 className="text-xs font-black text-white">Store Activity</h4>
                   </div>
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                    {(tables.user_activity || []).length} logs
+                  </span>
+                  <p className="hidden md:inline text-[11px] text-stone-400 truncate max-w-md">
+                    Latest: {(tables.user_activity?.[0]?.action) || 'System operations running smoothly'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDashView('activity')}
+                    className="text-[11px] font-bold text-[#F97316] hover:text-[#FB923C] hover:underline cursor-pointer"
+                  >
+                    View Telemetry Logs &rarr;
+                  </button>
                 </div>
               </div>
             </div>
@@ -612,38 +639,38 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
               {/* Sales Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-7 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <ResponsiveLineChart
                     title="Daily & Monthly Sales Trend vs Projected (PHP)"
                     data={charts.sales_trends || []}
                     xKey="month"
                     yKey="sales"
                     yKey2="projected"
-                    strokeColor="#1E3A5F"
+                    strokeColor="#F97316"
                     strokeColor2="#10B981"
                   />
                 </div>
-                <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <ResponsiveBarChart
                     title="Top-Selling Products (Volume)"
                     data={charts.top_products || []}
                     xKey="name"
                     yKey="units"
-                    barColor="#10B981"
+                    barColor="#FB923C"
                   />
                 </div>
               </div>
 
               {/* Sales Transactions Table */}
-              <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Receipt className="w-4 h-4 text-navy dark:text-blue-400" />
+                    <Receipt className="w-4 h-4 text-[#F97316] dark:text-[#FB923C]" />
                     <h3 className="font-black text-sm text-slate-900 dark:text-white">Recent Sales Transactions</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('sales')}
-                    className="text-xs text-navy dark:text-cyan-400 hover:underline font-semibold"
+                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
                   >
                     Go to Full Sales Register &rarr;
                   </button>
@@ -651,7 +678,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                    <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold border-b border-[#292524]">
                       <tr>
                         <th className="py-2.5 px-3">Invoice #</th>
                         <th className="py-2.5 px-3">Customer</th>
@@ -661,14 +688,14 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                       {(tables.recent_sales || []).map((t) => (
-                        <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                          <td className="py-2.5 px-3 font-mono font-medium text-navy dark:text-blue-400">{t.invoice_number}</td>
+                        <tr key={t.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
+                          <td className="py-2.5 px-3 font-mono font-medium text-[#F97316] dark:text-[#FB923C]">{t.invoice_number}</td>
                           <td className="py-2.5 px-3">{t.customer_name}</td>
                           <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                             PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </td>
                           <td className="py-2.5 px-3 text-center">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-navy dark:text-greige">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F97316]/10 text-[#F97316] dark:text-greige">
                               {t.payment_method}
                             </span>
                           </td>
@@ -714,7 +741,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
               {/* Inventory Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <ResponsiveDonutChart
                     title="Inventory Status Distribution"
                     data={charts.inventory_status || []}
@@ -723,19 +750,19 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     centerLabel="Stock Status"
                   />
                 </div>
-                <div className="lg:col-span-7 bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <ResponsiveBarChart
                     title="Category Stock Breakdown"
                     data={charts.category_breakdown || []}
                     xKey="name"
                     yKey="stock"
-                    barColor="#1E3A5F"
+                    barColor="#F97316"
                   />
                 </div>
               </div>
 
               {/* Low-Stock Alert Table */}
-              <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
@@ -743,7 +770,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                   <button
                     onClick={() => setActiveTab('inventory')}
-                    className="text-xs text-navy dark:text-cyan-400 hover:underline font-semibold"
+                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
                   >
                     Open Master Inventory &rarr;
                   </button>
@@ -751,7 +778,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold border-b border-slate-200 dark:border-darkbg-border">
+                    <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold border-b border-[#292524]">
                       <tr>
                         <th className="py-2.5 px-3">Product Name</th>
                         <th className="py-2.5 px-3">SKU</th>
@@ -761,9 +788,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                       {(tables.low_stock_products || []).map((p) => (
-                        <tr key={p.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
+                        <tr key={p.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
                           <td className="py-2.5 px-3 font-medium">{p.name}</td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] text-navy dark:text-blue-400">{p.sku}</td>
+                          <td className="py-2.5 px-3 font-mono text-[11px] text-[#F97316] dark:text-[#FB923C]">{p.sku}</td>
                           <td className="py-2.5 px-3 text-center font-bold text-red-500">{p.current_stock}</td>
                           <td className="py-2.5 px-3 text-center text-slate-600 font-medium">{p.reorder_level}</td>
                         </tr>
@@ -800,28 +827,28 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               </div>
 
               {/* Demand Trend Chart */}
-              <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                 <ResponsiveLineChart
                   title="Predicted Demand Trends"
                   data={charts.predicted_demand_trends || []}
                   xKey="period"
                   yKey="demand"
                   yKey2="capacity"
-                  strokeColor="#3B82F6"
+                  strokeColor="#F97316"
                   strokeColor2="#6B7280"
                 />
               </div>
 
               {/* Latest Executive Prediction Runs */}
-              <div className="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-purple-500" />
+                    <Sparkles className="w-4 h-4 text-[#F97316]" />
                     <h3 className="font-black text-sm text-slate-900 dark:text-white">Latest Executive Prediction Runs</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('pred_sales')}
-                    className="text-xs text-navy dark:text-cyan-400 hover:underline font-semibold"
+                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
                   >
                     Launch Prediction Suite &rarr;
                   </button>
@@ -832,9 +859,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <p className="text-slate-400 text-xs py-4 text-center">No predictions recorded yet. Launch one from the Prediction Workspace.</p>
                   ) : (
                     (tables.latest_predictions || []).map((pred, i) => (
-                      <div key={i} className="p-3 rounded-lg bg-purple-500/5 dark:bg-darkbg/50 border border-purple-500/15">
+                      <div key={i} className="p-3 rounded-lg bg-[#F97316]/5 bg-[#141210]/50 border border-[#F97316]/20">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-purple-700 dark:text-purple-300 uppercase text-[10px]">
+                          <span className="font-bold text-[#FB923C] uppercase text-[10px]">
                             Task: {pred.task_type?.replace('_', ' ')}
                           </span>
                           <span className="font-mono text-[10px] text-slate-500">{pred.created_at?.substring(0, 16)}</span>
@@ -875,24 +902,24 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               </div>
 
               {/* Activity Logs Table */}
-              <div className="bg-white dark:bg-darkbg-card border border-slate-300 dark:border-darkbg-border rounded-2xl p-6 shadow-xs">
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-darkbg-border">
+              <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#292524]">
                   <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-navy dark:text-cyan-400" />
-                    <h3 className="font-black text-sm text-slate-900 dark:text-white">Recent Store Activity Logs</h3>
+                    <Activity className="w-4 h-4 text-[#F97316]" />
+                    <h3 className="font-black text-sm text-[#FAFAF9]">Recent Store Activity Logs</h3>
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-500 font-bold">Chronological telemetry</span>
+                  <span className="text-xs text-stone-400 font-bold">Chronological telemetry</span>
                 </div>
 
                 <div className="space-y-2.5 text-xs">
                   {(tables.user_activity || []).map((log) => (
-                    <div key={log.id} className="p-3.5 rounded-xl bg-slate-50 dark:bg-darkbg/60 border border-slate-200 dark:border-darkbg-border hover:bg-slate-100/90 dark:hover:bg-darkbg-hover/80 transition-colors flex items-start justify-between shadow-2xs">
+                    <div key={log.id} className="p-3.5 rounded-xl bg-[#141210] border border-[#292524] hover:bg-[#292524]/60 transition-colors flex items-start justify-between shadow-xs">
                       <div>
-                        <p className="font-black text-slate-900 dark:text-white">{log.action}</p>
-                        <p className="text-[12px] text-slate-700 dark:text-gray-300 font-semibold mt-0.5">{log.details}</p>
-                        <p className="text-[11px] text-slate-500 dark:text-cyan-400 font-bold mt-1">By {log.user_name} ({log.role})</p>
+                        <p className="font-black text-[#FAFAF9]">{log.action}</p>
+                        <p className="text-[12px] text-stone-300 font-semibold mt-0.5">{log.details}</p>
+                        <p className="text-[11px] text-[#FB923C] font-bold mt-1">By {log.user_name} ({log.role})</p>
                       </div>
-                      <span className="text-[11px] text-slate-700 dark:text-gray-300 font-bold font-mono bg-white dark:bg-darkbg px-2.5 py-1 rounded-md border border-slate-300 dark:border-darkbg-border shadow-2xs shrink-0">{log.created_at?.substring(11, 16)}</span>
+                      <span className="text-[11px] text-stone-300 font-bold font-mono bg-[#1C1917] px-2.5 py-1 rounded-md border border-[#292524] shadow-xs shrink-0">{log.created_at?.substring(11, 16) || log.created_at}</span>
                     </div>
                   ))}
                 </div>
@@ -904,18 +931,18 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: INVENTORY MANAGEMENT */}
       {activeTab === 'inventory' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Master Inventory Catalog</h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
+              <h2 className="text-xl sm:text-2xl font-black text-[#FAFAF9]">Master Inventory Catalog</h2>
+              <p className="text-xs sm:text-sm text-stone-400 mt-0.5">
                 Full administrative authority over hardware specifications, procurement cost, and retail pricing
               </p>
             </div>
             <button
               type="button"
               onClick={() => setIsAddProductModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Product</span>
@@ -924,13 +951,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-500" />
+              <Search className="w-4 h-4 absolute left-3.5 top-3 text-stone-500" />
               <input
                 type="text"
                 placeholder="Search by product name, SKU, or brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs sm:text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-gray-900 dark:text-white focus:ring-2 focus:ring-navy/20 dark:focus:ring-cyan-500/30 outline-none"
+                className="w-full text-xs sm:text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[#F97316]/30 outline-none placeholder:text-stone-500"
               />
               {searchTerm && (
                 <button
@@ -945,7 +972,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-darkbg-border bg-gray-50/70 dark:bg-darkbg text-gray-900 dark:text-white focus:ring-2 focus:ring-navy/20 dark:focus:ring-cyan-500/30 outline-none font-medium cursor-pointer"
+              className="text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[#F97316]/30 outline-none font-medium cursor-pointer"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -957,11 +984,11 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           {/* Filter Status & Results Counter */}
           <div className="flex items-center justify-between text-xs text-slate-500 px-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-slate-700 dark:text-gray-300">
-                Showing <span className="font-bold text-navy dark:text-cyan-400">{products.length}</span> items
+              <span className="font-semibold text-stone-300">
+                Showing <span className="font-bold text-[#FB923C]">{products.length}</span> items
               </span>
               {(searchTerm || categoryFilter) && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkbg text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-darkbg-border">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#141210] text-stone-300 border border-[#292524]">
                   Filtered
                   <button
                     type="button"
@@ -976,9 +1003,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-[#292524]">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold text-[11px] border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3.5">SKU</th>
                   <th className="py-3 px-3.5">Product Name</th>
@@ -991,7 +1018,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3.5 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] text-stone-200">
                 {products.map((p) => {
                   const cost = Number(p.cost_price) || 0;
                   const retail = Number(p.selling_price) || 0;
@@ -1004,13 +1031,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         setViewProduct(p);
                         setIsViewModalOpen(true);
                       }}
-                      className="hover:bg-blue-50/40 dark:hover:bg-darkbg-hover/80 transition-colors cursor-pointer group"
+                      className="hover:bg-[#292524]/80 transition-colors cursor-pointer group"
                       title="Click to view full product & supplier specifications"
                     >
-                      <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400 group-hover:underline">{p.sku}</td>
+                      <td className="py-2.5 px-3 font-mono font-bold text-[#FB923C] group-hover:underline">{p.sku}</td>
                       <td className="py-2.5 px-3 font-medium">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-110 shadow-xs">
+                          <div className="w-9 h-9 rounded-lg bg-[#292524] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-110 shadow-xs">
                             <img 
                               src={p.image_url || '/products/desktop.svg'} 
                               alt={p.name} 
@@ -1018,14 +1045,14 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                               onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
                             />
                           </div>
-                          <span className="group-hover:text-navy dark:group-hover:text-blue-400 transition-colors font-bold block">{p.name}</span>
+                          <span className="group-hover:text-[#FB923C] transition-colors font-bold block">{p.name}</span>
                         </div>
                       </td>
                       <td className="py-2.5 px-3">{p.brand}</td>
                       <td className="py-2.5 px-3 text-right font-mono">PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-500/25">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/25">
                           +{marginPct}%
                         </span>
                       </td>
@@ -1045,7 +1072,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                               setSelectedProduct(p);
                               setIsEditProductModalOpen(true);
                             }}
-                            className="px-2.5 py-1 rounded bg-navy text-white text-[11px] font-semibold hover:bg-navy-light inline-flex items-center gap-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 rounded bg-[#F97316] text-white text-[11px] font-semibold hover:bg-[#F97316]-light inline-flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-3 h-3" />
                             Edit
@@ -1075,27 +1102,27 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: USER MANAGEMENT */}
       {activeTab === 'users' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Store Employee Accounts & Access</h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
+              <h2 className="text-xl sm:text-2xl font-black text-[#FAFAF9]">Store Employee Accounts & Access</h2>
+              <p className="text-xs sm:text-sm text-stone-400 mt-0.5">
                 Create team accounts, assign role permissions, and control operational access
               </p>
             </div>
             <button
               type="button"
               onClick={() => setIsAddUserModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <UserPlus className="w-4 h-4" />
               <span>Create Employee Account</span>
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-[#292524]">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold text-[11px] border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3.5">Full Name</th>
                   <th className="py-3 px-3.5">Username</th>
@@ -1106,17 +1133,17 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-3 px-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
+              <tbody className="divide-y divide-[#292524] text-stone-200">
                 {usersList.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                    <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white">{u.full_name}</td>
-                    <td className="py-2.5 px-3 font-mono text-slate-500">{u.username}</td>
+                  <tr key={u.id} className="hover:bg-[#292524]/50">
+                    <td className="py-2.5 px-3 font-semibold text-[#FAFAF9]">{u.full_name}</td>
+                    <td className="py-2.5 px-3 font-mono text-stone-400">{u.username}</td>
                     <td className="py-2.5 px-3">{u.email}</td>
                     <td className="py-2.5 px-3">
                       <select
                         value={u.role}
                         onChange={(e) => handleUpdateRole(u.id, e.target.value)}
-                        className="text-xs px-2 py-1 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-semibold"
+                        className="text-xs px-2 py-1 rounded border border-[#292524] bg-[#141210] text-[#FAFAF9] font-semibold"
                       >
                         <option value="admin">Administrator</option>
                         <option value="inventory_clerk">Inventory Clerk</option>
@@ -1130,7 +1157,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         {u.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">{u.last_login || 'Never'}</td>
+                    <td className="py-2.5 px-3 text-stone-400 font-mono text-[11px]">{u.last_login || 'Never'}</td>
                     <td className="py-2.5 px-3 text-right">
                       {u.id !== user?.id && (
                         <button
@@ -1154,8 +1181,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SALES TRANSACTIONS MONITOR */}
       {activeTab === 'sales' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Store Sales Transaction Audit</h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
@@ -1172,9 +1199,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-darkbg-border">
+          <div className="overflow-x-auto rounded-xl border border-[#292524]">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-100 dark:bg-darkbg text-slate-700 uppercase font-extrabold text-[11px] border-b border-slate-200 dark:border-darkbg-border">
+              <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3.5">Invoice #</th>
                   <th className="py-3 px-3.5">Date & Time</th>
@@ -1188,8 +1215,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {salesList.map((s) => (
-                  <tr key={s.id} className="hover:bg-gray-50/50 dark:hover:bg-darkbg-hover/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-navy dark:text-blue-400">{s.invoice_number}</td>
+                  <tr key={s.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
+                    <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">{s.invoice_number}</td>
                     <td className="py-2.5 px-3 text-slate-600 font-medium">{s.created_at}</td>
                     <td className="py-2.5 px-3 font-medium">{s.customer_name}</td>
                     <td className="py-2.5 px-3">{s.cashier}</td>
@@ -1197,7 +1224,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <td className="py-2.5 px-3 text-right font-mono text-slate-500">PHP {Number(s.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-navy dark:text-greige">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F97316]/10 text-[#F97316] dark:text-greige">
                         {s.payment_method}
                       </span>
                     </td>
@@ -1222,8 +1249,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: ADMIN KNOWLEDGE ANALYSIS & PREDICTION (EXECUTIVE VIEW) */}
       {isPredictionTab && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-darkbg-border">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
                   <BrainCircuit className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -1240,7 +1267,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <select
                   value={selectedAlgorithm}
                   onChange={(e) => setSelectedAlgorithm(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-semibold"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-gray-50 bg-[#141210] font-semibold"
                 >
                   <option value="random_forest">Random Forest Regression (Ensemble)</option>
                   <option value="linear_regression">Simple Linear Regression</option>
@@ -1249,7 +1276,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             {/* Prediction Task Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gray-100 dark:border-darkbg-border">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gray-100 border-[#292524]">
               {[
                 { id: 'sales', label: 'Sales Revenue Prediction' },
                 { id: 'demand', label: 'Product Demand Prediction' },
@@ -1265,8 +1292,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     setPredictionSuccess(null);
                   }}
                   className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${selectedTask === task.id
-                    ? 'bg-navy text-white border-navy shadow-sm'
-                    : 'bg-gray-50 dark:bg-darkbg text-gray-700 dark:text-gray-300 border-gray-200 dark:border-darkbg-border hover:bg-gray-100'
+                    ? 'bg-[#F97316] text-white border-navy shadow-sm'
+                    : 'bg-gray-50 bg-[#141210] text-gray-700 dark:text-gray-300 border-gray-200 border-[#292524] hover:bg-gray-100'
                     }`}
                 >
                   {task.label}
@@ -1296,7 +1323,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             )}
 
             {/* Inputs Form */}
-            <div className="p-4 rounded-xl bg-gray-50/60 dark:bg-darkbg/40 border border-gray-200 dark:border-darkbg-border space-y-3">
+            <div className="p-4 rounded-xl bg-gray-50/60 bg-[#141210]/40 border border-gray-200 border-[#292524] space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                 Prediction Input Parameters
               </h4>
@@ -1310,7 +1337,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.store_footfall}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, store_footfall: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1319,7 +1346,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.marketing_spend}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, marketing_spend: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1327,7 +1354,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       <select
                         value={predictionInputs.promotions_active}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, promotions_active: Number(e.target.value) })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       >
                         <option value="1">Yes (Active Promotion / Sale)</option>
                         <option value="0">No (Standard Trading Day)</option>
@@ -1343,7 +1370,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       <select
                         value={predictionInputs.category}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, category: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       >
                         {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
                       </select>
@@ -1354,7 +1381,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.unit_price}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, unit_price: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1363,7 +1390,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.discount_pct}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, discount_pct: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1377,7 +1404,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.current_stock}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, current_stock: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1386,7 +1413,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.monthly_demand}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, monthly_demand: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1400,7 +1427,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         type="number"
                         value={predictionInputs.page_views}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, page_views: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                     <div>
@@ -1410,7 +1437,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         step="0.1"
                         value={predictionInputs.rating}
                         onChange={(e) => setPredictionInputs({ ...predictionInputs, rating: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card"
+                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
                       />
                     </div>
                   </>
@@ -1421,7 +1448,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <button
                   onClick={handleRunPrediction}
                   disabled={isPredicting}
-                  className="px-5 py-2 rounded-lg bg-navy hover:bg-navy-light text-white text-xs font-bold shadow-md flex items-center gap-2"
+                  className="px-5 py-2 rounded-lg bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs font-bold shadow-md flex items-center gap-2"
                 >
                   {isPredicting ? (
                     <>
@@ -1440,8 +1467,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Prediction Output & Recommendations */}
             {predictionResult && (
-              <div className="p-5 rounded-xl bg-purple-500/5 dark:bg-darkbg/50 border border-purple-500/20 space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-purple-500/20">
+              <div className="p-5 rounded-xl bg-[#F97316]/5 bg-[#141210]/50 border border-[#F97316]/20 space-y-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-[#F97316]/20">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
                       Forecast Outcome ({predictionResult.task_name})
@@ -1451,15 +1478,15 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       {Number(predictionResult.predicted_value).toLocaleString()} {predictionResult.units !== 'PHP' ? predictionResult.units : ''}
                     </h3>
                   </div>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#F97316]/10 text-[#FB923C] border border-[#F97316]/20">
                     Confidence: {predictionResult.confidence_level}
                   </span>
                 </div>
 
                 {/* Business Recommendation Box */}
-                <div className="p-4 rounded-lg bg-white dark:bg-darkbg-card border border-purple-200 dark:border-darkbg-border space-y-1">
+                <div className="p-4 rounded-lg bg-[#1C1917] border border-purple-200 border-[#292524] space-y-1">
                   <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-purple-500" />
+                    <Sparkles className="w-4 h-4 text-[#F97316]" />
                     Actionable Business Recommendation
                   </h4>
                   <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -1469,7 +1496,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
                 {/* Projected Trajectory Chart */}
                 {predictionResult.trend_data && predictionResult.trend_data.length > 0 && (
-                  <div className="bg-white dark:bg-darkbg-card p-4 rounded-lg border border-gray-200 dark:border-darkbg-border">
+                  <div className="bg-[#1C1917] p-4 rounded-lg border border-gray-200 border-[#292524]">
                     <ResponsiveLineChart
                       title="Projected Trajectory Analysis"
                       data={predictionResult.trend_data}
@@ -1487,11 +1514,11 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: SYSTEM & STORE CONFIGURATION (INDIVIDUAL PANEL) */}
       {activeTab === 'settings' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 max-w-4xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-darkbg-border">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
-                <SettingsIcon className="w-6 h-6 text-navy dark:text-cyan-400" />
+                <SettingsIcon className="w-6 h-6 text-[#F97316] dark:text-[#FB923C]" />
                 Store Settings & System Controls
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
@@ -1504,7 +1531,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 setSettingsSavedToast(true);
                 setTimeout(() => setSettingsSavedToast(false), 3000);
               }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
             >
               <Check className="w-4 h-4" />
               <span>Save Preferences</span>
@@ -1520,8 +1547,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Store Information */}
-            <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-4">
-              <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+            <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-4">
+              <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
                 <Building className="w-4 h-4" />
                 <span>Store Identity & Branch</span>
               </div>
@@ -1532,7 +1559,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     type="text"
                     value={storeSettings.storeName}
                     onChange={(e) => setStoreSettings({ ...storeSettings, storeName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 border-[#292524] bg-[#1C1917] text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -1541,15 +1568,15 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     type="text"
                     value={storeSettings.branchName}
                     onChange={(e) => setStoreSettings({ ...storeSettings, branchName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 border-[#292524] bg-[#1C1917] text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
             </div>
 
             {/* Financial & Fiscal */}
-            <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-4">
-              <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+            <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-4">
+              <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
                 <CreditCard className="w-4 h-4" />
                 <span>Point of Sale & Fiscal Rules</span>
               </div>
@@ -1560,7 +1587,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     type="number"
                     value={storeSettings.vatRate}
                     onChange={(e) => setStoreSettings({ ...storeSettings, vatRate: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 border-[#292524] bg-[#1C1917] text-gray-900 dark:text-white font-mono"
                   />
                 </div>
                 <div>
@@ -1569,7 +1596,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     type="number"
                     value={storeSettings.reorderThreshold}
                     onChange={(e) => setStoreSettings({ ...storeSettings, reorderThreshold: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 border-[#292524] bg-[#1C1917] text-gray-900 dark:text-white font-mono"
                   />
                 </div>
               </div>
@@ -1577,8 +1604,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Receipt Customization */}
-          <div className="p-5 rounded-2xl bg-gray-50/70 dark:bg-darkbg/50 border border-gray-200/80 dark:border-darkbg-border space-y-3">
-            <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+          <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-3">
+            <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
               <Printer className="w-4 h-4" />
               <span>Official Receipt Footer Message</span>
             </div>
@@ -1586,34 +1613,34 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               rows={2}
               value={storeSettings.receiptFooter}
               onChange={(e) => setStoreSettings({ ...storeSettings, receiptFooter: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-900 dark:text-white"
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 border-[#292524] bg-[#1C1917] text-gray-900 dark:text-white"
             />
           </div>
 
           {/* Infrastructure Health Status */}
-          <div className="p-5 rounded-2xl bg-navy/5 dark:bg-darkbg/50 border border-navy/15 dark:border-darkbg-border space-y-3">
-            <div className="flex items-center gap-2 text-navy dark:text-cyan-400 font-bold text-sm">
+          <div className="p-5 rounded-2xl bg-[#F97316]/5 bg-[#141210]/50 border border-navy/15 border-[#292524] space-y-3">
+            <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
               <Database className="w-4 h-4" />
               <span>System & Database Diagnostics</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+              <div className="p-3 rounded-xl bg-[#1C1917] border border-gray-200/80 border-[#292524] flex items-center justify-between">
                 <span className="text-gray-600 dark:text-slate-500 font-medium">MySQL Database:</span>
                 <span className="font-bold text-emerald-600 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   Connected
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+              <div className="p-3 rounded-xl bg-[#1C1917] border border-gray-200/80 border-[#292524] flex items-center justify-between">
                 <span className="text-gray-600 dark:text-slate-500 font-medium">ML Inference Service:</span>
                 <span className="font-bold text-purple-600 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-purple-500"></span>
                   Ready
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-darkbg-card border border-gray-200/80 dark:border-darkbg-border flex items-center justify-between">
+              <div className="p-3 rounded-xl bg-[#1C1917] border border-gray-200/80 border-[#292524] flex items-center justify-between">
                 <span className="text-gray-600 dark:text-slate-500 font-medium">Role Access Level:</span>
-                <span className="font-bold text-navy dark:text-cyan-400">Admin (L4)</span>
+                <span className="font-bold text-[#F97316] dark:text-[#FB923C]">Admin (L4)</span>
               </div>
             </div>
           </div>
@@ -1622,25 +1649,25 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
       {/* VIEW: MY PROFILE */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-darkbg-card border border-gray-200/90 dark:border-darkbg-border rounded-2xl p-6 sm:p-8 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-8 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-navy text-white text-2xl font-bold flex items-center justify-center shadow-md">
+            <div className="w-16 h-16 rounded-2xl bg-[#F97316] text-white text-2xl font-bold flex items-center justify-center shadow-md">
               {user?.full_name?.charAt(0) || 'A'}
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.full_name}</h2>
-              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-navy/10 text-navy dark:bg-darkbg-hover dark:text-greige border border-navy/20">
+              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#F97316]/10 text-[#F97316] bg-[#141210]-hover dark:text-greige border border-navy/20">
                 ROLE: STORE ADMINISTRATOR (SUPERUSER)
               </span>
             </div>
           </div>
 
-          <div className="space-y-3 text-xs border-t border-gray-100 dark:border-darkbg-border pt-4">
-            <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
+          <div className="space-y-3 text-xs border-t border-gray-100 border-[#292524] pt-4">
+            <div className="flex justify-between py-2 border-b border-gray-50 border-[#292524]">
               <span className="text-gray-500">Username:</span>
               <span className="font-bold text-gray-900 dark:text-white">{user?.username}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-50 dark:border-darkbg-border">
+            <div className="flex justify-between py-2 border-b border-gray-50 border-[#292524]">
               <span className="text-gray-500">Corporate Email:</span>
               <span className="font-bold text-gray-900 dark:text-white">{user?.email}</span>
             </div>
@@ -1663,7 +1690,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={newProduct.sku}
                 onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
             <div>
@@ -1673,7 +1700,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={newProduct.brand}
                 onChange={(e) => setNewProduct({ ...newProduct, brand: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
           </div>
@@ -1684,7 +1711,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               required
               value={newProduct.name}
               onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -1696,7 +1723,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={newProduct.cost_price}
                 onChange={(e) => setNewProduct({ ...newProduct, cost_price: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
             <div>
@@ -1707,13 +1734,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 required
                 value={newProduct.selling_price}
                 onChange={(e) => setNewProduct({ ...newProduct, selling_price: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-            <button type="button" onClick={() => setIsAddProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 dark:bg-darkbg">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-navy text-white font-bold">Save Product</button>
+          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
+            <button type="button" onClick={() => setIsAddProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
+            <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] text-white font-bold">Save Product</button>
           </div>
         </form>
       </Modal>
@@ -1727,7 +1754,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               type="text"
               value={selectedProduct?.name || ''}
               onChange={(e) => setSelectedProduct({ ...selectedProduct, name: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -1738,7 +1765,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 step="0.01"
                 value={selectedProduct?.cost_price || 0}
                 onChange={(e) => setSelectedProduct({ ...selectedProduct, cost_price: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
             <div>
@@ -1748,11 +1775,11 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 step="0.01"
                 value={selectedProduct?.selling_price || 0}
                 onChange={(e) => setSelectedProduct({ ...selectedProduct, selling_price: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-bold text-emerald-600"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210] font-bold text-emerald-600"
               />
             </div>
           </div>
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-darkbg-border">
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100 border-[#292524]">
             <button
               type="button"
               onClick={() => handleDeleteProduct(selectedProduct)}
@@ -1762,8 +1789,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <span>Delete Product</span>
             </button>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setIsEditProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 dark:bg-darkbg text-slate-700 dark:text-gray-300 font-medium">Cancel</button>
-              <button type="submit" className="px-4 py-1.5 rounded bg-navy hover:bg-navy-light text-white font-bold transition-colors">Update Details</button>
+              <button type="button" onClick={() => setIsEditProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210] text-slate-700 dark:text-gray-300 font-medium">Cancel</button>
+              <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] hover:bg-[#F97316]-light text-white font-bold transition-colors">Update Details</button>
             </div>
           </div>
         </form>
@@ -1780,7 +1807,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               placeholder="e.g. John Doe"
               value={newUser.full_name}
               onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -1792,7 +1819,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="johnd"
                 value={newUser.username}
                 onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
             <div>
@@ -1800,7 +1827,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <select
                 value={newUser.role}
                 onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg font-semibold"
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210] font-semibold"
               >
                 <option value="sales_personnel">Sales Personnel</option>
                 <option value="inventory_clerk">Inventory Clerk</option>
@@ -1817,7 +1844,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               placeholder="johnd@techavenue.com"
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
             />
           </div>
           <div>
@@ -1828,12 +1855,12 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               placeholder="Min. 6 characters"
               value={newUser.password}
               onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-200 dark:border-darkbg-border bg-gray-50 dark:bg-darkbg"
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
             />
           </div>
-          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 dark:border-darkbg-border">
-            <button type="button" onClick={() => setIsAddUserModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 dark:bg-darkbg">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-navy text-white font-bold">Register Account</button>
+          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
+            <button type="button" onClick={() => setIsAddUserModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
+            <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] text-white font-bold">Register Account</button>
           </div>
         </form>
       </Modal>
