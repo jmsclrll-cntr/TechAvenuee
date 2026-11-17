@@ -6,6 +6,8 @@ import {
   Banknote, 
   CheckCircle2, 
   AlertCircle, 
+  AlertTriangle,
+  Info,
   Plus, 
   Minus, 
   ArrowRight,
@@ -50,7 +52,9 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
-  const [feedback, setFeedback] = useState(null);
+  
+  // Floating bottom-left toast notification state
+  const [toasts, setToasts] = useState([]);
 
   // Resume Drafts selection modal
   const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
@@ -59,9 +63,24 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({});
 
+  const addToast = (msg, type = 'success') => {
+    const id = Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+    setToasts(prev => [...prev, { id, msg, type, timestamp: Date.now() }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4500);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  const clearAllToasts = () => {
+    setToasts([]);
+  };
+
   const showFeedback = (msg, type = 'success') => {
-    setFeedback({ msg, type });
-    setTimeout(() => setFeedback(null), 4500);
+    addToast(msg, type);
   };
 
   const loadInitialData = async () => {
@@ -372,7 +391,12 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
       setActiveDraft({
         id: draftActiveId,
         reference_number: draftReferenceNumber,
-        customer_name: draftCustomerName
+        customer_name: draftCustomerName,
+        subtotal: draftNetSubtotal,
+        vat_amount: draftVatAmount,
+        total_amount: draftTotalAmount,
+        discount_amount: draftDiscountAmount,
+        discount_pct: draftDiscountPct
       });
       setPanelMode('pos');
       showFeedback('Draft items transferred to Current Sale Cart. Ready for checkout.');
@@ -403,11 +427,35 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
 
   // Financial calculations for POS Cart
   const grossSubtotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-  const discountAmount = grossSubtotal * (Number(discountPct) / 100);
+  const discountAmount = Math.round(grossSubtotal * (Number(discountPct) / 100.0) * 100) / 100;
   const discountedTotal = Math.max(0, grossSubtotal - discountAmount);
-  const vatExclusiveSubtotal = +(discountedTotal / 1.12).toFixed(2);
-  const vatAmount = +(discountedTotal - vatExclusiveSubtotal).toFixed(2);
-  const totalAmountDue = discountedTotal;
+
+  // Synchronize calculation logic between Draft and Checkout:
+  // When a saved draft is loaded (e.g. ₱42,999.00 before tax + 12% VAT = ₱48,158.88),
+  // totalAmountDue accurately reflects the tax-inclusive total (₱48,158.88) matching backend validation.
+  let vatExclusiveSubtotal;
+  let vatAmount;
+  let totalAmountDue;
+
+  if (activeDraft) {
+    const draftNet = Math.round(discountedTotal * 100) / 100;
+    const computedVat = Math.round(draftNet * 0.12 * 100) / 100;
+    const computedTotal = Math.round((draftNet + computedVat) * 100) / 100;
+
+    if (activeDraft.total_amount && Math.abs(Number(activeDraft.total_amount) - computedTotal) < 0.05) {
+      totalAmountDue = Number(activeDraft.total_amount);
+      vatExclusiveSubtotal = activeDraft.subtotal != null ? Number(activeDraft.subtotal) : draftNet;
+      vatAmount = activeDraft.vat_amount != null ? Number(activeDraft.vat_amount) : computedVat;
+    } else {
+      totalAmountDue = computedTotal;
+      vatExclusiveSubtotal = draftNet;
+      vatAmount = computedVat;
+    }
+  } else {
+    vatExclusiveSubtotal = +(discountedTotal / 1.12).toFixed(2);
+    vatAmount = +(discountedTotal - vatExclusiveSubtotal).toFixed(2);
+    totalAmountDue = discountedTotal;
+  }
 
   // Tender & Change calculation
   const numericTendered = parseFloat(amountTendered) || 0;
@@ -542,25 +590,6 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
           </button>
         </div>
       </div>
-
-      {/* Notification Toast */}
-      {feedback && (
-        <div className={`p-4 rounded-xl border text-sm font-semibold flex items-center justify-between shadow-md transition-all ${
-          feedback.type === 'error' 
-            ? 'bg-red-50 dark:bg-red-950/60 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800' 
-            : feedback.type === 'info'
-            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800'
-            : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800'
-        }`}>
-          <div className="flex items-center gap-3">
-            {feedback.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle2 className="w-5 h-5 shrink-0" />}
-            <span>{feedback.msg}</span>
-          </div>
-          <button onClick={() => setFeedback(null)} className="opacity-70 hover:opacity-100">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* Active Draft Alert Banner */}
       {activeDraft && panelMode === 'pos' && (
@@ -1299,6 +1328,79 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
         confirmText="Confirm"
         type={confirmConfig.style}
       />
+
+      {/* FLOATING TOAST NOTIFICATION STACK (BOTTOM-LEFT) */}
+      <div 
+        className="fixed bottom-6 left-6 z-[9999] flex flex-col gap-2.5 max-w-sm pointer-events-none"
+        aria-live="polite"
+        role="region"
+      >
+        {toasts.length > 1 && (
+          <div className="flex justify-start pointer-events-auto">
+            <button
+              type="button"
+              onClick={clearAllToasts}
+              className="text-[11px] font-bold text-gray-300 hover:text-white bg-[#1E1E1E] hover:bg-[#2A2A2A] px-2.5 py-1 rounded-lg border border-[#333333] shadow-lg transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <X className="w-3 h-3 text-gray-400" />
+              <span>Clear All ({toasts.length})</span>
+            </button>
+          </div>
+        )}
+
+        {toasts.map((toast) => {
+          const isError = toast.type === 'error';
+          const isWarning = toast.type === 'warning';
+          const isInfo = toast.type === 'info';
+
+          return (
+            <div
+              key={toast.id}
+              className={`pointer-events-auto p-3.5 rounded-xl border shadow-2xl flex items-start justify-between gap-3 bg-[#181818] text-xs font-medium transition-all duration-300 animate-toast-slide-in ${
+                isError
+                  ? 'border-red-500/60 text-red-100 shadow-red-950/30'
+                  : isWarning
+                  ? 'border-amber-500/60 text-amber-100 shadow-amber-950/30'
+                  : isInfo
+                  ? 'border-blue-500/60 text-blue-100 shadow-blue-950/30'
+                  : 'border-emerald-500/60 text-emerald-100 shadow-emerald-950/30'
+              }`}
+              style={{ minWidth: '280px', maxWidth: '380px' }}
+            >
+              <div className="flex items-start gap-2.5">
+                <div className="shrink-0 mt-0.5">
+                  {isError ? (
+                    <AlertCircle className="w-4 h-4 text-red-400" />
+                  ) : isWarning ? (
+                    <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  ) : isInfo ? (
+                    <Info className="w-4 h-4 text-blue-400" />
+                  ) : (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  )}
+                </div>
+                <div className="space-y-0.5">
+                  <p className="font-bold text-[10px] uppercase tracking-wider opacity-75">
+                    {isError ? 'Error Notification' : isWarning ? 'Warning' : isInfo ? 'Information' : 'Success'}
+                  </p>
+                  <p className="text-xs text-gray-200 leading-snug break-words">
+                    {toast.msg}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => removeToast(toast.id)}
+                className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-white/10 transition shrink-0 cursor-pointer"
+                title="Dismiss notification"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

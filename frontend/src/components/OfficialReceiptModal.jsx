@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { 
   X, 
   Printer, 
@@ -90,10 +90,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             ${itemQty}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-family: monospace;">
-            â‚±${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₱${itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
           <td style="padding: 5px 0; text-align: right; border-bottom: 1px dotted #ccc; font-weight: 700; font-family: monospace;">
-            â‚±${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₱${itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>
       `;
@@ -156,7 +156,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px; color: #0f172a;">TECH AVENUE</div>
           <div style="font-size: 9.5px; font-weight: 700; color: #334155; margin-top: 1px;">COMPUTER & ACCESSORIES STORE MANAGEMENT</div>
           <div style="font-size: 8.5px; color: #475569; margin-top: 2px;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 8.5px; color: #475569;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
           <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; padding: 3px 0; background: #f1f5f9; border-radius: 4px;">
             Official Transaction Receipt
           </div>
@@ -191,22 +191,22 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
           <div class="row">
             <span>Subtotal (Net of VAT):</span>
-            <span class="font-mono">â‚±${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Output VAT (12%):</span>
-            <span class="font-mono">â‚±${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           ${discountAmount > 0 ? `
             <div class="row" style="color: #b45309; font-weight: 600;">
               <span>Discount (${discountPct}%):</span>
-              <span class="font-mono">-â‚±${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span class="font-mono">-₱${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : ''}
 
           <div class="total-highlight border-double">
             <span>TOTAL AMOUNT DUE:</span>
-            <span class="font-mono">â‚±${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
 
           <div class="row">
@@ -215,11 +215,11 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
           <div class="row">
             <span>Amount Tendered:</span>
-            <span class="font-mono">â‚±${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="change-highlight">
             <span>Change:</span>
-            <span class="font-mono">â‚±${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="font-mono">₱${changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
 
@@ -247,11 +247,11 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div 
-        className="w-full max-w-lg bg-[#0F172A] text-slate-100 rounded-2xl shadow-2xl border border-slate-700/80 overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
+        className="w-full max-w-lg bg-[#121212] text-gray-100 rounded-2xl shadow-2xl border border-[#2A2A2A] overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
         style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)' }}
       >
         {/* Top Bar with Status Badge & Close button */}
-        <div className="flex items-center justify-between px-5 py-3.5 bg-[#090D16] border-b border-slate-800">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-[#181818] border-b border-[#2A2A2A]">
           <div className="flex items-center gap-2">
             <span className="p-1 rounded-md bg-emerald-500/20 text-emerald-400">
               <CheckCircle2 className="w-4 h-4" />
@@ -259,25 +259,25 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
               Official Transaction Receipt
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-[#242424] text-gray-300 border border-[#333333]">
               {invoiceNumber}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#242424] transition cursor-pointer"
             title="Close Receipt Modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Scrollable Receipt Body (Dark Navy Theme) */}
+        {/* Scrollable Receipt Body (Dark Charcoal Theme #121212 / #1E1E1E) */}
         <div className="p-6 overflow-y-auto space-y-4 font-sans text-xs">
           
           {/* 1. Store Information Header */}
-          <div className="text-center pb-4 border-b border-dashed border-slate-700 space-y-1">
-            <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center p-1 bg-white/5 rounded-xl border border-slate-700/60 shadow-inner">
+          <div className="text-center pb-4 border-b border-dashed border-[#2A2A2A] space-y-1">
+            <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center p-1 bg-white/5 rounded-xl border border-[#2A2A2A] shadow-inner">
               <img 
                 src={logoImg} 
                 alt="Tech Avenue" 
@@ -288,14 +288,14 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <h2 className="text-lg font-black tracking-wider uppercase text-white font-mono">
               TECH AVENUE
             </h2>
-            <p className="text-[11px] font-bold text-slate-300 uppercase tracking-wide">
+            <p className="text-[11px] font-bold text-gray-300 uppercase tracking-wide">
               Computer & Accessories Store Management
             </p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-gray-400">
               Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines
             </p>
-            <p className="text-[10px] text-slate-400">
-              Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000
+            <p className="text-[10px] text-gray-400">
+              Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000
             </p>
             <div className="pt-2">
               <span className="inline-block px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
@@ -305,51 +305,51 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
 
           {/* 2. Transaction Information */}
-          <div className="py-2 border-b border-dashed border-slate-700 text-xs space-y-1.5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+          <div className="py-2 border-b border-dashed border-[#2A2A2A] text-xs space-y-1.5 bg-[#1E1E1E] p-3 rounded-xl border border-[#2A2A2A]">
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Receipt / OR Number:</span>
-              <span className="font-mono font-bold text-white tracking-wide bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
+              <span className="text-gray-400">Receipt / OR Number:</span>
+              <span className="font-mono font-bold text-white tracking-wide bg-[#282828] px-2 py-0.5 rounded border border-[#383838]">
                 {invoiceNumber}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Transaction ID:</span>
-              <span className="font-mono text-slate-300">#{transactionId}</span>
+              <span className="text-gray-400">Transaction ID:</span>
+              <span className="font-mono text-gray-300">#{transactionId}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Date and Time:</span>
-              <span className="text-slate-200">{formattedDate}</span>
+              <span className="text-gray-400">Date and Time:</span>
+              <span className="text-gray-200">{formattedDate}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Cashier Name:</span>
-              <span className="font-semibold text-slate-200">{cashierName}</span>
+              <span className="text-gray-400">Cashier Name:</span>
+              <span className="font-semibold text-gray-200">{cashierName}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Customer Name:</span>
+              <span className="text-gray-400">Customer Name:</span>
               <span className="font-semibold text-white">{customerName}</span>
             </div>
           </div>
 
           {/* 3. Purchased Products Table */}
-          <div className="py-1 border-b border-dashed border-slate-700">
-            <div className="text-[11px] font-bold uppercase text-slate-400 mb-2 tracking-wider flex items-center justify-between">
+          <div className="py-1 border-b border-dashed border-[#2A2A2A]">
+            <div className="text-[11px] font-bold uppercase text-gray-400 mb-2 tracking-wider flex items-center justify-between">
               <span>Purchased Products</span>
-              <span className="text-[10px] text-slate-500 font-mono">({items.length} {items.length === 1 ? 'item' : 'items'})</span>
+              <span className="text-[10px] text-gray-500 font-mono">({items.length} {items.length === 1 ? 'item' : 'items'})</span>
             </div>
 
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-700 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                <tr className="border-b border-[#2A2A2A] text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                   <th className="pb-2 text-left">Product Description</th>
                   <th className="pb-2 text-center w-12">Qty</th>
                   <th className="pb-2 text-right w-24">Unit Price</th>
                   <th className="pb-2 text-right w-24">Line Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-xs">
+              <tbody className="divide-y divide-[#2A2A2A]/60 text-xs">
                 {items.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="py-4 text-center text-slate-500">
+                    <td colSpan="4" className="py-4 text-center text-gray-500">
                       No products listed in this receipt.
                     </td>
                   </tr>
@@ -362,25 +362,25 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                     const itemTotal = Number(item.total_price || (itemQty * itemPrice));
 
                     return (
-                      <tr key={idx} className="group hover:bg-slate-800/30 transition">
+                      <tr key={idx} className="group hover:bg-[#1E1E1E]/50 transition">
                         <td className="py-2.5 pr-2">
                           <p className="font-bold text-white text-xs leading-snug">
                             {itemName}
                           </p>
                           {itemSku && (
-                            <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                            <p className="text-[10px] text-gray-400 font-mono mt-0.5">
                               SKU: {itemSku}
                             </p>
                           )}
                         </td>
-                        <td className="py-2.5 text-center text-slate-300 font-semibold">
+                        <td className="py-2.5 text-center text-gray-300 font-semibold">
                           {itemQty}
                         </td>
-                        <td className="py-2.5 text-right font-mono text-slate-300 text-xs">
-                          â‚±{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        <td className="py-2.5 text-right font-mono text-gray-300 text-xs">
+                          ₱{itemPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-2.5 text-right font-mono font-bold text-white text-xs">
-                          â‚±{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₱{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </tr>
                     );
@@ -391,24 +391,24 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           </div>
 
           {/* 4. Payment Summary Breakdown */}
-          <div className="py-3 border-b border-dashed border-slate-700 space-y-2 text-xs">
-            <div className="flex justify-between items-center text-slate-400">
+          <div className="py-3 border-b border-dashed border-[#2A2A2A] space-y-2 text-xs">
+            <div className="flex justify-between items-center text-gray-400">
               <span>Subtotal (Before Discount):</span>
-              <span className="font-mono text-slate-200">
+              <span className="font-mono text-gray-200">
                 ₱{grossSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-            <div className="flex justify-between items-center text-slate-400">
+            <div className="flex justify-between items-center text-gray-400">
               <span>Subtotal (Net of VAT):</span>
-              <span className="font-mono text-slate-200">
-                â‚±{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="font-mono text-gray-200">
+                ₱{subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
-            <div className="flex justify-between items-center text-slate-400">
+            <div className="flex justify-between items-center text-gray-400">
               <span>Output VAT (12%):</span>
-              <span className="font-mono text-slate-200">
-                â‚±{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="font-mono text-gray-200">
+                ₱{vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -416,36 +416,36 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               <div className="flex justify-between items-center text-amber-400 font-semibold">
                 <span>Discount ({discountPct}%):</span>
                 <span className="font-mono">
-                  -â‚±{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  -₱{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             )}
 
             {/* Total Amount Due with Vibrant Green Highlighting */}
-            <div className="pt-2 pb-1 border-t border-slate-700/80">
+            <div className="pt-2 pb-1 border-t border-[#2A2A2A]">
               <div className="p-3 rounded-xl bg-emerald-950/50 border border-emerald-500/40 flex justify-between items-center">
                 <span className="text-xs font-black uppercase tracking-wider text-emerald-300">
                   TOTAL AMOUNT DUE:
                 </span>
                 <span className="text-lg font-black font-mono text-emerald-400 tracking-tight">
-                  â‚±{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
 
             {/* Payment Method - Cash Only */}
-            <div className="flex justify-between items-center pt-1 text-slate-300">
+            <div className="flex justify-between items-center pt-1 text-gray-300">
               <span>Payment Method:</span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-emerald-400 font-bold border border-slate-700 text-xs">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1E1E1E] text-emerald-400 font-bold border border-[#2A2A2A] text-xs">
                 <Banknote className="w-3.5 h-3.5" />
                 CASH
               </span>
             </div>
 
-            <div className="flex justify-between items-center text-slate-300">
+            <div className="flex justify-between items-center text-gray-300">
               <span>Amount Tendered:</span>
               <span className="font-mono font-bold text-white text-xs">
-                â‚±{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{amountTendered.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
@@ -455,32 +455,32 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
                 Change:
               </span>
               <span className="text-base font-black font-mono text-emerald-400">
-                â‚±{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₱{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>
 
           {/* 5. Receipt Footer */}
-          <div className="text-center pt-2 space-y-1 text-slate-400">
-            <p className="font-bold text-slate-200 text-xs">
+          <div className="text-center pt-2 space-y-1 text-gray-400">
+            <p className="font-bold text-gray-200 text-xs">
               Thank you for your purchase!
             </p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-gray-400">
               Items eligible for 7-day replacement with this receipt.
             </p>
-            <p className="text-[9px] font-mono uppercase tracking-widest text-slate-500 pt-1">
+            <p className="text-[9px] font-mono uppercase tracking-widest text-gray-500 pt-1">
               *** THIS SERVES AS AN OFFICIAL RECEIPT ***
             </p>
           </div>
         </div>
 
         {/* Modal Action Buttons Footer */}
-        <div className="p-4 bg-[#090D16] border-t border-slate-800 flex items-center justify-between gap-3">
+        <div className="p-4 bg-[#181818] border-t border-[#2A2A2A] flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => handlePrintOrPdf(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition cursor-pointer"
               title="Save Receipt as PDF"
             >
               <Download className="w-3.5 h-3.5" />
@@ -489,7 +489,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <button
               type="button"
               onClick={() => handlePrintOrPdf(false)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs border border-slate-700 shadow-md transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1E1E1E] hover:bg-[#282828] text-gray-200 hover:text-white font-bold text-xs border border-[#333333] shadow-md transition cursor-pointer"
               title="Print Receipt"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -500,7 +500,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs shadow transition"
+            className="px-4 py-2 rounded-xl bg-[#282828] hover:bg-[#333333] text-gray-200 hover:text-white font-bold text-xs border border-[#3A3A3A] shadow transition cursor-pointer"
           >
             Close
           </button>

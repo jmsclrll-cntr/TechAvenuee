@@ -234,8 +234,8 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div style="font-size: 9px; color: #666; font-weight: normal;">${item.sku || ''}</div>
         </td>
         <td style="padding: 4px 0; text-align: center;">${item.quantity}</td>
-        <td style="padding: 4px 0; text-align: right;">â‚±${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-        <td style="padding: 4px 0; text-align: right; font-weight: bold;">â‚±${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right;">₱${Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td style="padding: 4px 0; text-align: right; font-weight: bold;">₱${Number(item.total_price || (item.quantity * item.unit_price)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       </tr>
     `).join('');
 
@@ -285,7 +285,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div style="font-size: 15px; font-weight: 900; letter-spacing: 1px;">TECH AVENUE</div>
           <div style="font-size: 9px; font-weight: bold;">COMPUTER & ACCESSORIES STORE</div>
           <div style="font-size: 8px; color: #444;">Unit 402, Cyberzone Tech Plaza, Metro Manila, Philippines</div>
-          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 â€¢ VAT Reg TIN: 401-889-223-000</div>
+          <div style="font-size: 8px; color: #444;">Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000</div>
           <div style="font-size: 10px; font-weight: bold; margin-top: 4px; text-transform: uppercase;">Official Transaction Receipt</div>
         </div>
 
@@ -313,21 +313,21 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         <div class="border-t" style="font-size: 10px;">
           <div class="row">
             <span>Subtotal (Net of VAT):</span>
-            <span>â‚±${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${subtotalNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>12% Output VAT:</span>
-            <span>â‚±${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           ${discountVal > 0 ? `
             <div class="row" style="color: #059669;">
               <span>Discount (${discountPctVal}%):</span>
-              <span>-â‚±${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>-₱${discountVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : ''}
           <div class="total-row border-t border-b">
             <span>TOTAL AMOUNT DUE:</span>
-            <span>â‚±${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span>₱${Number(receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div class="row">
             <span>Payment Method:</span>
@@ -336,11 +336,11 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           ${(receipt.payment_method === 'Cash' || !receipt.payment_method) ? `
             <div class="row">
               <span>Amount Tendered:</span>
-              <span>â‚±${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>₱${Number(receipt.amount_tendered || receipt.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <div class="row bold">
               <span>Change:</span>
-              <span>â‚±${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>₱${Number(receipt.change_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           ` : `
             <div class="row">
@@ -770,7 +770,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     <h4 className="font-semibold text-xs mt-1 text-[#FAFAF9] line-clamp-2 group-hover:text-[#14B8A6]">
                       {p.name}
                     </h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{p.brand} â€¢ {p.category_name}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{p.brand} • {p.category_name}</p>
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-gray-100 dark:border-darkbg-border flex items-center justify-between">
@@ -778,7 +778,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                     <button
-                      className="p-1 rounded-md bg-navy text-white hover:bg-navy-light text-xs font-bold"
+                      className="p-1 rounded-md bg-[#F97316] text-white hover:bg-orange-600 text-xs font-bold transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -833,7 +833,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                   >
                     <div className="flex-1 pr-2">
                       <p className="font-semibold text-[#FAFAF9] truncate">{item.name}</p>
-                      <p className="text-[10px] text-gray-400 font-mono">{item.sku} â€¢ PHP {item.unit_price.toLocaleString()}</p>
+                      <p className="text-[10px] text-gray-400 font-mono">{item.sku} • PHP {item.unit_price.toLocaleString()}</p>
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -1232,12 +1232,12 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     </span>
                   </div>
                   <h4 className="font-semibold text-sm text-[#FAFAF9] group-hover:text-[#14B8A6] transition-colors">{p.name}</h4>
-                  <p className="text-xs text-gray-500">{p.brand} â€¢ {p.category_name}</p>
+                  <p className="text-xs text-gray-500">{p.brand} • {p.category_name}</p>
                   <div className="flex items-end justify-between pt-2">
                     <p className="text-lg font-bold text-[#14B8A6] font-mono">
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </p>
-                    <span className="text-xs text-gray-400 group-hover:text-[#14B8A6] transition-colors">View details â†’</span>
+                    <span className="text-xs text-gray-400 group-hover:text-[#14B8A6] transition-colors">View details →</span>
                   </div>
                 </div>
               ))}

@@ -82,7 +82,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
     storeName: 'Tech Avenue Smart Solutions',
     branchName: 'Main HQ - Flagship',
     vatRate: 12,
-    currency: 'PHP (Ã¢â€šÂ±)',
+    currency: 'PHP (₱)',
     reorderThreshold: 10,
     receiptFooter: 'Thank you for shopping at Tech Avenue! Official warranty valid with this receipt.',
     autoDeductStock: true
