@@ -713,7 +713,7 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                             isOutOfStock 
                               ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' 
-                              : p.stock_quantity <= (p.reorder_level || 5)
+                              : (p.stock_quantity <= 5 || p.status === 'low_stock')
                               ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
                               : 'bg-[#292524] text-[#FB923C] border border-[#44403C]'
                           }`}>

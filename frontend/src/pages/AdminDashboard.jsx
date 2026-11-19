@@ -25,12 +25,14 @@ import {
   Eye,
   LayoutGrid,
   X,
-  Inbox
+  Inbox,
+  Printer
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal from '../components/Modal';
 import { api } from '../api';
+import { printInventory } from '../utils/printInventory';
 import PurchasingManagement from './PurchasingManagement';
 import ReportsAnalytics from './ReportsAnalytics';
 import logoImg from '../assets/logo.png';
@@ -71,8 +73,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
   // Forms
   const [newProduct, setNewProduct] = useState({
-    sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, reorder_level: 5, description: ''
+    sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, description: ''
   });
+  const [productImageFile, setProductImageFile] = useState(null);
+  const [productImagePreview, setProductImagePreview] = useState(null);
   const [newUser, setNewUser] = useState({
     username: '', full_name: '', email: '', password: '', role: 'sales_personnel'
   });
@@ -154,10 +158,34 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   // Handle Add Product
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    const qty = Number(newProduct.stock_quantity);
+    if (qty > 100) {
+      showToast("Initial stock quantity cannot exceed the maximum limit of 100 units.", "error");
+      return;
+    }
+    if (qty < 0) {
+      showToast("Initial stock quantity cannot be negative.", "error");
+      return;
+    }
     try {
-      await api.addProduct(newProduct);
+      const res = await api.addProduct({
+        ...newProduct,
+        stock_quantity: qty,
+        image_url: productImagePreview ? undefined : '/products/desktop.svg'
+      });
+      if (productImageFile && res?.product_id) {
+        const formData = new FormData();
+        formData.append('image', productImageFile);
+        try {
+          await api.uploadProductImage(res.product_id, formData);
+        } catch (uploadErr) {
+          console.warn("Image upload warning:", uploadErr);
+        }
+      }
       setIsAddProductModalOpen(false);
-      setNewProduct({ sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, reorder_level: 5, description: '' });
+      setNewProduct({ sku: '', name: '', brand: '', category_id: categories[0]?.id || 1, cost_price: '', selling_price: '', stock_quantity: 10, description: '' });
+      setProductImageFile(null);
+      setProductImagePreview(null);
       showToast(`Product "${newProduct.name}" created successfully!`, 'success');
       loadData();
     } catch (err) {
@@ -326,15 +354,21 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   key={btn.id}
                   type="button"
                   onClick={() => setDashView(btn.id)}
-                  className={`relative flex items-center gap-2 px-4 sm:px-6 py-2.5 text-sm sm:text-base font-semibold transition-all shrink-0 cursor-pointer select-none ${
+                  style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                  className={`relative flex items-center gap-2 px-4 sm:px-6 py-2.5 text-sm sm:text-base font-semibold shrink-0 cursor-pointer select-none ${
                     isActive
                       ? 'text-[#F97316] font-bold'
                       : 'text-stone-400 hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#F97316]' : ''}`} />
-                  <span>{btn.label}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-md font-mono ${
+                  <Icon
+                    style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                    className={`w-4 h-4 ${isActive ? 'text-[#F97316]' : 'text-stone-400'}`}
+                  />
+                  <span style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>{btn.label}</span>
+                  <span
+                    style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                    className={`text-xs px-2 py-0.5 rounded-md font-mono ${
                     isActive
                       ? 'bg-[#F97316]/20 text-[#FDBA74] font-bold border border-[#F97316]/30'
                       : 'bg-[#292524] text-stone-400'
@@ -342,7 +376,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     {btn.count}
                   </span>
                   {isActive && (
-                    <span className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-[#F97316]"></span>
+                    <span
+                      style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                      className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-[#F97316]"
+                    />
                   )}
                 </button>
               );
@@ -783,7 +820,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         <th className="py-2.5 px-3">Product Name</th>
                         <th className="py-2.5 px-3">SKU</th>
                         <th className="py-2.5 px-3 text-center">Stock</th>
-                        <th className="py-2.5 px-3 text-center">Reorder</th>
+                        <th className="py-2.5 px-3 text-center">Threshold</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
@@ -792,7 +829,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                           <td className="py-2.5 px-3 font-medium">{p.name}</td>
                           <td className="py-2.5 px-3 font-mono text-[11px] text-[#F97316] dark:text-[#FB923C]">{p.sku}</td>
                           <td className="py-2.5 px-3 text-center font-bold text-red-500">{p.current_stock}</td>
-                          <td className="py-2.5 px-3 text-center text-slate-600 font-medium">{p.reorder_level}</td>
+                          <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">≤ 5 units</td>
                         </tr>
                       ))}
                     </tbody>
@@ -939,14 +976,25 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 Full administrative authority over hardware specifications, procurement cost, and retail pricing
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsAddProductModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Product</span>
-            </button>
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => printInventory({ products, suppliers, user })}
+                className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#292524] hover:bg-[#342F2D] text-stone-200 hover:text-white border border-[#44403C] text-xs sm:text-sm font-bold shadow-sm transition-all cursor-pointer active:scale-95"
+                title="Print all inventory products with full specifications and supplier details"
+              >
+                <Printer className="w-4 h-4 text-[#FB923C]" />
+                <span>Print All Products (PDF / Print)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAddProductModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-orange-600 text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Product</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -1058,7 +1106,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       </td>
                       <td className="py-2.5 px-3 text-center font-bold">{p.stock_quantity}</td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.stock_quantity === 0 ? 'bg-red-500/10 text-red-500' : p.stock_quantity <= p.reorder_level ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-600'
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'bg-red-500/10 text-red-500' : (p.stock_quantity <= 5 || p.status === 'low_stock') ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-600'
                           }`}>
                           {p.status?.replace('_', ' ').toUpperCase()}
                         </span>
@@ -1716,6 +1764,31 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
+              <label className="block font-semibold mb-1">Category *</label>
+              <select
+                value={newProduct.category_id}
+                onChange={(e) => setNewProduct({ ...newProduct, category_id: Number(e.target.value) })}
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
+              >
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block font-semibold mb-1">Initial Stock (Max 100)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={newProduct.stock_quantity}
+                onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: Math.min(100, Math.max(0, Number(e.target.value))) })}
+                className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
               <label className="block font-semibold mb-1">Cost Price (PHP) *</label>
               <input
                 type="number"
@@ -1737,6 +1810,59 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
               />
             </div>
+          </div>
+
+          {/* Optional Product Photo Upload */}
+          <div>
+            <label className="block font-semibold mb-1">Product Photo (Optional)</label>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={productImagePreview || '/products/desktop.svg'}
+                  alt="Product preview"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setProductImageFile(file);
+                      setProductImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
+                />
+                <p className="text-[10px] text-stone-500 mt-0.5">Optional image upload. Defaults to standard placeholder if empty.</p>
+              </div>
+              {productImageFile && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProductImageFile(null);
+                    setProductImagePreview(null);
+                  }}
+                  className="px-2 py-1 text-xs text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1">Description / Notes</label>
+            <textarea
+              rows="2"
+              placeholder="Technical specs, warranty notes..."
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              className="w-full px-3 py-2 rounded border border-[#292524] bg-gray-50 bg-[#141210]"
+            ></textarea>
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
             <button type="button" onClick={() => setIsAddProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>

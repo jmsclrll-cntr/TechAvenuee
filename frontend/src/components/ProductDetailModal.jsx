@@ -43,14 +43,14 @@ export default function ProductDetailModal({
   const cost = Number(product.cost_price || 0);
   const price = Number(product.selling_price || 0);
   const stock = Number(product.stock_quantity ?? 0);
-  const reorder = Number(product.reorder_level ?? 0);
+  const autoReorderThreshold = 5;
   const margin = price - cost;
   const marginPct = price > 0 ? ((margin / price) * 100).toFixed(1) : 0;
   const totalValuation = stock * price;
   const totalCostValuation = stock * cost;
 
-  const isOutOfStock = stock === 0;
-  const isLowStock = !isOutOfStock && stock <= reorder;
+  const isOutOfStock = stock === 0 || product.status === 'out_of_stock';
+  const isLowStock = !isOutOfStock && (stock <= autoReorderThreshold || product.status === 'low_stock');
 
   // Specific product photo mapping
   const getProductImage = () => {
@@ -232,7 +232,7 @@ export default function ProductDetailModal({
                 <span className="text-[11px] text-gray-500 dark:text-gray-300">units</span>
               </div>
               <span className="text-[10px] text-gray-500 dark:text-gray-300 block mt-0.5">
-                Min threshold: {reorder}
+                Auto Reorder: &le; {autoReorderThreshold} units
               </span>
             </div>
 
@@ -293,13 +293,13 @@ export default function ProductDetailModal({
                 <span className="font-mono font-semibold text-navy dark:text-blue-400">{product.sku}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-darkbg-border">
-                <span className="text-gray-500 dark:text-gray-300">Reorder Trigger:</span>
-                <span className="font-semibold text-gray-900 dark:text-white">{reorder} units minimum</span>
+                <span className="text-gray-500 dark:text-gray-300">Reorder Rule:</span>
+                <span className="font-semibold text-gray-900 dark:text-white">Auto Trigger (&le; {autoReorderThreshold} units)</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-darkbg-border">
                 <span className="text-gray-500 dark:text-gray-300">Stock Status:</span>
                 <span className="font-semibold capitalize text-gray-900 dark:text-white">
-                  {product.status ? product.status.replace('_', ' ') : (stock === 0 ? 'Out of stock' : stock <= reorder ? 'Low stock' : 'In stock')}
+                  {product.status ? product.status.replace('_', ' ') : (stock === 0 ? 'Out of stock' : stock <= autoReorderThreshold ? 'Low stock' : 'In stock')}
                 </span>
               </div>
             </div>

@@ -54,7 +54,8 @@ def require_role(*allowed_roles):
             if not user:
                 return jsonify({"status": "error", "message": "Authentication required"}), 401
             
-            if allowed_roles and user["role"] not in allowed_roles:
+            # Academic Instructor has super-admin / full-system access across all roles and resources
+            if allowed_roles and user["role"] not in allowed_roles and user["role"] != "instructor":
                 return jsonify({
                     "status": "error",
                     "message": f"Forbidden: role '{user['role']}' does not have permission for this resource"
@@ -63,6 +64,26 @@ def require_role(*allowed_roles):
             return fn(*args, **kwargs)
         return wrapper
     return decorator
+
+# ----------------- INVENTORY REORDER & STOCK LOGIC -----------------
+AUTO_REORDER_THRESHOLD = 5
+
+def calculate_stock_status(stock_quantity):
+    """
+    Automatic system-wide inventory status rule:
+    - 0 or less units: 'out_of_stock'
+    - 1 to 5 units: 'low_stock' (automatic reorder trigger)
+    - Above 5 units: 'in_stock'
+    """
+    try:
+        qty = int(stock_quantity)
+    except (ValueError, TypeError):
+        qty = 0
+    if qty <= 0:
+        return "out_of_stock"
+    elif qty <= AUTO_REORDER_THRESHOLD:
+        return "low_stock"
+    return "in_stock"
 
 # ----------------- HEALTH & STATIC UPLOADS -----------------
 @app.route("/api/health", methods=["GET"])
@@ -172,7 +193,13 @@ def switch_role():
 @app.route("/api/dashboard/stats", methods=["GET"])
 def get_dashboard_stats():
     user = get_current_user()
-    role = user["role"] if user else request.args.get("role", "admin")
+    req_role = request.args.get("role")
+    if user and user.get("role") == "instructor" and req_role:
+        role = req_role
+    elif user:
+        role = user["role"]
+    else:
+        role = req_role or "admin"
 
     conn = get_db_connection()
     try:
@@ -184,7 +211,7 @@ def get_dashboard_stats():
             cursor.execute("SELECT COALESCE(SUM(stock_quantity), 0) AS total_units FROM products;")
             total_units = cursor.fetchone()["total_units"]
 
-            cursor.execute("SELECT COUNT(*) AS count FROM products WHERE stock_quantity > 0 AND stock_quantity <= reorder_level;")
+            cursor.execute("SELECT COUNT(*) AS count FROM products WHERE stock_quantity > 0 AND (stock_quantity <= %s OR status = 'low_stock');", (AUTO_REORDER_THRESHOLD,))
             low_stock_count = cursor.fetchone()["count"]
 
             cursor.execute("SELECT COUNT(*) AS count FROM products WHERE stock_quantity = 0;")
@@ -266,16 +293,16 @@ def get_dashboard_stats():
                         "projected": round(float(raw_sales_trend[-1]["sales"]) * 1.12, 2)
                     })
 
-            # Low stock products list (with photos)
+            # Low stock products list (with photos) - auto threshold <= 5
             cursor.execute("""
                 SELECT p.id, p.sku, p.name, p.brand, c.name as category, p.stock_quantity as current_stock, 
                        p.reorder_level, p.status, p.cost_price, p.selling_price, p.image_url
                 FROM products p
                 JOIN categories c ON p.category_id = c.id
-                WHERE p.stock_quantity <= p.reorder_level
+                WHERE p.stock_quantity <= %s OR p.status = 'low_stock' OR p.status = 'out_of_stock'
                 ORDER BY p.stock_quantity ASC
                 LIMIT 10;
-            """)
+            """, (AUTO_REORDER_THRESHOLD,))
             low_stock_alerts = cursor.fetchall()
 
             # Recent completed transactions
@@ -621,7 +648,7 @@ def get_product_images(product_id):
         conn.close()
 
 @app.route("/api/products/<int:product_id>/image", methods=["POST"])
-@require_role("admin", "inventory_clerk")
+@require_role("admin", "inventory_clerk", "sales_personnel")
 def upload_product_image(product_id):
     if "image" not in request.files:
         return jsonify({"status": "error", "message": "No file uploaded"}), 400
@@ -658,7 +685,7 @@ def upload_product_image(product_id):
         conn.close()
 
 @app.route("/api/inventory", methods=["POST"])
-@require_role("admin", "inventory_clerk")
+@require_role("admin", "inventory_clerk", "sales_personnel")
 def add_product():
     user = get_current_user()
     data = request.get_json() or {}
@@ -670,14 +697,21 @@ def add_product():
     cost_price = float(data.get("cost_price", 0))
     selling_price = float(data.get("selling_price", 0))
     stock_quantity = int(data.get("stock_quantity", 0))
-    reorder_level = int(data.get("reorder_level", 5))
-    image_url = data.get("image_url", "/products/default.svg")
+    image_url = data.get("image_url", "").strip() or "/products/desktop.svg"
     description = data.get("description", "")
 
     if not sku or not name or not brand or not category_id:
         return jsonify({"status": "error", "message": "SKU, Name, Brand, and Category are required"}), 400
 
-    status = "out_of_stock" if stock_quantity == 0 else ("low_stock" if stock_quantity <= reorder_level else "in_stock")
+    if stock_quantity < 0:
+        return jsonify({"status": "error", "message": "Initial stock quantity cannot be negative"}), 400
+
+    if stock_quantity > 100:
+        return jsonify({"status": "error", "message": "Initial stock quantity cannot exceed the maximum limit of 100 units"}), 400
+
+    # Automatic system-wide reorder logic (5 units threshold)
+    reorder_level = AUTO_REORDER_THRESHOLD
+    status = calculate_stock_status(stock_quantity)
 
     conn = get_db_connection()
     try:
@@ -702,9 +736,14 @@ def add_product():
             cursor.execute("""
                 INSERT INTO activity_logs (user_id, action, details)
                 VALUES (%s, 'ADD_PRODUCT', %s);
-            """, (user["id"], f"Added product {name} ({sku})"))
+            """, (user["id"], f"Added product {name} ({sku}) with {stock_quantity} units"))
 
-            return jsonify({"status": "success", "message": "Product created successfully", "product_id": new_id}), 201
+            return jsonify({
+                "status": "success", 
+                "message": "Product created successfully", 
+                "product_id": new_id,
+                "image_url": image_url
+            }), 201
     finally:
         conn.close()
 
@@ -726,20 +765,19 @@ def update_product(product_id):
             brand = data.get("brand", current["brand"])
             category_id = data.get("category_id", current["category_id"])
             cost_price = float(data.get("cost_price", current["cost_price"]))
-            reorder_level = int(data.get("reorder_level", current["reorder_level"]))
             image_url = data.get("image_url", current.get("image_url"))
             description = data.get("description", current["description"])
+            selling_price = float(data.get("selling_price", current["selling_price"]))
             
-            if user["role"] == "inventory_clerk":
-                selling_price = float(current["selling_price"])
-            else:
-                selling_price = float(data.get("selling_price", current["selling_price"]))
+            # Automatic system-wide reorder calculation
+            reorder_level = AUTO_REORDER_THRESHOLD
+            new_status = calculate_stock_status(current["stock_quantity"])
 
             cursor.execute("""
                 UPDATE products 
-                SET name = %s, brand = %s, category_id = %s, cost_price = %s, selling_price = %s, reorder_level = %s, image_url = %s, description = %s
+                SET name = %s, brand = %s, category_id = %s, cost_price = %s, selling_price = %s, reorder_level = %s, status = %s, image_url = %s, description = %s
                 WHERE id = %s;
-            """, (name, brand, category_id, cost_price, selling_price, reorder_level, image_url, description, product_id))
+            """, (name, brand, category_id, cost_price, selling_price, reorder_level, new_status, image_url, description, product_id))
 
             cursor.execute("""
                 INSERT INTO activity_logs (user_id, action, details)
@@ -800,6 +838,9 @@ def process_stock_in():
     if not product_id or quantity <= 0:
         return jsonify({"status": "error", "message": "Valid product and positive quantity required"}), 400
 
+    if quantity > 100:
+        return jsonify({"status": "error", "message": "Stock entry limit exceeded: maximum 100 units allowed per operation"}), 400
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -810,13 +851,13 @@ def process_stock_in():
 
             prev_stock = prod["stock_quantity"]
             new_stock = prev_stock + quantity
-            new_status = "in_stock" if new_stock > prod["reorder_level"] else "low_stock"
+            new_status = calculate_stock_status(new_stock)
 
             cursor.execute("""
                 UPDATE products 
-                SET stock_quantity = %s, status = %s
+                SET stock_quantity = %s, status = %s, reorder_level = %s
                 WHERE id = %s;
-            """, (new_stock, new_status, product_id))
+            """, (new_stock, new_status, AUTO_REORDER_THRESHOLD, product_id))
 
             ref = f"STKIN-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
             cursor.execute("""
@@ -851,6 +892,9 @@ def process_stock_out():
     if not product_id or quantity <= 0:
         return jsonify({"status": "error", "message": "Valid product and positive quantity required"}), 400
 
+    if quantity > 100:
+        return jsonify({"status": "error", "message": "Stock reduction limit exceeded: maximum 100 units allowed per operation"}), 400
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -864,13 +908,13 @@ def process_stock_out():
                 return jsonify({"status": "error", "message": f"Insufficient stock: current stock is {prev_stock}"}), 400
 
             new_stock = prev_stock - quantity
-            new_status = "out_of_stock" if new_stock == 0 else ("low_stock" if new_stock <= prod["reorder_level"] else "in_stock")
+            new_status = calculate_stock_status(new_stock)
 
             cursor.execute("""
                 UPDATE products 
-                SET stock_quantity = %s, status = %s
+                SET stock_quantity = %s, status = %s, reorder_level = %s
                 WHERE id = %s;
-            """, (new_stock, new_status, product_id))
+            """, (new_stock, new_status, AUTO_REORDER_THRESHOLD, product_id))
 
             ref = f"STKOUT-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
             cursor.execute("""
@@ -1449,12 +1493,12 @@ def pos_checkout():
             # ATOMICALLY DEDUCT INVENTORY & RECORD MOVEMENTS
             for v in validated_items:
                 new_stock = v["stock_quantity"] - v["quantity"]
-                new_status = "out_of_stock" if new_stock == 0 else ("low_stock" if new_stock <= v["reorder_level"] else "in_stock")
+                new_status = calculate_stock_status(new_stock)
                 cursor.execute("""
                     UPDATE products 
-                    SET stock_quantity = %s, status = %s
+                    SET stock_quantity = %s, status = %s, reorder_level = %s
                     WHERE id = %s;
-                """, (new_stock, new_status, v["product_id"]))
+                """, (new_stock, new_status, AUTO_REORDER_THRESHOLD, v["product_id"]))
 
                 ref_mov = f"MOV-{final_invoice_num}-{v['product_id']}"
                 cursor.execute("""

@@ -605,7 +605,7 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                       <th className="py-2.5 px-3 font-semibold">Product</th>
                       <th className="py-2.5 px-2 font-semibold">SKU</th>
                       <th className="py-2.5 px-2 font-semibold text-center">Stock</th>
-                      <th className="py-2.5 px-2 font-semibold text-center">Reorder Level</th>
+                      <th className="py-2.5 px-2 font-semibold text-center">Auto Threshold</th>
                       <th className="py-2.5 px-3 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
@@ -638,8 +638,8 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           <td className="py-2.5 px-2 text-center font-bold text-red-600 dark:text-red-400">
                             {item.stock_quantity}
                           </td>
-                          <td className="py-2.5 px-2 text-center text-gray-500">
-                            {item.reorder_level}
+                          <td className="py-2.5 px-2 text-center text-gray-400 font-mono text-[11px]">
+                            ≤ 5 units
                           </td>
                           <td className="py-2.5 px-3 text-right">
                             <button

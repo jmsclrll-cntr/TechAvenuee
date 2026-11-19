@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight } from 'lucide-react';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Header from './components/Header'; // adjust path if your Header lives elsewhere
 import UserManualModal from './components/UserManualModal';
 import ClerkDashboard from './pages/ClerkDashboard';
 import SalesDashboard from './pages/SalesDashboard';
@@ -36,6 +35,17 @@ function App() {
   });
 
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeWorkspace, setActiveWorkspace] = useState(() => {
+    try {
+      const saved = localStorage.getItem('techavenue_active_workspace');
+      if (saved && ['admin', 'inventory_clerk', 'sales_personnel', 'instructor'].includes(saved)) {
+        return saved;
+      }
+    } catch {
+      // Ignore
+    }
+    return 'instructor';
+  });
   const [shiftInfo, setShiftInfo] = useState(null);
   const [lowStockCount, setLowStockCount] = useState(5);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
@@ -103,8 +113,10 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('techavenue_token');
     localStorage.removeItem('techavenue_user');
+    localStorage.removeItem('techavenue_active_workspace');
     setUser(null);
     setActiveTab('dashboard');
+    setActiveWorkspace('instructor');
   };
 
   if (!user) {
@@ -127,44 +139,26 @@ function App() {
     );
   }
 
-  // Render Role Dashboard based on authenticated user's role
+  // Academic Instructor has full access to switch between all role workspaces
+  const currentWorkspace = user.role === 'instructor' ? activeWorkspace : user.role;
+  const effectiveUser = user.role === 'instructor' ? { ...user, role: currentWorkspace, isInstructor: true } : user;
+
+  // Render Role Dashboard based on effective workspace
   const renderDashboardContent = () => {
-    switch (user.role) {
+    const props = { activeTab, setActiveTab, user: effectiveUser };
+
+    switch (currentWorkspace) {
       case 'inventory_clerk':
-        return (
-          <ClerkDashboard
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            user={user}
-          />
-        );
+        return <ClerkDashboard {...props} />;
 
       case 'sales_personnel':
-        return (
-          <SalesDashboard
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            user={user}
-          />
-        );
+        return <SalesDashboard {...props} />;
 
       case 'admin':
-        return (
-          <AdminDashboard
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            user={user}
-          />
-        );
+        return <AdminDashboard {...props} />;
 
       case 'instructor':
-        return (
-          <InstructorDashboard
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            user={user}
-          />
-        );
+        return <InstructorDashboard {...props} />;
 
       default:
         return (
@@ -176,63 +170,62 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen text-slate-900 dark:text-gray-100 flex overflow-hidden transition-colors select-none bg-[#141210]">
-      {/* ========================================================================= */}
-      {/* 1. SIDEBAR PANEL: Removed (All roles use the sleek top navigation bar)     */}
-      {/* ========================================================================= */}
-
-      {/* ========================================================================= */}
-      {/* 2. MAIN WORKSPACE / DASHBOARD CONTENT                                     */}
-      {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden transition-all duration-300">
-        {/* Top Header with theme toggle, role navigation, and live info */}
+    <BrowserRouter>
+      <div className="relative h-screen bg-darkbg text-gray-100 flex flex-col overflow-hidden transition-colors select-none">
+        {/* Top Header with theme toggle, workspaces, sub-tabs, and live info */}
         <Header
           user={user}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
-          role={user.role}
+          role={currentWorkspace}
+          activeWorkspace={currentWorkspace}
+          setActiveWorkspace={(ws) => {
+            setActiveWorkspace(ws);
+            localStorage.setItem('techavenue_active_workspace', ws);
+          }}
           shiftInfo={shiftInfo}
           lowStockCount={lowStockCount}
-          sidebarCollapsed={sidebarCollapsed}
-          setSidebarCollapsed={setSidebarCollapsed}
           onOpenManual={() => setIsManualModalOpen(true)}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           onLogout={handleLogout}
+          onSwitchRole={handleSwitchRole}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
 
-        {/* Dashboard Role Body */}
+        {/* Main Full-Width Dashboard Content Body */}
         <main className="flex-1 overflow-y-auto bg-[#141210]">
           {renderDashboardContent()}
         </main>
-      </div>
 
-      {/* Global Interactive User Manual for all roles */}
-      <UserManualModal
-        isOpen={isManualModalOpen}
-        onClose={() => setIsManualModalOpen(false)}
-        initialRole={user.role}
-        onNavigateTab={async (tab, targetRole) => {
-          setIsManualModalOpen(false);
-          if (targetRole && targetRole !== user.role) {
-            try {
-              const res = await api.switchRole(targetRole);
-              if (res.status === 'success') {
-                localStorage.setItem('techavenue_token', res.token);
-                localStorage.setItem('techavenue_user', JSON.stringify(res.user));
-                setUser(res.user);
+        {/* Global Interactive User Manual for all roles */}
+        <UserManualModal
+          isOpen={isManualModalOpen}
+          onClose={() => setIsManualModalOpen(false)}
+          initialRole={user.role}
+          onNavigateTab={async (tab, targetRole) => {
+            setIsManualModalOpen(false);
+            if (targetRole && targetRole !== user.role) {
+              try {
+                const res = await api.switchRole(targetRole);
+                if (res.status === 'success') {
+                  localStorage.setItem('techavenue_token', res.token);
+                  localStorage.setItem('techavenue_user', JSON.stringify(res.user));
+                  setUser(res.user);
+                  setActiveTab(tab);
+                }
+              } catch (err) {
+                console.error('Role switch error:', err);
                 setActiveTab(tab);
               }
-            } catch (err) {
-              console.error('Role switch error:', err);
+            } else {
               setActiveTab(tab);
             }
-          } else {
-            setActiveTab(tab);
-          }
-        }}
-      />
-    </div>
+          }}
+        />
+      </div>
+    </BrowserRouter>
   );
 }
 

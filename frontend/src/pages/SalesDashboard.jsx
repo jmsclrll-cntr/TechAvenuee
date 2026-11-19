@@ -21,13 +21,17 @@ import {
   Lock,
   Unlock,
   UserCheck,
-  Download
+  Download,
+  LayoutGrid,
+  List,
+  X
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal from '../components/Modal';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { api } from '../api';
+import { printInventory } from '../utils/printInventory';
 import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import PointOfSale from './PointOfSale';
 import NewTransaction from './NewTransaction';
@@ -68,16 +72,33 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [inventoryProducts, setInventoryProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [lookupViewMode, setLookupViewMode] = useState('grid');
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [productImageFile, setProductImageFile] = useState(null);
+  const [productImagePreview, setProductImagePreview] = useState(null);
+  const [newProduct, setNewProduct] = useState({
+    sku: '',
+    name: '',
+    brand: '',
+    category_id: 1,
+    cost_price: '',
+    selling_price: '',
+    stock_quantity: 10,
+    description: ''
+  });
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const [statsRes, posRes, salesRes, shiftRes, suppliersRes] = await Promise.all([
+      const [statsRes, posRes, salesRes, shiftRes, suppliersRes, invRes] = await Promise.all([
         api.getDashboardStats('sales_personnel'),
         api.getPosProducts(),
         api.getSalesHistory(),
         api.getCurrentShift(),
-        api.getSuppliers()
+        api.getSuppliers(),
+        api.getInventory()
       ]);
 
       if (statsRes.status === 'success') setStats(statsRes.data);
@@ -85,10 +106,63 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       if (salesRes.status === 'success') setSalesHistory(salesRes.transactions);
       if (shiftRes.status === 'success') setCurrentShift(shiftRes.shift);
       if (suppliersRes.status === 'success') setSuppliers(suppliersRes.suppliers || []);
+      if (invRes.status === 'success') {
+        setInventoryProducts(invRes.products || []);
+        setCategories(invRes.categories || []);
+        if (invRes.categories && invRes.categories.length > 0) {
+          setNewProduct(prev => prev.category_id ? prev : { ...prev, category_id: invRes.categories[0].id });
+        }
+      }
     } catch (err) {
       console.error('Error fetching sales data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    const qty = Number(newProduct.stock_quantity);
+    if (qty > 100) {
+      alert("Initial stock quantity cannot exceed the maximum limit of 100 units.");
+      return;
+    }
+    if (qty < 0) {
+      alert("Initial stock quantity cannot be negative.");
+      return;
+    }
+    try {
+      const res = await api.addProduct({
+        ...newProduct,
+        stock_quantity: qty,
+        image_url: productImagePreview ? undefined : '/products/desktop.svg'
+      });
+      if (productImageFile && res?.product_id) {
+        const formData = new FormData();
+        formData.append('image', productImageFile);
+        try {
+          await api.uploadProductImage(res.product_id, formData);
+        } catch (uploadErr) {
+          console.warn("Image upload warning:", uploadErr);
+        }
+      }
+      alert(`Product "${newProduct.name}" (${newProduct.sku}) added successfully!`);
+      setIsAddProductModalOpen(false);
+      setNewProduct({
+        sku: '',
+        name: '',
+        brand: '',
+        category_id: categories[0]?.id || 1,
+        cost_price: '',
+        selling_price: '',
+        stock_quantity: 10,
+        description: ''
+      });
+      setProductImageFile(null);
+      setProductImagePreview(null);
+      loadData();
+    } catch (err) {
+      alert(err.message || 'Failed to add product');
     }
   };
 
@@ -492,13 +566,13 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Low-Stock Notifications for Cashiers */}
-          {posProducts.filter(p => p.stock_quantity > 0 && p.stock_quantity <= (p.reorder_level || 5)).length > 0 && (
+          {posProducts.filter(p => p.stock_quantity > 0 && (p.stock_quantity <= 5 || p.status === 'low_stock')).length > 0 && (
             <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
               <div className="flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
                 <div>
                   <span className="font-bold">Inventory Low-Stock Warning: </span>
-                  <span>{posProducts.filter(p => p.stock_quantity > 0 && p.stock_quantity <= (p.reorder_level || 5)).length} products have reached critical reorder levels. Check available units before confirming sales.</span>
+                  <span>{posProducts.filter(p => p.stock_quantity > 0 && (p.stock_quantity <= 5 || p.status === 'low_stock')).length} products have reached critical low stock (≤ 5 units). Check available units before confirming sales.</span>
                 </div>
               </div>
               <button
@@ -1191,57 +1265,237 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
         </div>
       )}
 
-      {/* VIEW: PRODUCT LOOKUP */}
-      {activeTab === 'product_lookup' && (
+      {/* VIEW: PRODUCT LOOKUP / INVENTORY */}
+      {(activeTab === 'product_lookup' || activeTab === 'inventory') && (
         <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm space-y-4">
-          <div>
-            <h2 className="text-lg font-bold text-[#FAFAF9]">Customer Product & Price Lookup</h2>
-            <p className="text-xs text-gray-500">Quickly check specifications, availability, and retail price during customer consultations</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#292524]">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]"></span>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#14B8A6]">Store Catalog &amp; Specifications</span>
+              </div>
+              <h2 className="text-lg font-black tracking-tight text-[#FAFAF9] mt-0.5">
+                Product Lookup &amp; Inventory Management
+              </h2>
+              <p className="text-xs text-stone-400">
+                Check specifications, stock levels, and retail prices during customer consultations, or register new catalog items.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              {/* Print All Products Button */}
+              <button
+                type="button"
+                onClick={() => printInventory({
+                  products: inventoryProducts.length > 0 ? inventoryProducts : posProducts,
+                  suppliers,
+                  user
+                })}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#292524] hover:bg-[#3E3835] text-stone-200 border border-[#44403C] text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                title="Print full catalog with specifications and supplier information"
+              >
+                <Printer className="w-4 h-4 text-emerald-400" />
+                <span>Print All Products (PDF)</span>
+              </button>
+
+              {/* Add New Product Button */}
+              <button
+                type="button"
+                onClick={() => setIsAddProductModalOpen(true)}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Product</span>
+              </button>
+            </div>
           </div>
 
-          <div className="relative max-w-md">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by SKU, product name, or brand..."
-              value={lookupQuery}
-              onChange={(e) => setLookupQuery(e.target.value)}
-              className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-            {posProducts
-              .filter(p => !lookupQuery || p.name.toLowerCase().includes(lookupQuery.toLowerCase()) || p.sku.toLowerCase().includes(lookupQuery.toLowerCase()))
-              .map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
-                  className="p-4 rounded-xl border border-[#292524] bg-[#141210]/40 space-y-2 cursor-pointer hover:border-[#14B8A6] hover:shadow-md transition-all duration-150 group"
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Search by SKU, product name, or brand..."
+                value={lookupQuery}
+                onChange={(e) => setLookupQuery(e.target.value)}
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+              />
+              {lookupQuery && (
+                <button
+                  type="button"
+                  onClick={() => setLookupQuery('')}
+                  className="absolute right-2.5 top-2.5 text-stone-400 hover:text-stone-200"
                 >
-                  <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold text-[#14B8A6]">{p.sku}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${
-                      p.stock_quantity === 0
-                        ? 'bg-red-500/10 text-red-600'
-                        : p.stock_quantity <= (p.reorder_level ?? 3)
-                          ? 'bg-amber-500/10 text-amber-600'
-                          : 'bg-emerald-500/10 text-emerald-600'
-                    }`}>
-                      {p.stock_quantity === 0 ? 'Out of Stock' : `${p.stock_quantity} available`}
-                    </span>
-                  </div>
-                  <h4 className="font-semibold text-sm text-[#FAFAF9] group-hover:text-[#14B8A6] transition-colors">{p.name}</h4>
-                  <p className="text-xs text-gray-500">{p.brand} • {p.category_name}</p>
-                  <div className="flex items-end justify-between pt-2">
-                    <p className="text-lg font-bold text-[#14B8A6] font-mono">
-                      PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </p>
-                    <span className="text-xs text-gray-400 group-hover:text-[#14B8A6] transition-colors">View details →</span>
-                  </div>
-                </div>
-              ))}
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* View Mode Toggle: Grid Cards vs Full Table */}
+            <div className="flex items-center gap-1 bg-[#141210] border border-[#292524] p-1 rounded-lg self-end sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setLookupViewMode('grid')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition cursor-pointer ${
+                  lookupViewMode === 'grid'
+                    ? 'bg-[#292524] text-white shadow-xs'
+                    : 'text-stone-400 hover:text-stone-200'
+                }`}
+                title="Cards Grid View"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grid</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLookupViewMode('table')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition cursor-pointer ${
+                  lookupViewMode === 'table'
+                    ? 'bg-[#292524] text-white shadow-xs'
+                    : 'text-stone-400 hover:text-stone-200'
+                }`}
+                title="Full Table View"
+              >
+                <List className="w-3.5 h-3.5" />
+                <span>Table</span>
+              </button>
+            </div>
           </div>
+
+          {/* List items rendering (Grid or Table) */}
+          {(() => {
+            const listSource = inventoryProducts.length > 0 ? inventoryProducts : posProducts;
+            const displayedItems = listSource.filter(p =>
+              !lookupQuery ||
+              p.name.toLowerCase().includes(lookupQuery.toLowerCase()) ||
+              p.sku.toLowerCase().includes(lookupQuery.toLowerCase()) ||
+              (p.brand && p.brand.toLowerCase().includes(lookupQuery.toLowerCase()))
+            );
+
+            if (lookupViewMode === 'table') {
+              return (
+                <div className="overflow-x-auto rounded-lg border border-[#292524]">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-[#141210] text-stone-300 uppercase font-extrabold text-[11px] tracking-wide border-b border-[#292524]">
+                      <tr>
+                        <th className="py-3 px-3">SKU</th>
+                        <th className="py-3 px-3">Product Name</th>
+                        <th className="py-3 px-3">Brand</th>
+                        <th className="py-3 px-3">Category</th>
+                        <th className="py-3 px-3 text-right">Retail Price</th>
+                        <th className="py-3 px-3 text-center">Stock</th>
+                        <th className="py-3 px-3 text-center">Status</th>
+                        <th className="py-3 px-3 text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#292524] text-stone-200">
+                      {displayedItems.length === 0 ? (
+                        <tr>
+                          <td colSpan="8" className="py-8 text-center text-stone-400 text-xs">
+                            No matching products found.
+                          </td>
+                        </tr>
+                      ) : (
+                        displayedItems.map((p) => (
+                          <tr
+                            key={p.id}
+                            onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
+                            className="hover:bg-[#292524]/70 transition-colors cursor-pointer group"
+                          >
+                            <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] group-hover:underline">{p.sku}</td>
+                            <td className="py-2.5 px-3 font-medium">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                                  <img
+                                    src={p.image_url || '/products/desktop.svg'}
+                                    alt={p.name}
+                                    className="max-h-full max-w-full object-contain"
+                                    onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                                  />
+                                </div>
+                                <span className="group-hover:text-[#F97316] transition-colors font-bold text-[#FAFAF9]">{p.name}</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-3 text-stone-300">{p.brand}</td>
+                            <td className="py-2.5 px-3 text-stone-400">{p.category_name}</td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                              PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-2.5 px-3 text-center font-bold">{p.stock_quantity}</td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                p.stock_quantity === 0 || p.status === 'out_of_stock'
+                                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                  : (p.stock_quantity <= 5 || p.status === 'low_stock')
+                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                    : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              }`}>
+                                {p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'Out of Stock' : (p.stock_quantity <= 5 || p.status === 'low_stock') ? 'Low Stock' : 'In Stock'}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setSelectedProduct(p); setIsDetailModalOpen(true); }}
+                                className="px-2.5 py-1 rounded bg-[#292524] hover:bg-[#3E3835] text-stone-200 text-xs font-semibold border border-[#44403C] transition-colors"
+                              >
+                                Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                {displayedItems.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
+                    className="p-4 rounded-xl border border-[#292524] bg-[#141210]/40 space-y-2 cursor-pointer hover:border-[#14B8A6] hover:shadow-md transition-all duration-150 group"
+                  >
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-xs font-bold text-[#14B8A6]">{p.sku}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded font-bold ${
+                        p.stock_quantity === 0 || p.status === 'out_of_stock'
+                          ? 'bg-red-500/10 text-red-600'
+                          : (p.stock_quantity <= 5 || p.status === 'low_stock')
+                            ? 'bg-amber-500/10 text-amber-600'
+                            : 'bg-emerald-500/10 text-emerald-600'
+                      }`}>
+                        {p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'Out of Stock' : `${p.stock_quantity} available`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={p.image_url || '/products/desktop.svg'}
+                          alt={p.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm text-[#FAFAF9] group-hover:text-[#14B8A6] transition-colors truncate">{p.name}</h4>
+                        <p className="text-xs text-stone-400 truncate">{p.brand} &bull; {p.category_name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-end justify-between pt-2">
+                      <p className="text-lg font-bold text-[#14B8A6] font-mono">
+                        PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </p>
+                      <span className="text-xs text-stone-400 group-hover:text-[#14B8A6] transition-colors">View details &rarr;</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Product Detail Modal */}
           <ProductDetailModal
@@ -1414,6 +1668,168 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* MODAL: ADD PRODUCT (SALES PERSONNEL) */}
+      <Modal isOpen={isAddProductModalOpen} onClose={() => setIsAddProductModalOpen(false)} title="Add Product to Store Catalog">
+        <form onSubmit={handleAddProduct} className="space-y-3 text-xs">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold mb-1 text-stone-300">SKU *</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. LAP-ROG-002"
+                value={newProduct.sku}
+                onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value.toUpperCase() })}
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+              />
+            </div>
+            <div>
+              <label className="block font-semibold mb-1 text-stone-300">Brand *</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. ASUS"
+                value={newProduct.brand}
+                onChange={(e) => setNewProduct({ ...newProduct, brand: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Product Name *</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. ASUS ROG Strix G16 Gaming Laptop"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Category *</label>
+            <select
+              value={newProduct.category_id}
+              onChange={(e) => setNewProduct({ ...newProduct, category_id: Number(e.target.value) })}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+            >
+              {categories && categories.length > 0 ? (
+                categories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))
+              ) : (
+                <option value={1}>Laptops &amp; Ultrabooks</option>
+              )}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold mb-1 text-stone-300">Cost Price (PHP) *</label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                placeholder="0.00"
+                value={newProduct.cost_price}
+                onChange={(e) => setNewProduct({ ...newProduct, cost_price: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+              />
+            </div>
+            <div>
+              <label className="block font-semibold mb-1 text-stone-300">Selling Price (PHP) *</label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                placeholder="0.00"
+                value={newProduct.selling_price}
+                onChange={(e) => setNewProduct({ ...newProduct, selling_price: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-emerald-400 font-bold"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Initial Stock Quantity (Max 100)</label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={newProduct.stock_quantity}
+              onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: Math.min(100, Math.max(0, Number(e.target.value))) })}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+            />
+            <p className="text-[10px] text-stone-500 mt-1">Maximum 100 units limit. Auto-reorder alert triggers at ≤ 5 units.</p>
+          </div>
+
+          {/* Optional Product Photo Upload */}
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Product Photo (Optional)</label>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={productImagePreview || '/products/desktop.svg'}
+                  alt="Product preview"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setProductImageFile(file);
+                      setProductImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
+                />
+                <p className="text-[10px] text-stone-500 mt-0.5">Optional image. Defaults to system placeholder if empty.</p>
+              </div>
+              {productImageFile && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProductImageFile(null);
+                    setProductImagePreview(null);
+                  }}
+                  className="px-2 py-1 text-xs text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Description / Technical Specifications</label>
+            <textarea
+              rows="2"
+              placeholder="Hardware specs, warranty terms, components..."
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+            ></textarea>
+          </div>
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292524]">
+            <button
+              type="button"
+              onClick={() => setIsAddProductModalOpen(false)}
+              className="px-3.5 py-1.5 rounded-lg bg-[#292524] hover:bg-[#3E3835] text-stone-300 font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-1.5 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+            >
+              Save Product
+            </button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

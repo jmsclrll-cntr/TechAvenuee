@@ -15,6 +15,9 @@ import {
   Clock,
   Eye,
   Edit2,
+  Trash2,
+  Printer,
+  X,
   Truck
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
@@ -22,6 +25,7 @@ import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '.
 import Modal, { ConfirmDialog } from '../components/Modal';
 import { api } from '../api';
 import ProductDetailModal from '../components/ProductDetailModal';
+import { printInventory } from '../utils/printInventory';
 
 export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const formatDateOnly = (dateStr) => {
@@ -70,8 +74,10 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
   // Forms
   const [newProduct, setNewProduct] = useState({
-    sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, reorder_level: 5, description: ''
+    sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, description: ''
   });
+  const [productImageFile, setProductImageFile] = useState(null);
+  const [productImagePreview, setProductImagePreview] = useState(null);
   const [editProduct, setEditProduct] = useState({});
   const [stockActionData, setStockActionData] = useState({ quantity: 1, supplier_id: '', notes: '', reason: '' });
   const [newSupplier, setNewSupplier] = useState({ name: '', contact_person: '', email: '', phone: '', address: '' });
@@ -115,14 +121,38 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   // Handle Add Product
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    const qty = Number(newProduct.stock_quantity);
+    if (qty > 100) {
+      alert("Initial stock quantity cannot exceed the maximum limit of 100 units.");
+      return;
+    }
+    if (qty < 0) {
+      alert("Initial stock quantity cannot be negative.");
+      return;
+    }
     try {
-      await api.addProduct(newProduct);
+      const res = await api.addProduct({
+        ...newProduct,
+        stock_quantity: qty,
+        image_url: productImagePreview ? undefined : '/products/desktop.svg'
+      });
+      if (productImageFile && res?.product_id) {
+        const formData = new FormData();
+        formData.append('image', productImageFile);
+        try {
+          await api.uploadProductImage(res.product_id, formData);
+        } catch (uploadErr) {
+          console.warn("Image upload warning:", uploadErr);
+        }
+      }
       showNotification(`Product ${newProduct.name} successfully created!`);
       setIsAddModalOpen(false);
-      setNewProduct({ sku: '', name: '', brand: '', category_id: 1, cost_price: '', selling_price: '', stock_quantity: 10, reorder_level: 5, description: '' });
+      setNewProduct({ sku: '', name: '', brand: '', category_id: categories[0]?.id || 1, cost_price: '', selling_price: '', stock_quantity: 10, description: '' });
+      setProductImageFile(null);
+      setProductImagePreview(null);
       loadData();
     } catch (err) {
-      alert(err.message);
+      alert(err.message || 'Failed to add product');
     }
   };
 
@@ -130,7 +160,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     try {
-      await api.updateProduct(editProduct.id, editProduct);
+      const { reorder_level, ...payload } = editProduct;
+      await api.updateProduct(editProduct.id, payload);
       showNotification(`Product ${editProduct.name} updated!`);
       setIsEditModalOpen(false);
       loadData();
@@ -139,17 +170,50 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     }
   };
 
-  // Handle Stock In
+  // Handle Delete Product
+  const handleDeleteProduct = (product) => {
+    const target = product || selectedProduct;
+    if (!target) return;
+
+    setConfirmConfig({
+      title: 'Delete Product from Catalog',
+      message: `Are you sure you want to permanently delete "${target.name}" (${target.sku})? This will remove all associated stock and transaction records.`,
+      action: async () => {
+        try {
+          await api.deleteProduct(target.id);
+          showNotification(`Product "${target.name}" deleted successfully!`);
+          setIsConfirmOpen(false);
+          setIsEditModalOpen(false);
+          loadData();
+        } catch (err) {
+          alert(err.message || 'Failed to delete product');
+        }
+      },
+      style: 'danger'
+    });
+    setIsConfirmOpen(true);
+  };
+
+  // Handle Stock In (Max 100 limit)
   const handleStockInSubmit = async () => {
     if (!selectedProduct || !stockActionData.quantity) return;
+    const qty = Number(stockActionData.quantity);
+    if (qty <= 0) {
+      alert("Please enter a valid stock quantity.");
+      return;
+    }
+    if (qty > 100) {
+      alert("Stock entry cannot exceed the maximum limit of 100 units per operation.");
+      return;
+    }
     try {
       await api.stockIn({
         product_id: selectedProduct.id,
-        quantity: Number(stockActionData.quantity),
+        quantity: qty,
         supplier_id: stockActionData.supplier_id || null,
         notes: stockActionData.notes || 'Restock batch delivery'
       });
-      showNotification(`Received ${stockActionData.quantity} units for ${selectedProduct.name}`);
+      showNotification(`Received ${qty} units for ${selectedProduct.name}`);
       setIsStockInModalOpen(false);
       setIsConfirmOpen(false);
       loadData();
@@ -158,16 +222,25 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     }
   };
 
-  // Handle Stock Out
+  // Handle Stock Out (Max 100 limit)
   const handleStockOutSubmit = async () => {
     if (!selectedProduct || !stockActionData.quantity) return;
+    const qty = Number(stockActionData.quantity);
+    if (qty <= 0) {
+      alert("Please enter a valid deduction quantity.");
+      return;
+    }
+    if (qty > 100) {
+      alert("Stock reduction cannot exceed the maximum limit of 100 units per operation.");
+      return;
+    }
     try {
       await api.stockOut({
         product_id: selectedProduct.id,
-        quantity: Number(stockActionData.quantity),
+        quantity: qty,
         reason: stockActionData.reason || 'Store inventory adjustment'
       });
-      showNotification(`Processed stock out of ${stockActionData.quantity} units for ${selectedProduct.name}`);
+      showNotification(`Processed stock out of ${qty} units for ${selectedProduct.name}`);
       setIsStockOutModalOpen(false);
       setIsConfirmOpen(false);
       loadData();
@@ -190,11 +263,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     }
   };
 
-  const getStatusBadge = (status, qty, reorder) => {
+  const getStatusBadge = (status, qty, threshold = 5) => {
     if (qty === 0 || status === 'out_of_stock') {
       return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-500/10 text-red-500 border border-red-500/20">Out of Stock</span>;
     }
-    if (qty <= reorder || status === 'low_stock') {
+    if (qty <= threshold || status === 'low_stock') {
       return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-[#FB923C] border border-amber-500/20">Low Stock</span>;
     }
     return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20">In Stock</span>;
@@ -337,7 +410,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                       <th className="py-2.5 px-3">Product Name</th>
                       <th className="py-2.5 px-3">Category</th>
                       <th className="py-2.5 px-3">Current</th>
-                      <th className="py-2.5 px-3">Reorder</th>
+                      <th className="py-2.5 px-3">Threshold</th>
                       <th className="py-2.5 px-3">Status</th>
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
@@ -349,8 +422,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                         <td className="py-2 px-3 font-medium truncate max-w-[140px] text-[#FAFAF9]">{prod.name}</td>
                         <td className="py-2 px-3 text-stone-400">{prod.category}</td>
                         <td className="py-2 px-3 font-bold text-red-400">{prod.current_stock}</td>
-                        <td className="py-2 px-3 text-stone-400">{prod.reorder_level}</td>
-                        <td className="py-2 px-3">{getStatusBadge(prod.status, prod.current_stock, prod.reorder_level)}</td>
+                        <td className="py-2 px-3 text-stone-400 font-mono text-[11px]">≤ 5 units</td>
+                        <td className="py-2 px-3">{getStatusBadge(prod.status, prod.current_stock)}</td>
                         <td className="py-2 px-3 text-right">
                           <button
                             onClick={() => {
@@ -428,19 +501,38 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: INVENTORY / CATALOG TABLE */}
       {activeTab === 'inventory' && (
         <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#292524]">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-[#FAFAF9]">
                 Product Inventory Management
               </h2>
               <p className="text-xs text-stone-400">
-                Full warehouse and showroom product catalog
+                Full warehouse and showroom product catalog & administrative inventory control
               </p>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => printInventory({ products, suppliers, user })}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#292524] hover:bg-[#342F2D] text-stone-200 hover:text-white border border-[#44403C] text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-95"
+                title="Print all inventory products with full specifications and supplier details"
+              >
+                <Printer className="w-4 h-4 text-[#FB923C]" />
+                <span>Print All Products (PDF / Print)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Product</span>
+              </button>
             </div>
           </div>
 
           {/* Search and Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[#292524]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
               <input
@@ -448,8 +540,17 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by SKU, Name, or Brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs pl-9 pr-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[#F97316]"
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-2.5 top-2.5 text-stone-400 hover:text-white"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
             <select
               value={categoryFilter}
@@ -473,72 +574,121 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </select>
           </div>
 
-          {/* Products Table */}
+          {/* Result Counter & Active Filter Badge */}
+          <div className="flex items-center justify-between text-xs text-stone-400 px-0.5">
+            <div className="flex items-center gap-2">
+              <span>Showing <strong className="text-[#FB923C]">{products.length}</strong> catalog items</span>
+              {(searchTerm || categoryFilter || statusFilter) && (
+                <button
+                  type="button"
+                  onClick={() => { setSearchTerm(''); setCategoryFilter(''); setStatusFilter(''); }}
+                  className="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-red-400 font-semibold px-2 py-0.5 rounded bg-[#141210] border border-[#292524]"
+                >
+                  Clear Filters <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Products Table with Complete Management Actions */}
           <div className="overflow-x-auto rounded-lg border border-[#292524]">
-            <table className="w-full table-fixed text-xs" style={{ tableLayout: 'fixed' }}>
-              <colgroup>
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '30%' }} />
-                <col style={{ width: '13%' }} />
-                <col style={{ width: '14%' }} />
-                <col style={{ width: '14%' }} />
-                <col style={{ width: '8%' }} />
-                <col style={{ width: '11%' }} />
-              </colgroup>
-              <thead className="bg-[#141210] text-stone-300 uppercase font-extrabold text-xs sm:text-sm tracking-wide border-b border-[#292524]">
+            <table className="w-full text-xs text-left">
+              <thead className="bg-[#141210] text-stone-300 uppercase font-extrabold text-[11px] tracking-wide border-b border-[#292524]">
                 <tr>
-                  <th className="py-3 px-3 text-center align-middle">SKU</th>
-                  <th className="py-3 px-3 text-left align-middle">Product Name</th>
-                  <th className="py-3 px-3 text-center align-middle">Brand</th>
-                  <th className="py-3 px-3 text-center align-middle">Category</th>
-                  <th className="py-3 px-3 text-center align-middle">Selling Price</th>
-                  <th className="py-3 px-3 text-center align-middle">Stock</th>
-                  <th className="py-3 px-3 text-center align-middle">Status</th>
+                  <th className="py-3 px-3">SKU</th>
+                  <th className="py-3 px-3">Product Name</th>
+                  <th className="py-3 px-3">Brand</th>
+                  <th className="py-3 px-3 text-right">Cost (PHP)</th>
+                  <th className="py-3 px-3 text-right">Retail (PHP)</th>
+                  <th className="py-3 px-3 text-center">Margin</th>
+                  <th className="py-3 px-3 text-center">Stock</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#292524] text-stone-200">
                 {products.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="py-8 text-center align-middle text-stone-400 text-xs">
-                      No matching products found.
+                    <td colSpan="9" className="py-8 text-center text-stone-400 text-xs">
+                      No matching products found in warehouse catalog.
                     </td>
                   </tr>
                 ) : (
-                  products.map((p, idx) => (
-                    <tr
-                      key={p.id}
-                      onClick={() => {
-                        setViewProduct(p);
-                        setIsViewModalOpen(true);
-                      }}
-                      className="hover:bg-[#292524]/70 transition-colors cursor-pointer group"
-                      title="Click to view full product & supplier specifications"
-                    >
-                      <td className="py-3 px-3 text-center align-middle font-mono font-bold text-[#F97316] group-hover:underline truncate">{p.sku}</td>
-                      <td className="py-3 px-3 text-left align-middle font-medium">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
-                            <img
-                              src={p.image_url || '/products/desktop.svg'}
-                              alt={p.name}
-                              className="max-h-full max-w-full object-contain"
-                              onError={(e) => { e.target.src = '/products/desktop.svg'; }}
-                            />
+                  products.map((p) => {
+                    const cost = Number(p.cost_price) || 0;
+                    const retail = Number(p.selling_price) || 0;
+                    const marginPct = cost > 0 ? (((retail - cost) / cost) * 100).toFixed(1) : 0;
+
+                    return (
+                      <tr
+                        key={p.id}
+                        onClick={() => {
+                          setViewProduct(p);
+                          setIsViewModalOpen(true);
+                        }}
+                        className="hover:bg-[#292524]/70 transition-colors cursor-pointer group"
+                        title="Click to view full product & supplier specifications"
+                      >
+                        <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] group-hover:underline">{p.sku}</td>
+                        <td className="py-2.5 px-3 font-medium">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                              <img
+                                src={p.image_url || '/products/desktop.svg'}
+                                alt={p.name}
+                                className="max-h-full max-w-full object-contain"
+                                onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                              />
+                            </div>
+                            <span className="group-hover:text-[#F97316] transition-colors font-bold text-[#FAFAF9]">{p.name}</span>
                           </div>
-                          <span className="group-hover:text-[#F97316] transition-colors font-bold text-[#FAFAF9] truncate">{p.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-3 text-center align-middle truncate text-stone-300">{p.brand}</td>
-                      <td className="py-3 px-3 text-center align-middle truncate text-stone-300">{p.category_name}</td>
-                      <td className="py-3 px-3 text-center align-middle font-mono font-semibold text-[#FAFAF9]">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-center align-middle font-bold text-sm">
-                        <span className={p.stock_quantity <= p.reorder_level ? 'text-red-400 font-extrabold' : 'text-emerald-400'}>
-                          {p.stock_quantity}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 text-center align-middle">{getStatusBadge(p.status, p.stock_quantity, p.reorder_level)}</td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className="py-2.5 px-3 text-stone-300">{p.brand}</td>
+                        <td className="py-2.5 px-3 text-right font-mono text-stone-300">
+                          PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                          PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/25">
+                            +{marginPct}%
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-center font-bold">
+                          <span className={(p.stock_quantity <= 5 || p.status === 'low_stock' || p.status === 'out_of_stock') ? 'text-red-400 font-extrabold' : 'text-emerald-400'}>
+                            {p.stock_quantity}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-center">{getStatusBadge(p.status, p.stock_quantity)}</td>
+                        <td className="py-2.5 px-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditProduct(p);
+                                setIsEditModalOpen(true);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-[#F97316] text-white text-[11px] font-semibold hover:bg-orange-600 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                              title="Edit product details & pricing"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteProduct(p)}
+                              className="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors border border-red-500/20 cursor-pointer"
+                              title="Delete product from catalog"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -565,7 +715,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 <div>
                   <div className="flex items-start justify-between">
                     <span className="font-mono text-xs font-bold text-[#F97316]">{p.sku}</span>
-                    {getStatusBadge(p.status, p.stock_quantity, p.reorder_level)}
+                    {getStatusBadge(p.status, p.stock_quantity)}
                   </div>
                   <h4 className="font-semibold text-sm mt-1 text-[#FAFAF9] line-clamp-1">{p.name}</h4>
                   <p className="text-xs text-stone-400 mt-1">{p.brand} • {p.category_name}</p>
@@ -957,37 +1107,72 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Initial Stock</label>
+              <label className="block font-semibold mb-1 text-stone-300">Initial Stock (Max 100)</label>
               <input
                 type="number"
                 min="0"
+                max="100"
                 value={newProduct.stock_quantity}
-                onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: Number(e.target.value) })}
+                onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: Math.min(100, Math.max(0, Number(e.target.value))) })}
                 className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
               />
+              <p className="text-[10px] text-stone-500 mt-1">Max 100 units. Auto-reorder alert triggers at ≤ 5 units.</p>
             </div>
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Reorder Level</label>
-              <input
-                type="number"
-                min="1"
-                value={newProduct.reorder_level}
-                onChange={(e) => setNewProduct({ ...newProduct, reorder_level: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1 text-stone-300">Retail Price (PHP)</label>
+              <label className="block font-semibold mb-1 text-stone-300">Retail Price (PHP) *</label>
               <input
                 type="number"
                 step="0.01"
+                required
                 placeholder="Initial retail"
                 value={newProduct.selling_price}
                 onChange={(e) => setNewProduct({ ...newProduct, selling_price: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-emerald-400 font-bold"
               />
+            </div>
+          </div>
+
+          {/* Optional Product Photo */}
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Product Photo (Optional)</label>
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={productImagePreview || '/products/desktop.svg'}
+                  alt="Product preview"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setProductImageFile(file);
+                      setProductImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
+                />
+                <p className="text-[11px] text-stone-500 mt-1">Optional. Defaults to clean system placeholder if left empty.</p>
+              </div>
+              {productImageFile && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProductImageFile(null);
+                    setProductImagePreview(null);
+                  }}
+                  className="px-2 py-1 text-xs text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Remove
+                </button>
+              )}
             </div>
           </div>
 
@@ -1061,7 +1246,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Cost Price (PHP)</label>
+              <label className="block font-semibold mb-1 text-stone-300">Cost Price (PHP) *</label>
               <input
                 type="number"
                 step="0.01"
@@ -1072,27 +1257,32 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Reorder Level</label>
+              <label className="block font-semibold mb-1 text-stone-300">Retail Selling Price (PHP) *</label>
               <input
                 type="number"
+                step="0.01"
                 required
-                value={editProduct.reorder_level || 5}
-                onChange={(e) => setEditProduct({ ...editProduct, reorder_level: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9]"
+                value={editProduct.selling_price || 0}
+                onChange={(e) => setEditProduct({ ...editProduct, selling_price: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-emerald-400 font-bold"
               />
             </div>
           </div>
 
-          {/* Locked Selling Price Note for Inventory Clerk */}
-          <div className="p-3 rounded-lg bg-[#FB923C]/10 border border-[#FB923C]/20 text-[#FB923C]">
-            <p className="font-semibold">Security Permission Notice</p>
-            <p className="text-[11px] text-stone-300">
-              Selling Price (PHP {Number(editProduct.selling_price || 0).toLocaleString()}) is locked. Only Admin accounts are authorized to modify retail customer pricing.
-            </p>
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Stock Quantity</label>
+            <input
+              type="number"
+              disabled
+              value={editProduct.stock_quantity ?? 0}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#1C1917] text-stone-400 cursor-not-allowed"
+              title="Use Stock-In / Stock-Out actions to adjust live quantities"
+            />
+            <p className="text-[11px] text-stone-500 mt-1">Automatic low-stock reorder triggers when quantity is 5 units or below.</p>
           </div>
 
           <div>
-            <label className="block font-semibold mb-1 text-stone-300">Description</label>
+            <label className="block font-semibold mb-1 text-stone-300">Description / Technical Specifications</label>
             <textarea
               rows="2"
               value={editProduct.description || ''}
@@ -1101,20 +1291,30 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             ></textarea>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#292524]">
+          <div className="flex items-center justify-between pt-3 border-t border-[#292524]">
             <button
               type="button"
-              onClick={() => setIsEditModalOpen(false)}
-              className="px-4 py-2 rounded-lg text-stone-300 bg-[#292524] hover:bg-[#44403C]"
+              onClick={() => handleDeleteProduct(editProduct)}
+              className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold inline-flex items-center gap-1.5 border border-red-500/20 cursor-pointer transition-colors"
             >
-              Cancel
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Delete Product</span>
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
-            >
-              Update Changes
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="px-4 py-2 rounded-lg text-stone-300 bg-[#292524] hover:bg-[#44403C]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+              >
+                Update Changes
+              </button>
+            </div>
           </div>
         </form>
       </Modal>
@@ -1127,15 +1327,16 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <p className="font-mono text-xs text-[#F97316] font-bold">{selectedProduct?.sku}</p>
               <p className="text-stone-400">Current On-Hand Stock: <strong className="text-[#FAFAF9]">{selectedProduct?.stock_quantity} units</strong></p>
             </div>
-            {selectedProduct && getStatusBadge(selectedProduct.status, selectedProduct.stock_quantity, selectedProduct.reorder_level)}
+            {selectedProduct && getStatusBadge(selectedProduct.status, selectedProduct.stock_quantity)}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Quantity to Add *</label>
+              <label className="block font-semibold mb-1 text-stone-300">Quantity to Add (Max 100) *</label>
               <input
                 type="number"
                 min="1"
+                max="100"
                 required
                 value={stockActionData.quantity}
                 onChange={(e) => setStockActionData({ ...stockActionData, quantity: e.target.value })}
@@ -1207,11 +1408,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold mb-1 text-stone-300">Quantity to Deduct *</label>
+              <label className="block font-semibold mb-1 text-stone-300">Quantity to Deduct (Max 100) *</label>
               <input
                 type="number"
                 min="1"
-                max={selectedProduct?.stock_quantity || 1}
+                max={Math.min(100, selectedProduct?.stock_quantity || 1)}
                 required
                 value={stockActionData.quantity}
                 onChange={(e) => setStockActionData({ ...stockActionData, quantity: e.target.value })}

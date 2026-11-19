@@ -455,7 +455,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   <th className="py-2.5 px-2 text-right">Cost Price</th>
                   <th className="py-2.5 px-2 text-right">Selling Price</th>
                   <th className="py-2.5 px-2 text-center">Stock</th>
-                  <th className="py-2.5 px-2 text-center">Reorder Level</th>
+                  <th className="py-2.5 px-2 text-center">Auto Threshold</th>
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
@@ -485,16 +485,16 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       <td className="py-2.5 px-2 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-2 text-right font-mono font-bold text-[#F97316] dark:text-greige">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-2 text-center font-bold">{p.stock_quantity}</td>
-                      <td className="py-2.5 px-2 text-center text-gray-400">{p.reorder_level}</td>
+                      <td className="py-2.5 px-2 text-center text-stone-400 font-mono text-[11px]">≤ 5 units</td>
                       <td className="py-2.5 px-3 text-center">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          p.stock_quantity === 0
+                          p.stock_quantity === 0 || p.status === 'out_of_stock'
                             ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
-                            : p.stock_quantity <= p.reorder_level
+                            : (p.stock_quantity <= 5 || p.status === 'low_stock')
                             ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
                             : 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
                         }`}>
-                          {p.stock_quantity === 0 ? 'Out of Stock' : p.stock_quantity <= p.reorder_level ? 'Low Stock' : 'In Stock'}
+                          {p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'Out of Stock' : (p.stock_quantity <= 5 || p.status === 'low_stock') ? 'Low Stock' : 'In Stock'}
                         </span>
                       </td>
                     </tr>

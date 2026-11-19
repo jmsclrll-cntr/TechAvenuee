@@ -356,7 +356,7 @@ export default function NewTransaction({ onProceedToPos, user }) {
                           PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          p.stock_quantity <= p.reorder_level
+                          (p.stock_quantity <= 5 || p.status === 'low_stock')
                             ? 'bg-amber-500/10 text-amber-500'
                             : 'bg-emerald-500/10 text-emerald-600'
                         }`}>

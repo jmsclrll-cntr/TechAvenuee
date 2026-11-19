@@ -82,8 +82,9 @@ export default function ReportsAnalytics({ user }) {
 
   const handleExportBestSellers = () => {
     if (!reportData || !reportData.best_sellers) return;
-    const headers = ['Product ID', 'SKU', 'Product Name', 'Category', 'Units Sold', 'Total Revenue (PHP)'];
-    const rows = reportData.best_sellers.map(item => [
+    const headers = ['Rank', 'Product ID', 'SKU', 'Product Name', 'Category', 'Units Sold', 'Total Revenue (PHP)'];
+    const rows = reportData.best_sellers.map((item, idx) => [
+      `#${idx + 1}`,
       item.id,
       item.sku,
       item.name,
@@ -96,15 +97,17 @@ export default function ReportsAnalytics({ user }) {
 
   const handleExportSlowMoving = () => {
     if (!reportData || !reportData.slow_moving) return;
-    const headers = ['Product ID', 'SKU', 'Product Name', 'Category', 'Current Stock', 'Sold in Last 30 Days', 'Days Since Last Sale'];
-    const rows = reportData.slow_moving.map(item => [
+    const headers = ['Rank', 'Product ID', 'SKU', 'Product Name', 'Category', 'Current Stock', 'Sold in Last 30 Days', 'Days Since Last Sale', 'Recommendation'];
+    const rows = reportData.slow_moving.map((item, idx) => [
+      `#${idx + 1}`,
       item.id,
       item.sku,
       item.name,
       item.category,
       item.stock_quantity,
       item.units_sold_last_30d,
-      item.days_since_last_sale
+      item.days_since_last_sale !== null ? `${item.days_since_last_sale} days` : 'No sales recorded',
+      item.units_sold_last_30d === 0 ? 'Discount / Promo' : 'Monitor Stock'
     ]);
     exportToCSV('TechAvenue_Slow_Moving_Inventory', headers, rows);
   };
@@ -343,10 +346,10 @@ export default function ReportsAnalytics({ user }) {
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border p-1 shrink-0 flex items-center justify-center">
                             <img
-                              src={p.image_url || '/products/default.svg'}
+                              src={p.image_url || '/products/desktop.svg'}
                               alt={p.name}
                               className="max-h-full max-w-full object-contain"
-                              onError={(e) => { e.target.src = '/products/default.svg'; }}
+                              onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                             />
                           </div>
                           <span className="font-bold text-gray-900 dark:text-white">
@@ -397,6 +400,7 @@ export default function ReportsAnalytics({ user }) {
             <table className="w-full text-xs text-left">
               <thead className="bg-gray-50 dark:bg-darkbg text-gray-500 border-b border-gray-200 dark:border-darkbg-border">
                 <tr>
+                  <th className="py-3 px-4 font-semibold">Rank</th>
                   <th className="py-3 px-4 font-semibold">Product Description</th>
                   <th className="py-3 px-3 font-semibold">SKU</th>
                   <th className="py-3 px-3 font-semibold">Category</th>
@@ -409,21 +413,24 @@ export default function ReportsAnalytics({ user }) {
               <tbody className="divide-y divide-gray-100 dark:divide-darkbg-border">
                 {(reportData?.slow_moving || []).length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="py-12 text-center text-gray-400">
+                    <td colSpan="8" className="py-12 text-center text-gray-400">
                       No slow-moving products identified. Inventory turnover is optimal!
                     </td>
                   </tr>
                 ) : (
-                  (reportData?.slow_moving || []).map(p => (
+                  (reportData?.slow_moving || []).map((p, idx) => (
                     <tr key={p.id} className="hover:bg-gray-50/80 dark:hover:bg-darkbg transition">
+                      <td className="py-3 px-4 font-bold text-navy dark:text-greige">
+                        #{idx + 1}
+                      </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border p-1 shrink-0 flex items-center justify-center">
                             <img
-                              src={p.image_url || '/products/default.svg'}
+                              src={p.image_url || '/products/desktop.svg'}
                               alt={p.name}
                               className="max-h-full max-w-full object-contain"
-                              onError={(e) => { e.target.src = '/products/default.svg'; }}
+                              onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                             />
                           </div>
                           <span className="font-bold text-gray-900 dark:text-white">
@@ -436,14 +443,18 @@ export default function ReportsAnalytics({ user }) {
                       <td className="py-3 px-3 text-center font-bold text-gray-800 dark:text-gray-200">
                         {p.stock_quantity} units
                       </td>
-                      <td className="py-3 px-3 text-center font-bold text-amber-600">
-                        {p.units_sold_last_30d}
+                      <td className="py-3 px-3 text-center font-black text-amber-600 dark:text-amber-400">
+                        {p.units_sold_last_30d || 0} units
                       </td>
                       <td className="py-3 px-3 text-center text-gray-500">
                         {p.days_since_last_sale !== null ? `${p.days_since_last_sale} days` : 'No sales recorded'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                          p.units_sold_last_30d === 0 
+                            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20' 
+                            : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+                        }`}>
                           {p.units_sold_last_30d === 0 ? 'Discount / Promo' : 'Monitor Stock'}
                         </span>
                       </td>

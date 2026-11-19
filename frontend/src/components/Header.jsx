@@ -4,8 +4,6 @@ import {
   Clock,
   ShieldCheck,
   AlertTriangle,
-  PanelLeftClose,
-  PanelLeftOpen,
   BookOpen,
   Maximize,
   ChevronDown,
@@ -31,15 +29,19 @@ import {
 } from 'lucide-react';
 import { useTextSize } from '../context/TextSizeContext';
 
+const SMOOTH_TAB_TRANSITION = {
+  transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)'
+};
+
 export default function Header({
   user,
   darkMode,
   setDarkMode,
   role,
+  activeWorkspace,
+  setActiveWorkspace,
   shiftInfo,
   lowStockCount = 0,
-  sidebarCollapsed,
-  setSidebarCollapsed,
   onOpenManual,
   activeTab,
   setActiveTab,
@@ -53,7 +55,102 @@ export default function Header({
   const triggerButtonRef = useRef(null);
   const predictionMenuRef = useRef(null);
 
-  const currentRole = user?.role || role || 'admin';
+  const isInstructor = user?.role === 'instructor';
+  const effectiveRole = isInstructor ? (activeWorkspace || 'instructor') : (user?.role || role || 'admin');
+  const currentRole = effectiveRole;
+
+  // Role Workspaces configuration for Academic Instructor & system navigation
+  const ROLE_WORKSPACES = [
+    {
+      id: 'admin',
+      label: 'Admin',
+      badge: 'Admin Workspace',
+      icon: ShieldCheck,
+      defaultTab: 'sales',
+      subTabs: [
+        { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+        { id: 'sales', label: 'Sales Audit', icon: Receipt },
+        { id: 'users', label: 'Users', icon: Users },
+        { id: 'purchasing', label: 'Suppliers', icon: Truck },
+        { id: 'reports', label: 'Reports', icon: BarChart3 },
+        { id: 'inventory', label: 'Inventory', icon: Package }
+      ],
+      hasPredictions: true
+    },
+    {
+      id: 'inventory_clerk',
+      label: 'Inventory Clerk',
+      badge: 'Inventory Clerk Workspace',
+      icon: Package,
+      defaultTab: 'inventory',
+      subTabs: [
+        { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+        { id: 'inventory', label: 'Inventory', icon: Package },
+        { id: 'stock_in', label: 'Stock-In', icon: ArrowDownLeft },
+        { id: 'stock_out', label: 'Stock-Out', icon: ArrowUpRight },
+        { id: 'movements', label: 'Movement', icon: History },
+        { id: 'suppliers', label: 'Suppliers', icon: Truck }
+      ],
+      hasPredictions: false
+    },
+    {
+      id: 'sales_personnel',
+      label: 'Sales Personnel',
+      badge: 'Sales Personnel Workspace',
+      icon: ShoppingCart,
+      defaultTab: 'pos',
+      subTabs: [
+        { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+        { id: 'pos', label: 'Point of Sale', icon: ShoppingCart },
+        { id: 'sales_history', label: 'Sales History', icon: History },
+        { id: 'product_lookup', label: 'Product Lookup', icon: Search }
+      ],
+      hasPredictions: false
+    },
+    {
+      id: 'instructor',
+      label: 'Instructor ML',
+      badge: 'Academic Instructor ML Workspace',
+      icon: BrainCircuit,
+      defaultTab: 'dashboard',
+      subTabs: [
+        { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+        { id: 'datasets', label: 'Datasets', icon: Database },
+        { id: 'train', label: 'Training', icon: Cpu },
+        { id: 'compare', label: 'Compare Models', icon: GitCompare },
+        { id: 'saved_models', label: 'Saved Models', icon: Save },
+        { id: 'prediction_history', label: 'History', icon: History }
+      ],
+      hasPredictions: false
+    }
+  ];
+
+  const currentWorkspaceConfig = ROLE_WORKSPACES.find(w => w.id === effectiveRole) || ROLE_WORKSPACES[3];
+
+  const predictionSubItems = [
+    { id: 'pred_demand', label: 'Product Demand Prediction' },
+    { id: 'pred_sales', label: 'Sales Prediction' },
+    { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
+    { id: 'pred_best_selling', label: 'Best-Selling Products' }
+  ];
+
+  const isPredictionActive = predictionSubItems.some(item => item.id === activeTab);
+
+  const handleSelectWorkspace = (targetWsId) => {
+    if (setActiveWorkspace) {
+      setActiveWorkspace(targetWsId);
+    }
+    const targetWs = ROLE_WORKSPACES.find(w => w.id === targetWsId);
+    if (targetWs && setActiveTab) {
+      if (activeTab !== 'dashboard') {
+        const hasTab = targetWs.subTabs.some(t => t.id === activeTab) || (targetWs.hasPredictions && isPredictionActive);
+        if (!hasTab) {
+          setActiveTab(targetWs.defaultTab);
+        }
+      }
+    }
+    setPredictionDropdownOpen(false);
+  };
 
   const getNavItems = () => {
     switch (currentRole) {
@@ -99,15 +196,6 @@ export default function Header({
   };
 
   const navItems = getNavItems();
-
-  const predictionSubItems = [
-    { id: 'pred_demand', label: 'Product Demand Prediction' },
-    { id: 'pred_sales', label: 'Sales Prediction' },
-    { id: 'pred_slow_moving', label: 'Slow-Moving Products' },
-    { id: 'pred_best_selling', label: 'Best-Selling Products' }
-  ];
-
-  const isPredictionActive = predictionSubItems.some(item => item.id === activeTab);
 
   // Close prediction dropdown on click outside
   useEffect(() => {
@@ -233,7 +321,6 @@ export default function Header({
           await docEl.msRequestFullscreen();
         }
         localStorage.setItem('techavenue_fullscreen', 'true');
-        if (setSidebarCollapsed) setSidebarCollapsed(true);
       } else {
         if (document.exitFullscreen) {
           await document.exitFullscreen();
@@ -268,8 +355,10 @@ export default function Header({
   const capitalizedRole = roleDisplay.charAt(0).toUpperCase() + roleDisplay.slice(1);
 
   return (
-    <header className="sticky top-0 z-30 transition-colors bg-[#1C1917] border-b border-[#292524] px-3 sm:px-6 py-2.5 shadow-md">
-      <div className="flex items-center justify-between gap-4 max-w-[1700px] mx-auto">
+    <header className="sticky top-0 z-30 transition-colors bg-[#1C1917] border-b border-[#292524] shadow-md">
+      {/* Top Navigation Row */}
+      <div className="px-3 sm:px-6 py-2.5">
+        <div className="flex items-center justify-between gap-4 max-w-[1700px] mx-auto">
         {/* Left: Brand / Logo */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-2.5">
@@ -284,9 +373,20 @@ export default function Header({
                 Computer &amp; Accessories
               </span>
             </div>
-            <span className="hidden 2xl:inline-block ml-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#292524] text-[#FB923C] border border-[#44403C] capitalize">
-              {roleDisplay}
-            </span>
+            {isInstructor ? (
+              <div className="hidden xl:flex items-center gap-1.5 ml-1">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#292524] text-[#FB923C] border border-[#44403C] uppercase tracking-wide">
+                  Academic Instructor
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  Full Access Mode
+                </span>
+              </div>
+            ) : (
+              <span className="hidden 2xl:inline-block ml-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#292524] text-[#FB923C] border border-[#44403C] capitalize">
+                {roleDisplay}
+              </span>
+            )}
           </div>
 
           {lowStockCount > 0 && currentRole !== 'admin' && (
@@ -297,141 +397,207 @@ export default function Header({
           )}
         </div>
 
-        {/* Navigation Bar for all roles (positioned beside brand, right before user profile) */}
-        <nav
-          aria-label="Main Navigation"
-          className="ml-auto flex items-center gap-2 sm:gap-2.5 overflow-visible"
-        >
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            const isHovered = hoveredId === item.id;
-            const isExpanded = isActive || isHovered;
+        {/* Navigation Bar: Upper-Bar Role Switcher for Academic Instructor; Pill Buttons for All Other Roles */}
+        {isInstructor ? (
+          <nav
+            aria-label="Instructor Workspace Navigation"
+            className="ml-auto flex items-center gap-2 sm:gap-2.5 overflow-visible"
+          >
+            {/* Quick-Access Dashboard Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (setActiveTab) setActiveTab('dashboard');
+                setPredictionDropdownOpen(false);
+              }}
+              title="Dashboard Overview"
+              style={SMOOTH_TAB_TRANSITION}
+              className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full px-3.5 sm:px-4.5 transition-all duration-200 cursor-pointer active:scale-95 ${
+                activeTab === 'dashboard'
+                  ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <LayoutDashboard className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0" />
+              <span className="ml-2 text-xs sm:text-sm font-extrabold whitespace-nowrap">
+                Dashboard
+              </span>
+            </button>
 
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onMouseEnter={() => setHoveredId(item.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                onClick={() => {
-                  if (setActiveTab) setActiveTab(item.id);
-                  setPredictionDropdownOpen(false);
-                }}
-                title={item.label}
-                className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${isExpanded
-                  ? 'px-3.5 sm:px-4.5 shadow-lg'
-                  : 'w-10 sm:w-11 px-0'
-                  } ${isActive
-                    ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
-                    : 'text-stone-300 hover:text-white hover:bg-white/10'
-                  }`}
-              >
-                {/* Icon: Always remains visible */}
-                <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
+            {/* Separator */}
+            <div className="w-[1px] h-6 bg-[#292524] mx-1 shrink-0" />
 
-                {/* Text: When clicked/active or hovered, remains visible alongside the icon */}
-                <span
-                  className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none ${isExpanded
-                    ? 'max-w-[260px] opacity-100 ml-2 inline-block'
-                    : 'max-w-0 opacity-0 ml-0 pointer-events-none'
+            {/* Role Workspaces Quick Buttons */}
+            <div className="flex items-center gap-1 sm:gap-1.5 bg-[#141210] p-1 rounded-full border border-[#292524]">
+              {ROLE_WORKSPACES.map((ws) => {
+                const WsIcon = ws.icon;
+                const isWsActive = effectiveRole === ws.id;
+
+                return (
+                  <button
+                    key={ws.id}
+                    type="button"
+                    onClick={() => handleSelectWorkspace(ws.id)}
+                    title={`Switch to ${ws.label} Workspace`}
+                    style={SMOOTH_TAB_TRANSITION}
+                    className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer active:scale-95 ${
+                      isWsActive
+                        ? 'bg-[#F97316] text-white shadow-md shadow-orange-950/40 ring-1 ring-orange-400/40 font-black'
+                        : 'text-stone-300 hover:text-white hover:bg-white/10'
                     }`}
+                  >
+                    <WsIcon className="w-4 h-4 shrink-0" />
+                    <span className="whitespace-nowrap">{ws.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        ) : (
+          <nav
+            aria-label="Main Navigation"
+            className="ml-auto flex items-center gap-2 sm:gap-2.5 overflow-visible"
+          >
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              const isHovered = hoveredId === item.id;
+              const isExpanded = isActive || isHovered;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onMouseEnter={() => setHoveredId(item.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  onClick={() => {
+                    if (setActiveTab) setActiveTab(item.id);
+                    setPredictionDropdownOpen(false);
+                  }}
+                  title={item.label}
+                  className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${
+                    isExpanded
+                      ? 'px-3.5 sm:px-4.5 shadow-lg'
+                      : 'w-10 sm:w-11 px-0'
+                  } ${
+                    isActive
+                      ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
+                      : 'text-stone-300 hover:text-white hover:bg-white/10'
+                  }`}
                 >
-                  {item.label}
-                </span>
-              </button>
-            );
-          })}
+                  {/* Icon: Always remains visible */}
+                  <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
 
-          {/* For Admin: Add the Knowledge Analysis & Prediction Downward Dropdown */}
-          {currentRole === 'admin' && (
-            <>
-              {/* Separator Line */}
-              <div className="w-[1px] h-5 bg-[#292524] mx-1 shrink-0" />
+                  {/* Text: When clicked/active or hovered, remains visible alongside the icon */}
+                  <span
+                    className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none ${
+                      isExpanded
+                        ? 'max-w-[260px] opacity-100 ml-2 inline-block'
+                        : 'max-w-0 opacity-0 ml-0 pointer-events-none'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
 
-              <div ref={predictionMenuRef} className="relative shrink-0">
-                {(() => {
-                  const isHovered = hoveredId === 'predictions';
-                  const isExpanded = isPredictionActive || isHovered || predictionDropdownOpen;
+            {/* For Admin: Add the Knowledge Analysis & Prediction Downward Dropdown */}
+            {currentRole === 'admin' && (
+              <>
+                {/* Separator Line */}
+                <div className="w-[1px] h-5 bg-[#292524] mx-1 shrink-0" />
 
-                  return (
-                    <button
-                      type="button"
-                      onMouseEnter={() => setHoveredId('predictions')}
-                      onMouseLeave={() => {
-                        if (!predictionDropdownOpen) {
-                          setHoveredId(null);
-                        }
-                      }}
-                      onClick={() => {
-                        setPredictionDropdownOpen(!predictionDropdownOpen);
-                        setHoveredId('predictions');
-                      }}
-                      title="Knowledge Analysis & Prediction"
-                      className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${isExpanded
-                        ? 'px-3.5 sm:px-4.5 shadow-lg'
-                        : 'w-10 sm:w-11 px-0'
-                        } ${isPredictionActive
-                          ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
-                          : 'text-stone-300 hover:text-white hover:bg-white/10'
-                        }`}
-                    >
-                      {/* Icon */}
-                      <BrainCircuit className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
+                <div ref={predictionMenuRef} className="relative shrink-0">
+                  {(() => {
+                    const isHovered = hoveredId === 'predictions';
+                    const isExpanded = isPredictionActive || isHovered || predictionDropdownOpen;
 
-                      {/* Text & Chevron */}
-                      <span
-                        className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none flex items-center gap-1.5 ${isExpanded
-                          ? 'max-w-[300px] opacity-100 ml-2 inline-flex'
-                          : 'max-w-0 opacity-0 ml-0 pointer-events-none'
-                          }`}
-                      >
-                        <span>Prediction Modules</span>
-                        <ChevronDown
-                          className={`w-3.5 h-3.5 transition-transform duration-200 ${predictionDropdownOpen ? 'rotate-180' : ''
-                            }`}
-                        />
-                      </span>
-                    </button>
-                  );
-                })()}
-
-                {/* Downward Submenu with Fade-in */}
-                {predictionDropdownOpen && (
-                  <div className="absolute top-full mt-2.5 right-0 w-72 rounded-2xl bg-[#1C1917]/98 backdrop-blur-xl border border-[#292524] shadow-[0_18px_45px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.08)] p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-3 py-1.5 text-[11px] uppercase font-bold tracking-wider text-stone-400 border-b border-[#292524]/70 mb-1.5">
-                      Prediction &amp; Intelligence
-                    </div>
-                    {predictionSubItems.map((sub) => {
-                      const isSubActive = activeTab === sub.id;
-                      return (
-                        <button
-                          key={sub.id}
-                          type="button"
-                          onClick={() => {
-                            if (setActiveTab) setActiveTab(sub.id);
-                            setPredictionDropdownOpen(false);
+                    return (
+                      <button
+                        type="button"
+                        onMouseEnter={() => setHoveredId('predictions')}
+                        onMouseLeave={() => {
+                          if (!predictionDropdownOpen) {
                             setHoveredId(null);
-                          }}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${isSubActive
-                            ? 'bg-[#F97316] text-white shadow-md'
+                          }
+                        }}
+                        onClick={() => {
+                          setPredictionDropdownOpen(!predictionDropdownOpen);
+                          setHoveredId('predictions');
+                        }}
+                        title="Knowledge Analysis & Prediction"
+                        className={`relative flex items-center justify-center h-10 sm:h-11 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 ${
+                          isExpanded
+                            ? 'px-3.5 sm:px-4.5 shadow-lg'
+                            : 'w-10 sm:w-11 px-0'
+                        } ${
+                          isPredictionActive
+                            ? 'bg-[#F97316] text-white font-black shadow-lg shadow-orange-950/40 ring-2 ring-orange-400/40'
                             : 'text-stone-300 hover:text-white hover:bg-white/10'
-                            }`}
+                        }`}
+                      >
+                        {/* Icon */}
+                        <BrainCircuit className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200" />
+
+                        {/* Text & Chevron */}
+                        <span
+                          className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-out text-xs sm:text-sm font-extrabold leading-none select-none flex items-center gap-1.5 ${
+                            isExpanded
+                              ? 'max-w-[300px] opacity-100 ml-2 inline-flex'
+                              : 'max-w-0 opacity-0 ml-0 pointer-events-none'
+                          }`}
                         >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSubActive ? 'bg-white' : 'bg-stone-500'
-                              }`}
+                          <span>Prediction Modules</span>
+                          <ChevronDown
+                            className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                              predictionDropdownOpen ? 'rotate-180' : ''
+                            }`}
                           />
-                          <span>{sub.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </nav>
+                        </span>
+                      </button>
+                    );
+                  })()}
+
+                  {/* Downward Submenu with Fade-in */}
+                  {predictionDropdownOpen && (
+                    <div className="absolute top-full mt-2.5 right-0 w-72 rounded-2xl bg-[#1C1917]/98 backdrop-blur-xl border border-[#292524] shadow-[0_18px_45px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.08)] p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-3 py-1.5 text-[11px] uppercase font-bold tracking-wider text-stone-400 border-b border-[#292524]/70 mb-1.5">
+                        Prediction &amp; Intelligence
+                      </div>
+                      {predictionSubItems.map((sub) => {
+                        const isSubActive = activeTab === sub.id;
+                        return (
+                          <button
+                            key={sub.id}
+                            type="button"
+                            onClick={() => {
+                              if (setActiveTab) setActiveTab(sub.id);
+                              setPredictionDropdownOpen(false);
+                              setHoveredId(null);
+                            }}
+                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                              isSubActive
+                                ? 'bg-[#F97316] text-white shadow-md'
+                                : 'text-stone-300 hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                isSubActive ? 'bg-white' : 'bg-stone-500'
+                              }`}
+                            />
+                            <span>{sub.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </nav>
+        )}
 
         {/* Right: User Profile & System Controls Dropdown */}
         <div ref={userMenuRef} className="relative shrink-0">
@@ -582,6 +748,158 @@ export default function Header({
           )}
         </div>
       </div>
+      </div>
+
+      {/* Sub-Navigation Bar: Only for Academic Instructor Workspace Navigation */}
+      {isInstructor && (
+        <div className="w-full border-t border-[#292524] bg-[#141210]">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 max-w-[1700px] mx-auto px-3 sm:px-6 overflow-x-auto scrollbar-none">
+            {/* Active Role Workspace Badge (when Academic Instructor is switching workspaces) */}
+            <div className="flex items-center gap-2 shrink-0 py-2.5 mr-2">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 hidden md:inline">
+                Workspace:
+              </span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#292524] border border-[#44403C] text-xs font-bold text-[#FB923C]">
+                {(() => {
+                  const ActiveIcon = currentWorkspaceConfig.icon;
+                  return <ActiveIcon className="w-3.5 h-3.5 text-[#F97316] shrink-0" />;
+                })()}
+                <span>{currentWorkspaceConfig.badge}</span>
+              </div>
+            </div>
+
+            {/* Flat Horizontal Tabs with Flush 2px Solid Orange Bottom Line */}
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0 overflow-visible ml-auto">
+              {currentWorkspaceConfig.subTabs.map((sub) => {
+                const SubIcon = sub.icon;
+                const isSubActive = activeTab === sub.id;
+
+                return (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    onClick={() => {
+                      if (setActiveTab) setActiveTab(sub.id);
+                      setPredictionDropdownOpen(false);
+                    }}
+                    title={sub.label}
+                    style={SMOOTH_TAB_TRANSITION}
+                    className={`group relative flex items-center gap-2 px-3.5 sm:px-5 py-3 text-xs sm:text-sm font-semibold shrink-0 cursor-pointer select-none bg-transparent border-none outline-none focus:outline-none ${
+                      isSubActive
+                        ? 'text-[#F97316] font-bold'
+                        : 'text-stone-400 hover:text-white'
+                    }`}
+                  >
+                    {/* Icon */}
+                    <SubIcon
+                      style={SMOOTH_TAB_TRANSITION}
+                      className={`w-4 h-4 shrink-0 ${
+                        isSubActive
+                          ? 'text-[#F97316]'
+                          : 'text-stone-400 group-hover:text-white'
+                      }`}
+                    />
+
+                    {/* Label */}
+                    <span
+                      style={SMOOTH_TAB_TRANSITION}
+                      className="whitespace-nowrap tracking-tight"
+                    >
+                      {sub.label}
+                    </span>
+
+                    {/* 2px Solid Orange Bottom Indicator Line aligned flush with the bottom border */}
+                    <span
+                      style={SMOOTH_TAB_TRANSITION}
+                      className={`absolute bottom-[-1px] left-0 right-0 h-[2px] rounded-full ${
+                        isSubActive
+                          ? 'bg-[#F97316] opacity-100 scale-x-100'
+                          : 'bg-[#F97316] opacity-0 scale-x-0 group-hover:opacity-40 group-hover:scale-x-75'
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+
+              {/* Admin Prediction Modules Dropdown in Sub-Tabs when in Admin Workspace */}
+              {currentWorkspaceConfig.hasPredictions && (
+                <div ref={predictionMenuRef} className="relative shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setPredictionDropdownOpen(!predictionDropdownOpen)}
+                    style={SMOOTH_TAB_TRANSITION}
+                    className={`group relative flex items-center gap-2 px-3.5 sm:px-5 py-3 text-xs sm:text-sm font-semibold shrink-0 cursor-pointer select-none bg-transparent border-none outline-none focus:outline-none ${
+                      isPredictionActive
+                        ? 'text-[#F97316] font-bold'
+                        : 'text-stone-400 hover:text-white'
+                    }`}
+                  >
+                    <BrainCircuit
+                      style={SMOOTH_TAB_TRANSITION}
+                      className={`w-4 h-4 shrink-0 ${
+                        isPredictionActive
+                          ? 'text-[#F97316]'
+                          : 'text-stone-400 group-hover:text-white'
+                      }`}
+                    />
+                    <span
+                      style={SMOOTH_TAB_TRANSITION}
+                      className="whitespace-nowrap tracking-tight"
+                    >
+                      Prediction Modules
+                    </span>
+                    <ChevronDown
+                      style={SMOOTH_TAB_TRANSITION}
+                      className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                        predictionDropdownOpen ? 'rotate-180' : ''
+                      } ${isPredictionActive ? 'text-[#F97316]' : 'text-stone-400 group-hover:text-white'}`}
+                    />
+                    <span
+                      style={SMOOTH_TAB_TRANSITION}
+                      className={`absolute bottom-[-1px] left-0 right-0 h-[2px] rounded-full ${
+                        isPredictionActive
+                          ? 'bg-[#F97316] opacity-100 scale-x-100'
+                          : 'bg-[#F97316] opacity-0 scale-x-0 group-hover:opacity-40 group-hover:scale-x-75'
+                      }`}
+                    />
+                  </button>
+
+                  {/* Submenu */}
+                  {predictionDropdownOpen && (
+                    <div className="absolute top-full mt-1 right-0 w-64 rounded-xl bg-[#1C1917]/98 backdrop-blur-xl border border-[#292524] shadow-[0_18px_45px_rgba(0,0,0,0.85)] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-2.5 py-1 text-[10px] uppercase font-bold tracking-wider text-stone-500 border-b border-[#292524] mb-1">
+                        Prediction &amp; Intelligence
+                      </div>
+                      {predictionSubItems.map((predSub) => {
+                        const isPredActive = activeTab === predSub.id;
+                        return (
+                          <button
+                            key={predSub.id}
+                            type="button"
+                            onClick={() => {
+                              if (setActiveTab) setActiveTab(predSub.id);
+                              setPredictionDropdownOpen(false);
+                            }}
+                            style={SMOOTH_TAB_TRANSITION}
+                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-semibold text-left ${
+                              isPredActive
+                                ? 'bg-[#F97316]/15 text-[#F97316] font-bold'
+                                : 'text-stone-300 hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isPredActive ? 'bg-[#F97316]' : 'bg-stone-500'}`} />
+                            <span>{predSub.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
