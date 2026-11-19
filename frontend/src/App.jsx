@@ -195,7 +195,7 @@ function App() {
         />
 
         {/* Main Full-Width Dashboard Content Body */}
-        <main className="flex-1 overflow-y-auto bg-[#141210]">
+        <main className="flex-1 overflow-y-auto bg-[#141210] pb-24 sm:pb-28">
           {renderDashboardContent()}
         </main>
 
@@ -203,6 +203,7 @@ function App() {
         <UserManualModal
           isOpen={isManualModalOpen}
           onClose={() => setIsManualModalOpen(false)}
+          userRole={user.role}
           initialRole={user.role}
           onNavigateTab={async (tab, targetRole) => {
             setIsManualModalOpen(false);

@@ -37,8 +37,12 @@ import PurchasingManagement from './PurchasingManagement';
 import ReportsAnalytics from './ReportsAnalytics';
 import logoImg from '../assets/logo.png';
 import ProductDetailModal from '../components/ProductDetailModal';
+import { useNotification } from '../context/NotificationContext';
+import { useThemeColor } from '../context/ThemeColorContext';
 
 export default function AdminDashboard({ activeTab, setActiveTab, user }) {
+  const { currentTheme } = useThemeColor();
+  const { showSuccess, showError, showWarning, showInfo } = useNotification();
   const [stats, setStats] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -47,13 +51,11 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [suppliers, setSuppliers] = useState([]);
   const [predictionHistory, setPredictionHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState(null); // { message, type: 'success' | 'error' }
 
   const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 3500);
+    if (type === 'error') showError(message);
+    else if (type === 'warning') showWarning(message);
+    else showSuccess(message);
   };
   const [dashView, setDashView] = useState('all'); // 'all', 'sales', 'inventory', 'predictions', 'activity'
 
@@ -94,14 +96,14 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [settingsSavedToast, setSettingsSavedToast] = useState(false);
 
   // Prediction Form State (Executive View)
-  const [selectedTask, setSelectedTask] = useState('sales');
+  const [selectedTask, setSelectedTask] = useState('demand');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('random_forest');
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
   const [predictionError, setPredictionError] = useState(null);
   const [predictionSuccess, setPredictionSuccess] = useState(null);
   const [predictionInputs, setPredictionInputs] = useState({
-    category: 'Laptops & Ultrabooks',
+    category: 'Computer Components',
     store_footfall: 220,
     marketing_spend: 3500,
     promotions_active: 1,
@@ -150,9 +152,12 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   // Synchronize activeTab if it's one of the prediction tasks
   useEffect(() => {
     if (activeTab === 'pred_demand') setSelectedTask('demand');
-    if (activeTab === 'pred_sales') setSelectedTask('sales');
-    if (activeTab === 'pred_slow_moving') setSelectedTask('slow_moving');
-    if (activeTab === 'pred_best_selling') setSelectedTask('best_selling');
+    else if (activeTab === 'pred_sales') setSelectedTask('sales');
+    else if (activeTab === 'pred_slow_moving') setSelectedTask('slow_moving');
+    else if (activeTab === 'pred_best_selling') setSelectedTask('best_selling');
+    else if (activeTab === 'predictions' || activeTab === 'prediction_modules') {
+      setSelectedTask('demand');
+    }
   }, [activeTab]);
 
   // Handle Add Product
@@ -292,14 +297,18 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       const res = await api.runPrediction(selectedTask, selectedAlgorithm, predictionInputs);
       if (res && res.status === 'success' && res.prediction) {
         setPredictionResult(res.prediction);
-        setPredictionSuccess(`Prediction generated successfully using ${selectedAlgorithm === 'random_forest' ? 'Random Forest Regression' : 'Simple Linear Regression'}.`);
+        const msg = `Prediction generated successfully using ${selectedAlgorithm === 'random_forest' ? 'Random Forest Regression' : 'Simple Linear Regression'}.`;
+        setPredictionSuccess(msg);
+        showSuccess(msg, 'Prediction Accepted');
         loadData();
       } else {
         throw new Error(res?.message || 'The server returned an invalid response.');
       }
     } catch (err) {
       console.error('Prediction failed:', err);
-      setPredictionError(err.message || 'Unable to generate prediction. Check backend service connection.');
+      const errMsg = err.message || 'Unable to generate prediction. Check backend service connection.';
+      setPredictionError(errMsg);
+      showError(errMsg, 'Prediction Error');
     } finally {
       setIsPredicting(false);
     }
@@ -327,7 +336,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
     document.body.removeChild(link);
   };
 
-  const isPredictionTab = ['pred_demand', 'pred_sales', 'pred_slow_moving', 'pred_best_selling'].includes(activeTab);
+  const isPredictionTab = ['predictions', 'prediction_modules', 'pred_demand', 'pred_sales', 'pred_slow_moving', 'pred_best_selling'].includes(activeTab);
 
   const cards = stats?.cards || {};
   const charts = stats?.charts || {};
@@ -354,31 +363,45 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   key={btn.id}
                   type="button"
                   onClick={() => setDashView(btn.id)}
-                  style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                  style={{
+                    transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                    color: isActive ? currentTheme.primary : undefined
+                  }}
                   className={`relative flex items-center gap-2 px-4 sm:px-6 py-2.5 text-sm sm:text-base font-semibold shrink-0 cursor-pointer select-none ${
                     isActive
-                      ? 'text-[#F97316] font-bold'
+                      ? 'font-bold'
                       : 'text-stone-400 hover:text-white'
                   }`}
                 >
                   <Icon
-                    style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
-                    className={`w-4 h-4 ${isActive ? 'text-[#F97316]' : 'text-stone-400'}`}
+                    style={{
+                      transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                      color: isActive ? currentTheme.primary : undefined
+                    }}
+                    className={`w-4 h-4 ${isActive ? '' : 'text-stone-400'}`}
                   />
                   <span style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>{btn.label}</span>
                   <span
-                    style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
+                    style={{
+                      transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                      backgroundColor: isActive ? `${currentTheme.primary}20` : undefined,
+                      color: isActive ? currentTheme.light : undefined,
+                      borderColor: isActive ? `${currentTheme.primary}35` : undefined
+                    }}
                     className={`text-xs px-2 py-0.5 rounded-md font-mono ${
                     isActive
-                      ? 'bg-[#F97316]/20 text-[#FDBA74] font-bold border border-[#F97316]/30'
+                      ? 'font-bold border'
                       : 'bg-[#292524] text-stone-400'
                   }`}>
                     {btn.count}
                   </span>
                   {isActive && (
                     <span
-                      style={{ transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}
-                      className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-[#F97316]"
+                      style={{
+                        transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                        backgroundColor: currentTheme.primary
+                      }}
+                      className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full"
                     />
                   )}
                 </button>
@@ -392,7 +415,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <button
                 type="button"
                 onClick={() => setDashView('all')}
-                className="flex items-center gap-2 text-xs font-bold text-[#F97316] hover:text-[#FB923C] cursor-pointer active:scale-95 transition-transform"
+                style={{ color: currentTheme.primary }}
+                className="flex items-center gap-2 text-xs font-bold hover:underline cursor-pointer active:scale-95 transition-transform"
               >
                 &larr; Back to Dashboard Overview
               </button>
@@ -403,28 +427,46 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           )}
 
           {/* ========================================================================= */}
-          {/* GROUP 1: ALL OVERVIEW (Warm Neutral + Orange Layout - Compact & Balanced)  */}
+          {/* GROUP 1: ALL OVERVIEW (Cool Charcoal + Electric Blue Layout - Compact & Balanced) */}
           {/* ========================================================================= */}
           {dashView === 'all' && (
             <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-150">
               {/* Top Hero Section: Welcome & Sales Trend Side-by-Side (Compact) */}
-              <div className="bg-[#1C1917] text-[#FAFAF9] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-lg">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+              <div className="bg-[#1C1917] text-[#FAFAF9] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-lg relative overflow-hidden">
+                {/* Subtle theme background ambient tint */}
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-xl"
+                  style={{
+                    background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+                  }}
+                />
+                <div 
+                  className="absolute -right-12 -top-12 w-40 h-40 rounded-full blur-2xl pointer-events-none"
+                  style={{ backgroundColor: `${currentTheme.primary}15` }}
+                />
+
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
                   
                   {/* Left Column: Greeting, Live Badge, KPI Metrics & Action Buttons */}
                   <div className="lg:col-span-5 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] animate-pulse"></span>
-                        <span className="text-[10px] uppercase font-extrabold tracking-wider text-orange-400">
+                        <span 
+                          className="w-1.5 h-1.5 rounded-full animate-pulse"
+                          style={{ backgroundColor: currentTheme.primary }}
+                        />
+                        <span 
+                          className="text-[10px] uppercase font-extrabold tracking-wider"
+                          style={{ color: currentTheme.light }}
+                        >
                           Live Store Operations
                         </span>
                       </div>
 
-                      <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight">
+                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.05]">
                         Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'},
                         <br />
-                        <span className="text-[#F97316]">{(user?.full_name || user?.username || 'Carl').split(' ')[0]}</span>
+                        <span style={{ color: currentTheme.primary }}>{(user?.full_name || user?.username || 'Carl').split(' ')[0]}</span>
                       </h1>
                     </div>
 
@@ -435,7 +477,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                           <p className="text-[9px] font-extrabold uppercase tracking-widest text-stone-400">
                             Daily Sales &bull; Gross Revenue Today
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                          <span 
+                            className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] border border-[#44403C]"
+                            style={{ color: currentTheme.light }}
+                          >
                             +12.4%
                           </span>
                         </div>
@@ -459,7 +504,11 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       <button
                         type="button"
                         onClick={handleExportReport}
-                        className="px-3 py-1.5 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white text-[11px] font-black shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                        style={{
+                          backgroundColor: currentTheme.primary,
+                          boxShadow: `0 4px 14px ${currentTheme.primary}40`
+                        }}
+                        className="px-3 py-1.5 rounded-lg text-white text-[11px] font-black transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 hover:opacity-90"
                       >
                         <Download className="w-3 h-3" />
                         <span>Export Sales CSV</span>
@@ -472,7 +521,10 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         className="px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#342F2D] text-stone-200 border border-[#44403C] text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer active:scale-95"
                         title="Sync with database"
                       >
-                        <Activity className={`w-3 h-3 ${loading ? 'animate-spin text-[#F97316]' : 'text-stone-400'}`} />
+                        <Activity 
+                          className={`w-3 h-3 ${loading ? 'animate-spin' : 'text-stone-400'}`} 
+                          style={loading ? { color: currentTheme.primary } : {}}
+                        />
                         <span>{loading ? 'Syncing...' : 'Sync Data'}</span>
                       </button>
                     </div>
@@ -486,7 +538,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       xKey="month"
                       yKey="sales"
                       yKey2="projected"
-                      strokeColor="#F97316"
+                      strokeColor={currentTheme.strokeColor}
                       strokeColor2="#78716C"
                       height={175}
                     />
@@ -500,100 +552,163 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 
                 {/* Left 3 cols: Total Products & Low-Stock Alerts Stack */}
                 <div className="lg:col-span-3 flex flex-col justify-between gap-3.5">
-                  {/* Total Products (Deep Warm Slate/Stone Card) */}
+                  {/* Total Products (Deep Warm Slate/Stone Card with Blended Fade Effect) */}
                   <div 
                     onClick={() => setActiveTab('inventory')}
-                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between hover:border-[#F97316]/40 transition-all cursor-pointer group"
+                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between transition-all cursor-pointer group relative overflow-hidden"
                   >
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-[#FB923C]">
+                    {/* Faded effect: Black into Theme color gradient overlay */}
+                    <div 
+                      className="absolute inset-0 pointer-events-none rounded-xl"
+                      style={{
+                        background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
+                      }}
+                    />
+                    {/* Ambient luminous theme corner glow */}
+                    <div 
+                      className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
+                      style={{ backgroundColor: `${currentTheme.primary}18` }}
+                    />
+
+                    <div className="relative z-10 flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: currentTheme.light }}>
                         Total Products
                       </p>
-                      <Package className="w-4 h-4 text-[#F97316] group-hover:scale-110 transition-transform" />
+                      <Package className="w-4 h-4 group-hover:scale-110 transition-transform" style={{ color: currentTheme.primary }} />
                     </div>
-                    <div className="my-1.5">
+                    <div className="relative z-10 my-1.5">
                       <span className="text-2xl sm:text-3xl font-black font-mono text-[#FAFAF9]">
                         {cards.total_products || 0}
                       </span>
                     </div>
-                    <p className="text-[11px] text-stone-400 font-medium">
+                    <p className="relative z-10 text-[11px] text-stone-400 font-medium">
                       Registered catalog
                     </p>
                   </div>
 
-                  {/* Low-Stock Alerts (Deep Warm Amber/Orange Card) */}
+                  {/* Low-Stock Alerts (Deep Warm Slate/Stone Card with Blended Fade Effect) */}
                   <div 
                     onClick={() => setActiveTab('inventory')}
-                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between hover:border-[#EA580C]/40 transition-all cursor-pointer group"
+                    className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between transition-all cursor-pointer group relative overflow-hidden"
                   >
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-[#FDBA74]">
+                    {/* Faded effect: Black into Theme color gradient overlay */}
+                    <div 
+                      className="absolute inset-0 pointer-events-none rounded-xl"
+                      style={{
+                        background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
+                      }}
+                    />
+                    {/* Ambient luminous theme corner glow */}
+                    <div 
+                      className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
+                      style={{ backgroundColor: `${currentTheme.primary}18` }}
+                    />
+
+                    <div className="relative z-10 flex items-center justify-between">
+                      <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: currentTheme.light }}>
                         Low-Stock Alerts
                       </p>
-                      <AlertTriangle className="w-4 h-4 text-[#F97316] group-hover:scale-110 transition-transform" />
+                      <AlertTriangle className="w-4 h-4 group-hover:scale-110 transition-transform" style={{ color: currentTheme.primary }} />
                     </div>
-                    <div className="my-1.5">
+                    <div className="relative z-10 my-1.5">
                       <span className="text-2xl sm:text-3xl font-black font-mono text-[#FFFBEB]">
                         {cards.low_stock_products || 0}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="relative z-10 flex items-center justify-between">
                       <p className="text-[11px] text-stone-400 font-medium">
                         At/below threshold
                       </p>
-                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#292524] text-[#F59E0B] border border-[#44403C]">
                         Attention
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Middle 5 cols: Inventory Status Distribution Donut */}
-                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] hover:border-[#F97316]/30 rounded-xl p-4 shadow-sm flex flex-col justify-between transition-colors">
-                  <ResponsiveDonutChart
-                    title="Inventory status distribution"
-                    data={(charts.inventory_status || []).map((item) => {
-                      let color = '#F97316'; // Vibrant Orange for In Stock
-                      if (item.status === 'Low Stock') color = '#FB923C'; // Lighter Warm Amber/Orange for Low Stock
-                      if (item.status === 'Out of Stock') color = '#78716C'; // Neutral Stone for Out of Stock
-                      return { ...item, color };
-                    })}
-                    valueKey="count"
-                    labelKey="status"
-                    centerLabel="Stock Status"
+                {/* Middle 5 cols: Inventory Status Distribution Donut with Blended Fade Effect */}
+                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm flex flex-col justify-between transition-colors relative overflow-hidden">
+                  {/* Faded effect: Black into Theme color gradient overlay */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none rounded-xl"
+                    style={{
+                      background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+                    }}
                   />
+                  {/* Ambient luminous theme corner glow */}
+                  <div 
+                    className="absolute -right-10 -top-10 w-36 h-36 rounded-full blur-xl pointer-events-none"
+                    style={{ backgroundColor: `${currentTheme.primary}18` }}
+                  />
+
+                  <div className="relative z-10 flex-1 flex flex-col justify-between">
+                    <ResponsiveDonutChart
+                      title="Inventory status distribution"
+                      data={(charts.inventory_status || []).map((item) => {
+                        let color = currentTheme.primary; // Active theme palette for In Stock
+                        if (item.status === 'Low Stock') color = '#F59E0B'; // Warm Amber for Low Stock
+                        if (item.status === 'Out of Stock') color = '#EF4444'; // Red for Out of Stock
+                        return { ...item, color };
+                      })}
+                      valueKey="count"
+                      labelKey="status"
+                      centerLabel="Stock Status"
+                    />
+                  </div>
                 </div>
 
-                {/* Right 4 cols: Warm Orange AI Predictions Card */}
-                <div className="lg:col-span-4 bg-gradient-to-br from-[#EA580C] to-[#C2410C] text-white rounded-xl p-4 sm:p-5 shadow-lg shadow-orange-950/30 flex flex-col justify-between relative overflow-hidden">
-                  {/* Background ambient pattern */}
-                  <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 blur-lg pointer-events-none"></div>
+                {/* Right 4 cols: AI Predictions Card - Blended into System UI with Faded Effect */}
+                <div className="lg:col-span-4 bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between relative overflow-hidden transition-all duration-300 group">
+                  {/* Faded effect: Black into Theme color gradient overlay */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none rounded-xl"
+                    style={{
+                      background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
+                    }}
+                  />
+                  
+                  {/* Ambient luminous theme corner glow */}
+                  <div 
+                    className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
+                    style={{ backgroundColor: `${currentTheme.primary}18` }}
+                  />
+                  <div 
+                    className="absolute -left-6 -bottom-6 w-24 h-24 rounded-full blur-xl pointer-events-none"
+                    style={{ backgroundColor: `${currentTheme.primary}12` }}
+                  />
 
-                  <div>
+                  <div className="relative z-10">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-white/90" />
-                        <p className="text-[10px] font-black uppercase tracking-wider text-orange-100">
+                        <Sparkles className="w-3.5 h-3.5" style={{ color: currentTheme.primary }} />
+                        <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: currentTheme.light }}>
                           AI Predictions
                         </p>
                       </div>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-2xs">
+                      <span 
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                        style={{
+                          backgroundColor: `${currentTheme.primary}20`,
+                          color: currentTheme.light,
+                          borderColor: `${currentTheme.primary}35`
+                        }}
+                      >
                         ML Models
                       </span>
                     </div>
 
                     <div className="mt-2.5 mb-1">
-                      <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-mono">
+                      <h3 className="text-2xl sm:text-3xl font-black tracking-tight font-mono" style={{ color: currentTheme.primary }}>
                         {cards.predicted_sales_growth || '+14.8%'}
                       </h3>
-                      <p className="text-[11px] font-semibold text-orange-100 mt-0.5">
+                      <p className="text-[11px] font-medium text-stone-400 mt-0.5">
                         Projected growth
                       </p>
                     </div>
                   </div>
 
                   {/* 4 Interactive Quick Links */}
-                  <div className="space-y-1.5 mt-3">
+                  <div className="space-y-1.5 mt-3 relative z-10">
                     {[
                       { id: 'pred_demand', label: 'Product Demand Prediction' },
                       { id: 'pred_sales', label: 'Sales Prediction' },
@@ -604,10 +719,15 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                         key={item.id}
                         type="button"
                         onClick={() => setActiveTab(item.id)}
-                        className="w-full text-left px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-white text-[11px] font-bold transition-all flex items-center justify-between cursor-pointer group active:scale-[0.98]"
+                        className="w-full text-left px-3 py-1.5 rounded-lg bg-[#24201E]/80 hover:bg-[#2C2724] border border-[#383330] hover:border-white/20 text-stone-200 hover:text-white text-[11px] font-bold transition-all flex items-center justify-between cursor-pointer group/btn active:scale-[0.98]"
                       >
                         <span>{item.label}</span>
-                        <span className="text-[10px] text-white/70 group-hover:text-white font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+                        <span 
+                          className="text-[10px] font-mono transition-transform group-hover/btn:translate-x-0.5"
+                          style={{ color: currentTheme.light }}
+                        >
+                          &rarr;
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -619,10 +739,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5 text-[#F97316]" />
+                    <Activity className="w-3.5 h-3.5" style={{ color: currentTheme.primary }} />
                     <h4 className="text-xs font-black text-white">Store Activity</h4>
                   </div>
-                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#292524] text-[#FB923C] border border-[#44403C]">
+                  <span 
+                    className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#292524] border border-[#44403C]"
+                    style={{ color: currentTheme.light }}
+                  >
                     {(tables.user_activity || []).length} logs
                   </span>
                   <p className="hidden md:inline text-[11px] text-stone-400 truncate max-w-md">
@@ -634,7 +757,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   <button
                     type="button"
                     onClick={() => setDashView('activity')}
-                    className="text-[11px] font-bold text-[#F97316] hover:text-[#FB923C] hover:underline cursor-pointer"
+                    className="text-[11px] font-bold hover:underline cursor-pointer"
+                    style={{ color: currentTheme.primary }}
                   >
                     View Telemetry Logs &rarr;
                   </button>
@@ -674,26 +798,27 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 />
               </div>
 
-              {/* Sales Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              {/* Sales Charts - Full Width Trend with Blended Fade Effect */}
+              <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm transition-all relative overflow-hidden">
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  style={{
+                    background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+                  }}
+                />
+                <div 
+                  className="absolute -right-10 -top-10 w-36 h-36 rounded-full blur-xl pointer-events-none"
+                  style={{ backgroundColor: `${currentTheme.primary}18` }}
+                />
+                <div className="relative z-10">
                   <ResponsiveLineChart
                     title="Daily & Monthly Sales Trend vs Projected (PHP)"
                     data={charts.sales_trends || []}
                     xKey="month"
                     yKey="sales"
                     yKey2="projected"
-                    strokeColor="#F97316"
+                    strokeColor={currentTheme.strokeColor}
                     strokeColor2="#10B981"
-                  />
-                </div>
-                <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <ResponsiveBarChart
-                    title="Top-Selling Products (Volume)"
-                    data={charts.top_products || []}
-                    xKey="name"
-                    yKey="units"
-                    barColor="#FB923C"
                   />
                 </div>
               </div>
@@ -702,12 +827,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Receipt className="w-4 h-4 text-[#F97316] dark:text-[#FB923C]" />
+                    <Receipt className="w-4 h-4" style={{ color: currentTheme.primary }} />
                     <h3 className="font-black text-sm text-slate-900 dark:text-white">Recent Sales Transactions</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('sales')}
-                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
+                    className="text-xs hover:underline font-semibold"
+                    style={{ color: currentTheme.primary }}
                   >
                     Go to Full Sales Register &rarr;
                   </button>
@@ -726,13 +852,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
                       {(tables.recent_sales || []).map((t) => (
                         <tr key={t.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
-                          <td className="py-2.5 px-3 font-mono font-medium text-[#F97316] dark:text-[#FB923C]">{t.invoice_number}</td>
+                          <td className="py-2.5 px-3 font-mono font-medium text-[var(--accent-light)]">{t.invoice_number}</td>
                           <td className="py-2.5 px-3">{t.customer_name}</td>
                           <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                             PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </td>
                           <td className="py-2.5 px-3 text-center">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F97316]/10 text-[#F97316] dark:text-greige">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)]">
                               {t.payment_method}
                             </span>
                           </td>
@@ -793,7 +919,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     data={charts.category_breakdown || []}
                     xKey="name"
                     yKey="stock"
-                    barColor="#F97316"
+                    barColor="#3B82F6"
                   />
                 </div>
               </div>
@@ -807,7 +933,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                   <button
                     onClick={() => setActiveTab('inventory')}
-                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
+                    className="text-xs text-[var(--accent-light)] hover:text-[#3B82F6] hover:underline font-semibold"
                   >
                     Open Master Inventory &rarr;
                   </button>
@@ -827,7 +953,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       {(tables.low_stock_products || []).map((p) => (
                         <tr key={p.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
                           <td className="py-2.5 px-3 font-medium">{p.name}</td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] text-[#F97316] dark:text-[#FB923C]">{p.sku}</td>
+                          <td className="py-2.5 px-3 font-mono text-[11px] text-[var(--accent-light)]">{p.sku}</td>
                           <td className="py-2.5 px-3 text-center font-bold text-red-500">{p.current_stock}</td>
                           <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">≤ 5 units</td>
                         </tr>
@@ -871,46 +997,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   xKey="period"
                   yKey="demand"
                   yKey2="capacity"
-                  strokeColor="#F97316"
+                  strokeColor="#3B82F6"
                   strokeColor2="#6B7280"
                 />
-              </div>
-
-              {/* Latest Executive Prediction Runs */}
-              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#F97316]" />
-                    <h3 className="font-black text-sm text-slate-900 dark:text-white">Latest Executive Prediction Runs</h3>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab('pred_sales')}
-                    className="text-xs text-[#F97316] dark:text-[#FB923C] hover:underline font-semibold"
-                  >
-                    Launch Prediction Suite &rarr;
-                  </button>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  {(tables.latest_predictions || []).length === 0 ? (
-                    <p className="text-slate-400 text-xs py-4 text-center">No predictions recorded yet. Launch one from the Prediction Workspace.</p>
-                  ) : (
-                    (tables.latest_predictions || []).map((pred, i) => (
-                      <div key={i} className="p-3 rounded-lg bg-[#F97316]/5 bg-[#141210]/50 border border-[#F97316]/20">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-[#FB923C] uppercase text-[10px]">
-                            Task: {pred.task_type?.replace('_', ' ')}
-                          </span>
-                          <span className="font-mono text-[10px] text-slate-500">{pred.created_at?.substring(0, 16)}</span>
-                        </div>
-                        <p className="font-mono font-bold text-sm text-gray-900 dark:text-white mt-1">
-                          Forecast: {Number(pred.predicted_value).toLocaleString()}
-                        </p>
-                        <p className="text-[11px] text-slate-600 dark:text-gray-300 mt-0.5 line-clamp-1">{pred.recommendation}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
               </div>
             </div>
           )}
@@ -942,7 +1031,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#292524]">
                   <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#F97316]" />
+                    <Activity className="w-4 h-4 text-[var(--accent-light)]" />
                     <h3 className="font-black text-sm text-[#FAFAF9]">Recent Store Activity Logs</h3>
                   </div>
                   <span className="text-xs text-stone-400 font-bold">Chronological telemetry</span>
@@ -954,7 +1043,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       <div>
                         <p className="font-black text-[#FAFAF9]">{log.action}</p>
                         <p className="text-[12px] text-stone-300 font-semibold mt-0.5">{log.details}</p>
-                        <p className="text-[11px] text-[#FB923C] font-bold mt-1">By {log.user_name} ({log.role})</p>
+                        <p className="text-[11px] text-[var(--accent-light)] font-bold mt-1">By {log.user_name} ({log.role})</p>
                       </div>
                       <span className="text-[11px] text-stone-300 font-bold font-mono bg-[#1C1917] px-2.5 py-1 rounded-md border border-[#292524] shadow-xs shrink-0">{log.created_at?.substring(11, 16) || log.created_at}</span>
                     </div>
@@ -983,13 +1072,14 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#292524] hover:bg-[#342F2D] text-stone-200 hover:text-white border border-[#44403C] text-xs sm:text-sm font-bold shadow-sm transition-all cursor-pointer active:scale-95"
                 title="Print all inventory products with full specifications and supplier details"
               >
-                <Printer className="w-4 h-4 text-[#FB923C]" />
+                <Printer className="w-4 h-4" style={{ color: 'var(--accent-light)' }} />
                 <span>Print All Products (PDF / Print)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setIsAddProductModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-orange-600 text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95 hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Product</span>
@@ -1005,7 +1095,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by product name, SKU, or brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs sm:text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[#F97316]/30 outline-none placeholder:text-stone-500"
+                className="w-full text-xs sm:text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[var(--accent-primary)] outline-none placeholder:text-stone-500"
               />
               {searchTerm && (
                 <button
@@ -1020,7 +1110,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[#F97316]/30 outline-none font-medium cursor-pointer"
+              className="text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:ring-2 focus:ring-[var(--accent-primary)] outline-none font-medium cursor-pointer"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -1033,7 +1123,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           <div className="flex items-center justify-between text-xs text-slate-500 px-1">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-stone-300">
-                Showing <span className="font-bold text-[#FB923C]">{products.length}</span> items
+                Showing <span className="font-bold text-[var(--accent-light)]">{products.length}</span> items
               </span>
               {(searchTerm || categoryFilter) && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#141210] text-stone-300 border border-[#292524]">
@@ -1082,7 +1172,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       className="hover:bg-[#292524]/80 transition-colors cursor-pointer group"
                       title="Click to view full product & supplier specifications"
                     >
-                      <td className="py-2.5 px-3 font-mono font-bold text-[#FB923C] group-hover:underline">{p.sku}</td>
+                      <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)] group-hover:underline">{p.sku}</td>
                       <td className="py-2.5 px-3 font-medium">
                         <div className="flex items-center gap-2.5">
                           <div className="w-9 h-9 rounded-lg bg-[#292524] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-110 shadow-xs">
@@ -1093,14 +1183,14 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                               onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
                             />
                           </div>
-                          <span className="group-hover:text-[#FB923C] transition-colors font-bold block">{p.name}</span>
+                          <span className="group-hover:text-[var(--accent-light)] transition-colors font-bold block">{p.name}</span>
                         </div>
                       </td>
                       <td className="py-2.5 px-3">{p.brand}</td>
                       <td className="py-2.5 px-3 text-right font-mono">PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-white">PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/25">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-white/10 text-white border border-white/20">
                           +{marginPct}%
                         </span>
                       </td>
@@ -1120,7 +1210,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                               setSelectedProduct(p);
                               setIsEditProductModalOpen(true);
                             }}
-                            className="px-2.5 py-1 rounded bg-[#F97316] text-white text-[11px] font-semibold hover:bg-[#F97316]-light inline-flex items-center gap-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 rounded text-white text-[11px] font-semibold hover:opacity-90 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                            style={{ backgroundColor: 'var(--accent-primary)' }}
                           >
                             <Edit2 className="w-3 h-3" />
                             Edit
@@ -1161,7 +1252,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             <button
               type="button"
               onClick={() => setIsAddUserModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95 hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               <UserPlus className="w-4 h-4" />
               <span>Create Employee Account</span>
@@ -1264,7 +1356,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
                 {salesList.map((s) => (
                   <tr key={s.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">{s.invoice_number}</td>
+                    <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)]">{s.invoice_number}</td>
                     <td className="py-2.5 px-3 text-slate-600 font-medium">{s.created_at}</td>
                     <td className="py-2.5 px-3 font-medium">{s.customer_name}</td>
                     <td className="py-2.5 px-3">{s.cashier}</td>
@@ -1272,7 +1364,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <td className="py-2.5 px-3 text-right font-mono text-slate-500">PHP {Number(s.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className="py-2.5 px-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F97316]/10 text-[#F97316] dark:text-greige">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)]">
                         {s.payment_method}
                       </span>
                     </td>
@@ -1297,34 +1389,47 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       {/* VIEW: ADMIN KNOWLEDGE ANALYSIS & PREDICTION (EXECUTIVE VIEW) */}
       {isPredictionTab && (
         <div className="space-y-6">
-          <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
+          <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5 relative overflow-hidden">
+            {/* Faded Effect Header Background Overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+              }}
+            />
+            <div 
+              className="absolute -right-10 -top-10 w-36 h-36 rounded-full blur-xl pointer-events-none"
+              style={{ backgroundColor: `${currentTheme.primary}18` }}
+            />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
               <div>
-                <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
-                  <BrainCircuit className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  Executive Prediction & Business Forecasting
+                <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                  <BrainCircuit className="w-6 h-6" style={{ color: currentTheme.primary }} />
+                  Executive Prediction &amp; Business Forecasting
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
+                <p className="text-xs sm:text-sm text-stone-400 mt-0.5">
                   Select a business task, configure input parameters, and receive predictive revenue models and recommendations
                 </p>
               </div>
 
               {/* Algorithm Selector for Admin */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">Model:</span>
+                <span className="text-xs font-semibold text-stone-300">Model:</span>
                 <select
                   value={selectedAlgorithm}
                   onChange={(e) => setSelectedAlgorithm(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-gray-50 bg-[#141210] font-semibold"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] font-semibold focus:outline-none"
+                  style={{ borderColor: undefined }}
                 >
-                  <option value="random_forest">Random Forest Regression (Ensemble)</option>
-                  <option value="linear_regression">Simple Linear Regression</option>
+                  <option value="random_forest" className="bg-[#1C1917] text-[#FAFAF9]">Random Forest Regression (Ensemble)</option>
+                  <option value="linear_regression" className="bg-[#1C1917] text-[#FAFAF9]">Simple Linear Regression</option>
                 </select>
               </div>
             </div>
 
             {/* Prediction Task Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gray-100 border-[#292524]">
+            <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[#292524]">
               {[
                 { id: 'sales', label: 'Sales Revenue Prediction' },
                 { id: 'demand', label: 'Product Demand Prediction' },
@@ -1339,9 +1444,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     setPredictionError(null);
                     setPredictionSuccess(null);
                   }}
-                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${selectedTask === task.id
-                    ? 'bg-[#F97316] text-white border-navy shadow-sm'
-                    : 'bg-gray-50 bg-[#141210] text-gray-700 dark:text-gray-300 border-gray-200 border-[#292524] hover:bg-gray-100'
+                  style={selectedTask === task.id ? {
+                    backgroundColor: currentTheme.primary,
+                    borderColor: currentTheme.primary
+                  } : {}}
+                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all cursor-pointer ${selectedTask === task.id
+                    ? 'text-white shadow-sm'
+                    : 'bg-[#141210] text-stone-300 border-[#292524] hover:bg-[#292524] hover:text-white'
                     }`}
                 >
                   {task.label}
@@ -1349,211 +1458,228 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               ))}
             </div>
 
-            {/* Inline Notifications */}
-            {predictionError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{predictionError}</span>
+            {/* Inputs Form with Blended Fade Effect */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#1C1917] border border-[#292524] transition-all relative overflow-hidden shadow-sm space-y-4">
+              {/* Atmospheric Black-into-Theme Fade Gradient Overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-2xl"
+                style={{
+                  background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+                }}
+              />
+              {/* Ambient Luminous Theme Corner Glow */}
+              <div 
+                className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
+                style={{ backgroundColor: `${currentTheme.primary}18` }}
+              />
+
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-300 flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: currentTheme.primary }} />
+                    <span>Prediction Input Parameters</span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-stone-400">
+                    Live Scikit-Learn Pipeline
+                  </span>
                 </div>
-                <button onClick={() => setPredictionError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">Ã¢â€Å“ÃƒÂ¹</button>
-              </div>
-            )}
 
-            {predictionSuccess && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                  <span>{predictionSuccess}</span>
-                </div>
-                <button onClick={() => setPredictionSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">Ã¢â€Å“ÃƒÂ¹</button>
-              </div>
-            )}
-
-            {/* Inputs Form */}
-            <div className="p-4 rounded-xl bg-gray-50/60 bg-[#141210]/40 border border-gray-200 border-[#292524] space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                Prediction Input Parameters
-              </h4>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                {selectedTask === 'sales' && (
-                  <>
-                    <div>
-                      <label className="block font-semibold mb-1">Projected Daily Footfall</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.store_footfall}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, store_footfall: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Marketing Spend (PHP)</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.marketing_spend}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, marketing_spend: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Promotional Campaign Active?</label>
-                      <select
-                        value={predictionInputs.promotions_active}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, promotions_active: Number(e.target.value) })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      >
-                        <option value="1">Yes (Active Promotion / Sale)</option>
-                        <option value="0">No (Standard Trading Day)</option>
-                      </select>
-                    </div>
-                  </>
-                )}
-
-                {selectedTask === 'demand' && (
-                  <>
-                    <div>
-                      <label className="block font-semibold mb-1">Target Category</label>
-                      <select
-                        value={predictionInputs.category}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, category: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      >
-                        {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Unit Price (PHP)</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.unit_price}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, unit_price: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Discount %</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.discount_pct}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, discount_pct: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {selectedTask === 'slow_moving' && (
-                  <>
-                    <div>
-                      <label className="block font-semibold mb-1">Current Warehouse Stock</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.current_stock}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, current_stock: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Estimated Monthly Demand</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.monthly_demand}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, monthly_demand: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {selectedTask === 'best_selling' && (
-                  <>
-                    <div>
-                      <label className="block font-semibold mb-1">Product Page Views</label>
-                      <input
-                        type="number"
-                        value={predictionInputs.page_views}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, page_views: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-semibold mb-1">Customer Rating (1-5)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={predictionInputs.rating}
-                        onChange={(e) => setPredictionInputs({ ...predictionInputs, rating: e.target.value })}
-                        className="w-full px-2.5 py-1.5 rounded border border-gray-200 border-[#292524] bg-[#1C1917]"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-
-              <div className="pt-2 flex justify-end">
-                <button
-                  onClick={handleRunPrediction}
-                  disabled={isPredicting}
-                  className="px-5 py-2 rounded-lg bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs font-bold shadow-md flex items-center gap-2"
-                >
-                  {isPredicting ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                  {selectedTask === 'sales' && (
                     <>
-                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      Evaluating Business Algorithm...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 text-greige" />
-                      Generate Prediction & Business Recommendation
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Projected Daily Footfall</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.store_footfall}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, store_footfall: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Marketing Spend (PHP)</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.marketing_spend}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, marketing_spend: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Promotional Campaign Active?</label>
+                        <select
+                          value={predictionInputs.promotions_active}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, promotions_active: Number(e.target.value) })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        >
+                          <option value="1">Yes (Active Promotion / Sale)</option>
+                          <option value="0">No (Standard Trading Day)</option>
+                        </select>
+                      </div>
                     </>
                   )}
-                </button>
+
+                  {selectedTask === 'demand' && (
+                    <>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Target Category</label>
+                        <select
+                          value={predictionInputs.category}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, category: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        >
+                          {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Unit Price (PHP)</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.unit_price}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, unit_price: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Discount %</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.discount_pct}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, discount_pct: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedTask === 'slow_moving' && (
+                    <>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Current Warehouse Stock</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.current_stock}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, current_stock: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Estimated Monthly Demand</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.monthly_demand}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, monthly_demand: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedTask === 'best_selling' && (
+                    <>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Product Page Views</label>
+                        <input
+                          type="number"
+                          value={predictionInputs.page_views}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, page_views: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-1 text-stone-300">Customer Rating (1-5)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={predictionInputs.rating}
+                          onChange={(e) => setPredictionInputs({ ...predictionInputs, rating: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-[#292524] bg-[#141210] hover:border-[var(--accent-border)] focus:border-[var(--accent-primary)] text-[#FAFAF9] font-medium transition-colors focus:outline-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="pt-3 flex justify-end">
+                  <button
+                    onClick={handleRunPrediction}
+                    disabled={isPredicting}
+                    style={{
+                      backgroundColor: currentTheme.primary,
+                      boxShadow: `0 4px 14px ${currentTheme.primary}40`
+                    }}
+                    className="px-5 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-2 cursor-pointer transition-all active:scale-95 disabled:opacity-60 hover:opacity-90"
+                  >
+                    {isPredicting ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Evaluating Business Algorithm...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-white" />
+                        <span>Generate Prediction &amp; Business Recommendation</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Prediction Output & Recommendations */}
             {predictionResult && (
-              <div className="p-5 rounded-xl bg-[#F97316]/5 bg-[#141210]/50 border border-[#F97316]/20 space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-[#F97316]/20">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
-                      Forecast Outcome ({predictionResult.task_name})
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#1C1917] border border-[#292524] space-y-4 relative overflow-hidden shadow-sm">
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  style={{
+                    background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
+                  }}
+                />
+                <div 
+                  className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
+                  style={{ backgroundColor: `${currentTheme.primary}18` }}
+                />
+
+                <div className="relative z-10 space-y-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-[#292524]">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--accent-light)]">
+                        Forecast Outcome ({predictionResult.task_name})
+                      </span>
+                      <h3 className="text-2xl font-extrabold text-[#FAFAF9] font-mono mt-0.5">
+                        {predictionResult.units === 'PHP' ? 'PHP ' : ''}
+                        {Number(predictionResult.predicted_value).toLocaleString()} {predictionResult.units !== 'PHP' ? predictionResult.units : ''}
+                      </h3>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-glow)] text-[var(--accent-light)] border border-[var(--accent-border)]">
+                      Confidence: {predictionResult.confidence_level}
                     </span>
-                    <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white font-mono mt-0.5">
-                      {predictionResult.units === 'PHP' ? 'PHP ' : ''}
-                      {Number(predictionResult.predicted_value).toLocaleString()} {predictionResult.units !== 'PHP' ? predictionResult.units : ''}
-                    </h3>
                   </div>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#F97316]/10 text-[#FB923C] border border-[#F97316]/20">
-                    Confidence: {predictionResult.confidence_level}
-                  </span>
-                </div>
 
-                {/* Business Recommendation Box */}
-                <div className="p-4 rounded-lg bg-[#1C1917] border border-purple-200 border-[#292524] space-y-1">
-                  <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-[#F97316]" />
-                    Actionable Business Recommendation
-                  </h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {predictionResult.recommendation}
-                  </p>
-                </div>
-
-                {/* Projected Trajectory Chart */}
-                {predictionResult.trend_data && predictionResult.trend_data.length > 0 && (
-                  <div className="bg-[#1C1917] p-4 rounded-lg border border-gray-200 border-[#292524]">
-                    <ResponsiveLineChart
-                      title="Projected Trajectory Analysis"
-                      data={predictionResult.trend_data}
-                      xKey="period"
-                      yKey={Object.keys(predictionResult.trend_data[0])[1]}
-                      strokeColor="#8B5CF6"
-                    />
+                  {/* Business Recommendation Box */}
+                  <div className="p-4 rounded-xl bg-[#141210] border border-[#292524] space-y-1.5">
+                    <h4 className="text-xs font-bold text-[#FAFAF9] flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[var(--accent-light)]" />
+                      <span>Actionable Business Recommendation</span>
+                    </h4>
+                    <p className="text-xs text-stone-300 leading-relaxed">
+                      {predictionResult.recommendation}
+                    </p>
                   </div>
-                )}
+
+                  {/* Projected Trajectory Chart */}
+                  {predictionResult.trend_data && predictionResult.trend_data.length > 0 && (
+                    <div className="bg-[#141210] p-4 rounded-xl border border-[#292524]">
+                      <ResponsiveLineChart
+                        title={`Projected Trajectory (${predictionResult.task_name})`}
+                        data={predictionResult.trend_data}
+                        xKey={Object.keys(predictionResult.trend_data[0])[0]}
+                        yKey={Object.keys(predictionResult.trend_data[0])[1]}
+                        strokeColor="#3B82F6"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -1566,7 +1692,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2.5">
-                <SettingsIcon className="w-6 h-6 text-[#F97316] dark:text-[#FB923C]" />
+                <SettingsIcon className="w-6 h-6 text-[var(--accent-light)]" />
                 Store Settings & System Controls
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
@@ -1579,7 +1705,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 setSettingsSavedToast(true);
                 setTimeout(() => setSettingsSavedToast(false), 3000);
               }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#F97316]-light text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95 hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               <Check className="w-4 h-4" />
               <span>Save Preferences</span>
@@ -1596,7 +1723,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Store Information */}
             <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-4">
-              <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
+              <div className="flex items-center gap-2 text-[var(--accent-light)] font-bold text-sm">
                 <Building className="w-4 h-4" />
                 <span>Store Identity & Branch</span>
               </div>
@@ -1624,7 +1751,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Financial & Fiscal */}
             <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-4">
-              <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
+              <div className="flex items-center gap-2 text-[var(--accent-light)] font-bold text-sm">
                 <CreditCard className="w-4 h-4" />
                 <span>Point of Sale & Fiscal Rules</span>
               </div>
@@ -1653,7 +1780,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Receipt Customization */}
           <div className="p-5 rounded-2xl bg-gray-50/70 bg-[#141210]/50 border border-gray-200/80 border-[#292524] space-y-3">
-            <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
+            <div className="flex items-center gap-2 text-[var(--accent-light)] font-bold text-sm">
               <Printer className="w-4 h-4" />
               <span>Official Receipt Footer Message</span>
             </div>
@@ -1666,8 +1793,8 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
 
           {/* Infrastructure Health Status */}
-          <div className="p-5 rounded-2xl bg-[#F97316]/5 bg-[#141210]/50 border border-navy/15 border-[#292524] space-y-3">
-            <div className="flex items-center gap-2 text-[#F97316] dark:text-[#FB923C] font-bold text-sm">
+          <div className="p-5 rounded-2xl bg-[var(--accent-glow)] bg-[#141210]/50 border border-navy/15 border-[#292524] space-y-3">
+            <div className="flex items-center gap-2 text-[var(--accent-light)] font-bold text-sm">
               <Database className="w-4 h-4" />
               <span>System & Database Diagnostics</span>
             </div>
@@ -1688,7 +1815,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               </div>
               <div className="p-3 rounded-xl bg-[#1C1917] border border-gray-200/80 border-[#292524] flex items-center justify-between">
                 <span className="text-gray-600 dark:text-slate-500 font-medium">Role Access Level:</span>
-                <span className="font-bold text-[#F97316] dark:text-[#FB923C]">Admin (L4)</span>
+                <span className="font-bold text-[var(--accent-light)]">Admin (L4)</span>
               </div>
             </div>
           </div>
@@ -1699,12 +1826,12 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'profile' && (
         <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-8 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-[#F97316] text-white text-2xl font-bold flex items-center justify-center shadow-md">
+            <div className="w-16 h-16 rounded-2xl bg-[#2563EB] text-white text-2xl font-bold flex items-center justify-center shadow-md shadow-blue-950/40">
               {user?.full_name?.charAt(0) || 'A'}
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.full_name}</h2>
-              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#F97316]/10 text-[#F97316] bg-[#141210]-hover dark:text-greige border border-navy/20">
+              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--accent-glow)] text-[var(--accent-light)] bg-[#141210]-hover dark:text-greige border border-navy/20">
                 ROLE: STORE ADMINISTRATOR (SUPERUSER)
               </span>
             </div>
@@ -1866,7 +1993,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
             <button type="button" onClick={() => setIsAddProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] text-white font-bold">Save Product</button>
+            <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Save Product</button>
           </div>
         </form>
       </Modal>
@@ -1916,7 +2043,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </button>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setIsEditProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210] text-slate-700 dark:text-gray-300 font-medium">Cancel</button>
-              <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] hover:bg-[#F97316]-light text-white font-bold transition-colors">Update Details</button>
+              <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Update Details</button>
             </div>
           </div>
         </form>
@@ -1986,7 +2113,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
             <button type="button" onClick={() => setIsAddUserModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-[#F97316] text-white font-bold">Register Account</button>
+            <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Register Account</button>
           </div>
         </form>
       </Modal>
@@ -2006,26 +2133,6 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           setIsEditProductModalOpen(true);
         }}
       />
-      {/* TOAST NOTIFICATION */}
-      {toast && (
-        <div className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border backdrop-blur-md animate-in slide-in-from-top-5 fade-in duration-300 ${
-          toast.type === 'success'
-            ? 'bg-emerald-500/95 border-emerald-400/30 text-white'
-            : 'bg-red-500/95 border-red-400/30 text-white'
-        }`}>
-          {toast.type === 'success'
-            ? <CheckCircle2 className="w-5 h-5 shrink-0" />
-            : <XCircle className="w-5 h-5 shrink-0" />}
-          <span className="text-sm font-bold">{toast.message}</span>
-          <button
-            type="button"
-            onClick={() => setToast(null)}
-            className="ml-2 p-0.5 rounded-full hover:bg-white/20 transition-colors cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

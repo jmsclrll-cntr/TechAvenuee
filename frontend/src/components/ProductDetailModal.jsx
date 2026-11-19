@@ -240,10 +240,10 @@ export default function ProductDetailModal({
               <span className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-300 font-bold block mb-1">
                 Selling Price
               </span>
-              <span className="text-base sm:text-lg font-black text-navy dark:text-blue-400 block font-mono">
+              <span className="text-base sm:text-lg font-black text-navy dark:text-white block font-mono">
                 PHP {price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
-              <span className="text-[10px] text-emerald-600 font-semibold block mt-0.5">
+              <span className="text-[10px] text-emerald-600 dark:text-white font-semibold block mt-0.5">
                 +{marginPct}% margin
               </span>
             </div>

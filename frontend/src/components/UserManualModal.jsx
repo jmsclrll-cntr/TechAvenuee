@@ -13,6 +13,7 @@ import {
   ExternalLink,
   ChevronRight,
   Sparkles,
+  Lock,
   Database,
   Cpu,
   GitCompare,
@@ -658,19 +659,27 @@ export default function UserManualModal({
   isOpen,
   onClose,
   initialRole = 'admin',
+  userRole,
   onNavigateTab
 }) {
-  const [selectedRole, setSelectedRole] = useState(initialRole || 'admin');
+  const currentAccountRole = userRole || initialRole || 'admin';
+  const isInstructor = currentAccountRole === 'instructor';
+
+  const [selectedRole, setSelectedRole] = useState(
+    isInstructor ? (initialRole || 'admin') : currentAccountRole
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSectionId, setActiveSectionId] = useState('overview');
 
-  // Sync role if modal opens
+  // Sync role if modal opens: enforce user scope unless account is instructor
   useEffect(() => {
-    if (initialRole) {
+    if (!isInstructor) {
+      setSelectedRole(currentAccountRole);
+    } else if (initialRole) {
       setSelectedRole(initialRole);
     }
     setActiveSectionId('overview');
-  }, [initialRole, isOpen]);
+  }, [initialRole, userRole, isOpen, isInstructor, currentAccountRole]);
 
   if (!isOpen) return null;
 
@@ -1212,22 +1221,37 @@ export default function UserManualModal({
             ].map((r) => {
               const Icon = r.icon;
               const isSelected = selectedRole === r.id;
+              const isAllowed = isInstructor || r.id === currentAccountRole;
+
               return (
                 <button
                   key={r.id}
                   type="button"
+                  disabled={!isAllowed}
                   onClick={() => {
+                    if (!isAllowed) return;
                     setSelectedRole(r.id);
                     setActiveSectionId('overview');
                   }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  title={
+                    isAllowed
+                      ? `View ${r.label} User Manual`
+                      : `Restricted: Only accessible by ${r.label} or Instructor account`
+                  }
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
                     isSelected
-                      ? 'bg-navy dark:bg-blue-600 text-white shadow-xs'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/60 dark:hover:bg-darkbg-hover'
+                      ? 'text-white shadow-xs cursor-pointer'
+                      : isAllowed
+                      ? 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/60 dark:hover:bg-darkbg-hover cursor-pointer'
+                      : 'text-gray-400/50 dark:text-stone-600 cursor-not-allowed opacity-35 select-none'
                   }`}
+                  style={isSelected ? { backgroundColor: 'var(--accent-primary)', boxShadow: '0 2px 10px var(--accent-glow)' } : {}}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span>{r.label}</span>
+                  {!isAllowed && (
+                    <Lock className="w-3 h-3 text-stone-500/80 dark:text-stone-500 shrink-0 ml-0.5" />
+                  )}
                 </button>
               );
             })}
@@ -1277,12 +1301,13 @@ export default function UserManualModal({
                     onClick={() => setActiveSectionId(sec.id)}
                     className={`w-full text-left p-2.5 rounded-xl text-xs font-medium transition-all flex items-start justify-between gap-2 cursor-pointer ${
                       isActive
-                        ? 'bg-white dark:bg-darkbg-card text-navy dark:text-blue-400 shadow-xs border border-gray-200 dark:border-darkbg-border font-bold'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-darkbg-hover'
+                        ? 'bg-white dark:bg-[#1C1917] shadow-xs border border-gray-200 dark:border-[#292524] font-bold'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#292524]'
                     }`}
+                    style={isActive ? { color: 'var(--accent-light)', borderColor: 'var(--accent-border)' } : {}}
                   >
                     <span className="truncate">{sec.title}</span>
-                    <ChevronRight className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isActive ? 'text-navy dark:text-blue-400' : 'text-gray-300'}`} />
+                    <ChevronRight className="w-3.5 h-3.5 shrink-0 mt-0.5" style={isActive ? { color: 'var(--accent-light)' } : { color: '#78716C' }} />
                   </button>
                 );
               })}
@@ -1317,34 +1342,14 @@ export default function UserManualModal({
 
               return (
                 <div className="space-y-5">
-                  {/* Section Header with Functional "Open Feature Tab" Button */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-darkbg-border">
-                    <div>
-                      <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                        {activeSec.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {activeSec.summary}
-                      </p>
-                    </div>
-
-                    {activeSec.navTab && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          if (onNavigateTab) {
-                            onNavigateTab(activeSec.navTab, selectedRole);
-                          }
-                        }}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition-all cursor-pointer whitespace-nowrap active:scale-95 shrink-0"
-                        title={`Navigate directly to ${activeSec.title}`}
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Open Feature Tab</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                  {/* Section Header */}
+                  <div className="pb-3 border-b border-gray-100 dark:border-darkbg-border">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                      {activeSec.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      {activeSec.summary}
+                    </p>
                   </div>
 
                   {/* Visual Guide / SVG Diagram */}
@@ -1387,7 +1392,7 @@ export default function UserManualModal({
                   <div className="p-3 rounded-xl border border-emerald-100 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>
-                      <strong>Helpful Tip:</strong> Click the blue <strong>"Open Feature Tab"</strong> button above anytime to close this guide and go directly to this screen.
+                      <strong>Role Guide Tip:</strong> Refer to the visual interface guide and numbered steps above to carry out operations accurately within your authorized role scope.
                     </span>
                   </div>
                 </div>

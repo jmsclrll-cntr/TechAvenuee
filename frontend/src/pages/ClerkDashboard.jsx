@@ -26,8 +26,11 @@ import Modal, { ConfirmDialog } from '../components/Modal';
 import { api } from '../api';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { printInventory } from '../utils/printInventory';
+import { useNotification } from '../context/NotificationContext';
+import { useThemeColor } from '../context/ThemeColorContext';
 
 export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
+  const { currentTheme } = useThemeColor();
   const formatDateOnly = (dateStr) => {
     if (!dateStr) return '';
     try {
@@ -82,12 +85,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [stockActionData, setStockActionData] = useState({ quantity: 1, supplier_id: '', notes: '', reason: '' });
   const [newSupplier, setNewSupplier] = useState({ name: '', contact_person: '', email: '', phone: '', address: '' });
 
-  const [notification, setNotification] = useState(null);
+  const { showSuccess, showError, showWarning } = useNotification();
   const [highlightedProductId, setHighlightedProductId] = useState(null);
 
   const showNotification = (msg, type = 'success') => {
-    setNotification({ msg, type });
-    setTimeout(() => setNotification(null), 4000);
+    if (type === 'error') showError(msg);
+    else if (type === 'warning') showWarning(msg);
+    else showSuccess(msg);
   };
 
   const loadData = async () => {
@@ -270,7 +274,18 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     if (qty <= threshold || status === 'low_stock') {
       return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-[#FB923C] border border-amber-500/20">Low Stock</span>;
     }
-    return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20">In Stock</span>;
+    return (
+      <span 
+        className="px-2 py-0.5 rounded-full text-[11px] font-bold border transition-colors"
+        style={{
+          backgroundColor: 'var(--accent-glow)',
+          color: 'var(--accent-light)',
+          borderColor: 'var(--accent-border)'
+        }}
+      >
+        In Stock
+      </span>
+    );
   };
 
   const cards = stats?.cards || {};
@@ -279,106 +294,161 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
   return (
     <div className="p-4 sm:p-6 space-y-5 bg-[#141210] min-h-screen text-[#FAFAF9]">
-      {/* Toast Notification */}
-      {notification && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-[#F97316] text-white shadow-xl text-sm animate-bounce">
-          <CheckCircle2 className="w-4 h-4" />
-          <span>{notification.msg}</span>
-        </div>
-      )}
-
       {/* VIEW: MAIN DASHBOARD */}
       {activeTab === 'dashboard' && (
         <div className="space-y-5">
-          {/* Top KPI Cards (Compact size & warm neutral stone) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-            <StatCard
-              title="Total Products"
-              value={cards.total_products || 0}
-              subtitle="Registered catalog items"
-              icon={Package}
-              badgeColor="orange"
-              compact={true}
-            />
-            <StatCard
-              title="Units in Stock"
-              value={cards.total_units_in_stock || 0}
-              subtitle="Physical units count"
-              icon={Boxes}
-              badgeColor="orange"
-              compact={true}
-            />
-            <StatCard
-              title="Low-Stock Items"
-              value={cards.low_stock_products || 0}
-              subtitle="At or below threshold"
-              icon={AlertTriangle}
-              badgeColor="amber"
-              trend="Warning"
-              compact={true}
-            />
-            <StatCard
-              title="Out of Stock"
-              value={cards.out_of_stock_products || 0}
-              subtitle="Zero inventory remaining"
-              icon={XCircle}
-              badgeColor="red"
-              trend="Urgent"
-              compact={true}
-            />
-            <StatCard
-              title="Pending Restocks"
-              value={cards.pending_restocks || 0}
-              subtitle="Reorder alerts flagged"
-              icon={RefreshCw}
-              badgeColor="amber"
-              compact={true}
-            />
-            <StatCard
-              title="Inventory Value"
-              value={`PHP ${(cards.inventory_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Total asset cost basis"
-              icon={CircleDollarSign}
-              badgeColor="orange"
-              compact={true}
-            />
+          {/* Top KPI Cards (Consolidated 3 Primary Metrics with Blended Fade Effect) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-xl"
+                style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
+              />
+              <div 
+                className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
+                style={{ backgroundColor: 'var(--accent-glow)' }}
+              />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Total Products</span>
+                <Package className="w-4 h-4 group-hover:scale-110 transition-transform" style={{ color: 'var(--accent-primary)' }} />
+              </div>
+              <div className="relative z-10 my-2">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#FAFAF9]">{cards.total_products || 0}</span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Registered catalog items</p>
+            </div>
+
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-amber-500/40 transition-all relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-amber-500/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-amber-500/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Pending Restocks</span>
+                <RefreshCw className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="relative z-10 my-2 flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-amber-400">{cards.pending_restocks || 0}</span>
+                {Number(cards.pending_restocks || 0) > 0 && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Reorder Alert</span>
+                )}
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Items flagged for procurement</p>
+            </div>
+
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-xl"
+                style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
+              />
+              <div 
+                className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
+                style={{ backgroundColor: 'var(--accent-glow)' }}
+              />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Inventory Value</span>
+                <CircleDollarSign className="w-4 h-4 group-hover:scale-110 transition-transform" style={{ color: 'var(--accent-primary)' }} />
+              </div>
+              <div className="relative z-10 my-2">
+                <span className="text-xl sm:text-2xl font-black font-mono text-[#FAFAF9]">
+                  PHP {(cards.inventory_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Total asset cost basis</p>
+            </div>
           </div>
 
-          {/* Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#F97316]/30 transition-colors">
-              <ResponsiveBarChart
-                title="Stock Distribution by Category"
-                data={charts.category_distribution || []}
-                xKey="name"
-                yKey="count"
-                barColor="#F97316"
+          {/* Charts & Ratio Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+            {/* Left 7 cols: Category Distribution Bar Chart */}
+            <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[var(--accent-border)] transition-colors flex flex-col justify-between relative overflow-hidden">
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-xl"
+                style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
+              <div 
+                className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
+                style={{ backgroundColor: 'var(--accent-glow)' }}
+              />
+              <div className="relative z-10 flex-1 flex flex-col justify-between">
+                <ResponsiveBarChart
+                  title="Stock Distribution by Category"
+                  data={charts.category_distribution || []}
+                  xKey="name"
+                  yKey="count"
+                />
+              </div>
             </div>
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#F97316]/30 transition-colors">
-              <ResponsiveLineChart
-                title="Inventory Movement Trends (Past 7 Days)"
-                data={charts.movement_trends || []}
-                xKey="period"
-                yKey="stock_in"
-                yKey2="stock_out"
-                strokeColor="#F97316"
-                strokeColor2="#FB923C"
-              />
-            </div>
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#F97316]/30 transition-colors">
-              <ResponsiveDonutChart
-                title="Low-Stock vs In-Stock Ratio"
-                data={(charts.stock_status || []).map((item) => {
-                  let color = '#F97316';
-                  if (item.status === 'Low Stock') color = '#FB923C';
-                  if (item.status === 'Out of Stock') color = '#78716C';
-                  return { ...item, color };
-                })}
-                valueKey="count"
-                labelKey="status"
-                centerLabel="Products"
-              />
+
+            {/* Right 5 cols: Donut Chart + Transferred Single Box below for Units in Stock, Low Stock, Out of Stock */}
+            <div className="lg:col-span-5 flex flex-col justify-between gap-3.5">
+              {/* Low-Stock vs In-Stock Ratio Donut */}
+              <div className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-colors relative overflow-hidden">
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-xl"
+                  style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
+                />
+                <div 
+                  className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
+                  style={{ backgroundColor: 'var(--accent-glow)' }}
+                />
+                <div className="relative z-10">
+                  <ResponsiveDonutChart
+                    title="Low-Stock vs In-Stock Ratio"
+                    data={(charts.stock_status || []).map((item) => {
+                      let color = currentTheme.primary;
+                      if (item.status === 'Low Stock') color = '#FB923C';
+                      if (item.status === 'Out of Stock') color = '#EF4444';
+                      return { ...item, color };
+                    })}
+                    valueKey="count"
+                    labelKey="status"
+                    centerLabel="Products"
+                  />
+                </div>
+              </div>
+
+              {/* Single Consolidated Box Transferred from Top Row */}
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 shadow-sm relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+                <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+                
+                <div className="relative z-10 grid grid-cols-3 gap-2 divide-x divide-[#292524]">
+                  {/* Units in Stock */}
+                  <div className="px-2 first:pl-0 text-center sm:text-left">
+                    <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                      <Boxes className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">In Stock</span>
+                    </div>
+                    <p className="text-xl font-bold font-mono text-[#FAFAF9] mt-1">{cards.total_units_in_stock || 0}</p>
+                    <span className="text-[10px] text-stone-400">Physical units count</span>
+                  </div>
+
+                  {/* Low-Stock Items */}
+                  <div className="px-2 text-center sm:text-left">
+                    <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Low Stock</span>
+                    </div>
+                    <div className="flex items-baseline gap-1 mt-1 justify-center sm:justify-start">
+                      <p className="text-xl font-bold font-mono text-amber-400">{cards.low_stock_products || 0}</p>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Warning</span>
+                    </div>
+                    <span className="text-[10px] text-stone-400">At/below threshold</span>
+                  </div>
+
+                  {/* Out of Stock */}
+                  <div className="px-2 last:pr-0 text-center sm:text-left">
+                    <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                      <XCircle className="w-3.5 h-3.5 text-rose-500" />
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Out of Stock</span>
+                    </div>
+                    <div className="flex items-baseline gap-1 mt-1 justify-center sm:justify-start">
+                      <p className="text-xl font-bold font-mono text-rose-400">{cards.out_of_stock_products || 0}</p>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Urgent</span>
+                    </div>
+                    <span className="text-[10px] text-stone-400">Zero inventory</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -388,7 +458,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm">
               <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-[#292524]">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-[#FB923C]" />
+                  <AlertTriangle className="w-4 h-4 text-amber-500" />
                   <h3 className="font-bold text-sm text-[#FAFAF9]">Low-Stock Alerts</h3>
                 </div>
                 <button
@@ -396,7 +466,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                     setStatusFilter('low_stock');
                     setActiveTab('inventory');
                   }}
-                  className="text-xs text-[#F97316] hover:text-[#FB923C] hover:underline font-semibold"
+                  className="text-xs hover:underline font-semibold"
+                  style={{ color: 'var(--accent-primary)' }}
                 >
                   View in Inventory
                 </button>
@@ -418,7 +489,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   <tbody className="divide-y divide-[#292524] text-stone-300">
                     {(tables.low_stock_alerts || []).slice(0, 5).map((prod) => (
                       <tr key={prod.id} className="hover:bg-[#292524]/60 transition-colors">
-                        <td className="py-2 px-3 font-mono font-medium text-[#F97316]">{prod.sku}</td>
+                        <td className="py-2 px-3 font-mono font-medium" style={{ color: 'var(--accent-primary)' }}>{prod.sku}</td>
                         <td className="py-2 px-3 font-medium truncate max-w-[140px] text-[#FAFAF9]">{prod.name}</td>
                         <td className="py-2 px-3 text-stone-400">{prod.category}</td>
                         <td className="py-2 px-3 font-bold text-red-400">{prod.current_stock}</td>
@@ -431,7 +502,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                               setStockActionData({ quantity: 10, supplier_id: '', notes: 'Urgent low-stock restock' });
                               setIsStockInModalOpen(true);
                             }}
-                            className="px-2.5 py-1 rounded-lg bg-[#F97316] text-white text-[10px] font-bold hover:bg-[#EA580C] transition-colors"
+                            style={{ backgroundColor: 'var(--accent-primary)' }}
+                            className="px-2.5 py-1 rounded-lg text-white text-[10px] font-bold hover:opacity-90 transition-opacity"
                           >
                             Restock
                           </button>
@@ -447,12 +519,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm">
               <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-[#292524]">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#F97316]" />
+                  <Clock className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
                   <h3 className="font-bold text-sm text-[#FAFAF9]">Recent Inventory Movements</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('movements')}
-                  className="text-xs text-[#F97316] hover:text-[#FB923C] hover:underline font-semibold"
+                  className="text-xs hover:underline font-semibold"
+                  style={{ color: 'var(--accent-primary)' }}
                 >
                   View Movement Log
                 </button>
@@ -476,12 +549,19 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                         <td className="py-2 px-3 font-mono font-medium text-[11px] text-stone-400">{m.reference_number}</td>
                         <td className="py-2 px-3 font-medium truncate max-w-[130px] text-[#FAFAF9]">{m.product_name}</td>
                         <td className="py-2 px-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.movement_type === 'stock_in'
-                            ? 'bg-emerald-500/10 text-emerald-400'
-                            : m.movement_type === 'stock_out'
-                              ? 'bg-red-500/10 text-red-400'
-                              : 'bg-[#F97316]/10 text-[#F97316]'
-                            }`}>
+                          <span 
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.movement_type === 'stock_in'
+                              ? 'bg-emerald-500/10 text-emerald-400'
+                              : m.movement_type === 'stock_out'
+                                ? 'bg-red-500/10 text-red-400'
+                                : ''
+                            }`}
+                            style={m.movement_type !== 'stock_in' && m.movement_type !== 'stock_out' ? {
+                              backgroundColor: 'var(--accent-glow)',
+                              color: 'var(--accent-light)',
+                              border: '1px solid var(--accent-border)'
+                            } : undefined}
+                          >
                             {m.movement_type.toUpperCase()}
                           </span>
                         </td>
@@ -523,7 +603,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold shadow-md transition-all cursor-pointer active:scale-95"
+                style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold transition-all cursor-pointer active:scale-95 hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Product</span>
@@ -540,7 +621,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by SKU, Name, or Brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
               />
               {searchTerm && (
                 <button
@@ -555,7 +636,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+              className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -565,7 +646,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+              className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
             >
               <option value="">All Stock Statuses</option>
               <option value="in_stock">In Stock</option>
@@ -629,7 +710,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                         className="hover:bg-[#292524]/70 transition-colors cursor-pointer group"
                         title="Click to view full product & supplier specifications"
                       >
-                        <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] group-hover:underline">{p.sku}</td>
+                        <td className="py-2.5 px-3 font-mono font-bold group-hover:underline" style={{ color: 'var(--accent-primary)' }}>{p.sku}</td>
                         <td className="py-2.5 px-3 font-medium">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
@@ -640,18 +721,18 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                                 onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                               />
                             </div>
-                            <span className="group-hover:text-[#F97316] transition-colors font-bold text-[#FAFAF9]">{p.name}</span>
+                            <span className="transition-colors font-bold text-[#FAFAF9]" style={{ color: undefined }}>{p.name}</span>
                           </div>
                         </td>
                         <td className="py-2.5 px-3 text-stone-300">{p.brand}</td>
                         <td className="py-2.5 px-3 text-right font-mono text-stone-300">
                           PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-white">
                           PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </td>
                         <td className="py-2.5 px-3 text-center">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/25">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-white border border-white/20">
                             +{marginPct}%
                           </span>
                         </td>
@@ -669,7 +750,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                                 setEditProduct(p);
                                 setIsEditModalOpen(true);
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-[#F97316] text-white text-[11px] font-semibold hover:bg-orange-600 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                              style={{ backgroundColor: 'var(--accent-primary)' }}
+                              className="px-2.5 py-1 rounded-lg text-white text-[11px] font-semibold hover:opacity-90 inline-flex items-center gap-1 transition-opacity cursor-pointer"
                               title="Edit product details & pricing"
                             >
                               <Edit2 className="w-3 h-3" />
@@ -709,12 +791,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
             {products.map((p) => (
               <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-[#141210] flex flex-col justify-between ${highlightedProductId === p.id
-                  ? 'border-[#F97316] ring-2 ring-[#F97316]/60 shadow-lg shadow-orange-950/40 scale-[1.01]'
-                  : 'border-[#292524] hover:border-[#F97316]/40'
+                  ? 'border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/60 shadow-lg scale-[1.01]'
+                  : 'border-[#292524] hover:border-[var(--accent-border)]'
                 }`}>
                 <div>
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold text-[#F97316]">{p.sku}</span>
+                    <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
                     {getStatusBadge(p.status, p.stock_quantity)}
                   </div>
                   <h4 className="font-semibold text-sm mt-1 text-[#FAFAF9] line-clamp-1">{p.name}</h4>
@@ -730,7 +812,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                     setStockActionData({ quantity: 10, supplier_id: '', notes: 'Shipment restock' });
                     setIsStockInModalOpen(true);
                   }}
-                  className="mt-4 w-full py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                  style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+                  className="mt-4 w-full py-2 rounded-lg text-white text-xs font-semibold transition-all hover:opacity-90 flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <ArrowDownLeft className="w-4 h-4" />
                   Receive Restock Batch
@@ -757,7 +840,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 }`}>
                 <div>
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold text-[#F97316]">{p.sku}</span>
+                    <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
                     <span className="text-xs font-bold text-emerald-400">{p.stock_quantity} available</span>
                   </div>
                   <h4 className="font-semibold text-sm mt-1 text-[#FAFAF9] line-clamp-1">{p.name}</h4>
@@ -797,8 +880,9 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <button
                 type="button"
                 onClick={() => setMovementTab('stock_in')}
+                style={movementTab === 'stock_in' ? { backgroundColor: 'var(--accent-primary)' } : undefined}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${movementTab === 'stock_in'
-                    ? 'bg-[#F97316] text-white shadow-sm'
+                    ? 'text-white shadow-sm'
                     : 'text-stone-400 hover:text-white'
                   }`}
               >
@@ -833,7 +917,10 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-2.5 border-b border-[#292524]">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-[#F97316]/10 text-[#F97316]">
+                  <div 
+                    className="p-1.5 rounded-lg"
+                    style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)' }}
+                  >
                     <ArrowDownLeft className="w-5 h-5" />
                   </div>
                   <div>
@@ -974,7 +1061,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
             <button
               onClick={() => setIsSupplierModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-white text-xs font-bold transition-all cursor-pointer hover:opacity-90 active:scale-95"
             >
               <Plus className="w-4 h-4" />
               Add Supplier
@@ -983,9 +1071,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
             {suppliers.map((s) => (
-              <div key={s.id} className="p-4 rounded-xl border border-[#292524] bg-[#141210] space-y-3 hover:border-[#F97316]/40 transition-colors">
+              <div key={s.id} className="p-4 rounded-xl border border-[#292524] bg-[#141210] space-y-3 hover:border-[var(--accent-border)] transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[#F97316]/10 text-[#F97316]">
+                  <div 
+                    className="p-2.5 rounded-xl"
+                    style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)' }}
+                  >
                     <Truck className="w-5 h-5" />
                   </div>
                   <div>
@@ -1008,12 +1099,18 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'profile' && (
         <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-[#F97316] text-white text-2xl font-bold flex items-center justify-center shadow-lg shadow-orange-950/40">
+            <div 
+              className="w-16 h-16 rounded-2xl text-white text-2xl font-bold flex items-center justify-center shadow-lg"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 8px 24px var(--accent-glow)' }}
+            >
               {user?.full_name?.charAt(0) || 'C'}
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#FAFAF9]">{user?.full_name}</h2>
-              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#292524] text-[#FB923C] border border-[#292524]">
+              <span 
+                className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+                style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-light)', borderColor: 'var(--accent-border)' }}
+              >
                 ROLE: INVENTORY CLERK
               </span>
             </div>
@@ -1197,7 +1294,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+              className="px-4 py-2 rounded-lg text-white font-bold transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               Save Product
             </button>
@@ -1310,7 +1408,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+                className="px-4 py-2 rounded-lg text-white font-bold transition-opacity hover:opacity-90"
+                style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
               >
                 Update Changes
               </button>
@@ -1324,7 +1423,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
         <div className="space-y-4 text-xs">
           <div className="p-3 rounded-xl bg-[#141210] border border-[#292524] flex items-center justify-between">
             <div>
-              <p className="font-mono text-xs text-[#F97316] font-bold">{selectedProduct?.sku}</p>
+              <p className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{selectedProduct?.sku}</p>
               <p className="text-stone-400">Current On-Hand Stock: <strong className="text-[#FAFAF9]">{selectedProduct?.stock_quantity} units</strong></p>
             </div>
             {selectedProduct && getStatusBadge(selectedProduct.status, selectedProduct.stock_quantity)}
@@ -1386,7 +1485,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                 });
                 setIsConfirmOpen(true);
               }}
-              className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold flex items-center gap-1.5"
+              className="px-4 py-2 rounded-lg text-white font-bold flex items-center gap-1.5 transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               <ArrowDownLeft className="w-4 h-4" />
               Proceed with Restock
@@ -1527,7 +1627,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+              className="px-4 py-2 rounded-lg text-white font-bold transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               Save Supplier
             </button>

@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Cpu, 
-  Database, 
-  Award, 
-  GitCompare, 
-  Save, 
-  History, 
-  TrendingUp, 
-  Boxes, 
-  CircleDollarSign, 
-  Package, 
-  AlertTriangle, 
-  Download, 
-  Upload, 
-  Search, 
-  ChevronLeft, 
-  ChevronRight, 
-  Play, 
-  CheckCircle2, 
-  Info, 
+import {
+  Cpu,
+  Database,
+  Award,
+  GitCompare,
+  Save,
+  History,
+  TrendingUp,
+  Boxes,
+  CircleDollarSign,
+  Package,
+  AlertTriangle,
+  Download,
+  Upload,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  CheckCircle2,
+  Info,
   Sparkles,
   BarChart3,
   Layers,
@@ -30,8 +30,12 @@ import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart, ModelCom
 import Modal from '../components/Modal';
 import { api } from '../api';
 import ProductDetailModal from '../components/ProductDetailModal';
+import { useNotification } from '../context/NotificationContext';
+import { useThemeColor } from '../context/ThemeColorContext';
 
 export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
+  const { currentTheme } = useThemeColor();
+  const { showSuccess, showError, showWarning, showInfo } = useNotification();
   const [stats, setStats] = useState(null);
   const [datasets, setDatasets] = useState([]);
   const [selectedDataset, setSelectedDataset] = useState('tech_avenue_sales_dataset.csv');
@@ -73,6 +77,49 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
   const [expandedMetric, setExpandedMetric] = useState({});
   const toggleMetric = (key) => {
     setExpandedMetric(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Helper to determine Model Fitting Remarks (OVERFITTING, GOODFITTING, UNDERFITTING in Capslock & White Font)
+  const getFittingRemarks = (metrics) => {
+    if (!metrics) return null;
+    const r2 = typeof metrics.r2_score === 'number'
+      ? metrics.r2_score
+      : parseFloat(metrics.r2_score || 0);
+
+    let fitStatus = 'goodfitting';
+    if (r2 >= 0.99) {
+      fitStatus = 'overfitting';
+    } else if (r2 >= 0.60) {
+      fitStatus = 'goodfitting';
+    } else {
+      fitStatus = 'underfitting';
+    }
+
+    const configs = {
+      overfitting: {
+        label: 'OVERFITTING',
+        r2Explanation: 'R² score is exceptionally high (≥ 0.99). The model may be memorizing noise in the training set rather than generalizing.',
+        maeExplanation: 'Unusually low absolute error; model may have memorized specific training instances.',
+        mseExplanation: 'Near-zero squared loss suggesting over-constrained fitting on training data.',
+        rmseExplanation: 'Overly tight outlier boundaries; verify performance on independent test datasets.'
+      },
+      goodfitting: {
+        label: 'GOODFITTING',
+        r2Explanation: 'Strong explanatory power with healthy generalization on unseen test data.',
+        maeExplanation: 'Average absolute error is well within safe and reliable prediction margins.',
+        mseExplanation: 'Squared loss is minimized and evenly distributed across test instances.',
+        rmseExplanation: 'Root squared error is well-contained without significant outlier error spikes.'
+      },
+      underfitting: {
+        label: 'UNDERFITTING',
+        r2Explanation: 'Low determination score (< 0.60); model is underfitting and fails to capture underlying patterns.',
+        maeExplanation: 'Elevated absolute error margins indicating poor model fit on target features.',
+        mseExplanation: 'Substantial squared error penalty caused by insufficient model capacity.',
+        rmseExplanation: 'Heavy outlier mistakes resulting from underfitting and high model bias.'
+      }
+    };
+
+    return configs[fitStatus];
   };
 
   // Saved Models & History
@@ -146,6 +193,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
     if (activeTab === 'pred_sales') setPredictionTask('sales');
     if (activeTab === 'pred_slow_moving') setPredictionTask('slow_moving');
     if (activeTab === 'pred_best_selling') setPredictionTask('best_selling');
+    if (activeTab === 'predictions' || activeTab === 'prediction_modules') setPredictionTask('demand');
   }, [activeTab]);
 
   // Load preview when dataset or page changes
@@ -184,14 +232,18 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       });
       if (res && res.status === 'success' && res.result) {
         setTrainingResult(res.result);
-        setTrainingSuccess(`Model training finished successfully: ${res.result.model_name} with R² ${res.result.r2_score}.`);
+        const msg = `Model training finished successfully: ${res.result.model_name} with R² ${res.result.r2_score}.`;
+        setTrainingSuccess(msg);
+        showSuccess(msg, 'Training Accepted');
         loadData();
       } else {
         throw new Error(res?.message || 'Unexpected response during model training.');
       }
     } catch (err) {
       console.error('Model training error:', err);
-      setTrainingError(err.message || 'Model training failed.');
+      const errMsg = err.message || 'Model training failed.';
+      setTrainingError(errMsg);
+      showError(errMsg, 'Training Error');
     } finally {
       setIsTraining(false);
     }
@@ -206,13 +258,17 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       const res = await api.compareModels(compareTask, 0.2);
       if (res && res.status === 'success' && res.comparison) {
         setComparisonResult(res.comparison);
-        setComparisonSuccess('Algorithm benchmark completed successfully.');
+        const msg = 'Algorithm benchmark completed successfully.';
+        setComparisonSuccess(msg);
+        showSuccess(msg, 'Benchmark Accepted');
       } else {
         throw new Error(res?.message || 'Comparison failed.');
       }
     } catch (err) {
       console.error('Comparison failed:', err);
-      setComparisonError(err.message || 'Model comparison benchmark failed.');
+      const errMsg = err.message || 'Model comparison benchmark failed.';
+      setComparisonError(errMsg);
+      showError(errMsg, 'Benchmark Error');
     } finally {
       setIsComparing(false);
     }
@@ -226,12 +282,15 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       const res = await api.get10FoldCrossValidation(taskToRun, algoToRun);
       if (res && res.status === 'success' && res.data) {
         setCvResult(res.data);
+        showSuccess('10-Fold Cross-Validation generated successfully.', 'Validation Accepted');
       } else {
         throw new Error(res?.message || 'Failed to retrieve cross-validation data');
       }
     } catch (err) {
       console.error('10-Fold CV failed:', err);
-      setCvError(err.message || 'Error executing 10-fold cross-validation');
+      const errMsg = err.message || 'Error executing 10-fold cross-validation';
+      setCvError(errMsg);
+      showError(errMsg, 'Validation Error');
     } finally {
       setIsCvLoading(false);
     }
@@ -245,26 +304,36 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
     // Form parameter validation
     if (predictionTask === 'sales') {
       if (predInputs.store_footfall === '' || Number(predInputs.store_footfall) < 0) {
-        setPredictionError('Please enter a valid non-negative number for Store Footfall.');
+        const errMsg = 'Please enter a valid non-negative number for Store Footfall.';
+        setPredictionError(errMsg);
+        showError(errMsg, 'Parameter Error');
         return;
       }
       if (predInputs.marketing_spend === '' || Number(predInputs.marketing_spend) < 0) {
-        setPredictionError('Please enter a valid Marketing Spend amount.');
+        const errMsg = 'Please enter a valid Marketing Spend amount.';
+        setPredictionError(errMsg);
+        showError(errMsg, 'Parameter Error');
         return;
       }
     } else if (predictionTask === 'demand') {
       if (!predInputs.unit_price || Number(predInputs.unit_price) <= 0) {
-        setPredictionError('Please enter a Unit Price greater than 0.');
+        const errMsg = 'Please enter a Unit Price greater than 0.';
+        setPredictionError(errMsg);
+        showError(errMsg, 'Parameter Error');
         return;
       }
     } else if (predictionTask === 'slow_moving') {
       if (predInputs.current_stock === '' || Number(predInputs.current_stock) < 0) {
-        setPredictionError('Please enter a valid Current Stock quantity.');
+        const errMsg = 'Please enter a valid Current Stock quantity.';
+        setPredictionError(errMsg);
+        showError(errMsg, 'Parameter Error');
         return;
       }
     } else if (predictionTask === 'best_selling') {
       if (predInputs.rating && (Number(predInputs.rating) < 1 || Number(predInputs.rating) > 5)) {
-        setPredictionError('Customer rating must be between 1.0 and 5.0.');
+        const errMsg = 'Customer rating must be between 1.0 and 5.0.';
+        setPredictionError(errMsg);
+        showError(errMsg, 'Parameter Error');
         return;
       }
     }
@@ -274,20 +343,24 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
       const res = await api.runPrediction(predictionTask, predictionAlgorithm, predInputs);
       if (res && res.status === 'success' && res.prediction) {
         setPredictionResult(res.prediction);
-        setPredictionSuccess(`Prediction generated successfully using ${predictionAlgorithm === 'random_forest' ? 'Random Forest Regressor' : 'Simple Linear Regression'}.`);
+        const msg = `Prediction generated successfully using ${predictionAlgorithm === 'random_forest' ? 'Random Forest Regressor' : 'Simple Linear Regression'}.`;
+        setPredictionSuccess(msg);
+        showSuccess(msg, 'Prediction Accepted');
         loadData();
       } else {
         throw new Error(res?.message || 'Server returned an invalid prediction result.');
       }
     } catch (err) {
       console.error('Prediction failed:', err);
-      setPredictionError(err.message || 'Unable to generate prediction. Check backend service connection.');
+      const errMsg = err.message || 'Unable to generate prediction. Check backend service connection.';
+      setPredictionError(errMsg);
+      showError(errMsg, 'Prediction Error');
     } finally {
       setIsPredicting(false);
     }
   };
 
-  const isPredictionTab = ['pred_demand', 'pred_sales', 'pred_slow_moving', 'pred_best_selling'].includes(activeTab);
+  const isPredictionTab = ['predictions', 'prediction_modules', 'pred_demand', 'pred_sales', 'pred_slow_moving', 'pred_best_selling'].includes(activeTab);
 
   const cards = stats?.cards || {};
   const charts = stats?.charts || {};
@@ -378,7 +451,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 xKey="period"
                 yKey="actual"
                 yKey2="forecast"
-                strokeColor="#F97316"
+                strokeColor={currentTheme?.strokeColor}
                 strokeColor2="#78716C"
                 height={200}
               />
@@ -389,7 +462,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 data={charts.dataset_distribution || []}
                 xKey="dataset"
                 yKey="records"
-                barColor="#F97316"
+                barColor={currentTheme?.primary}
                 height={200}
               />
             </div>
@@ -425,7 +498,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#292524] border-[#292524]">
             <div>
               <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
-                <Package className="w-5 h-5 text-[#F97316] dark:text-greige" />
+                <Package className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
                 Store Inventory Overview
               </h2>
               <p className="text-xs text-stone-400">
@@ -463,8 +536,8 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 {overviewProducts
                   .filter(p => !overviewSearch || p.name.toLowerCase().includes(overviewSearch.toLowerCase()) || p.sku.toLowerCase().includes(overviewSearch.toLowerCase()))
                   .map(p => (
-                    <tr 
-                      key={p.id} 
+                    <tr
+                      key={p.id}
                       onClick={() => {
                         setViewProduct(p);
                         setIsViewModalOpen(true);
@@ -477,23 +550,22 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                           <div className="w-8 h-8 rounded bg-[#1C1917] bg-[#141210] border p-0.5 shrink-0 flex items-center justify-center">
                             <img src={p.image_url || '/products/desktop.svg'} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/desktop.svg'; }} />
                           </div>
-                          <span className="font-bold text-[#FAFAF9] dark:text-white truncate max-w-[200px] group-hover:text-[#F97316] dark:group-hover:text-[#FB923C] transition-colors">{p.name}</span>
+                          <span className="font-bold text-[#FAFAF9] dark:text-white truncate max-w-[200px] transition-colors">{p.name}</span>
                         </div>
                       </td>
                       <td className="py-2.5 px-2 font-mono text-stone-400 group-hover:underline">{p.sku}</td>
                       <td className="py-2.5 px-2 text-stone-400 dark:text-gray-300">{p.category_name || p.category}</td>
                       <td className="py-2.5 px-2 text-right font-mono">PHP {Number(p.cost_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-2 text-right font-mono font-bold text-[#F97316] dark:text-greige">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="py-2.5 px-2 text-right font-mono font-bold text-white">PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                       <td className="py-2.5 px-2 text-center font-bold">{p.stock_quantity}</td>
                       <td className="py-2.5 px-2 text-center text-stone-400 font-mono text-[11px]">≤ 5 units</td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          p.stock_quantity === 0 || p.status === 'out_of_stock'
-                            ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
-                            : (p.stock_quantity <= 5 || p.status === 'low_stock')
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${p.stock_quantity === 0 || p.status === 'out_of_stock'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                          : (p.stock_quantity <= 5 || p.status === 'low_stock')
                             ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
                             : 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
-                        }`}>
+                          }`}>
                           {p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'Out of Stock' : (p.stock_quantity <= 5 || p.status === 'low_stock') ? 'Low Stock' : 'In Stock'}
                         </span>
                       </td>
@@ -511,7 +583,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#292524] border-[#292524]">
             <div>
               <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-[#F97316] dark:text-greige" />
+                <Receipt className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
                 Sales Transactions Overview
               </h2>
               <p className="text-xs text-stone-400">
@@ -548,11 +620,11 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   .filter(s => !overviewSearch || (s.invoice_number && s.invoice_number.toLowerCase().includes(overviewSearch.toLowerCase())) || (s.customer_name && s.customer_name.toLowerCase().includes(overviewSearch.toLowerCase())))
                   .map(s => (
                     <tr key={s.id} className="hover:bg-[#1C1917]/50 dark:hover:bg-darkbg">
-                      <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-greige">{s.invoice_number}</td>
+                      <td className="py-2.5 px-3 font-mono font-bold" style={{ color: 'var(--accent-primary)' }}>{s.invoice_number}</td>
                       <td className="py-2.5 px-3 text-stone-400">{new Date(s.created_at || s.transaction_date).toLocaleString()}</td>
                       <td className="py-2.5 px-3 font-semibold text-[#FAFAF9] dark:text-gray-200">{s.customer_name || 'Walk-in'}</td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-navy/10 text-[#F97316] dark:text-greige">
+                        <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] border" style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-light)', borderColor: 'var(--accent-border)' }}>
                           {s.payment_method || 'Cash'}
                         </span>
                       </td>
@@ -578,7 +650,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#292524] border-[#292524]">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2.5">
-                  <Database className="w-6 h-6 text-[#F97316] dark:text-[#FB923C]" />
+                  <Database className="w-6 h-6" style={{ color: 'var(--accent-primary)' }} />
                   Dataset Explorer & Inspection Suite
                 </h2>
                 <p className="text-sm text-stone-400 dark:text-gray-300 mt-1 max-w-2xl leading-relaxed">
@@ -621,7 +693,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5">
                   <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
                     <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Total Records</p>
-                    <p className="text-2xl font-black font-mono text-[#F97316] dark:text-white mt-1">
+                    <p className="text-2xl font-black font-mono mt-1" style={{ color: 'var(--accent-light)' }}>
                       {currentDatasetMeta.total_records.toLocaleString()}
                     </p>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">
@@ -630,7 +702,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#1C1917] bg-[#141210] border border-[#292524]">
                     <p className="text-xs uppercase font-bold text-stone-400 dark:text-gray-400">Features</p>
-                    <p className="text-2xl font-black font-mono text-[#F97316] dark:text-white mt-1">
+                    <p className="text-2xl font-black font-mono mt-1" style={{ color: 'var(--accent-light)' }}>
                       {currentDatasetMeta.features_count}
                     </p>
                     <span className="text-xs text-stone-400 dark:text-gray-400 mt-1 inline-block">Columns</span>
@@ -695,7 +767,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                         const isTarget = col.name === currentDatasetMeta.target_variable;
                         return (
                           <tr key={col.name} className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
-                            <td className="py-2.5 px-4 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">
+                            <td className="py-2.5 px-4 font-mono font-bold" style={{ color: 'var(--accent-light)' }}>
                               {col.name}
                             </td>
                             <td className="py-2.5 px-4">
@@ -830,7 +902,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-[#F97316] dark:text-greige" />
+                  <Cpu className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
                   Machine Learning Model Training & Evaluation Console
                 </h2>
                 <p className="text-xs text-stone-400">
@@ -840,26 +912,6 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             {/* Training Controls Form */}
-            {trainingError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{trainingError}</span>
-                </div>
-                <button onClick={() => setTrainingError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
-              </div>
-            )}
-
-            {trainingSuccess && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                  <span>{trainingSuccess}</span>
-                </div>
-                <button onClick={() => setTrainingSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
-              </div>
-            )}
-
             <div className="p-4 rounded-xl bg-[#1C1917]/60 bg-[#141210]/40 border border-[#292524] space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <div>
@@ -930,28 +982,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-                <div className="flex-1">
-                  {trainingSuccess && (
-                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                        <span>{trainingSuccess}</span>
-                      </div>
-                      <button onClick={() => setTrainingSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
-                    </div>
-                  )}
-                  {trainingError && (
-                    <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                        <span>{trainingError}</span>
-                      </div>
-                      <button onClick={() => setTrainingError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
-                    </div>
-                  )}
-                </div>
-
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2">
                 <div className="flex items-center gap-2 justify-end">
                   <button
                     onClick={() => setIsCvModalOpen(true)}
@@ -1005,95 +1036,159 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 </div>
 
                 {/* The 4 Official Evaluation Metrics with Toggleable Descriptions - Compact & Warm Stone */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {/* R² */}
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase">R² — Determination</span>
-                      <button 
-                        onClick={() => toggleMetric('r2')} 
-                        className="p-0.5 rounded hover:bg-[#292524] text-[#F97316] cursor-pointer"
-                        title="Toggle description"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#F97316]">
-                      {trainingResult.evaluation_metrics.r2_score}
-                    </p>
-                    {expandedMetric['r2'] && (
-                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
-                        Measures variation explained by the model. Closer to 1.0 indicates superior fit.
-                      </p>
-                    )}
-                  </div>
+                {(() => {
+                  const remarks = getFittingRemarks(trainingResult.evaluation_metrics);
+                  return (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {/* R² */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-bold text-stone-400 uppercase">R² — Determination</span>
+                          <button
+                            onClick={() => toggleMetric('r2')}
+                            className={`p-1 rounded cursor-pointer transition-colors ${expandedMetric['r2']
+                              ? 'text-white shadow-sm'
+                              : 'hover:bg-[#292524]'
+                              }`}
+                            style={expandedMetric['r2']
+                              ? { backgroundColor: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }
+                              : { color: 'var(--accent-light)' }}
+                            title="Toggle description"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-bold font-mono" style={{ color: 'var(--accent-light)' }}>
+                          {trainingResult.evaluation_metrics.r2_score}
+                        </p>
+                        {remarks && (
+                          <p className="text-xs font-bold text-white tracking-wider mt-0.5">
+                            {remarks.label}
+                          </p>
+                        )}
+                        {expandedMetric['r2'] && (
+                          <div className="pt-2 border-t border-[#383330] mt-2 space-y-1">
+                            <p className="text-xs font-semibold text-white leading-snug">
+                              Measures variation explained by the model. Closer to 1.0 indicates superior fit.
+                            </p>
+                            <p className="text-[11px] text-zinc-100 font-normal leading-tight">
+                              <span className="font-semibold text-white">Fitting Remark: </span>
+                              {remarks?.r2Explanation}
+                            </p>
+                          </div>
+                        )}
+                      </div>
 
-                  {/* MAE */}
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase">MAE — Absolute Error</span>
-                      <button 
-                        onClick={() => toggleMetric('mae')} 
-                        className="p-0.5 rounded hover:bg-[#292524] text-[#FB923C] cursor-pointer"
-                        title="Toggle description"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
-                      {trainingResult.evaluation_metrics.mae} {trainingResult.units}
-                    </p>
-                    {expandedMetric['mae'] && (
-                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
-                        Average absolute prediction error in real target units. Lower is better.
-                      </p>
-                    )}
-                  </div>
+                      {/* MAE */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-bold text-stone-400 uppercase">MAE — Absolute Error</span>
+                          <button
+                            onClick={() => toggleMetric('mae')}
+                            className={`p-1 rounded cursor-pointer transition-colors ${expandedMetric['mae']
+                              ? 'bg-[#FB923C] text-white shadow-sm ring-1 ring-[#FB923C]'
+                              : 'hover:bg-[#292524] text-[#FB923C]'
+                              }`}
+                            title="Toggle description"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
+                          {trainingResult.evaluation_metrics.mae} {trainingResult.units}
+                        </p>
+                        {remarks && (
+                          <p className="text-xs font-bold text-white tracking-wider mt-0.5">
+                            {remarks.label}
+                          </p>
+                        )}
+                        {expandedMetric['mae'] && (
+                          <div className="pt-2 border-t border-[#383330] mt-2 space-y-1">
+                            <p className="text-xs font-semibold text-white leading-snug">
+                              Average absolute prediction error in real target units. Lower is better.
+                            </p>
+                            <p className="text-[11px] text-zinc-100 font-normal leading-tight">
+                              <span className="font-semibold text-white">Fitting Remark: </span>
+                              {remarks?.maeExplanation}
+                            </p>
+                          </div>
+                        )}
+                      </div>
 
-                  {/* MSE */}
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase">MSE — Squared Error</span>
-                      <button 
-                        onClick={() => toggleMetric('mse')} 
-                        className="p-0.5 rounded hover:bg-[#292524] text-[#FDBA74] cursor-pointer"
-                        title="Toggle description"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FDBA74]">
-                      {trainingResult.evaluation_metrics.mse}
-                    </p>
-                    {expandedMetric['mse'] && (
-                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
-                        Average squared difference between predictions and actual values. Lower is better.
-                      </p>
-                    )}
-                  </div>
+                      {/* MSE */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-bold text-stone-400 uppercase">MSE — Squared Error</span>
+                          <button
+                            onClick={() => toggleMetric('mse')}
+                            className={`p-1 rounded cursor-pointer transition-colors ${expandedMetric['mse']
+                              ? 'bg-[#FDBA74] text-white shadow-sm ring-1 ring-[#FDBA74]'
+                              : 'hover:bg-[#292524] text-[#FDBA74]'
+                              }`}
+                            title="Toggle description"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-bold font-mono text-[#FDBA74]">
+                          {trainingResult.evaluation_metrics.mse}
+                        </p>
+                        {remarks && (
+                          <p className="text-xs font-bold text-white tracking-wider mt-0.5">
+                            {remarks.label}
+                          </p>
+                        )}
+                        {expandedMetric['mse'] && (
+                          <div className="pt-2 border-t border-[#383330] mt-2 space-y-1">
+                            <p className="text-xs font-semibold text-white leading-snug">
+                              Average squared difference between predictions and actual values. Lower is better.
+                            </p>
+                            <p className="text-[11px] text-zinc-100 font-normal leading-tight">
+                              <span className="font-semibold text-white">Fitting Remark: </span>
+                              {remarks?.mseExplanation}
+                            </p>
+                          </div>
+                        )}
+                      </div>
 
-                  {/* RMSE */}
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-0.5">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase">RMSE — Root Mean Sq.</span>
-                      <button 
-                        onClick={() => toggleMetric('rmse')} 
-                        className="p-0.5 rounded hover:bg-[#292524] text-[#FB923C] cursor-pointer"
-                        title="Toggle description"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                      </button>
+                      {/* RMSE */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-[#1C1917] border border-[#292524] shadow-sm space-y-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-bold text-stone-400 uppercase">RMSE — Root Mean Sq.</span>
+                          <button
+                            onClick={() => toggleMetric('rmse')}
+                            className={`p-1 rounded cursor-pointer transition-colors ${expandedMetric['rmse']
+                              ? 'bg-[#FB923C] text-white shadow-sm ring-1 ring-[#FB923C]'
+                              : 'hover:bg-[#292524] text-[#FB923C]'
+                              }`}
+                            title="Toggle description"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
+                          {trainingResult.evaluation_metrics.rmse} {trainingResult.units}
+                        </p>
+                        {remarks && (
+                          <p className="text-xs font-bold text-white tracking-wider mt-0.5">
+                            {remarks.label}
+                          </p>
+                        )}
+                        {expandedMetric['rmse'] && (
+                          <div className="pt-2 border-t border-[#383330] mt-2 space-y-1">
+                            <p className="text-xs font-semibold text-white leading-snug">
+                              Square root of MSE in original units. Penalizes large outlier deviations. Lower is better.
+                            </p>
+                            <p className="text-[11px] text-zinc-100 font-normal leading-tight">
+                              <span className="font-semibold text-white">Fitting Remark: </span>
+                              {remarks?.rmseExplanation}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-xl sm:text-2xl font-bold font-mono text-[#FB923C]">
-                      {trainingResult.evaluation_metrics.rmse} {trainingResult.units}
-                    </p>
-                    {expandedMetric['rmse'] && (
-                      <p className="text-[10px] text-stone-400 leading-tight pt-1 border-t border-[#292524]">
-                        Square root of MSE in original units. Penalizes large outlier deviations. Lower is better.
-                      </p>
-                    )}
-                  </div>
-                </div>
+                  );
+                })()}
 
                 {/* Actual vs Predicted Sample Evaluation Points Chart (Warm Orange Theme & Compact Height) */}
                 {trainingResult.sample_points && (
@@ -1104,7 +1199,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       xKey="index"
                       yKey="actual"
                       yKey2="predicted"
-                      strokeColor="#F97316"
+                      strokeColor={currentTheme?.strokeColor}
                       strokeColor2="#78716C"
                       height={200}
                     />
@@ -1333,7 +1428,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-bold text-[#FAFAF9] dark:text-white flex items-center gap-2">
-                  <GitCompare className="w-5 h-5 text-[#F97316] dark:text-greige" />
+                  <GitCompare className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
                   Algorithm Benchmark: Linear Regression vs Random Forest
                 </h2>
                 <p className="text-xs text-stone-400">
@@ -1361,26 +1456,6 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 </button>
               </div>
             </div>
-
-            {comparisonError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{comparisonError}</span>
-                </div>
-                <button onClick={() => setComparisonError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
-              </div>
-            )}
-
-            {comparisonSuccess && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                  <span>{comparisonSuccess}</span>
-                </div>
-                <button onClick={() => setComparisonSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
-              </div>
-            )}
 
             {/* Comparison Results */}
             {comparisonResult && (
@@ -1484,10 +1559,10 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {savedModels.map((m, idx) => (
                   <tr key={idx} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] dark:text-[#FB923C]">{m.filename}</td>
+                    <td className="py-2.5 px-3 font-mono font-bold" style={{ color: 'var(--accent-primary)' }}>{m.filename}</td>
                     <td className="py-2.5 px-3 font-medium">{m.task_name}</td>
                     <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-[#F97316] dark:text-greige">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold border" style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-light)', borderColor: 'var(--accent-border)' }}>
                         {m.algorithm}
                       </span>
                     </td>
@@ -1532,7 +1607,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                 {predictionHistory.map((h) => (
                   <tr key={h.id} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
                     <td className="py-2.5 px-3 font-mono text-gray-400">#{h.id}</td>
-                    <td className="py-2.5 px-3 font-bold uppercase text-[#F97316] dark:text-[#FB923C]">{h.task_type}</td>
+                    <td className="py-2.5 px-3 font-bold uppercase" style={{ color: 'var(--accent-primary)' }}>{h.task_type}</td>
                     <td className="py-2.5 px-3">{h.model_type}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                       {Number(h.predicted_value).toLocaleString()}
@@ -1592,37 +1667,15 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                     setPredictionError(null);
                     setPredictionSuccess(null);
                   }}
-                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${
-                    predictionTask === task.id
-                      ? 'bg-navy text-white border-navy shadow-sm'
-                      : 'bg-[#1C1917] bg-[#141210] text-stone-200 dark:text-gray-300 border-[#292524] hover:bg-[#292524]'
-                  }`}
+                  className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${predictionTask === task.id
+                    ? 'bg-navy text-white border-navy shadow-sm'
+                    : 'bg-[#1C1917] bg-[#141210] text-stone-200 dark:text-gray-300 border-[#292524] hover:bg-[#292524]'
+                    }`}
                 >
                   {task.label}
                 </button>
               ))}
             </div>
-
-            {/* Inline Notifications */}
-            {predictionError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-700 dark:text-red-400 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{predictionError}</span>
-                </div>
-                <button onClick={() => setPredictionError(null)} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
-              </div>
-            )}
-
-            {predictionSuccess && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                  <span>{predictionSuccess}</span>
-                </div>
-                <button onClick={() => setPredictionSuccess(null)} className="text-emerald-400 hover:text-emerald-600 font-bold ml-2">×</button>
-              </div>
-            )}
 
             {/* Inputs Form */}
             <div className="p-4 rounded-xl bg-[#1C1917]/60 bg-[#141210]/40 border border-[#292524] space-y-3">

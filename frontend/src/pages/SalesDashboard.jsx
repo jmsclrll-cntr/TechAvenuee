@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingCart, 
   CircleDollarSign, 
@@ -35,8 +35,11 @@ import { printInventory } from '../utils/printInventory';
 import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import PointOfSale from './PointOfSale';
 import NewTransaction from './NewTransaction';
+import { useNotification } from '../context/NotificationContext';
 
 export default function SalesDashboard({ activeTab, setActiveTab, user }) {
+  const { showWarning, showSuccess, showError } = useNotification();
+  const lowStockAlertShownRef = useRef(false);
   const [stats, setStats] = useState(null);
   const [posProducts, setPosProducts] = useState([]);
   const [salesHistory, setSalesHistory] = useState([]);
@@ -102,7 +105,19 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       ]);
 
       if (statsRes.status === 'success') setStats(statsRes.data);
-      if (posRes.status === 'success') setPosProducts(posRes.products);
+      if (posRes.status === 'success') {
+        setPosProducts(posRes.products);
+        if (!lowStockAlertShownRef.current) {
+          const lowStockItems = (posRes.products || []).filter(p => p.stock_quantity > 0 && (p.stock_quantity <= 5 || p.status === 'low_stock'));
+          if (lowStockItems.length > 0) {
+            showWarning(
+              `${lowStockItems.length} products have reached critical low stock (≤ 5 units). Check available units before confirming sales.`,
+              'Inventory Low-Stock Warning'
+            );
+            lowStockAlertShownRef.current = true;
+          }
+        }
+      }
       if (salesRes.status === 'success') setSalesHistory(salesRes.transactions);
       if (shiftRes.status === 'success') setCurrentShift(shiftRes.shift);
       if (suppliersRes.status === 'success') setSuppliers(suppliersRes.suppliers || []);
@@ -543,7 +558,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse"></span>
-                <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Register Ready &bull; Live Operations</span>
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--accent-light)' }}>Register Ready &bull; Live Operations</span>
               </div>
               <h2 className="text-lg font-black tracking-tight mt-0.5 text-white">
                 Quick Sales Actions &amp; Transaction Flow
@@ -565,175 +580,99 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
           </div>
 
-          {/* Low-Stock Notifications for Cashiers */}
-          {posProducts.filter(p => p.stock_quantity > 0 && (p.stock_quantity <= 5 || p.status === 'low_stock')).length > 0 && (
-            <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-                <div>
-                  <span className="font-bold">Inventory Low-Stock Warning: </span>
-                  <span>{posProducts.filter(p => p.stock_quantity > 0 && (p.stock_quantity <= 5 || p.status === 'low_stock')).length} products have reached critical low stock (≤ 5 units). Check available units before confirming sales.</span>
-                </div>
+          {/* Top KPI Cards (Clean 4 Cards with Blended Fade Effect) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Sales Today</span>
+                <CircleDollarSign className="w-4 h-4 text-[#14B8A6] group-hover:scale-110 transition-transform" />
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('product_lookup')}
-                className="font-bold underline text-amber-800 dark:text-amber-300 ml-2 shrink-0"
-              >
-                Lookup Stock
-              </button>
+              <div className="relative z-10 my-2 flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-black font-mono text-[#FAFAF9]">
+                  PHP {(cards.sales_today || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">+8.4%</span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Total gross receipts</p>
             </div>
-          )}
 
-          {/* Top KPI Cards (6 cards required) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <StatCard
-              title="Sales Today"
-              value={`PHP ${(cards.sales_today || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Total gross receipts"
-              icon={CircleDollarSign}
-              badgeColor="green"
-              trend="+8.4%"
-            />
-            <StatCard
-              title="Transactions Today"
-              value={cards.transactions_today || 0}
-              subtitle="Completed register sales"
-              icon={Receipt}
-              badgeColor="blue"
-            />
-            <StatCard
-              title="Avg. Transaction"
-              value={`PHP ${(cards.average_transaction_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle="Basket size per customer"
-              icon={TrendingUp}
-              badgeColor="green"
-            />
-            <StatCard
-              title="Items Sold Today"
-              value={cards.items_sold_today || 0}
-              subtitle="Physical units checked out"
-              icon={PackageCheck}
-              badgeColor="blue"
-            />
-            <StatCard
-              title="Current Shift Sales"
-              value={`PHP ${(cards.current_shift_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              subtitle={currentShift ? `Shift #${currentShift.id} active` : 'No active shift'}
-              icon={Clock}
-              badgeColor="green"
-            />
-            <StatCard
-              title="Recent Transactions"
-              value={cards.recent_transactions_count || 0}
-              subtitle="Invoices processed"
-              icon={ShoppingCart}
-              badgeColor="blue"
-            />
-          </div>
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Transactions Today</span>
+                <Receipt className="w-4 h-4 text-[#14B8A6] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="relative z-10 my-2">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#FAFAF9]">{cards.transactions_today || 0}</span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Completed register sales</p>
+            </div>
 
-          {/* Charts Row (3 required) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-              <ResponsiveLineChart
-                title="Hourly Sales Trend Today (PHP)"
-                data={charts.hourly_sales || []}
-                xKey="hour"
-                yKey="sales"
-                strokeColor="#14B8A6"
-              />
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Avg. Transaction</span>
+                <TrendingUp className="w-4 h-4 text-[#14B8A6] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="relative z-10 my-2">
+                <span className="text-xl sm:text-2xl font-black font-mono text-[#FAFAF9]">
+                  PHP {(cards.average_transaction_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Basket size per customer</p>
             </div>
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-              <ResponsiveBarChart
-                title="Daily Transaction Count"
-                data={charts.daily_transactions || []}
-                xKey="day"
-                yKey="transactions"
-                barColor="#14B8A6"
-              />
-            </div>
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-              <ResponsiveDonutChart
-                title="Sales by Product Category"
-                data={charts.sales_by_category || []}
-                valueKey="value"
-                labelKey="name"
-                centerLabel="Revenue"
-              />
+
+            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Items Sold Today</span>
+                <PackageCheck className="w-4 h-4 text-[#14B8A6] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="relative z-10 my-2">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#FAFAF9]">{cards.items_sold_today || 0}</span>
+              </div>
+              <p className="relative z-10 text-[11px] text-stone-400">Physical units checked out</p>
             </div>
           </div>
 
-          {/* Tables Row: Recent Transactions & Best-Selling Items Today */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Transactions Table */}
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Receipt className="w-4 h-4 text-[#14B8A6]" />
-                  <h3 className="font-bold text-sm text-[#FAFAF9]">Recent Completed Transactions</h3>
-                </div>
-                <button
-                  onClick={() => setActiveTab('sales_history')}
-                  className="text-xs text-[#14B8A6] hover:underline font-semibold"
-                >
-                  View All History
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold border-b border-[#292524]">
-                    <tr>
-                      <th className="py-2.5 px-3">Invoice #</th>
-                      <th className="py-2.5 px-3">Date/Time</th>
-                      <th className="py-2.5 px-3 text-right">Total</th>
-                      <th className="py-2.5 px-3 text-center">Payment</th>
-                      <th className="py-2.5 px-3 text-center">Status</th>
-                      <th className="py-2.5 px-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#292524] text-stone-200">
-                    {(tables.recent_transactions || []).slice(0, 5).map((t) => (
-                      <tr key={t.id} className="hover:bg-[#292524]/50">
-                        <td className="py-2.5 px-3 font-mono font-medium text-[#14B8A6]">{t.invoice_number}</td>
-                        <td className="py-2.5 px-3 text-gray-500">{t.created_at?.substring(5, 16)}</td>
-                        <td className="py-2.5 px-3 text-right font-mono font-bold">PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                        <td className="py-2.5 px-3 text-center">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy/10 text-[#14B8A6]">
-                            {t.payment_method}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3 text-center">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
-                            Completed
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3 text-right">
-                          <button
-                            onClick={() => handleViewReceipt(t.id)}
-                            className="p-1 rounded bg-[#141210] hover:bg-[#292524] text-[#14B8A6]"
-                            title="View Receipt"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* Middle Row: Category Sales Donut & Best-Selling Items Side-by-Side */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            {/* Sales by Product Category Donut Card */}
+            <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm hover:border-[#14B8A6]/30 transition-colors flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              <div className="relative z-10 flex-1 flex flex-col justify-between">
+                <ResponsiveDonutChart
+                  title="Sales by Product Category"
+                  data={charts.sales_by_category || []}
+                  valueKey="value"
+                  labelKey="name"
+                  centerLabel="Revenue"
+                />
               </div>
             </div>
 
-            {/* Best-Selling Items Today Table */}
-            <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
+            {/* Best-Selling Items Today Table Card */}
+            <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+              
+              <div className="relative z-10 flex items-center justify-between mb-3 pb-2 border-b border-[#292524]">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
                   <h3 className="font-bold text-sm text-[#FAFAF9]">Best-Selling Items Today</h3>
                 </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Top Volume
+                </span>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="relative z-10 overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold border-b border-[#292524]">
                     <tr>
@@ -744,19 +683,93 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#292524] text-stone-200">
-                    {(tables.best_selling_today || []).map((p, idx) => (
-                      <tr key={idx} className="hover:bg-[#292524]/50">
-                        <td className="py-2.5 px-3 font-medium truncate max-w-[170px]">{p.name}</td>
-                        <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">{p.sku}</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-[#14B8A6]">{p.units_sold}</td>
-                        <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
-                          PHP {Number(p.revenue).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                        </td>
+                    {(tables.best_selling_today || []).length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="py-8 text-center text-stone-500 text-xs">No product sales recorded today yet.</td>
                       </tr>
-                    ))}
+                    ) : (
+                      (tables.best_selling_today || []).map((p, idx) => (
+                        <tr key={idx} className="hover:bg-[#292524]/50 transition-colors">
+                          <td className="py-2.5 px-3 font-semibold truncate max-w-[200px] text-[#FAFAF9]">{p.name}</td>
+                          <td className="py-2.5 px-3 font-mono text-[11px] text-stone-400">{p.sku}</td>
+                          <td className="py-2.5 px-3 text-center font-bold text-[#14B8A6]">{p.units_sold}</td>
+                          <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                            PHP {Number(p.revenue).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          {/* Bottom Row: Full-Width Recent Completed Transactions Table */}
+          <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
+
+            <div className="relative z-10 flex items-center justify-between mb-4 pb-2 border-b border-[#292524]">
+              <div className="flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-[#14B8A6]" />
+                <h3 className="font-bold text-sm text-[#FAFAF9]">Recent Completed Transactions</h3>
+              </div>
+              <button
+                onClick={() => setActiveTab('sales_history')}
+                className="text-xs text-[#14B8A6] hover:text-teal-300 hover:underline font-semibold cursor-pointer"
+              >
+                View All History &rarr;
+              </button>
+            </div>
+
+            <div className="relative z-10 overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold border-b border-[#292524]">
+                  <tr>
+                    <th className="py-2.5 px-3">Invoice #</th>
+                    <th className="py-2.5 px-3">Date/Time</th>
+                    <th className="py-2.5 px-3 text-right">Total Amount</th>
+                    <th className="py-2.5 px-3 text-center">Payment Method</th>
+                    <th className="py-2.5 px-3 text-center">Register Status</th>
+                    <th className="py-2.5 px-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#292524] text-stone-200">
+                  {(tables.recent_transactions || []).length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="py-8 text-center text-stone-500 text-xs">No transactions processed today.</td>
+                    </tr>
+                  ) : (
+                    (tables.recent_transactions || []).slice(0, 6).map((t) => (
+                      <tr key={t.id} className="hover:bg-[#292524]/50 transition-colors">
+                        <td className="py-2.5 px-3 font-mono font-bold text-[#14B8A6]">{t.invoice_number}</td>
+                        <td className="py-2.5 px-3 text-stone-400">{t.created_at?.substring(5, 16)}</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-[#FAFAF9]">PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#14B8A6]/10 text-[#14B8A6] border border-[#14B8A6]/20">
+                            {t.payment_method}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            Completed
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-right">
+                          <button
+                            onClick={() => handleViewReceipt(t.id)}
+                            className="p-1 rounded bg-[#141210] hover:bg-[#292524] text-[#14B8A6] hover:text-white transition-colors cursor-pointer"
+                            title="View Receipt"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -852,7 +865,8 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                       PHP {Number(p.selling_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                     <button
-                      className="p-1 rounded-md bg-[#F97316] text-white hover:bg-orange-600 text-xs font-bold transition"
+                      className="p-1 rounded-md text-white hover:opacity-90 text-xs font-bold transition"
+                      style={{ backgroundColor: 'var(--accent-primary)' }}
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -1302,7 +1316,8 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <button
                 type="button"
                 onClick={() => setIsAddProductModalOpen(true)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95 hover:opacity-90"
+                style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Product</span>
@@ -1318,7 +1333,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                 placeholder="Search by SKU, product name, or brand..."
                 value={lookupQuery}
                 onChange={(e) => setLookupQuery(e.target.value)}
-                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[#F97316]"
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
               />
               {lookupQuery && (
                 <button
@@ -1402,7 +1417,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                             onClick={() => { setSelectedProduct(p); setIsDetailModalOpen(true); }}
                             className="hover:bg-[#292524]/70 transition-colors cursor-pointer group"
                           >
-                            <td className="py-2.5 px-3 font-mono font-bold text-[#F97316] group-hover:underline">{p.sku}</td>
+                            <td className="py-2.5 px-3 font-mono font-bold group-hover:underline" style={{ color: 'var(--accent-primary)' }}>{p.sku}</td>
                             <td className="py-2.5 px-3 font-medium">
                               <div className="flex items-center gap-2.5">
                                 <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
@@ -1413,7 +1428,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                                     onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                                   />
                                 </div>
-                                <span className="group-hover:text-[#F97316] transition-colors font-bold text-[#FAFAF9]">{p.name}</span>
+                                <span className="transition-colors font-bold text-[#FAFAF9]" style={{ color: undefined }}>{p.name}</span>
                               </div>
                             </td>
                             <td className="py-2.5 px-3 text-stone-300">{p.brand}</td>
@@ -1824,7 +1839,8 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-bold"
+              className="px-4 py-1.5 rounded-lg text-white font-bold transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               Save Product
             </button>

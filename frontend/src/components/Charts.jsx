@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useThemeColor } from '../context/ThemeColorContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility: smooth cubic bezier path from an array of {x,y} points
@@ -34,10 +35,12 @@ export function ResponsiveLineChart({
   yKey = 'sales',
   yKey2 = null,
   height = 260,
-  strokeColor = '#3B82F6',
+  strokeColor,
   strokeColor2 = '#10B981',
   title = '',
 }) {
+  const { currentTheme } = useThemeColor();
+  const effectiveStroke = strokeColor || currentTheme?.strokeColor || 'var(--accent-primary, #9A6B4C)';
   const [hoveredIdx, setHoveredIdx] = useState(null);
 
   if (!data || data.length === 0) {
@@ -104,9 +107,9 @@ export function ResponsiveLineChart({
           <defs>
             {/* Area gradient – line 1 */}
             <linearGradient id={gradId1} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stopColor={strokeColor} stopOpacity="0.30" />
-              <stop offset="60%"  stopColor={strokeColor} stopOpacity="0.08" />
-              <stop offset="100%" stopColor={strokeColor} stopOpacity="0.00" />
+              <stop offset="0%"   stopColor={effectiveStroke} stopOpacity="0.30" />
+              <stop offset="60%"  stopColor={effectiveStroke} stopOpacity="0.08" />
+              <stop offset="100%" stopColor={effectiveStroke} stopOpacity="0.00" />
             </linearGradient>
             {/* Area gradient – line 2 */}
             {yKey2 && (
@@ -122,6 +125,10 @@ export function ResponsiveLineChart({
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
+            </filter>
+            {/* Luminous curve line glow */}
+            <filter id={`lineGlow-${gradId1}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor={effectiveStroke} floodOpacity="0.4" />
             </filter>
           </defs>
 
@@ -157,10 +164,11 @@ export function ResponsiveLineChart({
           <path
             d={line1}
             fill="none"
-            stroke={strokeColor}
+            stroke={effectiveStroke}
             strokeWidth="2.8"
             strokeLinecap="round"
             strokeLinejoin="round"
+            filter={`url(#lineGlow-${gradId1})`}
           />
 
           {/* ── Second line (target/baseline) ──────────────────────── */}
@@ -199,30 +207,28 @@ export function ResponsiveLineChart({
                   y1={padTop}
                   x2={p.x}
                   y2={padTop + chartH}
-                  stroke={strokeColor}
+                  stroke={effectiveStroke}
                   strokeOpacity="0.25"
                   strokeWidth="1"
                   strokeDasharray="4 3"
                 />
               )}
 
-              {/* Dot ring */}
-              {hoveredIdx === i && (
-                <circle
-                  cx={p.x}
-                  cy={p.y}
-                  r={9}
-                  fill={strokeColor}
-                  fillOpacity="0.15"
-                  filter="url(#dotGlow)"
-                />
-              )}
+              {/* Dot luminous halo glow */}
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={hoveredIdx === i ? 9 : 5.5}
+                fill={effectiveStroke}
+                fillOpacity={hoveredIdx === i ? 0.35 : 0.22}
+                filter="url(#dotGlow)"
+              />
               <circle
                 cx={p.x}
                 cy={p.y}
                 r={hoveredIdx === i ? 5.5 : 3.5}
-                fill={hoveredIdx === i ? strokeColor : '#ffffff'}
-                stroke={strokeColor}
+                fill={hoveredIdx === i ? effectiveStroke : '#ffffff'}
+                stroke={effectiveStroke}
                 strokeWidth="2.2"
                 className="transition-all duration-150"
               />
@@ -283,7 +289,7 @@ export function ResponsiveLineChart({
       {yKey2 && (
         <div className="flex items-center justify-end gap-5 mt-2 text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1.5">
-            <span className="inline-block w-6 h-0.5 rounded-full" style={{ backgroundColor: strokeColor }} />
+            <span className="inline-block w-6 h-0.5 rounded-full" style={{ backgroundColor: effectiveStroke }} />
             <span>Actual / Forecast</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -306,9 +312,11 @@ export function ResponsiveBarChart({
   xKey = 'name',
   yKey = 'count',
   height = 240,
-  barColor = '#1E3A5F',
+  barColor,
   title = '',
 }) {
+  const { currentTheme } = useThemeColor();
+  const activeBarColor = barColor || currentTheme?.primary || 'var(--accent-primary, #9A6B4C)';
   const [hoveredIdx, setHoveredIdx] = useState(null);
 
   if (!data || data.length === 0) {
@@ -350,8 +358,8 @@ export function ResponsiveBarChart({
         >
           <defs>
             <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stopColor={barColor} stopOpacity="1.0" />
-              <stop offset="100%" stopColor={barColor} stopOpacity="0.55" />
+              <stop offset="0%"   stopColor={activeBarColor} stopOpacity="1.0" />
+              <stop offset="100%" stopColor={activeBarColor} stopOpacity="0.55" />
             </linearGradient>
           </defs>
 
@@ -398,7 +406,7 @@ export function ResponsiveBarChart({
                   <rect
                     x={x - 4} y={y - 4} width={barW + 8} height={h + 4}
                     rx={6}
-                    fill={d.color || barColor}
+                    fill={d.color || activeBarColor}
                     fillOpacity="0.18"
                   />
                 )}
@@ -458,6 +466,7 @@ export function ResponsiveDonutChart({
   title     = '',
   centerLabel = 'Total',
 }) {
+  const { currentTheme } = useThemeColor();
   const [hoveredIdx, setHoveredIdx] = useState(null);
 
   if (!data || data.length === 0) {
@@ -468,7 +477,9 @@ export function ResponsiveDonutChart({
     );
   }
 
-  const COLORS  = ['#F97316', '#FB923C', '#78716C', '#FDBA74', '#A8A29E', '#EA580C', '#292524'];
+  const primaryColor = currentTheme?.primary || '#9A6B4C';
+  const lightColor = currentTheme?.light || '#C49A7C';
+  const COLORS  = [primaryColor, lightColor, '#78716C', '#F59E0B', '#EF4444', '#292524'];
   const total   = data.reduce((s, d) => s + (Number(d[valueKey]) || 0), 0) || 1;
   const cx = 90, cy = 90, R = 64, r = 40;
 
@@ -501,10 +512,15 @@ export function ResponsiveDonutChart({
         ? ''
         : `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${lx2} ${ly2} A ${r} ${r} 0 ${large} 0 ${lx1} ${ly1} Z`;
 
+    let sliceColor = item.color;
+    if (!sliceColor || item.status === 'In Stock' || item.label === 'In Stock') {
+      sliceColor = (item.status === 'In Stock' || item.label === 'In Stock') ? primaryColor : (item.color || COLORS[idx % COLORS.length]);
+    }
+
     return {
       ...item,
       pathD,
-      color: item.color || COLORS[idx % COLORS.length],
+      color: sliceColor,
       val,
       pct: Math.round(pct * 100),
       midAngle: startA + sweep / 2,

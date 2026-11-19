@@ -12,7 +12,8 @@ import {
   RefreshCw,
   FileSpreadsheet,
   CheckCircle2,
-  Receipt
+  Receipt,
+  Printer
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
@@ -123,6 +124,403 @@ export default function ReportsAnalytics({ user }) {
     exportToCSV('TechAvenue_Inventory_Valuation', headers, rows);
   };
 
+  // Executive Summary Print & PDF Generator
+  const handlePrintSummaryPDF = () => {
+    if (!reportData) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to print or download the PDF report.');
+      return;
+    }
+
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+    const formattedTime = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const sales = reportData?.sales_summary || {};
+    const vat = reportData?.vat_summary || {};
+    const inv = reportData?.inventory_valuation || {};
+    const bestSellers = (reportData?.best_sellers || []).slice(0, 5);
+    const slowMoving = (reportData?.slow_moving || []).slice(0, 5);
+
+    const docContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>TechAvenue_Executive_Report_${now.toISOString().split('T')[0]}</title>
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 12mm 15mm;
+          }
+          * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1.4;
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #0f172a;
+            margin-bottom: 14px;
+          }
+          .company-title {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #0f172a;
+            text-transform: uppercase;
+          }
+          .report-subtitle {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ea580c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+          }
+          .meta-block {
+            text-align: right;
+            font-size: 10px;
+            color: #475569;
+          }
+          .meta-block strong {
+            color: #0f172a;
+          }
+          .section-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #0f172a;
+            margin: 14px 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+          }
+          .stat-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            background: #f8fafc;
+          }
+          .stat-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+          }
+          .stat-value {
+            font-size: 14px;
+            font-weight: 900;
+            font-family: monospace;
+            color: #0f172a;
+            margin-top: 2px;
+          }
+          .stat-sub {
+            font-size: 8.5px;
+            color: #64748b;
+            margin-top: 1px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            margin-bottom: 12px;
+          }
+          th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 8.5px;
+            letter-spacing: 0.3px;
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1.5px solid #cbd5e1;
+          }
+          td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+          }
+          tr:nth-child(even) td {
+            background-color: #fafafa;
+          }
+          .text-right {
+            text-align: right;
+          }
+          .text-center {
+            text-align: center;
+          }
+          .font-mono {
+            font-family: monospace;
+            font-weight: 700;
+          }
+          .badge-pill {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #e2e8f0;
+            color: #334155;
+          }
+          .footer-sign {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            color: #475569;
+          }
+          .sign-line {
+            width: 180px;
+            border-top: 1px solid #0f172a;
+            margin-top: 30px;
+            text-align: center;
+            font-weight: 700;
+            padding-top: 3px;
+            font-size: 9px;
+            color: #0f172a;
+          }
+          @media print {
+            body { -webkit-print-color-adjust: exact; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="company-title">Tech Avenue Computer & Accessories</div>
+            <div class="report-subtitle">Executive Business Summary & Financial Report</div>
+            <div style="font-size: 9px; color: #64748b; margin-top: 2px;">Certified Transactional, Tax & Inventory Intelligence</div>
+          </div>
+          <div class="meta-block">
+            <div><strong>Report Date:</strong> ${formattedDate}</div>
+            <div><strong>Time:</strong> ${formattedTime}</div>
+            <div><strong>Generated By:</strong> ${user?.full_name || 'System Administrator'}</div>
+            <div><strong>Report Ref:</strong> REF-EBR-${now.getFullYear()}${String(now.getMonth()+1).padStart(2, '0')}</div>
+          </div>
+        </div>
+
+        <!-- Financial KPI Highlights -->
+        <div class="section-title">
+          <span>1. Key Financial & Sales Highlights</span>
+          <span style="font-size: 8.5px; font-weight: 600; color: #64748b;">All currency values in Philippine Peso (PHP)</span>
+        </div>
+        <div class="grid-4">
+          <div class="stat-box">
+            <div class="stat-label">Past 30 Days Sales</div>
+            <div class="stat-value">₱${Number(sales.monthly_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Monthly Run Rate</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Past 7 Days Sales</div>
+            <div class="stat-value">₱${Number(sales.weekly_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Trailing Weekly Volume</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Today's Register Sales</div>
+            <div class="stat-value">₱${Number(sales.daily_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Current Shift Revenue</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">All-Time Total Revenue</div>
+            <div class="stat-value">₱${Number(sales.total_sales_all_time || sales.monthly_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">${sales.total_orders || 0} Total Orders Recorded</div>
+          </div>
+        </div>
+
+        <!-- 12% Output VAT & Tax Compliance Ledger -->
+        <div class="section-title">
+          <span>2. Philippine 12% Output VAT & Taxation Ledger</span>
+          <span style="font-size: 8.5px; font-weight: 600; color: #16a34a;">BIR Tax Certified (12% Rate)</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Ledger Component</th>
+              <th>Statutory Basis</th>
+              <th class="text-right">Amount (PHP)</th>
+              <th class="text-right">Share of Gross</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Net Sales (Tax Base)</strong></td>
+              <td>Total revenue exclusive of 12% value added tax</td>
+              <td class="text-right font-mono">₱${Number(vat.net_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td class="text-right font-mono">89.29%</td>
+            </tr>
+            <tr>
+              <td><strong>12% Output VAT Collected</strong></td>
+              <td>Statutory tax collected remittable to the Bureau of Internal Revenue</td>
+              <td class="text-right font-mono" style="color: #ea580c;">₱${Number(vat.vat_collected || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td class="text-right font-mono">10.71%</td>
+            </tr>
+            <tr style="background-color: #f8fafc; font-weight: bold;">
+              <td><strong>Gross Sales (Inclusive of 12% VAT)</strong></td>
+              <td>Official POS register gross receipt value</td>
+              <td class="text-right font-mono">₱${Number(vat.gross_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td class="text-right font-mono">100.00%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Inventory Valuation & Profitability Health -->
+        <div class="section-title">
+          <span>3. Inventory Asset Valuation & Profit Margin</span>
+          <span style="font-size: 8.5px; font-weight: 600; color: #64748b;">Live Stock Valuation</span>
+        </div>
+        <div class="grid-4">
+          <div class="stat-box">
+            <div class="stat-label">Total Retail Value</div>
+            <div class="stat-value">₱${Number(inv.total_retail_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Retail On-Shelf Inventory</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Total Cost Value</div>
+            <div class="stat-value">₱${Number(inv.total_cost_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Procurement Asset Base</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Unrealized Gross Margin</div>
+            <div class="stat-value" style="color: #16a34a;">₱${Number(inv.unrealized_margin || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="stat-sub">Projected Profit Margin</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Projected Margin %</div>
+            <div class="stat-value font-mono">${inv.margin_pct != null ? inv.margin_pct : (inv.total_retail_value ? ((inv.unrealized_margin / inv.total_retail_value) * 100).toFixed(1) : 0)}%</div>
+            <div class="stat-sub">Catalog Margin Efficiency</div>
+          </div>
+        </div>
+
+        <!-- Top Best-Selling Products -->
+        <div class="section-title">
+          <span>4. Top Best-Selling Products (Key Volume Drivers)</span>
+          <span style="font-size: 8.5px; font-weight: 600; color: #64748b;">Top 5 Ranked by Gross Sales</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px;">Rank</th>
+              <th>SKU</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th class="text-center">Units Sold</th>
+              <th class="text-right">Total Revenue (PHP)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bestSellers.length === 0 ? '<tr><td colspan="6" class="text-center" style="padding: 12px; color: #64748b;">No product sales recorded yet.</td></tr>' : ''}
+            ${bestSellers.map((item, idx) => `
+              <tr>
+                <td class="font-mono"><strong>#${idx + 1}</strong></td>
+                <td class="font-mono" style="color: #475569;">${item.sku || 'N/A'}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td class="text-center font-mono" style="color: #16a34a;">${item.units_sold} units</td>
+                <td class="text-right font-mono">₱${Number(item.revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        ${slowMoving.length > 0 ? `
+        <!-- Attention Items / Slow-Moving Inventory -->
+        <div class="section-title">
+          <span>5. Inventory Attention & Actionable Flags (Slow-Moving)</span>
+          <span style="font-size: 8.5px; font-weight: 600; color: #dc2626;">Recommended for Clearance / Reorder Review</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px;">No.</th>
+              <th>SKU</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th class="text-center">Current Stock</th>
+              <th class="text-center">Sold (Last 30d)</th>
+              <th class="text-right">Action Needed</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${slowMoving.map((item, idx) => `
+              <tr>
+                <td class="font-mono">${idx + 1}</td>
+                <td class="font-mono" style="color: #475569;">${item.sku || 'N/A'}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td class="text-center font-mono"><strong>${item.stock_quantity}</strong></td>
+                <td class="text-center font-mono">${item.units_sold_last_30d || 0}</td>
+                <td class="text-right"><span class="badge-pill">${item.units_sold_last_30d === 0 ? 'Discount / Promo' : 'Monitor'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        ` : ''}
+
+        <!-- Sign-off & Audit Certification -->
+        <div class="footer-sign">
+          <div>
+            <div><strong>TECH AVENUE COMPUTER & ACCESSORIES</strong></div>
+            <div style="font-size: 8px; color: #64748b; margin-top: 2px;">Certified Executive Financial & Operational Report</div>
+            <div style="font-size: 8px; color: #64748b;">CONFIDENTIAL & PROPRIETARY &copy; ${now.getFullYear()}</div>
+          </div>
+          <div>
+            <div class="sign-line">
+              Prepared By: ${user?.full_name || 'System Administrator'}<br>
+              <span style="font-size: 7.5px; font-weight: normal; color: #64748b;">Administrator & Financial Auditor</span>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.document.title = "TechAvenue_Executive_Report_${now.toISOString().split('T')[0]}.pdf";
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(docContent);
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="p-12 text-center text-xs text-gray-500">
@@ -150,11 +548,11 @@ export default function ReportsAnalytics({ user }) {
           </p>
         </div>
 
-        {/* Global CSV Export Dropdown / Buttons */}
+        {/* Global CSV & PDF Print Export Toolbar */}
         <div className="flex items-center gap-2">
           <button
             onClick={loadReports}
-            className="p-2 rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-600 dark:text-gray-300 hover:bg-gray-100"
+            className="p-2 rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-600 dark:text-gray-300 hover:bg-gray-100 cursor-pointer"
             title="Refresh Data"
           >
             <RefreshCw className="w-4 h-4" />
@@ -162,18 +560,30 @@ export default function ReportsAnalytics({ user }) {
 
           <button
             onClick={handleExportSalesReport}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border bg-white dark:bg-darkbg-card text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm cursor-pointer"
+            style={{ borderColor: 'var(--accent-border)' }}
           >
-            <Download className="w-3.5 h-3.5 text-blue-600" />
+            <Download className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
             Sales CSV
           </button>
 
           <button
             onClick={handleExportBestSellers}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg bg-navy hover:bg-navy-dark text-white dark:bg-greige dark:text-navy shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg text-white shadow-sm cursor-pointer hover:opacity-90"
+            style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 2px 10px var(--accent-glow)' }}
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />
             Best-Sellers CSV
+          </button>
+
+          <button
+            onClick={handlePrintSummaryPDF}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg text-white shadow-sm cursor-pointer transition-all active:scale-95 hover:opacity-90"
+            style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 2px 10px var(--accent-glow)' }}
+            title="Print or Download Executive Summary as PDF"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            Print / Download PDF
           </button>
         </div>
       </div>
