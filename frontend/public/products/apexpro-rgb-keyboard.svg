@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rgbBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F43F5E"/>
+      <stop offset="25%" stop-color="#FB923C"/>
+      <stop offset="50%" stop-color="#FACC15"/>
+      <stop offset="75%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="24" fill="#0B132B"/>
+  <rect x="10" y="10" width="280" height="280" rx="20" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Keyboard Base Outer Case with RGB underglow -->
+  <rect x="25" y="80" width="250" height="140" rx="12" fill="#090D16" stroke="url(#rgbBorder)" stroke-width="3"/>
+  
+  <!-- Aluminum Top Plate -->
+  <rect x="35" y="90" width="230" height="120" rx="8" fill="#1E293B"/>
+
+  <!-- Row 1 Function/Num keys -->
+  <g fill="#0F172A" stroke="#F43F5E" stroke-width="1.5">
+    <rect x="45" y="100" width="14" height="18" rx="3"/>
+    <rect x="64" y="100" width="14" height="18" rx="3"/>
+    <rect x="83" y="100" width="14" height="18" rx="3"/>
+    <rect x="102" y="100" width="14" height="18" rx="3"/>
+    <rect x="121" y="100" width="14" height="18" rx="3"/>
+    <rect x="140" y="100" width="14" height="18" rx="3"/>
+    <rect x="159" y="100" width="14" height="18" rx="3"/>
+    <rect x="178" y="100" width="14" height="18" rx="3"/>
+    <rect x="197" y="100" width="14" height="18" rx="3"/>
+    <rect x="216" y="100" width="14" height="18" rx="3"/>
+    <rect x="235" y="100" width="20" height="18" rx="3" fill="#F43F5E"/>
+  </g>
+
+  <!-- Row 2 QWERTY keys -->
+  <g fill="#0F172A" stroke="#FB923C" stroke-width="1.5">
+    <rect x="45" y="125" width="20" height="18" rx="3"/>
+    <rect x="70" y="125" width="14" height="18" rx="3"/>
+    <rect x="89" y="125" width="14" height="18" rx="3"/>
+    <rect x="108" y="125" width="14" height="18" rx="3"/>
+    <rect x="127" y="125" width="14" height="18" rx="3"/>
+    <rect x="146" y="125" width="14" height="18" rx="3"/>
+    <rect x="165" y="125" width="14" height="18" rx="3"/>
+    <rect x="184" y="125" width="14" height="18" rx="3"/>
+    <rect x="203" y="125" width="14" height="18" rx="3"/>
+    <rect x="222" y="125" width="33" height="18" rx="3" fill="#FB923C"/>
+  </g>
+
+  <!-- Row 3 ASDF Home row -->
+  <g fill="#0F172A" stroke="#22C55E" stroke-width="1.5">
+    <rect x="45" y="150" width="26" height="18" rx="3"/>
+    <rect x="76" y="150" width="14" height="18" rx="3"/>
+    <rect x="95" y="150" width="14" height="18" rx="3"/>
+    <rect x="114" y="150" width="14" height="18" rx="3"/>
+    <rect x="133" y="150" width="14" height="18" rx="3"/>
+    <rect x="152" y="150" width="14" height="18" rx="3"/>
+    <rect x="171" y="150" width="14" height="18" rx="3"/>
+    <rect x="190" y="150" width="14" height="18" rx="3"/>
+    <rect x="209" y="150" width="46" height="18" rx="3" fill="#22C55E"/>
+  </g>
+
+  <!-- Row 4 Spacebar row -->
+  <g fill="#0F172A" stroke="#38BDF8" stroke-width="1.5">
+    <rect x="45" y="175" width="22" height="20" rx="3"/>
+    <rect x="72" y="175" width="20" height="20" rx="3"/>
+    <rect x="97" y="175" width="95" height="20" rx="3" fill="#0284C7"/>
+    <rect x="197" y="175" width="20" height="20" rx="3"/>
+    <rect x="222" y="175" width="33" height="20" rx="3"/>
+  </g>
+
+  <!-- OLED Mini Screen or Volume Roller -->
+  <rect x="235" y="65" width="30" height="10" rx="2" fill="#38BDF8"/>
+  <rect x="130" y="55" width="40" height="10" rx="3" fill="#334155"/>
+</svg>

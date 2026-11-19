@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" rx="16" fill="#1E293B"/>
+  <rect x="25" y="65" width="150" height="70" rx="8" fill="#0F172A" stroke="#EC4899" stroke-width="2"/>
+  <!-- Keys grid -->
+  <g fill="#1E293B" stroke="#334155" stroke-width="1">
+    <rect x="35" y="75" width="16" height="12" rx="2"/>
+    <rect x="55" y="75" width="16" height="12" rx="2"/>
+    <rect x="75" y="75" width="16" height="12" rx="2"/>
+    <rect x="95" y="75" width="16" height="12" rx="2"/>
+    <rect x="115" y="75" width="16" height="12" rx="2"/>
+    <rect x="135" y="75" width="30" height="12" rx="2" fill="#EC4899"/>
+    
+    <rect x="35" y="92" width="22" height="12" rx="2"/>
+    <rect x="61" y="92" width="16" height="12" rx="2"/>
+    <rect x="81" y="92" width="16" height="12" rx="2"/>
+    <rect x="101" y="92" width="16" height="12" rx="2"/>
+    <rect x="121" y="92" width="16" height="12" rx="2"/>
+    <rect x="141" y="92" width="24" height="12" rx="2"/>
+
+    <rect x="35" y="109" width="30" height="14" rx="2"/>
+    <rect x="70" y="109" width="60" height="14" rx="2" fill="#38BDF8"/>
+    <rect x="135" y="109" width="30" height="14" rx="2"/>
+  </g>
+</svg>

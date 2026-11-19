@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="silentBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="24" fill="#0B132B"/>
+  <rect x="10" y="10" width="280" height="280" rx="20" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Low Profile Keyboard Outer Case -->
+  <rect x="30" y="85" width="240" height="130" rx="16" fill="url(#silentBody)" stroke="#475569" stroke-width="2"/>
+
+  <!-- Bluetooth & Power status light -->
+  <circle cx="245" cy="100" r="3.5" fill="#10B981"/>
+  <path d="M 230 96 L 235 101 L 232 104 L 232 96 L 235 99 L 230 104" stroke="#38BDF8" stroke-width="1.5" fill="none"/>
+
+  <!-- Chiclet Round-corner Keys -->
+  <g fill="#0F172A" stroke="#475569" stroke-width="1">
+    <!-- Row 1 -->
+    <rect x="42" y="112" width="15" height="16" rx="4"/>
+    <rect x="62" y="112" width="15" height="16" rx="4"/>
+    <rect x="82" y="112" width="15" height="16" rx="4"/>
+    <rect x="102" y="112" width="15" height="16" rx="4"/>
+    <rect x="122" y="112" width="15" height="16" rx="4"/>
+    <rect x="142" y="112" width="15" height="16" rx="4"/>
+    <rect x="162" y="112" width="15" height="16" rx="4"/>
+    <rect x="182" y="112" width="15" height="16" rx="4"/>
+    <rect x="202" y="112" width="15" height="16" rx="4"/>
+    <rect x="222" y="112" width="15" height="16" rx="4"/>
+    <rect x="242" y="112" width="16" height="16" rx="4" fill="#475569"/>
+
+    <!-- Row 2 -->
+    <rect x="42" y="134" width="20" height="16" rx="4"/>
+    <rect x="67" y="134" width="15" height="16" rx="4"/>
+    <rect x="87" y="134" width="15" height="16" rx="4"/>
+    <rect x="107" y="134" width="15" height="16" rx="4"/>
+    <rect x="127" y="134" width="15" height="16" rx="4"/>
+    <rect x="147" y="134" width="15" height="16" rx="4"/>
+    <rect x="167" y="134" width="15" height="16" rx="4"/>
+    <rect x="187" y="134" width="15" height="16" rx="4"/>
+    <rect x="207" y="134" width="15" height="16" rx="4"/>
+    <rect x="227" y="134" width="31" height="16" rx="4" fill="#38BDF8"/>
+
+    <!-- Row 3 -->
+    <rect x="42" y="156" width="24" height="16" rx="4"/>
+    <rect x="71" y="156" width="15" height="16" rx="4"/>
+    <rect x="91" y="156" width="15" height="16" rx="4"/>
+    <rect x="111" y="156" width="15" height="16" rx="4"/>
+    <rect x="131" y="156" width="15" height="16" rx="4"/>
+    <rect x="151" y="156" width="15" height="16" rx="4"/>
+    <rect x="171" y="156" width="15" height="16" rx="4"/>
+    <rect x="191" y="156" width="15" height="16" rx="4"/>
+    <rect x="211" y="156" width="47" height="16" rx="4"/>
+
+    <!-- Row 4 -->
+    <rect x="42" y="178" width="22" height="18" rx="4"/>
+    <rect x="69" y="178" width="20" height="18" rx="4"/>
+    <rect x="94" y="178" width="105" height="18" rx="4" fill="#1E293B"/>
+    <rect x="204" y="178" width="24" height="18" rx="4"/>
+    <rect x="233" y="178" width="25" height="18" rx="4"/>
+  </g>
+</svg>

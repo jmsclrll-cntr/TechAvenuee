@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ssdCopper" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="50%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#FB923C"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="24" fill="#0B132B"/>
+  <rect x="10" y="10" width="280" height="280" rx="20" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- M.2 PCB Board (Horizontal 2280 stick) -->
+  <rect x="25" y="105" width="250" height="90" rx="6" fill="#090D16" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Left Screw Mount Notch -->
+  <path d="M 25 140 A 10 10 0 0 0 25 160 Z" fill="#0B132B"/>
+  <circle cx="28" cy="150" r="4" fill="none" stroke="#FACC15" stroke-width="1.5"/>
+
+  <!-- Controller Chip (Nickel-plated) -->
+  <rect x="55" y="120" width="35" height="35" rx="3" fill="#334155" stroke="#94A3B8" stroke-width="1.5"/>
+  <text x="72" y="141" fill="#E2E8F0" font-family="monospace" font-size="7" text-anchor="middle">SAMSUNG</text>
+
+  <!-- DRAM Cache Chip -->
+  <rect x="55" y="162" width="35" height="22" rx="2" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+  <text x="72" y="176" fill="#94A3B8" font-family="monospace" font-size="6" text-anchor="middle">2GB LPDDR4</text>
+
+  <!-- Dual V-NAND Flash Memory Chips -->
+  <rect x="105" y="120" width="55" height="64" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1.5"/>
+  <rect x="168" y="120" width="55" height="64" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1.5"/>
+
+  <!-- Thermal Label Over NAND -->
+  <rect x="100" y="132" width="128" height="40" rx="3" fill="#0F172A" stroke="url(#ssdCopper)" stroke-width="1.5"/>
+  <text x="164" y="148" fill="#FFFFFF" font-family="sans-serif" font-size="11" font-weight="900" text-anchor="middle">990 PRO</text>
+  <text x="164" y="161" fill="url(#ssdCopper)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">PCIe 4.0 NVMe M.2 • 2TB</text>
+
+  <!-- M.2 Gold Pins (Right edge) -->
+  <g fill="#FACC15">
+    <rect x="262" y="112" width="8" height="3"/>
+    <rect x="262" y="118" width="8" height="3"/>
+    <rect x="262" y="124" width="8" height="3"/>
+    <rect x="262" y="130" width="8" height="3"/>
+    <rect x="262" y="136" width="8" height="3"/>
+    <!-- M-Key gap -->
+    <rect x="262" y="148" width="8" height="3"/>
+    <rect x="262" y="154" width="8" height="3"/>
+    <rect x="262" y="160" width="8" height="3"/>
+    <rect x="262" y="166" width="8" height="3"/>
+    <rect x="262" y="172" width="8" height="3"/>
+    <rect x="262" y="178" width="8" height="3"/>
+    <rect x="262" y="184" width="8" height="3"/>
+  </g>
+
+  <!-- Speed Badge -->
+  <rect x="90" y="215" width="120" height="22" rx="6" fill="#1E293B" stroke="#F97316" stroke-width="1"/>
+  <text x="150" y="230" fill="#F97316" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">7,450 MB/s READ</text>
+</svg>

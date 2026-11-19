@@ -1,0 +1,410 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <!-- Dark Room Gradient -->
+    <linearGradient id="bgRoom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#050a14" />
+      <stop offset="60%" stop-color="#091322" />
+      <stop offset="100%" stop-color="#030710" />
+    </linearGradient>
+
+    <!-- Glowing Cyber Circuit Board Pattern -->
+    <pattern id="circuitPattern" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M 0,30 L 40,30 L 60,50 L 100,50 M 60,0 L 60,20 L 75,35 M 20,80 L 50,80 L 70,100 L 120,100 M 10,120 L 10,95 L 25,80" 
+            fill="none" stroke="#00f2fe" stroke-width="1.2" stroke-opacity="0.22" />
+      <circle cx="40" cy="30" r="3" fill="#00f2fe" fill-opacity="0.35" />
+      <circle cx="100" cy="50" r="3.5" fill="#38bdf8" fill-opacity="0.4" />
+      <circle cx="75" cy="35" r="2.5" fill="#38bdf8" fill-opacity="0.3" />
+      <circle cx="70" cy="100" r="3" fill="#00f2fe" fill-opacity="0.35" />
+    </pattern>
+
+    <!-- Ambient Cyan Backlight -->
+    <radialGradient id="glowCyan" cx="50%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.4" />
+      <stop offset="45%" stop-color="#0284c7" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#050a14" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Ambient Deep Blue Backlight -->
+    <radialGradient id="glowBlue" cx="80%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.45" />
+      <stop offset="60%" stop-color="#1d4ed8" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#050a14" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Ambient Purple/Magenta Glow for PC tower -->
+    <radialGradient id="glowPurple" cx="88%" cy="55%" r="35%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.35" />
+      <stop offset="70%" stop-color="#091322" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Ultrawide Curved Screen Gradient -->
+    <linearGradient id="curvedScreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#081a2e" />
+      <stop offset="45%" stop-color="#0c233c" />
+      <stop offset="100%" stop-color="#051220" />
+    </linearGradient>
+
+    <!-- Code Line Glow -->
+    <linearGradient id="codeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <!-- Desk Gradient -->
+    <linearGradient id="deskWood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1b2536" />
+      <stop offset="15%" stop-color="#111a28" />
+      <stop offset="100%" stop-color="#060b13" />
+    </linearGradient>
+
+    <!-- LED Desk Strip Underglow -->
+    <linearGradient id="deskLedGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.2" />
+      <stop offset="30%" stop-color="#00f0ff" stop-opacity="0.8" />
+      <stop offset="70%" stop-color="#38bdf8" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.3" />
+    </linearGradient>
+
+    <!-- PC RGB Fan Gradient -->
+    <radialGradient id="fanRgb1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9" />
+      <stop offset="60%" stop-color="#0284c7" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#0b1320" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="fanRgb2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.9" />
+      <stop offset="65%" stop-color="#6366f1" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#0b1320" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- High-tech Bezel Finish -->
+    <linearGradient id="bezelFinish" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+
+    <!-- Stand Brushed Metal -->
+    <linearGradient id="brushedStand" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="50%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Background Room Wall -->
+  <rect width="1920" height="1080" fill="url(#bgRoom)" />
+
+  <!-- 2. Circuit Board Wall Pattern (Computer Field Theme) -->
+  <rect width="1920" height="680" fill="url(#circuitPattern)" />
+
+  <!-- 3. Ambient Backlights Behind Monitors & Hardware -->
+  <circle cx="960" cy="380" r="700" fill="url(#glowCyan)" />
+  <circle cx="1550" cy="460" r="550" fill="url(#glowBlue)" />
+  <circle cx="1600" cy="550" r="450" fill="url(#glowPurple)" />
+  <circle cx="350" cy="450" r="500" fill="url(#glowCyan)" />
+
+  <!-- 4. Floating Tech Hexagon Shelves with Hardware Accessories -->
+  <g stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.25" fill="#0b1526" fill-opacity="0.7">
+    <polygon points="180,140 220,117 260,140 260,186 220,209 180,186" />
+    <polygon points="265,140 305,117 345,140 345,186 305,209 265,186" />
+    <polygon points="222,214 262,191 302,214 302,260 262,283 222,260" />
+    <!-- Shelf content icon: Microchip -->
+    <rect x="250" y="225" width="24" height="24" rx="4" fill="#0284c7" fill-opacity="0.6" stroke="#38bdf8" stroke-width="1" />
+  </g>
+
+  <!-- Right side wall shelf -->
+  <g stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.2" fill="#0b1526" fill-opacity="0.7">
+    <polygon points="1620,140 1660,117 1700,140 1700,186 1660,209 1620,186" />
+    <polygon points="1705,140 1745,117 1785,140 1785,186 1745,209 1705,186" />
+    <polygon points="1662,214 1702,191 1742,214 1742,260 1702,283 1662,260" />
+  </g>
+
+  <!-- 5. Modern Minimalist Computer Desk Surface -->
+  <!-- Desk Top Surface -->
+  <polygon points="80,660 1840,660 1920,1080 0,1080" fill="url(#deskWood)" />
+  <!-- Glowing LED Edge Line (Workstation Backlight) -->
+  <line x1="80" y1="660" x2="1840" y2="660" stroke="url(#deskLedGlow)" stroke-width="3.5" />
+  <line x1="80" y1="662" x2="1840" y2="662" stroke="#00f0ff" stroke-width="8" stroke-opacity="0.18" filter="blur(4px)" />
+
+  <!-- Premium Extended Desk Mat (Mousepad) -->
+  <polygon points="360,720 1460,720 1520,1040 300,1040" fill="#080d17" stroke="#00f0ff" stroke-width="1.8" stroke-opacity="0.45" />
+
+  <!-- ========================================================================= -->
+  <!-- 6. PRIMARY CENTER ULTRAWIDE CURVED MONITOR (High-End Coding & Dev View)    -->
+  <!-- ========================================================================= -->
+  <!-- Heavy Duty Aluminum Monitor Stand Base -->
+  <polygon points="850,685 1070,685 1100,725 820,725" fill="url(#brushedStand)" stroke="#475569" stroke-width="1" />
+  <rect x="945" y="440" width="30" height="255" fill="url(#brushedStand)" />
+
+  <!-- Monitor Screen Ambient Aura -->
+  <rect x="490" y="160" width="940" height="460" rx="24" fill="#00f0ff" opacity="0.12" filter="blur(25px)" />
+
+  <!-- Sleek Outer Bezel -->
+  <rect x="500" y="170" width="920" height="440" rx="18" fill="url(#bezelFinish)" stroke="#475569" stroke-width="2" />
+  <!-- Active Curved Display Surface -->
+  <rect x="514" y="184" width="892" height="412" rx="12" fill="url(#curvedScreen)" stroke="#0ea5e9" stroke-width="1" stroke-opacity="0.4" />
+
+  <!-- Monitor Top Screenbar / LED Lamp (Modern Workstation hallmark) -->
+  <rect x="740" y="156" width="440" height="12" rx="4" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+  <polygon points="740,168 1180,168 1280,310 640,310" fill="#e0f2fe" opacity="0.12" />
+
+  <!-- ================= SCREEN CONTENT: MODERN CODE & SYSTEM DASHBOARD ================= -->
+  <!-- Top Application Header Bar -->
+  <rect x="514" y="184" width="892" height="30" fill="#081424" />
+  <circle cx="534" cy="199" r="4.5" fill="#ef4444" />
+  <circle cx="550" cy="199" r="4.5" fill="#f59e0b" />
+  <circle cx="566" cy="199" r="4.5" fill="#10b981" />
+  <!-- Tab: TechAvenue Core.tsx -->
+  <rect x="590" y="190" width="130" height="24" rx="4" fill="#0c233c" stroke="#00f0ff" stroke-width="1" stroke-opacity="0.5" />
+  <text x="605" y="206" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#38bdf8">TechAvenue.tsx</text>
+  <!-- Tab: SystemMetrics.py -->
+  <rect x="726" y="190" width="120" height="24" rx="4" fill="#081628" />
+  <text x="736" y="206" font-family="'Courier New', monospace" font-size="10" fill="#64748b">database.py</text>
+
+  <!-- Left Half: Code Editor with Syntax Highlighting -->
+  <g font-family="'Courier New', monospace" font-size="11" font-weight="600">
+    <!-- Line numbers & code lines -->
+    <text x="530" y="240" fill="#475569">01</text>
+    <text x="560" y="240" fill="#c084fc">import</text>
+    <text x="610" y="240" fill="#e2e8f0">{ StoreManager, InventoryEngine } </text>
+    <text x="830" y="240" fill="#c084fc">from</text>
+    <text x="865" y="240" fill="#38bdf8">'@techavenue/core'</text>
+
+    <text x="530" y="262" fill="#475569">02</text>
+    <text x="560" y="262" fill="#38bdf8">const</text>
+    <text x="605" y="262" fill="#fbbf24">workstationConfig</text>
+    <text x="735" y="262" fill="#e2e8f0">=</text>
+    <text x="750" y="262" fill="#34d399">new</text>
+    <text x="780" y="262" fill="#60a5fa">StoreCluster()</text>
+
+    <text x="530" y="284" fill="#475569">03</text>
+    <text x="560" y="284" fill="#64748b">// Real-time hardware telemetry and neural sync</text>
+
+    <text x="530" y="306" fill="#475569">04</text>
+    <text x="560" y="306" fill="#c084fc">async function</text>
+    <text x="665" y="306" fill="#38bdf8">initializeHardwareNodes</text>
+    <text x="830" y="306" fill="#e2e8f0">() {</text>
+
+    <text x="530" y="328" fill="#475569">05</text>
+    <text x="580" y="328" fill="#c084fc">await</text>
+    <text x="625" y="328" fill="#e2e8f0">workstationConfig.</text>
+    <text x="755" y="328" fill="#38bdf8">connectDatabase</text>
+    <text x="865" y="328" fill="#e2e8f0">({</text>
+
+    <text x="530" y="350" fill="#475569">06</text>
+    <text x="605" y="350" fill="#e2e8f0">cluster:</text>
+    <text x="670" y="350" fill="#38bdf8">'TechAvenue-PH-Primary'</text>
+    <text x="825" y="350" fill="#e2e8f0">,</text>
+
+    <text x="530" y="372" fill="#475569">07</text>
+    <text x="605" y="372" fill="#e2e8f0">status:</text>
+    <text x="665" y="372" fill="#34d399">'OPERATIONAL_READY'</text>
+
+    <text x="530" y="394" fill="#475569">08</text>
+    <text x="580" y="394" fill="#e2e8f0">});</text>
+
+    <text x="530" y="416" fill="#475569">09</text>
+    <text x="580" y="416" fill="#c084fc">return</text>
+    <text x="635" y="416" fill="#fbbf24">true</text>
+    <text x="665" y="416" fill="#e2e8f0">;</text>
+
+    <text x="530" y="438" fill="#475569">10</text>
+    <text x="560" y="438" fill="#e2e8f0">}</text>
+  </g>
+
+  <!-- Right Half: Live Hardware Telemetry & Stock Flow Graphs -->
+  <g transform="translate(970, 230)">
+    <!-- Main Telemetry Card -->
+    <rect x="0" y="0" width="415" height="150" rx="10" fill="#08182b" stroke="#00f0ff" stroke-width="1.2" stroke-opacity="0.4" />
+    <text x="16" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#00f0ff">SYSTEM HARDWARE MONITOR</text>
+    <text x="315" y="24" font-family="sans-serif" font-size="10" font-weight="bold" fill="#34d399">ONLINE • 99.98%</text>
+
+    <!-- Sine Wave / Oscilloscope Graph -->
+    <path d="M 15,100 Q 55,40 95,80 T 175,60 T 255,100 T 335,45 T 400,75" fill="none" stroke="#00f0ff" stroke-width="3" />
+    <path d="M 15,100 Q 55,40 95,80 T 175,60 T 255,100 T 335,45 T 400,75 L 400,135 L 15,135 Z" fill="#00f0ff" fill-opacity="0.12" />
+
+    <!-- CPU Bar Chart Card -->
+    <rect x="0" y="165" width="200" height="180" rx="8" fill="#08182b" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" />
+    <text x="12" y="185" font-family="sans-serif" font-size="10" font-weight="bold" fill="#38bdf8">CPU LOAD (16 CORES)</text>
+    <g transform="translate(15, 200)">
+      <line x1="15" y1="125" x2="15" y2="40" stroke="#00f0ff" stroke-width="10" stroke-linecap="round" />
+      <line x1="40" y1="125" x2="40" y2="20" stroke="#38bdf8" stroke-width="10" stroke-linecap="round" />
+      <line x1="65" y1="125" x2="65" y2="60" stroke="#0284c7" stroke-width="10" stroke-linecap="round" />
+      <line x1="90" y1="125" x2="90" y2="35" stroke="#00f0ff" stroke-width="10" stroke-linecap="round" />
+      <line x1="115" y1="125" x2="115" y2="15" stroke="#38bdf8" stroke-width="10" stroke-linecap="round" />
+      <line x1="140" y1="125" x2="140" y2="50" stroke="#6366f1" stroke-width="10" stroke-linecap="round" />
+      <line x1="165" y1="125" x2="165" y2="30" stroke="#a855f7" stroke-width="10" stroke-linecap="round" />
+    </g>
+
+    <!-- RAM & GPU Gauges Card -->
+    <rect x="215" y="165" width="200" height="180" rx="8" fill="#08182b" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" />
+    <text x="227" y="185" font-family="sans-serif" font-size="10" font-weight="bold" fill="#38bdf8">RAM USAGE • 32GB DDR5</text>
+    <circle cx="315" cy="255" r="45" fill="none" stroke="#1e293b" stroke-width="10" />
+    <circle cx="315" cy="255" r="45" fill="none" stroke="#00f0ff" stroke-width="10" stroke-dasharray="210 75" />
+    <text x="295" y="260" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">74%</text>
+    <text x="278" y="278" font-family="sans-serif" font-size="9" fill="#94a3b8">23.6 GB / 32 GB</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 7. SECONDARY VERTICAL MONITOR (Left - Live Linux Terminal / Server Log)    -->
+  <!-- ========================================================================= -->
+  <g transform="translate(230, 210) rotate(5, 120, 240)">
+    <!-- Stand -->
+    <rect x="110" y="320" width="22" height="180" fill="url(#brushedStand)" />
+    <!-- Bezel -->
+    <rect x="0" y="0" width="220" height="460" rx="12" fill="url(#bezelFinish)" stroke="#475569" stroke-width="2" />
+    <!-- Display -->
+    <rect x="10" y="10" width="200" height="440" rx="8" fill="#050d18" stroke="#00f0ff" stroke-width="1" stroke-opacity="0.3" />
+
+    <!-- Terminal Prompt & Lines -->
+    <rect x="10" y="10" width="200" height="24" fill="#0a1829" />
+    <circle cx="24" cy="22" r="3.5" fill="#ef4444" />
+    <circle cx="36" cy="22" r="3.5" fill="#f59e0b" />
+    <circle cx="48" cy="22" r="3.5" fill="#10b981" />
+    <text x="60" y="26" font-family="monospace" font-size="9" fill="#94a3b8">bash - techavenue@sys</text>
+
+    <g font-family="'Courier New', monospace" font-size="9" fill="#38bdf8" opacity="0.9">
+      <text x="20" y="55" fill="#34d399">root@techavenue:~#</text>
+      <text x="20" y="70" fill="#ffffff">systemctl status mysqld</text>
+      <text x="20" y="85" fill="#34d399">● mysqld.service - Active: active (running)</text>
+      <text x="20" y="100" fill="#94a3b8">  Docs: man:mysqld(8)</text>
+      <text x="20" y="115" fill="#94a3b8">  Main PID: 1420 (mysqld)</text>
+      <text x="20" y="130" fill="#94a3b8">  Tasks: 38 (limit: 4915)</text>
+
+      <text x="20" y="160" fill="#34d399">root@techavenue:~#</text>
+      <text x="20" y="175" fill="#ffffff">python ml_engine.py --train</text>
+      <text x="20" y="190" fill="#00f0ff">[ML] Model: XGBoost Regressor</text>
+      <text x="20" y="205" fill="#00f0ff">[ML] Dataset: tech_avenue_sales</text>
+      <text x="20" y="220" fill="#34d399">[ML] Status: R2 Score = 0.941</text>
+      <text x="20" y="235" fill="#34d399">[ML] Model weights exported.</text>
+
+      <text x="20" y="265" fill="#34d399">root@techavenue:~#</text>
+      <text x="20" y="280" fill="#ffffff">netstat -tlpn | grep 5000</text>
+      <text x="20" y="295" fill="#e2e8f0">tcp 0.0.0.0:5000 LISTEN</text>
+
+      <text x="20" y="325" fill="#34d399">root@techavenue:~#</text>
+      <text x="20" y="340" fill="#00f0ff">ping 127.0.0.1 -c 4</text>
+      <text x="20" y="355" fill="#94a3b8">64 bytes: time=0.038 ms</text>
+      <text x="20" y="370" fill="#94a3b8">64 bytes: time=0.041 ms</text>
+      
+      <!-- Blinking Cursor -->
+      <rect x="20" y="390" width="8" height="12" fill="#00f0ff" />
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 8. HIGH-END DESKTOP COMPUTER TOWER RIG (Right Side - Tempered Glass & RGB) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(1460, 360)">
+    <!-- Case Exterior Structure -->
+    <rect x="0" y="0" width="270" height="490" rx="16" fill="#070c16" stroke="#1e293b" stroke-width="3.5" />
+    <!-- Front Mesh & RGB Bezel Line -->
+    <rect x="245" y="15" width="16" height="460" rx="4" fill="#0284c7" fill-opacity="0.4" />
+    <line x1="253" y1="15" x2="253" y2="475" stroke="#00f0ff" stroke-width="2" />
+
+    <!-- Tempered Glass Side Panel with Blue Tint -->
+    <rect x="15" y="16" width="224" height="458" rx="10" fill="#0a1324" fill-opacity="0.75" stroke="#00f0ff" stroke-width="1.8" stroke-opacity="0.6" />
+
+    <!-- 3x Front RGB Intake Fans (Vivid Cyan & Violet Lighting) -->
+    <g transform="translate(200, 75)">
+      <circle cx="0" cy="0" r="48" fill="url(#fanRgb1)" />
+      <circle cx="0" cy="0" r="28" fill="none" stroke="#00f0ff" stroke-width="3" />
+      <circle cx="0" cy="0" r="14" fill="#070c16" stroke="#38bdf8" stroke-width="2" />
+    </g>
+    <g transform="translate(200, 195)">
+      <circle cx="0" cy="0" r="48" fill="url(#fanRgb2)" />
+      <circle cx="0" cy="0" r="28" fill="none" stroke="#a855f7" stroke-width="3" />
+      <circle cx="0" cy="0" r="14" fill="#070c16" stroke="#c084fc" stroke-width="2" />
+    </g>
+    <g transform="translate(200, 315)">
+      <circle cx="0" cy="0" r="48" fill="url(#fanRgb1)" />
+      <circle cx="0" cy="0" r="28" fill="none" stroke="#00f0ff" stroke-width="3" />
+      <circle cx="0" cy="0" r="14" fill="#070c16" stroke="#38bdf8" stroke-width="2" />
+    </g>
+
+    <!-- Liquid Cooling CPU Pump Block with OLED Temperature Display -->
+    <circle cx="75" cy="130" r="30" fill="#0f172a" stroke="#00f0ff" stroke-width="2.5" />
+    <circle cx="75" cy="130" r="20" fill="#0284c7" fill-opacity="0.5" />
+    <text x="63" y="135" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#ffffff">38°C</text>
+
+    <!-- Braided Water Cooler Tubes -->
+    <path d="M 90,115 Q 140,80 180,95" fill="none" stroke="#334155" stroke-width="8" stroke-linecap="round" />
+    <path d="M 85,145 Q 130,120 180,115" fill="none" stroke="#334155" stroke-width="8" stroke-linecap="round" />
+
+    <!-- 4x RGB RAM Modules (G.Skill / Corsair Trident style) -->
+    <rect x="120" y="100" width="7" height="48" rx="2" fill="#00f0ff" filter="drop-shadow(0 0 4px #00f0ff)" />
+    <rect x="130" y="100" width="7" height="48" rx="2" fill="#38bdf8" filter="drop-shadow(0 0 4px #38bdf8)" />
+    <rect x="140" y="100" width="7" height="48" rx="2" fill="#818cf8" filter="drop-shadow(0 0 4px #818cf8)" />
+    <rect x="150" y="100" width="7" height="48" rx="2" fill="#c084fc" filter="drop-shadow(0 0 4px #c084fc)" />
+
+    <!-- GeForce RTX 4090 GPU (Massive Card with Illuminated Logo) -->
+    <rect x="25" y="245" width="160" height="46" rx="6" fill="#111827" stroke="#334155" stroke-width="1.5" />
+    <!-- Backplate & RGB Logo -->
+    <rect x="35" y="258" width="85" height="18" rx="3" fill="#00f0ff" fill-opacity="0.85" />
+    <text x="42" y="271" font-family="sans-serif" font-size="10" font-weight="900" fill="#042f2e">GEFORCE RTX</text>
+    <!-- GPU Fans visible through shroud -->
+    <circle cx="145" cy="268" r="15" fill="#030712" stroke="#475569" stroke-width="1.5" />
+    <circle cx="172" cy="268" r="12" fill="#030712" stroke="#475569" stroke-width="1.5" />
+
+    <!-- Power Supply Shroud with Tech Avenue Logo -->
+    <rect x="15" y="415" width="224" height="58" rx="4" fill="#080e1a" stroke="#1e293b" stroke-width="1" />
+    <text x="30" y="448" font-family="sans-serif" font-size="13" font-weight="bold" fill="#00f0ff" letter-spacing="2">TECH AVENUE PC</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 9. STUDIO SPEAKERS (Desktop Audio Monitors)                               -->
+  <!-- ========================================================================= -->
+  <!-- Left Speaker -->
+  <rect x="420" y="460" width="70" height="140" rx="8" fill="#09111e" stroke="#1e293b" stroke-width="2" />
+  <circle cx="455" cy="500" r="16" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5" />
+  <circle cx="455" cy="550" r="26" fill="#0f172a" stroke="#0284c7" stroke-width="2" />
+
+  <!-- Right Speaker -->
+  <rect x="1380" y="460" width="70" height="140" rx="8" fill="#09111e" stroke="#1e293b" stroke-width="2" />
+  <circle cx="1415" cy="500" r="16" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5" />
+  <circle cx="1415" cy="550" r="26" fill="#0f172a" stroke="#0284c7" stroke-width="2" />
+
+  <!-- ========================================================================= -->
+  <!-- 10. BACKLIT MECHANICAL KEYBOARD & GAMING MOUSE                            -->
+  <!-- ========================================================================= -->
+  <!-- Custom Mechanical Keyboard -->
+  <g transform="translate(640, 780)">
+    <!-- Base Chassis -->
+    <polygon points="40,0 580,0 610,120 0,120" fill="#070d17" stroke="#1e293b" stroke-width="2" />
+    <!-- Vibrant Cyan Underglow -->
+    <polygon points="35,-2 585,-2 615,124 -5,124" fill="none" stroke="#00f0ff" stroke-width="3" opacity="0.75" filter="blur(3px)" />
+
+    <!-- Stylized Mechanical Keycaps with Per-Key RGB -->
+    <g fill="#0f172a" stroke="#334155" stroke-width="1">
+      <!-- Function Row -->
+      <rect x="35" y="8" width="550" height="15" rx="2" fill="#0284c7" fill-opacity="0.5" />
+      <!-- Number Row -->
+      <rect x="30" y="28" width="560" height="18" rx="2" />
+      <!-- QWERTY Row -->
+      <rect x="25" y="50" width="570" height="18" rx="2" />
+      <!-- ASDF Home Row (Highlighted Cyan Keys) -->
+      <rect x="20" y="72" width="580" height="18" rx="2" fill="#00f0ff" fill-opacity="0.3" stroke="#00f0ff" stroke-width="1" />
+      <!-- Spacebar Row -->
+      <rect x="195" y="95" width="230" height="18" rx="3" fill="#00f0ff" fill-opacity="0.8" stroke="#38bdf8" />
+    </g>
+  </g>
+
+  <!-- Ergonomic Wireless Mouse & RGB Charging Dock -->
+  <g transform="translate(1310, 800)">
+    <!-- Cyan Mouse Glow -->
+    <ellipse cx="45" cy="65" rx="36" ry="55" fill="#00f0ff" opacity="0.35" filter="blur(8px)" />
+    <!-- Mouse Chassis -->
+    <ellipse cx="45" cy="65" rx="28" ry="46" fill="#070e1a" stroke="#00f0ff" stroke-width="1.8" />
+    <!-- RGB Scroll Wheel & Lightstrip -->
+    <rect x="42" y="32" width="6" height="20" rx="3" fill="#00f0ff" />
+    <path d="M 25,60 Q 45,75 65,60" fill="none" stroke="#38bdf8" stroke-width="2" />
+  </g>
+
+  <!-- 11. Subtle Edge Vignette (For Depth and Contrast) -->
+  <radialGradient id="edgeVignette" cx="50%" cy="50%" r="70%">
+    <stop offset="60%" stop-color="#000000" stop-opacity="0" />
+    <stop offset="100%" stop-color="#000000" stop-opacity="0.5" />
+  </radialGradient>
+  <rect width="1920" height="1080" fill="url(#edgeVignette)" />
+</svg>

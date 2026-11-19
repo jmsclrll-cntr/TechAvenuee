@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" rx="16" fill="#1E293B"/>
+  <!-- Panel -->
+  <rect x="30" y="35" width="140" height="95" rx="4" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+  <rect x="35" y="40" width="130" height="85" fill="#1E3A5F"/>
+  <path d="M 45 105 Q 85 55 125 75 T 155 50" fill="none" stroke="#34D399" stroke-width="3" stroke-linecap="round"/>
+  <!-- Stand -->
+  <rect x="94" y="132" width="12" height="25" fill="#475569"/>
+  <polygon points="65,165 135,165 120,157 80,157" fill="#334155"/>
+</svg>

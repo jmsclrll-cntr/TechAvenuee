@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="400" height="480">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="60%" r="70%">
+      <stop offset="0%" stop-color="#1a1a2e"/><stop offset="100%" stop-color="#0a0a0f"/>
+    </radialGradient>
+    <linearGradient id="caseBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1c1c1c"/><stop offset="30%" stop-color="#2d2d2d"/>
+      <stop offset="70%" stop-color="#252525"/><stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <linearGradient id="glassPanel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8080ff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#2020aa" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="glassReflect" x1="0%" y1="0%" x2="30%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/>
+    </linearGradient>
+    <radialGradient id="fanGlow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff0080" stop-opacity="0.9"/><stop offset="100%" stop-color="#0040ff" stop-opacity="0.0"/>
+    </radialGradient>
+    <radialGradient id="fanGlow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ffcc" stop-opacity="0.9"/><stop offset="100%" stop-color="#0040ff" stop-opacity="0.0"/>
+    </radialGradient>
+    <radialGradient id="fanGlow3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6600" stop-opacity="0.85"/><stop offset="100%" stop-color="#8800ff" stop-opacity="0.0"/>
+    </radialGradient>
+    <linearGradient id="gpuGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a3a"/><stop offset="100%" stop-color="#121218"/>
+    </linearGradient>
+    <linearGradient id="moboGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1a0d"/><stop offset="100%" stop-color="#0a140a"/>
+    </linearGradient>
+    <linearGradient id="edgeHL" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#555"/><stop offset="100%" stop-color="#222"/>
+    </linearGradient>
+    <filter id="rgbGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#6633ff" flood-opacity="0.35"/></filter>
+  </defs>
+
+  <rect width="400" height="480" fill="url(#bgGrad)"/>
+  <ellipse cx="200" cy="430" rx="140" ry="22" fill="#6633ff" fill-opacity="0.18" filter="url(#softGlow)"/>
+
+  <g filter="url(#shadow)">
+    <!-- Case body -->
+    <rect x="80" y="55" width="240" height="368" rx="8" fill="url(#caseBody)"/>
+    <rect x="80" y="55" width="6" height="368" rx="3" fill="url(#edgeHL)"/>
+    <rect x="80" y="55" width="240" height="5" rx="2" fill="#444"/>
+    <rect x="88" y="418" width="224" height="8" rx="4" fill="#1a1a1a"/>
+
+    <!-- Front panel (left strip) -->
+    <rect x="80" y="55" width="46" height="368" rx="4" fill="#181818"/>
+    <rect x="119" y="75" width="2" height="308" fill="#2a2a2a"/>
+
+    <!-- Front IO -->
+    <circle cx="100" cy="84" r="8" fill="#222" stroke="#444" stroke-width="1"/>
+    <circle cx="100" cy="84" r="5" fill="#ff0080" fill-opacity="0.85" filter="url(#rgbGlow)"/>
+    <circle cx="100" cy="84" r="2" fill="#ff88cc"/>
+    <rect x="112" y="77" width="8" height="4" rx="1" fill="#333"/>
+    <rect x="112" y="84" width="8" height="4" rx="1" fill="#333"/>
+    <rect x="112" y="91" width="5" height="3" rx="1" fill="#005588"/>
+
+    <!-- Tempered glass -->
+    <rect x="126" y="63" width="186" height="352" rx="4" fill="url(#glassPanel)" stroke="#444" stroke-width="1"/>
+    <rect x="128" y="65" width="28" height="348" rx="2" fill="url(#glassReflect)"/>
+
+    <!-- Motherboard -->
+    <rect x="136" y="130" width="138" height="210" rx="2" fill="url(#moboGrad)"/>
+    <line x1="145" y1="145" x2="264" y2="145" stroke="#1a3a1a" stroke-width="1"/>
+    <line x1="145" y1="145" x2="145" y2="335" stroke="#1a3a1a" stroke-width="1"/>
+
+    <!-- CPU Cooler (tower, with RGB) -->
+    <rect x="176" y="150" width="58" height="68" rx="2" fill="#1a1a2a"/>
+    <line x1="181" y1="150" x2="181" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="187" y1="150" x2="187" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="193" y1="150" x2="193" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="199" y1="150" x2="199" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="205" y1="150" x2="205" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="211" y1="150" x2="211" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="217" y1="150" x2="217" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="223" y1="150" x2="223" y2="218" stroke="#2a2a3a" stroke-width="2"/>
+    <rect x="176" y="178" width="58" height="7" rx="2" fill="#ff0080" fill-opacity="0.9" filter="url(#rgbGlow)"/>
+
+    <!-- RAM -->
+    <rect x="253" y="142" width="10" height="82" rx="1" fill="#1a1a2a"/>
+    <rect x="253" y="142" width="10" height="10" rx="1" fill="#ff0080" fill-opacity="0.85" filter="url(#rgbGlow)"/>
+    <rect x="265" y="142" width="10" height="82" rx="1" fill="#1a1a2a"/>
+    <rect x="265" y="142" width="10" height="10" rx="1" fill="#00ffcc" fill-opacity="0.85" filter="url(#rgbGlow)"/>
+
+    <!-- GPU -->
+    <rect x="136" y="250" width="166" height="66" rx="4" fill="url(#gpuGrad)" stroke="#333" stroke-width="1"/>
+    <circle cx="174" cy="283" r="24" fill="#111" stroke="#2a2a3a" stroke-width="1.5"/>
+    <circle cx="174" cy="283" r="19" fill="#161622"/>
+    <path d="M174 264 Q184 270 182 283 Q184 296 174 302 Q164 296 166 283 Q164 270 174 264Z" fill="#222"/>
+    <path d="M155 283 Q161 273 174 271 Q187 273 193 283 Q187 293 174 295 Q161 293 155 283Z" fill="#222"/>
+    <circle cx="174" cy="283" r="6" fill="#1a1a28"/>
+    <circle cx="239" cy="283" r="24" fill="#111" stroke="#2a2a3a" stroke-width="1.5"/>
+    <circle cx="239" cy="283" r="19" fill="#161622"/>
+    <path d="M239 264 Q249 270 247 283 Q249 296 239 302 Q229 296 231 283 Q229 270 239 264Z" fill="#222"/>
+    <path d="M220 283 Q226 273 239 271 Q252 273 258 283 Q252 293 239 295 Q226 293 220 283Z" fill="#222"/>
+    <circle cx="239" cy="283" r="6" fill="#1a1a28"/>
+    <rect x="136" y="314" width="166" height="4" rx="2" fill="#8800ff" fill-opacity="0.9" filter="url(#rgbGlow)"/>
+
+    <!-- Top fans (3 RGB) -->
+    <circle cx="162" cy="90" r="21" fill="#111" stroke="#2a2a3a" stroke-width="1"/>
+    <circle cx="162" cy="90" r="17" fill="url(#fanGlow1)" fill-opacity="0.55"/>
+    <circle cx="162" cy="90" r="9" fill="#0a0a0f"/>
+    <circle cx="162" cy="90" r="4" fill="#ff0080" fill-opacity="0.9" filter="url(#rgbGlow)"/>
+    <line x1="150" y1="78" x2="174" y2="102" stroke="#ff0080" stroke-width="1" stroke-opacity="0.35"/>
+    <line x1="174" y1="78" x2="150" y2="102" stroke="#ff0080" stroke-width="1" stroke-opacity="0.35"/>
+
+    <circle cx="207" cy="90" r="21" fill="#111" stroke="#2a2a3a" stroke-width="1"/>
+    <circle cx="207" cy="90" r="17" fill="url(#fanGlow2)" fill-opacity="0.55"/>
+    <circle cx="207" cy="90" r="9" fill="#0a0a0f"/>
+    <circle cx="207" cy="90" r="4" fill="#00ffcc" fill-opacity="0.9" filter="url(#rgbGlow)"/>
+    <line x1="195" y1="78" x2="219" y2="102" stroke="#00ffcc" stroke-width="1" stroke-opacity="0.35"/>
+    <line x1="219" y1="78" x2="195" y2="102" stroke="#00ffcc" stroke-width="1" stroke-opacity="0.35"/>
+
+    <circle cx="252" cy="90" r="21" fill="#111" stroke="#2a2a3a" stroke-width="1"/>
+    <circle cx="252" cy="90" r="17" fill="url(#fanGlow3)" fill-opacity="0.55"/>
+    <circle cx="252" cy="90" r="9" fill="#0a0a0f"/>
+    <circle cx="252" cy="90" r="4" fill="#ff6600" fill-opacity="0.9" filter="url(#rgbGlow)"/>
+    <line x1="240" y1="78" x2="264" y2="102" stroke="#ff6600" stroke-width="1" stroke-opacity="0.35"/>
+    <line x1="264" y1="78" x2="240" y2="102" stroke="#ff6600" stroke-width="1" stroke-opacity="0.35"/>
+
+    <!-- Bottom RGB strip -->
+    <rect x="136" y="350" width="174" height="5" rx="2" fill="#ff0080" fill-opacity="0.75" filter="url(#rgbGlow)"/>
+
+    <!-- PSU -->
+    <rect x="136" y="358" width="78" height="48" rx="2" fill="#141414" stroke="#222" stroke-width="1"/>
+    <line x1="145" y1="372" x2="205" y2="372" stroke="#333" stroke-width="0.5"/>
+    <line x1="145" y1="378" x2="205" y2="378" stroke="#333" stroke-width="0.5"/>
+    <line x1="145" y1="384" x2="205" y2="384" stroke="#333" stroke-width="0.5"/>
+    <line x1="145" y1="390" x2="205" y2="390" stroke="#333" stroke-width="0.5"/>
+  </g>
+
+  <!-- Label -->
+  <rect x="82" y="434" width="236" height="26" rx="4" fill="#111" fill-opacity="0.85"/>
+  <text x="200" y="451" text-anchor="middle" fill="#aaaacc" font-size="10" font-family="Arial,sans-serif" font-weight="700" letter-spacing="1.5">AVENUE BEAST GAMING PC</text>
+</svg>

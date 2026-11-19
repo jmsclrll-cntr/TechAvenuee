@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" rx="16" fill="#1E293B"/>
+  <!-- M.2 SSD Stick -->
+  <rect x="35" y="70" width="130" height="60" rx="4" fill="#0F172A" stroke="#EC4899" stroke-width="2"/>
+  <rect x="40" y="80" width="35" height="40" rx="2" fill="#1E293B" stroke="#64748B" stroke-width="1"/>
+  <rect x="82" y="80" width="35" height="40" rx="2" fill="#1E293B" stroke="#64748B" stroke-width="1"/>
+  <rect x="124" y="85" width="25" height="30" rx="2" fill="#334155"/>
+  <!-- Pins -->
+  <rect x="162" y="78" width="5" height="44" fill="#F59E0B"/>
+  <text x="95" y="148" fill="#F472B6" font-size="9" font-family="monospace" text-anchor="middle">NVMe PCIe 4.0</text>
+</svg>
