@@ -1,4 +1,4 @@
-﻿const API_BASE = typeof window !== "undefined" && window.location.hostname ? `http://${window.location.hostname}:5000/api` : "http://127.0.0.1:5000/api";
+const API_BASE = typeof window !== "undefined" && window.location.hostname ? `http://${window.location.hostname}:5000/api` : "http://127.0.0.1:5000/api";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("techavenue_token");
@@ -45,6 +45,18 @@ export async function apiRequest(endpoint, options = {}) {
   }
 }
 
+export const getProductImageUrl = (url) => {
+  if (!url) return '/products/desktop.svg';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+    return url;
+  }
+  if (url.startsWith('/api/uploads/')) {
+    const host = typeof window !== "undefined" && window.location.hostname ? window.location.hostname : "127.0.0.1";
+    return `http://${host}:5000${url}`;
+  }
+  return url;
+};
+
 export const api = {
   // Auth
   login: (email, password) => apiRequest("/auth/login", {
@@ -65,14 +77,20 @@ export const api = {
     const q = new URLSearchParams(params).toString();
     return apiRequest(`/inventory?${q}`);
   },
-  addProduct: (productData) => apiRequest("/inventory", {
-    method: "POST",
-    body: JSON.stringify(productData)
-  }),
-  updateProduct: (id, productData) => apiRequest(`/inventory/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(productData)
-  }),
+  addProduct: (productData) => {
+    const isFormData = productData instanceof FormData;
+    return apiRequest("/inventory", {
+      method: "POST",
+      body: isFormData ? productData : JSON.stringify(productData)
+    });
+  },
+  updateProduct: (id, productData) => {
+    const isFormData = productData instanceof FormData;
+    return apiRequest(`/inventory/${id}`, {
+      method: "PUT",
+      body: isFormData ? productData : JSON.stringify(productData)
+    });
+  },
   deleteProduct: (id) => apiRequest(`/inventory/${id}`, {
     method: "DELETE"
   }),
@@ -89,7 +107,10 @@ export const api = {
     method: "POST",
     body: JSON.stringify(data)
   }),
-  getMovements: () => apiRequest("/inventory/movements"),
+  getMovements: (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    return apiRequest(q ? `/inventory/movements?${q}` : "/inventory/movements");
+  },
 
   // New Transaction — Draft Management
   getDrafts: () => apiRequest("/transactions/drafts"),
@@ -144,6 +165,9 @@ export const api = {
     method: "PUT",
     body: JSON.stringify(data)
   }),
+  deleteSupplier: (id) => apiRequest(`/suppliers/${id}`, {
+    method: "DELETE"
+  }),
   toggleSupplierStatus: (id, status) => apiRequest(`/suppliers/${id}/status`, {
     method: "PUT",
     body: JSON.stringify({ status })
@@ -189,6 +213,10 @@ export const api = {
   getUsers: () => apiRequest("/users"),
   createUser: (userData) => apiRequest("/users", {
     method: "POST",
+    body: JSON.stringify(userData)
+  }),
+  updateUser: (id, userData) => apiRequest(`/users/${id}`, {
+    method: "PUT",
     body: JSON.stringify(userData)
   }),
   updateUserStatus: (id, status) => apiRequest(`/users/${id}/status`, {

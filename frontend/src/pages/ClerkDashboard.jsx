@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Package,
   Boxes,
@@ -23,7 +23,7 @@ import {
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal, { ConfirmDialog } from '../components/Modal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { printInventory } from '../utils/printInventory';
 import { useNotification } from '../context/NotificationContext';
@@ -61,6 +61,23 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  // Stock Movement Audit Trail Filters & Pagination
+  const [movementSearch, setMovementSearch] = useState('');
+  const [movementCategory, setMovementCategory] = useState('');
+  const [movementSupplier, setMovementSupplier] = useState('');
+  const [movementProcessor, setMovementProcessor] = useState('');
+  const [movementDateFilterType, setMovementDateFilterType] = useState('all'); // 'all', 'today', 'week', 'month', 'specific', 'range'
+  const [movementSpecificDate, setMovementSpecificDate] = useState('');
+  const [movementStartDate, setMovementStartDate] = useState('');
+  const [movementEndDate, setMovementEndDate] = useState('');
+  const [movementProcessorsList, setMovementProcessorsList] = useState([]);
+  const [movementPage, setMovementPage] = useState(1);
+  const movementItemsPerPage = 10;
+
+  // Independent Search States for Stock In and Stock Out
+  const [stockInSearch, setStockInSearch] = useState('');
+  const [stockOutSearch, setStockOutSearch] = useState('');
+
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,6 +86,10 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [isStockInModalOpen, setIsStockInModalOpen] = useState(false);
   const [isStockOutModalOpen, setIsStockOutModalOpen] = useState(false);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [isDeleteSupplierModalOpen, setIsDeleteSupplierModalOpen] = useState(false);
+  const [deletingSupplier, setDeletingSupplier] = useState(null);
+  const [isDeletingSupplier, setIsDeletingSupplier] = useState(false);
+  const [deleteSupplierWarningError, setDeleteSupplierWarningError] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({});
 
@@ -82,6 +103,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
   const [productImageFile, setProductImageFile] = useState(null);
   const [productImagePreview, setProductImagePreview] = useState(null);
   const [editProduct, setEditProduct] = useState({});
+  const [editProductImageFile, setEditProductImageFile] = useState(null);
+  const [editProductImagePreview, setEditProductImagePreview] = useState(null);
   const [stockActionData, setStockActionData] = useState({ quantity: 1, supplier_id: '', notes: '', reason: '' });
   const [newSupplier, setNewSupplier] = useState({ name: '', contact_person: '', email: '', phone: '', address: '' });
 
@@ -109,7 +132,12 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
         setProducts(invRes.products);
         setCategories(invRes.categories);
       }
-      if (movRes.status === 'success') setMovements(movRes.movements);
+      if (movRes.status === 'success') {
+        setMovements(movRes.movements || []);
+        if (movRes.processors) {
+          setMovementProcessorsList(movRes.processors);
+        }
+      }
       if (supRes.status === 'success') setSuppliers(supRes.suppliers);
     } catch (err) {
       console.error('Error loading inventory data:', err);
@@ -117,6 +145,185 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       setLoading(false);
     }
   };
+
+  // Extract distinct staff members who have processed movements
+  const processedByOptions = useMemo(() => {
+    const set = new Set(movementProcessorsList || []);
+    (movements || []).forEach(m => {
+      if (m.processed_by) set.add(m.processed_by);
+    });
+    return Array.from(set).sort();
+  }, [movementProcessorsList, movements]);
+
+  // Robust date comparison helper
+  const extractDateYMD = (dateVal) => {
+    if (!dateVal) return '';
+    try {
+      if (typeof dateVal === 'string') {
+        const match = dateVal.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (match) return match[1];
+      }
+      const d = new Date(dateVal);
+      if (!isNaN(d.getTime())) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    } catch {
+      return '';
+    }
+  };
+
+  // Reset pagination on filter or tab change
+  useEffect(() => {
+    setMovementPage(1);
+  }, [
+    movementSearch,
+    movementCategory,
+    movementSupplier,
+    movementProcessor,
+    movementDateFilterType,
+    movementSpecificDate,
+    movementStartDate,
+    movementEndDate,
+    movementTab
+  ]);
+
+  const handleClearMovementFilters = () => {
+    setMovementSearch('');
+    setMovementCategory('');
+    setMovementSupplier('');
+    setMovementProcessor('');
+    setMovementDateFilterType('all');
+    setMovementSpecificDate('');
+    setMovementStartDate('');
+    setMovementEndDate('');
+    setMovementPage(1);
+  };
+
+  const hasActiveMovementFilters = Boolean(
+    movementSearch.trim() ||
+    movementCategory ||
+    movementSupplier ||
+    movementProcessor ||
+    movementDateFilterType !== 'all' ||
+    movementSpecificDate ||
+    movementStartDate ||
+    movementEndDate
+  );
+
+  // Combined filtering for Stock Movement Audit Trail
+  const filterMovementItem = (m) => {
+    // 1. Search Bar: Search by Product Name, SKU, or Brand
+    if (movementSearch.trim()) {
+      const q = movementSearch.trim().toLowerCase();
+      const nameMatch = (m.product_name || '').toLowerCase().includes(q);
+      const skuMatch = (m.sku || '').toLowerCase().includes(q);
+      const brandMatch = (m.brand || '').toLowerCase().includes(q);
+      if (!nameMatch && !skuMatch && !brandMatch) return false;
+    }
+
+    // 2. Category Filter: Filter movements according to product category
+    if (movementCategory) {
+      const catIdMatch = String(m.category_id || '') === String(movementCategory);
+      const catNameMatch = (m.category_name || '').toLowerCase() === String(movementCategory).toLowerCase();
+      if (!catIdMatch && !catNameMatch) return false;
+    }
+
+    // 3. Supplier Filter: Filter records according to supplier
+    if (movementSupplier) {
+      const sName = (m.supplier_name || '').toLowerCase();
+      const sTarget = movementSupplier.toLowerCase();
+      if (sName !== sTarget && !sName.includes(sTarget)) return false;
+    }
+
+    // 4. Processed By Filter: Filter records according to employee
+    if (movementProcessor) {
+      if ((m.processed_by || '').trim() !== movementProcessor.trim()) return false;
+    }
+
+    // 5. Date Filter: Filter by date or date range
+    if (movementDateFilterType !== 'all') {
+      const mDate = extractDateYMD(m.created_at);
+      const today = new Date().toISOString().split('T')[0];
+
+      if (movementDateFilterType === 'today') {
+        if (mDate !== today) return false;
+      } else if (movementDateFilterType === 'week') {
+        const now = new Date();
+        const pastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        if (mDate < pastWeek || mDate > today) return false;
+      } else if (movementDateFilterType === 'month') {
+        const now = new Date();
+        const pastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        if (mDate < pastMonth || mDate > today) return false;
+      } else if (movementDateFilterType === 'specific') {
+        if (movementSpecificDate && mDate !== movementSpecificDate) return false;
+      } else if (movementDateFilterType === 'range') {
+        if (movementStartDate && mDate < movementStartDate) return false;
+        if (movementEndDate && mDate > movementEndDate) return false;
+      }
+    }
+
+    return true;
+  };
+
+  const allStockInMovements = useMemo(() => {
+    return movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0);
+  }, [movements]);
+
+  const allStockOutMovements = useMemo(() => {
+    return movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0);
+  }, [movements]);
+
+  const filteredStockInMovements = useMemo(() => {
+    return allStockInMovements.filter(filterMovementItem);
+  }, [allStockInMovements, movementSearch, movementCategory, movementSupplier, movementProcessor, movementDateFilterType, movementSpecificDate, movementStartDate, movementEndDate]);
+
+  const filteredStockOutMovements = useMemo(() => {
+    return allStockOutMovements.filter(filterMovementItem);
+  }, [allStockOutMovements, movementSearch, movementCategory, movementSupplier, movementProcessor, movementDateFilterType, movementSpecificDate, movementStartDate, movementEndDate]);
+
+  const currentMovementList = movementTab === 'stock_in' ? filteredStockInMovements : filteredStockOutMovements;
+  const totalMovementCount = movementTab === 'stock_in' ? allStockInMovements.length : allStockOutMovements.length;
+  const totalMovementPages = Math.max(1, Math.ceil(currentMovementList.length / movementItemsPerPage));
+  const safeMovementPage = Math.min(movementPage, totalMovementPages);
+  const paginatedMovements = useMemo(() => {
+    const start = (safeMovementPage - 1) * movementItemsPerPage;
+    return currentMovementList.slice(start, start + movementItemsPerPage);
+  }, [currentMovementList, safeMovementPage, movementItemsPerPage]);
+
+  // Dynamic search filtering for Stock In (searches SKU, Name, Brand, Category)
+  const filterStockInProducts = useMemo(() => {
+    if (!stockInSearch.trim()) return products;
+    const q = stockInSearch.trim().toLowerCase();
+    return products.filter((p) => {
+      const sku = (p.sku || '').toLowerCase();
+      const name = (p.name || '').toLowerCase();
+      const brand = (p.brand || '').toLowerCase();
+      const cat = (p.category_name || categories.find((c) => c.id === p.category_id)?.name || '').toLowerCase();
+      return sku.includes(q) || name.includes(q) || brand.includes(q) || cat.includes(q);
+    });
+  }, [products, stockInSearch, categories]);
+
+  // Dynamic search filtering for Stock Out (only products with positive stock, searches SKU, Name, Brand, Category)
+  const allStockOutProducts = useMemo(() => {
+    return products.filter((p) => Number(p.stock_quantity) > 0);
+  }, [products]);
+
+  const filterStockOutProducts = useMemo(() => {
+    if (!stockOutSearch.trim()) return allStockOutProducts;
+    const q = stockOutSearch.trim().toLowerCase();
+    return allStockOutProducts.filter((p) => {
+      const sku = (p.sku || '').toLowerCase();
+      const name = (p.name || '').toLowerCase();
+      const brand = (p.brand || '').toLowerCase();
+      const cat = (p.category_name || categories.find((c) => c.id === p.category_id)?.name || '').toLowerCase();
+      return sku.includes(q) || name.includes(q) || brand.includes(q) || cat.includes(q);
+    });
+  }, [allStockOutProducts, stockOutSearch, categories]);
 
   useEffect(() => {
     loadData();
@@ -127,50 +334,92 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     e.preventDefault();
     const qty = Number(newProduct.stock_quantity);
     if (qty > 100) {
-      alert("Initial stock quantity cannot exceed the maximum limit of 100 units.");
+      showError("Initial stock quantity cannot exceed the maximum limit of 100 units.");
       return;
     }
     if (qty < 0) {
-      alert("Initial stock quantity cannot be negative.");
+      showError("Initial stock quantity cannot be negative.");
       return;
     }
-    try {
-      const res = await api.addProduct({
-        ...newProduct,
-        stock_quantity: qty,
-        image_url: productImagePreview ? undefined : '/products/desktop.svg'
-      });
-      if (productImageFile && res?.product_id) {
-        const formData = new FormData();
-        formData.append('image', productImageFile);
-        try {
-          await api.uploadProductImage(res.product_id, formData);
-        } catch (uploadErr) {
-          console.warn("Image upload warning:", uploadErr);
-        }
+
+    if (productImageFile) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(productImageFile.type.toLowerCase())) {
+        showError("Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.");
+        return;
       }
-      showNotification(`Product ${newProduct.name} successfully created!`);
+      if (productImageFile.size > 5 * 1024 * 1024) {
+        showError("Image size exceeds the 5 MB limit. Please upload a smaller photo.");
+        return;
+      }
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('sku', (newProduct.sku || '').trim().toUpperCase());
+      formData.append('name', (newProduct.name || '').trim());
+      formData.append('brand', (newProduct.brand || '').trim());
+      formData.append('category_id', newProduct.category_id || categories[0]?.id || 1);
+      formData.append('cost_price', newProduct.cost_price || 0);
+      formData.append('selling_price', newProduct.selling_price || 0);
+      formData.append('stock_quantity', qty);
+      formData.append('description', newProduct.description || '');
+      if (productImageFile) {
+        formData.append('image', productImageFile);
+      }
+
+      const res = await api.addProduct(formData);
+      if (res?.has_photo || productImageFile) {
+        showSuccess(`Product "${newProduct.name}" added successfully with photo!`);
+      } else {
+        showSuccess(`Product "${newProduct.name}" added successfully without photo.`);
+      }
+
       setIsAddModalOpen(false);
       setNewProduct({ sku: '', name: '', brand: '', category_id: categories[0]?.id || 1, cost_price: '', selling_price: '', stock_quantity: 10, description: '' });
       setProductImageFile(null);
       setProductImagePreview(null);
-      loadData();
+      await loadData();
     } catch (err) {
-      alert(err.message || 'Failed to add product');
+      showError(err.message || 'Failed to add product');
     }
   };
 
-  // Handle Edit Product (Clerk cannot change selling_price)
+  // Handle Edit Product
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
+    if (editProductImageFile) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(editProductImageFile.type.toLowerCase())) {
+        showError("Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.");
+        return;
+      }
+      if (editProductImageFile.size > 5 * 1024 * 1024) {
+        showError("Image size exceeds the 5 MB limit. Please upload a smaller photo.");
+        return;
+      }
+    }
+
     try {
-      const { reorder_level, ...payload } = editProduct;
-      await api.updateProduct(editProduct.id, payload);
-      showNotification(`Product ${editProduct.name} updated!`);
+      const formData = new FormData();
+      formData.append('name', (editProduct.name || '').trim());
+      formData.append('brand', (editProduct.brand || '').trim());
+      formData.append('category_id', editProduct.category_id);
+      formData.append('cost_price', editProduct.cost_price);
+      formData.append('selling_price', editProduct.selling_price);
+      formData.append('description', editProduct.description || '');
+      if (editProductImageFile) {
+        formData.append('image', editProductImageFile);
+      }
+
+      const res = await api.updateProduct(editProduct.id, formData);
+      showSuccess(res?.message || `Product "${editProduct.name}" updated successfully!`);
       setIsEditModalOpen(false);
-      loadData();
+      setEditProductImageFile(null);
+      setEditProductImagePreview(null);
+      await loadData();
     } catch (err) {
-      alert(err.message);
+      showError(err.message || 'Failed to update product');
     }
   };
 
@@ -267,6 +516,35 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
     }
   };
 
+  const handleOpenDeleteSupplier = (supplier) => {
+    setDeletingSupplier(supplier);
+    setDeleteSupplierWarningError(null);
+    setIsDeleteSupplierModalOpen(true);
+  };
+
+  const handleConfirmDeleteSupplier = async () => {
+    if (!deletingSupplier?.id) return;
+    setIsDeletingSupplier(true);
+    setDeleteSupplierWarningError(null);
+    try {
+      const res = await api.deleteSupplier(deletingSupplier.id);
+      if (res.status === 'success') {
+        showSuccess(res.message || `Supplier '${deletingSupplier.name}' deleted successfully.`);
+        setIsDeleteSupplierModalOpen(false);
+        setDeletingSupplier(null);
+        await loadData();
+      } else {
+        setDeleteSupplierWarningError(res.message || 'Failed to delete supplier.');
+      }
+    } catch (err) {
+      const msg = err.message || 'Cannot delete supplier.';
+      setDeleteSupplierWarningError(msg);
+      showError(msg);
+    } finally {
+      setIsDeletingSupplier(false);
+    }
+  };
+
   const getStatusBadge = (status, qty, threshold = 5) => {
     if (qty === 0 || status === 'out_of_stock') {
       return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-500/10 text-red-500 border border-red-500/20">Out of Stock</span>;
@@ -275,7 +553,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-[#FB923C] border border-amber-500/20">Low Stock</span>;
     }
     return (
-      <span 
+      <span
         className="px-2 py-0.5 rounded-full text-[11px] font-bold border transition-colors"
         style={{
           backgroundColor: 'var(--accent-glow)',
@@ -300,11 +578,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           {/* Top KPI Cards (Consolidated 3 Primary Metrics with Blended Fade Effect) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
-              <div 
+              <div
                 className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
-              <div 
+              <div
                 className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
                 style={{ backgroundColor: 'var(--accent-glow)' }}
               />
@@ -335,11 +613,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
-              <div 
+              <div
                 className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
-              <div 
+              <div
                 className="absolute -right-8 -top-8 w-28 h-28 rounded-full blur-xl pointer-events-none"
                 style={{ backgroundColor: 'var(--accent-glow)' }}
               />
@@ -360,11 +638,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
             {/* Left 7 cols: Category Distribution Bar Chart */}
             <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[var(--accent-border)] transition-colors flex flex-col justify-between relative overflow-hidden">
-              <div 
+              <div
                 className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
-              <div 
+              <div
                 className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
                 style={{ backgroundColor: 'var(--accent-glow)' }}
               />
@@ -382,11 +660,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="lg:col-span-5 flex flex-col justify-between gap-3.5">
               {/* Low-Stock vs In-Stock Ratio Donut */}
               <div className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-colors relative overflow-hidden">
-                <div 
+                <div
                   className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                   style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
                 />
-                <div 
+                <div
                   className="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-xl pointer-events-none"
                   style={{ backgroundColor: 'var(--accent-glow)' }}
                 />
@@ -410,7 +688,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 shadow-sm relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
                 <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
-                
+
                 <div className="relative z-10 grid grid-cols-3 gap-2 divide-x divide-[#292524]">
                   {/* Units in Stock */}
                   <div className="px-2 first:pl-0 text-center sm:text-left">
@@ -549,13 +827,13 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                         <td className="py-2 px-3 font-mono font-medium text-[11px] text-stone-400">{m.reference_number}</td>
                         <td className="py-2 px-3 font-medium truncate max-w-[130px] text-[#FAFAF9]">{m.product_name}</td>
                         <td className="py-2 px-3">
-                          <span 
+                          <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.movement_type === 'stock_in'
                               ? 'bg-emerald-500/10 text-emerald-400'
                               : m.movement_type === 'stock_out'
                                 ? 'bg-red-500/10 text-red-400'
                                 : ''
-                            }`}
+                              }`}
                             style={m.movement_type !== 'stock_in' && m.movement_type !== 'stock_out' ? {
                               backgroundColor: 'var(--accent-glow)',
                               color: 'var(--accent-light)',
@@ -715,7 +993,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
                               <img
-                                src={p.image_url || '/products/desktop.svg'}
+                                src={getProductImageUrl(p.image_url)}
                                 alt={p.name}
                                 className="max-h-full max-w-full object-contain"
                                 onError={(e) => { e.target.src = '/products/desktop.svg'; }}
@@ -748,6 +1026,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                               type="button"
                               onClick={() => {
                                 setEditProduct(p);
+                                setEditProductImageFile(null);
+                                setEditProductImagePreview(null);
                                 setIsEditModalOpen(true);
                               }}
                               style={{ backgroundColor: 'var(--accent-primary)' }}
@@ -788,38 +1068,114 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
           </div>
 
+          {/* Search Bar & Result Counter */}
+          <div className="space-y-2 pt-1">
+            <div className="relative w-full sm:max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Search by SKU, Product Name, or Brand..."
+                value={stockInSearch}
+                onChange={(e) => setStockInSearch(e.target.value)}
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+              />
+              {stockInSearch && (
+                <button
+                  type="button"
+                  onClick={() => setStockInSearch('')}
+                  className="absolute right-2.5 top-2.5 text-stone-400 hover:text-white cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Result Counter & Active Clear Badge */}
+            <div className="flex items-center justify-between text-xs text-stone-400 px-0.5">
+              <div className="flex items-center gap-2">
+                <span>
+                  Showing <strong className="text-[#FB923C]">{filterStockInProducts.length}</strong> products available for restocking
+                  {stockInSearch.trim() && ` (filtered from ${products.length} total)`}
+                </span>
+                {stockInSearch.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => setStockInSearch('')}
+                    className="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-red-400 font-semibold px-2 py-0.5 rounded bg-[#141210] border border-[#292524] transition-colors cursor-pointer"
+                  >
+                    Clear Search <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-            {products.map((p) => (
-              <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-[#141210] flex flex-col justify-between ${highlightedProductId === p.id
+            {filterStockInProducts.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-stone-400 text-xs rounded-xl border border-dashed border-[#292524] bg-[#141210]">
+                <div className="flex flex-col items-center justify-center gap-2 py-4">
+                  <Package className="w-8 h-8 text-stone-500 stroke-1" />
+                  <span className="font-semibold text-stone-300 text-sm">No matching products found</span>
+                  <span className="text-stone-500 text-xs">
+                    {stockInSearch.trim() ? `No products match your search "${stockInSearch}"` : 'No products available for restocking.'}
+                  </span>
+                  {stockInSearch.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => setStockInSearch('')}
+                      className="mt-2 text-xs font-bold text-[var(--accent-primary)] hover:underline cursor-pointer"
+                    >
+                      Clear Search
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              filterStockInProducts.map((p) => (
+                <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-[#141210] flex flex-col justify-between ${highlightedProductId === p.id
                   ? 'border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/60 shadow-lg scale-[1.01]'
                   : 'border-[#292524] hover:border-[var(--accent-border)]'
-                }`}>
-                <div>
-                  <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
-                    {getStatusBadge(p.status, p.stock_quantity)}
+                  }`}>
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
+                      {getStatusBadge(p.status, p.stock_quantity)}
+                    </div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="w-12 h-12 rounded-lg bg-[#1C1917] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={getProductImageUrl(p.image_url)}
+                          alt={p.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm text-[#FAFAF9] truncate">{p.name}</h4>
+                        <p className="text-xs text-stone-400 truncate">{p.brand} • {p.category_name}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between text-xs">
+                      <span className="text-stone-400">Current Stock:</span>
+                      <span className="font-bold text-[#FAFAF9]">{p.stock_quantity} units</span>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-sm mt-1 text-[#FAFAF9] line-clamp-1">{p.name}</h4>
-                  <p className="text-xs text-stone-400 mt-1">{p.brand} • {p.category_name}</p>
-                  <div className="mt-3 flex items-center justify-between text-xs">
-                    <span className="text-stone-400">Current Stock:</span>
-                    <span className="font-bold text-[#FAFAF9]">{p.stock_quantity} units</span>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedProduct(p);
+                      setStockActionData({ quantity: 10, supplier_id: '', notes: 'Shipment restock' });
+                      setIsStockInModalOpen(true);
+                    }}
+                    style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+                    className="mt-4 w-full py-2 rounded-lg text-white text-xs font-semibold transition-all hover:opacity-90 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:scale-95"
+                  >
+                    <ArrowDownLeft className="w-4 h-4" />
+                    Receive Restock Batch
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedProduct(p);
-                    setStockActionData({ quantity: 10, supplier_id: '', notes: 'Shipment restock' });
-                    setIsStockInModalOpen(true);
-                  }}
-                  style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
-                  className="mt-4 w-full py-2 rounded-lg text-white text-xs font-semibold transition-all hover:opacity-90 flex items-center justify-center gap-1.5 shadow-sm"
-                >
-                  <ArrowDownLeft className="w-4 h-4" />
-                  Receive Restock Batch
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}
@@ -832,33 +1188,109 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <p className="text-xs text-stone-400">Process non-sale stock reductions: damaged units, RMA returns, display models, or inter-branch transfers</p>
           </div>
 
+          {/* Search Bar & Result Counter */}
+          <div className="space-y-2 pt-1">
+            <div className="relative w-full sm:max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Search by SKU, Product Name, or Brand..."
+                value={stockOutSearch}
+                onChange={(e) => setStockOutSearch(e.target.value)}
+                className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+              />
+              {stockOutSearch && (
+                <button
+                  type="button"
+                  onClick={() => setStockOutSearch('')}
+                  className="absolute right-2.5 top-2.5 text-stone-400 hover:text-white cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Result Counter & Active Clear Badge */}
+            <div className="flex items-center justify-between text-xs text-stone-400 px-0.5">
+              <div className="flex items-center gap-2">
+                <span>
+                  Showing <strong className="text-[#FB923C]">{filterStockOutProducts.length}</strong> products available for reduction
+                  {stockOutSearch.trim() && ` (filtered from ${allStockOutProducts.length} total)`}
+                </span>
+                {stockOutSearch.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => setStockOutSearch('')}
+                    className="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-red-400 font-semibold px-2 py-0.5 rounded bg-[#141210] border border-[#292524] transition-colors cursor-pointer"
+                  >
+                    Clear Search <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-            {products.filter(p => p.stock_quantity > 0).map((p) => (
-              <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-[#141210] flex flex-col justify-between ${highlightedProductId === p.id
+            {filterStockOutProducts.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-stone-400 text-xs rounded-xl border border-dashed border-[#292524] bg-[#141210]">
+                <div className="flex flex-col items-center justify-center gap-2 py-4">
+                  <Package className="w-8 h-8 text-stone-500 stroke-1" />
+                  <span className="font-semibold text-stone-300 text-sm">No matching products found</span>
+                  <span className="text-stone-500 text-xs">
+                    {stockOutSearch.trim() ? `No products match your search "${stockOutSearch}"` : 'No products available with positive stock quantity.'}
+                  </span>
+                  {stockOutSearch.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => setStockOutSearch('')}
+                      className="mt-2 text-xs font-bold text-red-400 hover:underline cursor-pointer"
+                    >
+                      Clear Search
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              filterStockOutProducts.map((p) => (
+                <div key={p.id} className={`p-4 rounded-xl border hover:shadow-md transition-all duration-300 bg-[#141210] flex flex-col justify-between ${highlightedProductId === p.id
                   ? 'border-red-500 ring-2 ring-red-500/60 shadow-lg shadow-red-950/40 scale-[1.01]'
                   : 'border-[#292524] hover:border-red-500/40'
-                }`}>
-                <div>
-                  <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
-                    <span className="text-xs font-bold text-emerald-400">{p.stock_quantity} available</span>
+                  }`}>
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{p.sku}</span>
+                      <span className="text-xs font-bold text-emerald-400">{p.stock_quantity} available</span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="w-12 h-12 rounded-lg bg-[#1C1917] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={getProductImageUrl(p.image_url)}
+                          alt={p.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm text-[#FAFAF9] truncate">{p.name}</h4>
+                        <p className="text-xs text-stone-400 truncate">{p.brand} • {p.category_name}</p>
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-sm mt-1 text-[#FAFAF9] line-clamp-1">{p.name}</h4>
-                  <p className="text-xs text-stone-400 mt-1">{p.brand} • {p.category_name}</p>
+                  <button
+                    onClick={() => {
+                      setSelectedProduct(p);
+                      setStockActionData({ quantity: 1, reason: 'Damaged in transit' });
+                      setIsStockOutModalOpen(true);
+                    }}
+                    className="mt-4 w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:scale-95"
+                  >
+                    <ArrowUpRight className="w-4 h-4" />
+                    Record Stock-Out
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedProduct(p);
-                    setStockActionData({ quantity: 1, reason: 'Damaged in transit' });
-                    setIsStockOutModalOpen(true);
-                  }}
-                  className="mt-4 w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-                >
-                  <ArrowUpRight className="w-4 h-4" />
-                  Record Stock-Out
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}
@@ -879,36 +1311,214 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="inline-flex p-1 rounded-xl bg-[#141210] border border-[#292524] text-xs font-bold">
               <button
                 type="button"
-                onClick={() => setMovementTab('stock_in')}
+                onClick={() => { setMovementTab('stock_in'); setMovementPage(1); }}
                 style={movementTab === 'stock_in' ? { backgroundColor: 'var(--accent-primary)' } : undefined}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${movementTab === 'stock_in'
-                    ? 'text-white shadow-sm'
-                    : 'text-stone-400 hover:text-white'
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${movementTab === 'stock_in'
+                  ? 'text-white shadow-sm'
+                  : 'text-stone-400 hover:text-white'
                   }`}
               >
                 <ArrowDownLeft className="w-4 h-4" />
                 <span>Stock In History</span>
                 <span className={`ml-1 text-[10px] px-1.5 py-0.5 rounded-full ${movementTab === 'stock_in' ? 'bg-white/20 text-white' : 'bg-[#292524] text-stone-400'
                   }`}>
-                  {movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).length}
+                  {filteredStockInMovements.length}
                 </span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setMovementTab('stock_out')}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${movementTab === 'stock_out'
-                    ? 'bg-red-600 text-white shadow-sm'
-                    : 'text-stone-400 hover:text-white'
+                onClick={() => { setMovementTab('stock_out'); setMovementPage(1); }}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${movementTab === 'stock_out'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'text-stone-400 hover:text-white'
                   }`}
               >
                 <ArrowUpRight className="w-4 h-4" />
                 <span>Stock Out History</span>
                 <span className={`ml-1 text-[10px] px-1.5 py-0.5 rounded-full ${movementTab === 'stock_out' ? 'bg-white/20 text-white' : 'bg-[#292524] text-stone-400'
                   }`}>
-                  {movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).length}
+                  {filteredStockOutMovements.length}
                 </span>
               </button>
+            </div>
+          </div>
+
+          {/* Filter Toolbar (Consistent with Product Inventory Management) */}
+          <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#292524]">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-[#FB923C]" />
+                <h3 className="text-sm font-bold text-[#FAFAF9]">Filter Movement Audit Trail</h3>
+                <span className="text-[11px] text-stone-400">
+                  (Search by product, SKU, brand, category, supplier, staff, or date)
+                </span>
+              </div>
+              {hasActiveMovementFilters && (
+                <button
+                  type="button"
+                  onClick={handleClearMovementFilters}
+                  className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-red-400 font-semibold px-2.5 py-1 rounded-lg bg-[#141210] border border-[#292524] transition-colors cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Reset All Filters</span>
+                </button>
+              )}
+            </div>
+
+            {/* Filter Inputs Toolbar */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+              {/* 1. Search Bar */}
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
+                <input
+                  type="text"
+                  placeholder="Search SKU, Name, Brand..."
+                  value={movementSearch}
+                  onChange={(e) => setMovementSearch(e.target.value)}
+                  className="w-full text-xs pl-9 pr-8 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+                />
+                {movementSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setMovementSearch('')}
+                    className="absolute right-2.5 top-2.5 text-stone-400 hover:text-white cursor-pointer"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* 2. Category Filter */}
+              <select
+                value={movementCategory}
+                onChange={(e) => setMovementCategory(e.target.value)}
+                className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] cursor-pointer"
+              >
+                <option value="">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+
+              {/* 3. Supplier Filter */}
+              <select
+                value={movementSupplier}
+                onChange={(e) => setMovementSupplier(e.target.value)}
+                className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] cursor-pointer"
+              >
+                <option value="">All Suppliers</option>
+                {suppliers.map((s) => (
+                  <option key={s.id} value={s.name}>{s.name}</option>
+                ))}
+              </select>
+
+              {/* 4. Processed By Filter */}
+              <select
+                value={movementProcessor}
+                onChange={(e) => setMovementProcessor(e.target.value)}
+                className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] cursor-pointer"
+              >
+                <option value="">All Processed By</option>
+                {processedByOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+
+              {/* 5. Date Filter Presets */}
+              <select
+                value={movementDateFilterType}
+                onChange={(e) => {
+                  setMovementDateFilterType(e.target.value);
+                  if (e.target.value !== 'specific' && e.target.value !== 'range') {
+                    setMovementSpecificDate('');
+                    setMovementStartDate('');
+                    setMovementEndDate('');
+                  }
+                }}
+                className="text-xs px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] cursor-pointer"
+              >
+                <option value="all">All Dates</option>
+                <option value="today">Today</option>
+                <option value="week">Past 7 Days</option>
+                <option value="month">Past 30 Days</option>
+                <option value="specific">Specific Date...</option>
+                <option value="range">Date Range...</option>
+              </select>
+            </div>
+
+            {/* Sub-row for Date Pickers (Specific Date or Date Range) */}
+            {movementDateFilterType === 'specific' && (
+              <div className="flex items-center gap-2 pt-1 animate-in fade-in duration-150">
+                <span className="text-xs text-stone-400 font-semibold">Select Date:</span>
+                <input
+                  type="date"
+                  value={movementSpecificDate}
+                  onChange={(e) => setMovementSpecificDate(e.target.value)}
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+                />
+                {movementSpecificDate && (
+                  <button
+                    type="button"
+                    onClick={() => setMovementSpecificDate('')}
+                    className="text-stone-400 hover:text-white cursor-pointer"
+                    title="Clear date"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {movementDateFilterType === 'range' && (
+              <div className="flex items-center flex-wrap gap-2 pt-1 animate-in fade-in duration-150">
+                <span className="text-xs text-stone-400 font-semibold">From Date:</span>
+                <input
+                  type="date"
+                  value={movementStartDate}
+                  onChange={(e) => setMovementStartDate(e.target.value)}
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+                  title="Start Date"
+                />
+                <span className="text-xs text-stone-500 font-bold">To:</span>
+                <input
+                  type="date"
+                  value={movementEndDate}
+                  onChange={(e) => setMovementEndDate(e.target.value)}
+                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+                  title="End Date"
+                />
+                {(movementStartDate || movementEndDate) && (
+                  <button
+                    type="button"
+                    onClick={() => { setMovementStartDate(''); setMovementEndDate(''); }}
+                    className="text-stone-400 hover:text-white cursor-pointer"
+                    title="Clear range"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Result Counter & Active Filter Badge */}
+            <div className="flex items-center justify-between text-xs text-stone-400 px-0.5 pt-1 border-t border-[#292524]/60">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>
+                  Showing <strong className="text-[#FB923C]">{currentMovementList.length}</strong> {movementTab === 'stock_in' ? 'Stock In' : 'Stock Out'} records
+                  {hasActiveMovementFilters && ` (filtered from ${totalMovementCount} total)`}
+                </span>
+                {hasActiveMovementFilters && (
+                  <button
+                    type="button"
+                    onClick={handleClearMovementFilters}
+                    className="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-red-400 font-semibold px-2 py-0.5 rounded bg-[#141210] border border-[#292524] transition-colors cursor-pointer"
+                  >
+                    Clear Filters <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -917,7 +1527,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-2.5 border-b border-[#292524]">
                 <div className="flex items-center gap-2">
-                  <div 
+                  <div
                     className="p-1.5 rounded-lg"
                     style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)' }}
                   >
@@ -949,14 +1559,29 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#292524] text-stone-200">
-                    {movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).length === 0 ? (
+                    {filteredStockInMovements.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="py-8 text-center align-middle text-stone-400 text-xs">
-                          No restocking or receiving entries recorded yet.
+                        <td colSpan="5" className="py-10 text-center align-middle text-stone-400 text-xs">
+                          {hasActiveMovementFilters ? (
+                            <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                              <Filter className="w-7 h-7 text-stone-500 stroke-1" />
+                              <span className="font-semibold text-stone-300">No matching Stock In records found</span>
+                              <span className="text-[11px] text-stone-500">Try adjusting your filters or search keywords</span>
+                              <button
+                                type="button"
+                                onClick={handleClearMovementFilters}
+                                className="mt-1 text-[11px] font-bold text-[var(--accent-primary)] hover:underline cursor-pointer"
+                              >
+                                Clear Filters
+                              </button>
+                            </div>
+                          ) : (
+                            "No restocking or receiving entries recorded yet."
+                          )}
                         </td>
                       </tr>
                     ) : (
-                      movements.filter(m => m.movement_type === 'stock_in' || m.quantity > 0).map((m, idx) => (
+                      paginatedMovements.map((m) => (
                         <tr key={m.id} className="hover:bg-[#292524]/60 transition-colors">
                           <td className="py-3 px-3 text-center align-middle text-xs font-medium text-[#FAFAF9] truncate" title={m.product_name}>
                             {m.product_name}
@@ -979,6 +1604,36 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination Controls */}
+              {filteredStockInMovements.length > movementItemsPerPage && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#292524] text-xs text-stone-400">
+                  <div>
+                    Showing <strong className="text-stone-200">{(safeMovementPage - 1) * movementItemsPerPage + 1}</strong> to <strong className="text-stone-200">{Math.min(safeMovementPage * movementItemsPerPage, filteredStockInMovements.length)}</strong> of <strong className="text-[#FB923C]">{filteredStockInMovements.length}</strong> records
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setMovementPage(p => Math.max(1, p - 1))}
+                      disabled={safeMovementPage === 1}
+                      className="px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-2.5 font-mono font-bold text-stone-200">
+                      {safeMovementPage} / {totalMovementPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setMovementPage(p => Math.min(totalMovementPages, p + 1))}
+                      disabled={safeMovementPage >= totalMovementPages}
+                      className="px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1016,14 +1671,29 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#292524] text-stone-200">
-                    {movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).length === 0 ? (
+                    {filteredStockOutMovements.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="py-8 text-center align-middle text-stone-400 text-xs">
-                          No stock reduction entries recorded yet.
+                        <td colSpan="5" className="py-10 text-center align-middle text-stone-400 text-xs">
+                          {hasActiveMovementFilters ? (
+                            <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                              <Filter className="w-7 h-7 text-stone-500 stroke-1" />
+                              <span className="font-semibold text-stone-300">No matching Stock Out records found</span>
+                              <span className="text-[11px] text-stone-500">Try adjusting your filters or search keywords</span>
+                              <button
+                                type="button"
+                                onClick={handleClearMovementFilters}
+                                className="mt-1 text-[11px] font-bold text-[var(--accent-primary)] hover:underline cursor-pointer"
+                              >
+                                Clear Filters
+                              </button>
+                            </div>
+                          ) : (
+                            "No stock reduction entries recorded yet."
+                          )}
                         </td>
                       </tr>
                     ) : (
-                      movements.filter(m => m.movement_type === 'stock_out' || m.movement_type === 'sale' || m.quantity < 0).map((m, idx) => (
+                      paginatedMovements.map((m) => (
                         <tr key={m.id} className="hover:bg-[#292524]/60 transition-colors">
                           <td className="py-3 px-3 text-center align-middle text-xs font-medium text-[#FAFAF9] truncate" title={m.product_name}>
                             {m.product_name}
@@ -1046,6 +1716,36 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination Controls */}
+              {filteredStockOutMovements.length > movementItemsPerPage && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#292524] text-xs text-stone-400">
+                  <div>
+                    Showing <strong className="text-stone-200">{(safeMovementPage - 1) * movementItemsPerPage + 1}</strong> to <strong className="text-stone-200">{Math.min(safeMovementPage * movementItemsPerPage, filteredStockOutMovements.length)}</strong> of <strong className="text-[#FB923C]">{filteredStockOutMovements.length}</strong> records
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setMovementPage(p => Math.max(1, p - 1))}
+                      disabled={safeMovementPage === 1}
+                      className="px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-2.5 font-mono font-bold text-stone-200">
+                      {safeMovementPage} / {totalMovementPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setMovementPage(p => Math.min(totalMovementPages, p + 1))}
+                      disabled={safeMovementPage >= totalMovementPages}
+                      className="px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1072,17 +1772,26 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
             {suppliers.map((s) => (
               <div key={s.id} className="p-4 rounded-xl border border-[#292524] bg-[#141210] space-y-3 hover:border-[var(--accent-border)] transition-colors">
-                <div className="flex items-center gap-3">
-                  <div 
-                    className="p-2.5 rounded-xl"
-                    style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)' }}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="p-2.5 rounded-xl"
+                      style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)' }}
+                    >
+                      <Truck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-[#FAFAF9]">{s.name}</h3>
+                      <p className="text-xs text-stone-400">Contact: {s.contact_person || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleOpenDeleteSupplier(s)}
+                    className="p-1.5 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors cursor-pointer shrink-0"
+                    title="Delete Supplier"
                   >
-                    <Truck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-[#FAFAF9]">{s.name}</h3>
-                    <p className="text-xs text-stone-400">Contact: {s.contact_person || 'N/A'}</p>
-                  </div>
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
                 <div className="text-xs space-y-1 text-stone-300 pt-2 border-t border-[#292524]">
                   <p><strong className="text-stone-400">Email:</strong> {s.email || 'N/A'}</p>
@@ -1099,7 +1808,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
       {activeTab === 'profile' && (
         <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-6 shadow-sm max-w-xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
-            <div 
+            <div
               className="w-16 h-16 rounded-2xl text-white text-2xl font-bold flex items-center justify-center shadow-lg"
               style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 8px 24px var(--accent-glow)' }}
             >
@@ -1107,7 +1816,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#FAFAF9]">{user?.full_name}</h2>
-              <span 
+              <span
                 className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
                 style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-light)', borderColor: 'var(--accent-border)' }}
               >
@@ -1246,17 +1955,28 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex-1">
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                      if (!allowedTypes.includes(file.type.toLowerCase())) {
+                        showError('Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.');
+                        e.target.value = '';
+                        return;
+                      }
+                      if (file.size > 5 * 1024 * 1024) {
+                        showError('Image size exceeds the 5 MB limit. Please select a smaller photo.');
+                        e.target.value = '';
+                        return;
+                      }
                       setProductImageFile(file);
                       setProductImagePreview(URL.createObjectURL(file));
                     }
                   }}
                   className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
                 />
-                <p className="text-[11px] text-stone-500 mt-1">Optional. Defaults to clean system placeholder if left empty.</p>
+                <p className="text-[11px] text-stone-500 mt-1">Supported formats: PNG, JPG, JPEG, WEBP (Max 5 MB). Defaults to clean system placeholder if left empty.</p>
               </div>
               {productImageFile && (
                 <button
@@ -1389,6 +2109,59 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             ></textarea>
           </div>
 
+          {/* Photo Management in Edit Product */}
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Product Photo</label>
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={editProductImagePreview || getProductImageUrl(editProduct.image_url)}
+                  alt="Product preview"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                      if (!allowedTypes.includes(file.type.toLowerCase())) {
+                        showError('Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.');
+                        e.target.value = '';
+                        return;
+                      }
+                      if (file.size > 5 * 1024 * 1024) {
+                        showError('Image size exceeds the 5 MB limit. Please select a smaller photo.');
+                        e.target.value = '';
+                        return;
+                      }
+                      setEditProductImageFile(file);
+                      setEditProductImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
+                />
+                <p className="text-[11px] text-stone-500 mt-1">Upload a photo to replace current image. Leave empty to keep existing photo.</p>
+              </div>
+              {editProductImageFile && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditProductImageFile(null);
+                    setEditProductImagePreview(null);
+                  }}
+                  className="px-2 py-1 text-xs text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center justify-between pt-3 border-t border-[#292524]">
             <button
               type="button"
@@ -1401,7 +2174,11 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setIsEditModalOpen(false)}
+                onClick={() => {
+                  setIsEditModalOpen(false);
+                  setEditProductImageFile(null);
+                  setEditProductImagePreview(null);
+                }}
                 className="px-4 py-2 rounded-lg text-stone-300 bg-[#292524] hover:bg-[#44403C]"
               >
                 Cancel
@@ -1649,6 +2426,8 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
         onEdit={(prod) => {
           setIsViewModalOpen(false);
           setEditProduct(prod);
+          setEditProductImageFile(null);
+          setEditProductImagePreview(null);
           setIsEditModalOpen(true);
         }}
         onAddStock={(prod) => {
@@ -1689,6 +2468,78 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           }
         }}
       />
+
+      {/* DELETE SUPPLIER MODAL */}
+      <Modal
+        isOpen={isDeleteSupplierModalOpen}
+        onClose={() => {
+          if (!isDeletingSupplier) {
+            setIsDeleteSupplierModalOpen(false);
+            setDeletingSupplier(null);
+            setDeleteSupplierWarningError(null);
+          }
+        }}
+        title="Delete Supplier?"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4">
+          <div className="p-3.5 rounded-xl border border-red-900/40 bg-red-950/20 text-xs space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-red-400">Supplier to Delete:</span>
+            <p className="text-sm font-black text-[#FAFAF9]">
+              {deletingSupplier?.name}
+            </p>
+            {deletingSupplier?.contact_person && (
+              <p className="text-stone-400 text-[11px]">
+                Contact: {deletingSupplier.contact_person}
+              </p>
+            )}
+          </div>
+
+          <p className="text-xs text-stone-300 leading-relaxed">
+            Are you sure you want to delete this supplier? This action cannot be undone.
+          </p>
+
+          {deleteSupplierWarningError && (
+            <div className="p-3 rounded-xl border border-amber-800/60 bg-amber-950/30 text-amber-200 text-xs space-y-2">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold block">Deletion Restricted</span>
+                  <p className="leading-snug text-[11px] text-amber-300">
+                    {deleteSupplierWarningError}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#292524]">
+            <button
+              type="button"
+              disabled={isDeletingSupplier}
+              onClick={() => {
+                setIsDeleteSupplierModalOpen(false);
+                setDeletingSupplier(null);
+                setDeleteSupplierWarningError(null);
+              }}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-stone-300 bg-[#141210] hover:bg-white/5 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            {!deleteSupplierWarningError && (
+              <button
+                type="button"
+                disabled={isDeletingSupplier}
+                onClick={handleConfirmDeleteSupplier}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                {isDeletingSupplier && <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                <span>Delete Supplier</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </Modal>
 
       {/* REUSABLE CONFIRMATION DIALOG */}
       <ConfirmDialog

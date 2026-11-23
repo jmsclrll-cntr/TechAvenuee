@@ -97,6 +97,9 @@ def health():
 
 @app.route("/api/uploads/products/<path:filename>", methods=["GET"])
 def serve_product_image(filename):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    if not os.path.isfile(file_path):
+        return jsonify({"status": "error", "message": "Image not found"}), 404
     return send_from_directory(UPLOAD_DIR, filename)
 
 # ----------------- AUTHENTICATION -----------------
@@ -688,16 +691,28 @@ def upload_product_image(product_id):
 @require_role("admin", "inventory_clerk", "sales_personnel")
 def add_product():
     user = get_current_user()
-    data = request.get_json() or {}
+    if request.content_type and "multipart/form-data" in request.content_type:
+        data = request.form
+    else:
+        data = request.get_json() or {}
     
-    sku = data.get("sku", "").strip().upper()
-    name = data.get("name", "").strip()
-    brand = data.get("brand", "").strip()
+    sku = (data.get("sku") or "").strip().upper()
+    name = (data.get("name") or "").strip()
+    brand = (data.get("brand") or "").strip()
     category_id = data.get("category_id")
-    cost_price = float(data.get("cost_price", 0))
-    selling_price = float(data.get("selling_price", 0))
-    stock_quantity = int(data.get("stock_quantity", 0))
-    image_url = data.get("image_url", "").strip() or "/products/desktop.svg"
+    try:
+        cost_price = float(data.get("cost_price", 0))
+    except (ValueError, TypeError):
+        cost_price = 0.0
+    try:
+        selling_price = float(data.get("selling_price", 0))
+    except (ValueError, TypeError):
+        selling_price = 0.0
+    try:
+        stock_quantity = int(data.get("stock_quantity", 0))
+    except (ValueError, TypeError):
+        stock_quantity = 0
+
     description = data.get("description", "")
 
     if not sku or not name or not brand or not category_id:
@@ -713,11 +728,44 @@ def add_product():
     reorder_level = AUTO_REORDER_THRESHOLD
     status = calculate_stock_status(stock_quantity)
 
+    # Process optional photo upload
+    uploaded_file = request.files.get("image") or request.files.get("photo")
+    saved_filepath = None
+    image_url = (data.get("image_url") or "").strip() or "/products/desktop.svg"
+
+    if uploaded_file and uploaded_file.filename:
+        if not allowed_file(uploaded_file.filename):
+            return jsonify({
+                "status": "error",
+                "message": "Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP."
+            }), 400
+
+        uploaded_file.seek(0, os.SEEK_END)
+        file_size = uploaded_file.tell()
+        uploaded_file.seek(0)
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({
+                "status": "error",
+                "message": "Image size exceeds the 5 MB limit. Please upload a smaller photo."
+            }), 400
+
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        ext = uploaded_file.filename.rsplit(".", 1)[1].lower()
+        unique_filename = f"prod_{int(datetime.datetime.now().timestamp())}_{uuid.uuid4().hex[:8]}.{ext}"
+        saved_filepath = os.path.join(UPLOAD_DIR, unique_filename)
+        uploaded_file.save(saved_filepath)
+        image_url = f"/api/uploads/products/{unique_filename}"
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute("SELECT id FROM products WHERE sku = %s;", (sku,))
             if cursor.fetchone():
+                if saved_filepath and os.path.exists(saved_filepath):
+                    try:
+                        os.remove(saved_filepath)
+                    except Exception:
+                        pass
                 return jsonify({"status": "error", "message": f"Product with SKU '{sku}' already exists"}), 400
 
             cursor.execute("""
@@ -726,8 +774,14 @@ def add_product():
             """, (sku, name, brand, category_id, cost_price, selling_price, stock_quantity, reorder_level, status, image_url, description))
             new_id = cursor.lastrowid
 
+            # Save in product_image table
+            cursor.execute("""
+                INSERT INTO product_image (product_id, image_url, alt_text, is_primary)
+                VALUES (%s, %s, %s, TRUE);
+            """, (new_id, image_url, f"{name} photo"))
+
             if stock_quantity > 0:
-                ref = f"MOV-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+                ref = f"MOV-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}"
                 cursor.execute("""
                     INSERT INTO inventory_movements (reference_number, product_id, movement_type, quantity, previous_stock, new_stock, reason, user_id)
                     VALUES (%s, %s, 'stock_in', %s, 0, %s, 'Initial inventory registration', %s);
@@ -740,10 +794,18 @@ def add_product():
 
             return jsonify({
                 "status": "success", 
-                "message": "Product created successfully", 
+                "message": f"Product '{name}' created successfully with photo." if saved_filepath else f"Product '{name}' created successfully without photo.", 
                 "product_id": new_id,
+                "has_photo": bool(saved_filepath),
                 "image_url": image_url
             }), 201
+    except Exception as e:
+        if saved_filepath and os.path.exists(saved_filepath):
+            try:
+                os.remove(saved_filepath)
+            except Exception:
+                pass
+        return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
     finally:
         conn.close()
 
@@ -751,9 +813,15 @@ def add_product():
 @require_role("admin", "inventory_clerk")
 def update_product(product_id):
     user = get_current_user()
-    data = request.get_json() or {}
+    if request.content_type and "multipart/form-data" in request.content_type:
+        data = request.form
+    else:
+        data = request.get_json() or {}
 
     conn = get_db_connection()
+    new_saved_filepath = None
+    old_file_to_clean = None
+
     try:
         with conn.cursor() as cursor:
             cursor.execute("SELECT * FROM products WHERE id = %s;", (product_id,))
@@ -764,11 +832,55 @@ def update_product(product_id):
             name = data.get("name", current["name"])
             brand = data.get("brand", current["brand"])
             category_id = data.get("category_id", current["category_id"])
-            cost_price = float(data.get("cost_price", current["cost_price"]))
-            image_url = data.get("image_url", current.get("image_url"))
+            try:
+                cost_price = float(data.get("cost_price", current["cost_price"]))
+            except (ValueError, TypeError):
+                cost_price = float(current["cost_price"])
+            try:
+                selling_price = float(data.get("selling_price", current["selling_price"]))
+            except (ValueError, TypeError):
+                selling_price = float(current["selling_price"])
             description = data.get("description", current["description"])
-            selling_price = float(data.get("selling_price", current["selling_price"]))
             
+            # Default to retaining current photo
+            image_url = current.get("image_url") or "/products/desktop.svg"
+
+            # Check if replacement photo was uploaded
+            uploaded_file = request.files.get("image") or request.files.get("photo")
+            if uploaded_file and uploaded_file.filename:
+                if not allowed_file(uploaded_file.filename):
+                    return jsonify({
+                        "status": "error",
+                        "message": "Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP."
+                    }), 400
+
+                uploaded_file.seek(0, os.SEEK_END)
+                file_size = uploaded_file.tell()
+                uploaded_file.seek(0)
+                if file_size > MAX_FILE_SIZE:
+                    return jsonify({
+                        "status": "error",
+                        "message": "Image size exceeds the 5 MB limit. Please upload a smaller photo."
+                    }), 400
+
+                os.makedirs(UPLOAD_DIR, exist_ok=True)
+                ext = uploaded_file.filename.rsplit(".", 1)[1].lower()
+                unique_filename = f"prod_{product_id}_{int(datetime.datetime.now().timestamp())}_{uuid.uuid4().hex[:8]}.{ext}"
+                new_saved_filepath = os.path.join(UPLOAD_DIR, unique_filename)
+                uploaded_file.save(new_saved_filepath)
+                image_url = f"/api/uploads/products/{unique_filename}"
+
+                # Mark old file for safe cleanup only AFTER DB update succeeds
+                old_url = current.get("image_url") or ""
+                if old_url.startswith("/api/uploads/products/"):
+                    old_filename = old_url.split("/api/uploads/products/")[-1]
+                    if not old_filename.endswith(".svg"):
+                        old_path = os.path.join(UPLOAD_DIR, old_filename)
+                        if os.path.exists(old_path) and os.path.abspath(old_path).startswith(os.path.abspath(UPLOAD_DIR)):
+                            old_file_to_clean = old_path
+            elif "image_url" in data and data["image_url"]:
+                image_url = data["image_url"]
+
             # Automatic system-wide reorder calculation
             reorder_level = AUTO_REORDER_THRESHOLD
             new_status = calculate_stock_status(current["stock_quantity"])
@@ -779,12 +891,37 @@ def update_product(product_id):
                 WHERE id = %s;
             """, (name, brand, category_id, cost_price, selling_price, reorder_level, new_status, image_url, description, product_id))
 
+            if new_saved_filepath:
+                cursor.execute("UPDATE product_image SET is_primary = FALSE WHERE product_id = %s;", (product_id,))
+                cursor.execute("""
+                    INSERT INTO product_image (product_id, image_url, alt_text, is_primary)
+                    VALUES (%s, %s, %s, TRUE);
+                """, (product_id, image_url, f"{name} updated photo"))
+
             cursor.execute("""
                 INSERT INTO activity_logs (user_id, action, details)
                 VALUES (%s, 'EDIT_PRODUCT', %s);
             """, (user["id"], f"Updated product {name} ({current['sku']})"))
 
-            return jsonify({"status": "success", "message": "Product updated successfully"})
+            # Safely clean up old replaced image file now that database transaction succeeded
+            if old_file_to_clean and os.path.exists(old_file_to_clean):
+                try:
+                    os.remove(old_file_to_clean)
+                except Exception as clean_err:
+                    print(f"Warning: could not delete old image {old_file_to_clean}: {clean_err}")
+
+            return jsonify({
+                "status": "success", 
+                "message": "Product updated successfully",
+                "image_url": image_url
+            })
+    except Exception as e:
+        if new_saved_filepath and os.path.exists(new_saved_filepath):
+            try:
+                os.remove(new_saved_filepath)
+            except Exception:
+                pass
+        return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
     finally:
         conn.close()
 
@@ -795,7 +932,7 @@ def delete_product(product_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT id, name, sku FROM products WHERE id = %s;", (product_id,))
+            cursor.execute("SELECT id, name, sku, image_url FROM products WHERE id = %s;", (product_id,))
             product = cursor.fetchone()
             if not product:
                 return jsonify({"status": "error", "message": "Product not found"}), 404
@@ -814,6 +951,17 @@ def delete_product(product_id):
                 INSERT INTO activity_logs (user_id, action, details)
                 VALUES (%s, 'DELETE_PRODUCT', %s);
             """, (user["id"], f"Deleted product {product['name']} ({product['sku']})"))
+
+            # Safely clean up physical image file if uploaded
+            if product.get("image_url", "").startswith("/api/uploads/products/"):
+                fname = product["image_url"].split("/api/uploads/products/")[-1]
+                if not fname.endswith(".svg"):
+                    fpath = os.path.join(UPLOAD_DIR, fname)
+                    if os.path.exists(fpath):
+                        try:
+                            os.remove(fpath)
+                        except Exception:
+                            pass
 
             return jsonify({
                 "status": "success", 
@@ -938,13 +1086,25 @@ def process_stock_out():
 
 @app.route("/api/inventory/movements", methods=["GET"])
 def get_inventory_movements():
+    search = request.args.get("search", "").strip()
+    category_id = request.args.get("category_id")
+    supplier = request.args.get("supplier", "").strip()
+    date_val = request.args.get("date", "").strip()
+    start_date = request.args.get("start_date", "").strip()
+    end_date = request.args.get("end_date", "").strip()
+    processed_by = request.args.get("processed_by", "").strip()
+    movement_type = request.args.get("movement_type", "").strip()
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("""
-                SELECT m.id, m.reference_number, m.product_id, p.name as product_name, p.sku, p.image_url,
+            query = """
+                SELECT m.id, m.reference_number, m.product_id, p.name as product_name, p.sku, p.brand, p.image_url,
+                       p.category_id, c.name as category_name,
                        m.movement_type, m.quantity, m.previous_stock, m.new_stock, m.reason,
+                       m.supplier_id,
                        COALESCE(s.name, prod_sup.name, 'Primary Distributor') as supplier_name, 
+                       m.user_id,
                        u.full_name as processed_by, m.created_at
                 FROM inventory_movements m
                 JOIN products p ON m.product_id = p.id
@@ -955,12 +1115,64 @@ def get_inventory_movements():
                     prod_sup.supplied_categories LIKE CONCAT('%%', c.name, '%%')
                     OR prod_sup.supplied_categories LIKE CONCAT('%%', c.code, '%%')
                 )
+                WHERE 1=1
+            """
+            params = []
+            if search:
+                query += " AND (p.name LIKE %s OR p.sku LIKE %s OR p.brand LIKE %s)"
+                term = f"%{search}%"
+                params.extend([term, term, term])
+            if category_id:
+                query += " AND p.category_id = %s"
+                params.append(category_id)
+            if supplier:
+                query += " AND (s.name = %s OR prod_sup.name = %s OR s.id = %s)"
+                params.extend([supplier, supplier, supplier])
+            if processed_by:
+                query += " AND (u.full_name = %s OR u.username = %s OR m.user_id = %s)"
+                params.extend([processed_by, processed_by, processed_by])
+            if date_val:
+                query += " AND DATE(m.created_at) = %s"
+                params.append(date_val)
+            if start_date:
+                query += " AND DATE(m.created_at) >= %s"
+                params.append(start_date)
+            if end_date:
+                query += " AND DATE(m.created_at) <= %s"
+                params.append(end_date)
+            if movement_type:
+                if movement_type == 'stock_in':
+                    query += " AND (m.movement_type = 'stock_in' OR m.quantity > 0)"
+                elif movement_type == 'stock_out':
+                    query += " AND (m.movement_type = 'stock_out' OR m.movement_type = 'sale' OR m.quantity < 0)"
+                else:
+                    query += " AND m.movement_type = %s"
+                    params.append(movement_type)
+
+            query += """
                 GROUP BY m.id
                 ORDER BY m.id DESC
-                LIMIT 100;
-            """)
+                LIMIT 500;
+            """
+            cursor.execute(query, params)
             movements = cursor.fetchall()
-            return jsonify({"status": "success", "movements": movements})
+
+            # Retrieve distinct processors from actual database movements
+            cursor.execute("""
+                SELECT DISTINCT u.full_name 
+                FROM inventory_movements m 
+                JOIN users u ON m.user_id = u.id 
+                WHERE u.full_name IS NOT NULL AND u.full_name != ''
+                ORDER BY u.full_name ASC;
+            """)
+            processors = [r["full_name"] for r in cursor.fetchall()]
+
+            return jsonify({
+                "status": "success", 
+                "movements": movements,
+                "processors": processors,
+                "total": len(movements)
+            })
     finally:
         conn.close()
 
@@ -1845,6 +2057,66 @@ def update_supplier(sid):
     finally:
         conn.close()
 
+@app.route("/api/suppliers/<int:sid>", methods=["DELETE"])
+@require_role("admin", "inventory_clerk")
+def delete_supplier(sid):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # 1. Check supplier exists
+            cursor.execute("SELECT id, name, status FROM suppliers WHERE id = %s;", (sid,))
+            supplier = cursor.fetchone()
+            if not supplier:
+                return jsonify({"status": "error", "message": "Supplier not found"}), 404
+
+            # 2. Check for existing Purchase Orders
+            cursor.execute("SELECT COUNT(*) AS count FROM purchase_orders WHERE supplier_id = %s;", (sid,))
+            po_count = cursor.fetchone()["count"]
+
+            # 3. Check for existing Stock Movements / Receiving
+            cursor.execute("SELECT COUNT(*) AS count FROM inventory_movements WHERE supplier_id = %s;", (sid,))
+            mov_count = cursor.fetchone()["count"]
+
+            # 4. Enforce Database Relationship Protection
+            if po_count > 0 or mov_count > 0:
+                reasons = []
+                if po_count > 0:
+                    reasons.append(f"{po_count} purchase order{'s' if po_count > 1 else ''}")
+                if mov_count > 0:
+                    reasons.append(f"{mov_count} stock-in/inventory movement record{'s' if mov_count > 1 else ''}")
+                details = " and ".join(reasons)
+
+                return jsonify({
+                    "status": "error",
+                    "code": "SUPPLIER_HAS_DEPENDENCIES",
+                    "message": (
+                        f"Cannot delete supplier '{supplier['name']}' because they have existing transaction history "
+                        f"({details}). To preserve historical audit trails and financial reports, please mark this supplier "
+                        f"as 'Inactive' instead of permanently deleting."
+                    ),
+                    "can_deactivate": supplier["status"] == "active"
+                }), 400
+
+            # 5. Delete supplier from database
+            cursor.execute("DELETE FROM suppliers WHERE id = %s;", (sid,))
+
+            # Activity logging
+            admin = get_current_user()
+            if admin:
+                cursor.execute("""
+                    INSERT INTO activity_logs (user_id, action, details)
+                    VALUES (%s, 'DELETE_SUPPLIER', %s);
+                """, (admin["id"], f"Permanently deleted supplier '{supplier['name']}' (ID: {sid})"))
+
+            return jsonify({
+                "status": "success",
+                "message": f"Supplier '{supplier['name']}' was successfully deleted."
+            })
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
+    finally:
+        conn.close()
+
 @app.route("/api/suppliers/<int:sid>/status", methods=["PUT"])
 @require_role("admin")
 def toggle_supplier_status(sid):
@@ -2483,6 +2755,78 @@ def create_user():
             """, (admin["id"], f"Created user {username} with role {role}"))
 
             return jsonify({"status": "success", "message": f"User '{username}' created successfully", "user_id": user_id}), 201
+    finally:
+        conn.close()
+
+@app.route("/api/users/<int:uid>", methods=["PUT"])
+@require_role("admin")
+def update_user(uid):
+    admin = get_current_user()
+    data = request.get_json() or {}
+    
+    full_name = (data.get("full_name") or "").strip()
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password")
+
+    if not full_name:
+        return jsonify({"status": "error", "message": "Full Name is required"}), 400
+    if not username:
+        return jsonify({"status": "error", "message": "Username is required"}), 400
+    if not email:
+        return jsonify({"status": "error", "message": "Email Address is required"}), 400
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, username, full_name, email, role, status, last_login FROM users WHERE id = %s;", (uid,))
+            existing = cursor.fetchone()
+            if not existing:
+                return jsonify({"status": "error", "message": "User not found"}), 404
+
+            # Check if username or email already taken by another account
+            cursor.execute("SELECT id, username, email FROM users WHERE (username = %s OR email = %s) AND id != %s;", (username, email, uid))
+            conflict = cursor.fetchone()
+            if conflict:
+                if conflict["username"].lower() == username.lower():
+                    return jsonify({"status": "error", "message": f"Username '{username}' is already in use by another account"}), 400
+                if conflict["email"].lower() == email.lower():
+                    return jsonify({"status": "error", "message": f"Email '{email}' is already registered to another account"}), 400
+                return jsonify({"status": "error", "message": "Username or email is already in use"}), 400
+
+            # Update password if provided
+            if password and str(password).strip():
+                clean_pw = str(password).strip()
+                if len(clean_pw) < 6:
+                    return jsonify({"status": "error", "message": "Password must be at least 6 characters"}), 400
+                pw_hash = generate_password_hash(clean_pw)
+                cursor.execute("""
+                    UPDATE users 
+                    SET full_name = %s, username = %s, email = %s, password_hash = %s
+                    WHERE id = %s;
+                """, (full_name, username, email, pw_hash, uid))
+            else:
+                cursor.execute("""
+                    UPDATE users 
+                    SET full_name = %s, username = %s, email = %s
+                    WHERE id = %s;
+                """, (full_name, username, email, uid))
+
+            cursor.execute("""
+                INSERT INTO activity_logs (user_id, action, details)
+                VALUES (%s, 'UPDATE_USER', %s);
+            """, (admin["id"], f"Updated profile for employee '{username}' (ID: {uid})"))
+
+            cursor.execute("SELECT id, username, full_name, email, role, status, last_login FROM users WHERE id = %s;", (uid,))
+            updated_user = cursor.fetchone()
+
+            return jsonify({
+                "status": "success",
+                "message": f"Employee '{full_name}' updated successfully",
+                "user": updated_user
+            })
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
     finally:
         conn.close()
 

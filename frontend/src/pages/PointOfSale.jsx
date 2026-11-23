@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import Modal, { ConfirmDialog } from '../components/Modal';
 import OfficialReceiptModal from '../components/OfficialReceiptModal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 
 export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
   const [products, setProducts] = useState([]);
@@ -688,10 +688,10 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                         {/* Thumbnail Image */}
                         <div className="w-full h-24 bg-white dark:bg-[#292524] rounded-lg border border-gray-200 dark:border-[#383330] p-2 mb-2 flex items-center justify-center overflow-hidden">
                           <img
-                            src={p.image_url || '/products/default.svg'}
+                            src={getProductImageUrl(p.image_url)}
                             alt={p.name}
                             className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
-                            onError={(e) => { e.target.src = '/products/default.svg'; }}
+                            onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                           />
                         </div>
 
@@ -857,10 +857,10 @@ export default function PointOfSale({ user, initialDraftId, onClearDraft }) {
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border border-gray-200 dark:border-darkbg-border p-1 shrink-0 flex items-center justify-center">
                             <img 
-                              src={item.image_url || '/products/default.svg'} 
+                              src={getProductImageUrl(item.image_url)} 
                               alt={item.name} 
                               className="max-h-full max-w-full object-contain"
-                              onError={(e) => { e.target.src = '/products/default.svg'; }}
+                              onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                             />
                           </div>
                           <div className="min-w-0">

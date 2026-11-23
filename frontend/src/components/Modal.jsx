@@ -1,11 +1,11 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-xl' }) {
+export default function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-xl', zIndex = 'z-50' }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in`}>
       <div className={`w-full ${maxWidth} bg-white dark:bg-darkbg-card rounded-2xl shadow-2xl border border-gray-200 dark:border-darkbg-border overflow-hidden transition-all transform scale-100`}>
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-darkbg-border">
@@ -29,18 +29,21 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
   );
 }
 
-export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirm', confirmStyle = 'danger', loading = false }) {
+export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirm', confirmStyle = 'danger', loading = false, zIndex = 'z-[60]' }) {
   if (!isOpen) return null;
 
   const getBtnStyle = () => {
     if (confirmStyle === 'danger') {
       return 'bg-red-600 hover:bg-red-700 text-white';
     }
+    if (confirmStyle === 'primary' || confirmStyle === 'emerald' || confirmStyle === 'success') {
+      return 'bg-emerald-600 hover:bg-emerald-700 text-white';
+    }
     return 'bg-navy hover:bg-navy-light text-white';
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-md">
+    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-md" zIndex={zIndex}>
       <div className="space-y-4">
         <p className="text-sm text-gray-600 dark:text-gray-300">
           {message}

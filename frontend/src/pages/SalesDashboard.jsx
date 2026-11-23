@@ -30,7 +30,7 @@ import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
 import Modal from '../components/Modal';
 import ProductDetailModal from '../components/ProductDetailModal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 import { printInventory } from '../utils/printInventory';
 import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import PointOfSale from './PointOfSale';
@@ -146,22 +146,40 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
       alert("Initial stock quantity cannot be negative.");
       return;
     }
-    try {
-      const res = await api.addProduct({
-        ...newProduct,
-        stock_quantity: qty,
-        image_url: productImagePreview ? undefined : '/products/desktop.svg'
-      });
-      if (productImageFile && res?.product_id) {
-        const formData = new FormData();
-        formData.append('image', productImageFile);
-        try {
-          await api.uploadProductImage(res.product_id, formData);
-        } catch (uploadErr) {
-          console.warn("Image upload warning:", uploadErr);
-        }
+
+    if (productImageFile) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(productImageFile.type.toLowerCase())) {
+        alert("Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.");
+        return;
       }
-      alert(`Product "${newProduct.name}" (${newProduct.sku}) added successfully!`);
+      if (productImageFile.size > 5 * 1024 * 1024) {
+        alert("Image size exceeds the 5 MB limit. Please upload a smaller photo.");
+        return;
+      }
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('sku', (newProduct.sku || '').trim().toUpperCase());
+      formData.append('name', (newProduct.name || '').trim());
+      formData.append('brand', (newProduct.brand || '').trim());
+      formData.append('category_id', newProduct.category_id || categories[0]?.id || 1);
+      formData.append('cost_price', newProduct.cost_price || 0);
+      formData.append('selling_price', newProduct.selling_price || 0);
+      formData.append('stock_quantity', qty);
+      formData.append('description', newProduct.description || '');
+      if (productImageFile) {
+        formData.append('image', productImageFile);
+      }
+
+      const res = await api.addProduct(formData);
+      if (res?.has_photo || productImageFile) {
+        alert(`Product "${newProduct.name}" (${newProduct.sku}) added successfully with photo!`);
+      } else {
+        alert(`Product "${newProduct.name}" (${newProduct.sku}) added successfully without photo.`);
+      }
+
       setIsAddProductModalOpen(false);
       setNewProduct({
         sku: '',
@@ -1422,7 +1440,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                               <div className="flex items-center gap-2.5">
                                 <div className="w-8 h-8 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
                                   <img
-                                    src={p.image_url || '/products/desktop.svg'}
+                                    src={getProductImageUrl(p.image_url)}
                                     alt={p.name}
                                     className="max-h-full max-w-full object-contain"
                                     onError={(e) => { e.target.src = '/products/desktop.svg'; }}
@@ -1489,7 +1507,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-lg bg-[#141210] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden">
                         <img
-                          src={p.image_url || '/products/desktop.svg'}
+                          src={getProductImageUrl(p.image_url)}
                           alt={p.name}
                           className="max-h-full max-w-full object-contain"
                           onError={(e) => { e.target.src = '/products/desktop.svg'; }}
@@ -1793,17 +1811,28 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex-1">
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                      if (!allowedTypes.includes(file.type.toLowerCase())) {
+                        alert('Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.');
+                        e.target.value = '';
+                        return;
+                      }
+                      if (file.size > 5 * 1024 * 1024) {
+                        alert('Image size exceeds the 5 MB limit. Please select a smaller photo.');
+                        e.target.value = '';
+                        return;
+                      }
                       setProductImageFile(file);
                       setProductImagePreview(URL.createObjectURL(file));
                     }
                   }}
                   className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
                 />
-                <p className="text-[10px] text-stone-500 mt-0.5">Optional image. Defaults to system placeholder if empty.</p>
+                <p className="text-[10px] text-stone-500 mt-0.5">Supported formats: PNG, JPG, JPEG, WEBP (Max 5 MB). Defaults to system placeholder if empty.</p>
               </div>
               {productImageFile && (
                 <button

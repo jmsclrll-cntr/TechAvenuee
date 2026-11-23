@@ -23,6 +23,8 @@ import {
   Settings as SettingsIcon,
   ShieldCheck,
   Eye,
+  EyeOff,
+  History,
   LayoutGrid,
   X,
   Inbox,
@@ -30,13 +32,14 @@ import {
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
-import Modal from '../components/Modal';
-import { api } from '../api';
+import Modal, { ConfirmDialog } from '../components/Modal';
+import { api, getProductImageUrl } from '../api';
 import { printInventory } from '../utils/printInventory';
 import PurchasingManagement from './PurchasingManagement';
 import ReportsAnalytics from './ReportsAnalytics';
 import logoImg from '../assets/logo.png';
 import ProductDetailModal from '../components/ProductDetailModal';
+import OfficialReceiptModal from '../components/OfficialReceiptModal';
 import { useNotification } from '../context/NotificationContext';
 import { useThemeColor } from '../context/ThemeColorContext';
 
@@ -82,6 +85,19 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   const [newUser, setNewUser] = useState({
     username: '', full_name: '', email: '', password: '', role: 'sales_personnel'
   });
+  const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
+  const [editUser, setEditUser] = useState({ id: null, full_name: '', username: '', email: '', password: '' });
+  const [editUserError, setEditUserError] = useState(null);
+  const [isSavingUser, setIsSavingUser] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({
+    title: '',
+    message: '',
+    action: null,
+    confirmText: 'Confirm',
+    confirmStyle: 'danger',
+    loading: false
+  });
 
   // Store Settings (Individual Settings Panel)
   const [storeSettings, setStoreSettings] = useState({
@@ -98,6 +114,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   // Prediction Form State (Executive View)
   const [selectedTask, setSelectedTask] = useState('demand');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('random_forest');
+  const [isPredictionHistoryModalOpen, setIsPredictionHistoryModalOpen] = useState(false);
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
   const [predictionError, setPredictionError] = useState(null);
@@ -145,6 +162,23 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
     }
   };
 
+  const handleViewReceipt = async (tx) => {
+    if (!tx) return;
+    setActiveReceipt(tx);
+    setIsReceiptModalOpen(true);
+    try {
+      const txId = tx.id || tx.transaction_id;
+      if (txId) {
+        const res = await api.getReceipt(txId);
+        if (res.status === 'success' && res.data) {
+          setActiveReceipt(res.data);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load transaction receipt details:', err);
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, [searchTerm, categoryFilter]);
@@ -172,26 +206,43 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       showToast("Initial stock quantity cannot be negative.", "error");
       return;
     }
-    try {
-      const res = await api.addProduct({
-        ...newProduct,
-        stock_quantity: qty,
-        image_url: productImagePreview ? undefined : '/products/desktop.svg'
-      });
-      if (productImageFile && res?.product_id) {
-        const formData = new FormData();
-        formData.append('image', productImageFile);
-        try {
-          await api.uploadProductImage(res.product_id, formData);
-        } catch (uploadErr) {
-          console.warn("Image upload warning:", uploadErr);
-        }
+
+    if (productImageFile) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(productImageFile.type.toLowerCase())) {
+        showToast("Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.", "error");
+        return;
       }
+      if (productImageFile.size > 5 * 1024 * 1024) {
+        showToast("Image size exceeds the 5 MB limit. Please upload a smaller photo.", "error");
+        return;
+      }
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('sku', (newProduct.sku || '').trim().toUpperCase());
+      formData.append('name', (newProduct.name || '').trim());
+      formData.append('brand', (newProduct.brand || '').trim());
+      formData.append('category_id', newProduct.category_id || categories[0]?.id || 1);
+      formData.append('cost_price', newProduct.cost_price || 0);
+      formData.append('selling_price', newProduct.selling_price || 0);
+      formData.append('stock_quantity', qty);
+      formData.append('description', newProduct.description || '');
+      if (productImageFile) {
+        formData.append('image', productImageFile);
+      }
+
+      const res = await api.addProduct(formData);
       setIsAddProductModalOpen(false);
       setNewProduct({ sku: '', name: '', brand: '', category_id: categories[0]?.id || 1, cost_price: '', selling_price: '', stock_quantity: 10, description: '' });
       setProductImageFile(null);
       setProductImagePreview(null);
-      showToast(`Product "${newProduct.name}" created successfully!`, 'success');
+      if (res?.has_photo || productImageFile) {
+        showToast(`Product "${newProduct.name}" added successfully with photo!`, 'success');
+      } else {
+        showToast(`Product "${newProduct.name}" added successfully without photo.`, 'success');
+      }
       loadData();
     } catch (err) {
       showToast(err.message, 'error');
@@ -229,6 +280,108 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
   };
 
   // User Management
+  const handleOpenEditUser = (u) => {
+    setEditUser({
+      id: u.id,
+      full_name: u.full_name || '',
+      username: u.username || '',
+      email: u.email || '',
+      password: ''
+    });
+    setEditUserError(null);
+    setIsEditUserModalOpen(true);
+  };
+
+  const handleSaveUser = (e) => {
+    e.preventDefault();
+    setEditUserError(null);
+
+    const fullName = (editUser.full_name || '').trim();
+    const username = (editUser.username || '').trim();
+    const email = (editUser.email || '').trim().toLowerCase();
+    const password = (editUser.password || '').trim();
+
+    if (!fullName) {
+      setEditUserError('Full Name is required.');
+      return;
+    }
+    if (!username) {
+      setEditUserError('Username is required.');
+      return;
+    }
+    if (!email) {
+      setEditUserError('Email Address is required.');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEditUserError('Please provide a valid corporate email address.');
+      return;
+    }
+
+    // Validate duplicate username against usersList
+    const duplicateUsername = usersList.find(
+      u => u.id !== editUser.id && (u.username || '').toLowerCase() === username.toLowerCase()
+    );
+    if (duplicateUsername) {
+      setEditUserError(`Username '${username}' is already in use by another account.`);
+      return;
+    }
+
+    // Validate duplicate email against usersList
+    const duplicateEmail = usersList.find(
+      u => u.id !== editUser.id && (u.email || '').toLowerCase() === email
+    );
+    if (duplicateEmail) {
+      setEditUserError(`Email address '${email}' is already registered to another account.`);
+      return;
+    }
+
+    if (password && password.length < 6) {
+      setEditUserError('Password must be at least 6 characters if you are setting a new one.');
+      return;
+    }
+
+    // Confirmation validation: ensure admin is sure before updating
+    setConfirmConfig({
+      title: 'Update Employee Account?',
+      message: `Are you sure you want to save the changes for "${fullName}" (@${username})?`,
+      confirmText: 'Yes, Save Changes',
+      confirmStyle: 'primary',
+      loading: false,
+      action: async () => {
+        setIsSavingUser(true);
+        try {
+          const payload = {
+            full_name: fullName,
+            username: username,
+            email: email,
+            ...(password ? { password } : {})
+          };
+          const res = await api.updateUser(editUser.id, payload);
+          if (res.status === 'success') {
+            // Update the table row directly in state without page reload
+            setUsersList(prev => prev.map(u => (u.id === editUser.id ? { ...u, ...res.user } : u)));
+            showToast(`Employee "${fullName}" updated successfully!`, 'success');
+            setIsConfirmOpen(false);
+            setIsEditUserModalOpen(false);
+          } else {
+            setIsConfirmOpen(false);
+            setEditUserError(res.message || 'Failed to update employee account.');
+          }
+        } catch (err) {
+          setIsConfirmOpen(false);
+          setEditUserError(err.message || 'Error updating employee account.');
+        } finally {
+          setIsSavingUser(false);
+        }
+      }
+    });
+    setIsConfirmOpen(true);
+  };
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
@@ -237,27 +390,69 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
       setNewUser({ username: '', full_name: '', email: '', password: '', role: 'sales_personnel' });
       loadData();
     } catch (err) {
-      alert(err.message);
+      showToast(err.message || 'Failed to create user account.', 'error');
     }
   };
 
-  const handleToggleUserStatus = async (uid, currentStatus) => {
-    const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    try {
-      await api.updateUserStatus(uid, nextStatus);
-      loadData();
-    } catch (err) {
-      alert(err.message);
-    }
+  const handleToggleUserStatus = (targetUser) => {
+    const isDeactivating = targetUser.status === 'active';
+    const nextStatus = isDeactivating ? 'inactive' : 'active';
+
+    setConfirmConfig({
+      title: isDeactivating ? 'Deactivate Employee Account?' : 'Activate Employee Account?',
+      message: isDeactivating
+        ? `Are you sure you want to deactivate the account for "${targetUser.full_name}" (@${targetUser.username})? They will no longer be able to log in until reactivated.`
+        : `Are you sure you want to activate the account for "${targetUser.full_name}" (@${targetUser.username})? They will regain operational access to log in.`,
+      confirmText: isDeactivating ? 'Yes, Deactivate' : 'Yes, Activate',
+      confirmStyle: isDeactivating ? 'danger' : 'primary',
+      loading: false,
+      action: async () => {
+        try {
+          await api.updateUserStatus(targetUser.id, nextStatus);
+          // Update the table row directly in state without page reload
+          setUsersList(prev => prev.map(u => (u.id === targetUser.id ? { ...u, status: nextStatus } : u)));
+          showToast(`Employee "${targetUser.full_name}" ${isDeactivating ? 'deactivated' : 'activated'} successfully!`, 'success');
+          setIsConfirmOpen(false);
+        } catch (err) {
+          showToast(err.message || `Failed to ${isDeactivating ? 'deactivate' : 'activate'} employee account.`, 'error');
+          setIsConfirmOpen(false);
+        }
+      }
+    });
+    setIsConfirmOpen(true);
   };
 
-  const handleUpdateRole = async (uid, newRole) => {
-    try {
-      await api.updateUserRole(uid, newRole);
-      loadData();
-    } catch (err) {
-      alert(err.message);
-    }
+  const ROLE_NAMES = {
+    admin: 'Administrator',
+    inventory_clerk: 'Inventory Clerk',
+    sales_personnel: 'Sales Personnel',
+    instructor: 'Instructor Account'
+  };
+
+  const handleUpdateRole = (targetUser, newRole) => {
+    if (targetUser.role === newRole) return;
+    const newRoleLabel = ROLE_NAMES[newRole] || newRole;
+
+    setConfirmConfig({
+      title: 'Change Assigned Role?',
+      message: `Are you sure you want to change the role for "${targetUser.full_name}" (@${targetUser.username}) to ${newRoleLabel}?`,
+      confirmText: 'Yes, Change Role',
+      confirmStyle: 'primary',
+      loading: false,
+      action: async () => {
+        try {
+          await api.updateUserRole(targetUser.id, newRole);
+          // Update the table row directly in state without page reload
+          setUsersList(prev => prev.map(u => (u.id === targetUser.id ? { ...u, role: newRole } : u)));
+          showToast(`Role for "${targetUser.full_name}" changed to ${newRoleLabel}!`, 'success');
+          setIsConfirmOpen(false);
+        } catch (err) {
+          showToast(err.message || 'Failed to update employee role.', 'error');
+          setIsConfirmOpen(false);
+        }
+      }
+    });
+    setIsConfirmOpen(true);
   };
 
   // Generate Prediction (Executive view: returns forecast & business recommendations, no raw training/metrics exposed!)
@@ -828,7 +1023,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Receipt className="w-4 h-4" style={{ color: currentTheme.primary }} />
-                    <h3 className="font-black text-sm text-slate-900 dark:text-white">Recent Sales Transactions</h3>
+                    <h3 className="font-black text-sm text-[#FAFAF9]">Recent Sales Transactions</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('sales')}
@@ -839,31 +1034,122 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-xl border border-[#292524]">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold border-b border-[#292524]">
+                    <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                       <tr>
                         <th className="py-2.5 px-3">Invoice #</th>
+                        <th className="py-2.5 px-3">Date &amp; Time</th>
                         <th className="py-2.5 px-3">Customer</th>
-                        <th className="py-2.5 px-3 text-right">Total</th>
+                        <th className="py-2.5 px-3">Cashier Station</th>
+                        <th className="py-2.5 px-3 text-center">Items</th>
+                        <th className="py-2.5 px-3 text-right">Gross Total</th>
                         <th className="py-2.5 px-3 text-center">Payment</th>
+                        <th className="py-2.5 px-3 text-right">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
-                      {(tables.recent_sales || []).map((t) => (
-                        <tr key={t.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
-                          <td className="py-2.5 px-3 font-mono font-medium text-[var(--accent-light)]">{t.invoice_number}</td>
-                          <td className="py-2.5 px-3">{t.customer_name}</td>
-                          <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
-                            PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="py-2.5 px-3 text-center">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)]">
-                              {t.payment_method}
-                            </span>
+                    <tbody className="divide-y divide-[#292524] text-stone-200">
+                      {(!tables.recent_sales || tables.recent_sales.length === 0) ? (
+                        <tr>
+                          <td colSpan="8" className="py-8 text-center text-stone-500">
+                            No recent sales transactions recorded yet.
                           </td>
                         </tr>
-                      ))}
+                      ) : (
+                        tables.recent_sales.map((t) => (
+                          <tr key={t.id} className="hover:bg-[#292524]/60">
+                            <td className="py-2.5 px-3 font-mono font-medium text-[var(--accent-light)]">{t.invoice_number}</td>
+                            <td className="py-2.5 px-3 text-stone-400 text-[11px] font-mono">{t.created_at}</td>
+                            <td className="py-2.5 px-3 font-medium text-[#FAFAF9]">{t.customer_name || 'Walk-in Customer'}</td>
+                            <td className="py-2.5 px-3 text-stone-300">{t.cashier_name || 'Cashier Station'}</td>
+                            <td className="py-2.5 px-3 text-center font-mono">{t.items_count || 1}</td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                              PHP {Number(t.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)] border border-[var(--accent-border)]">
+                                {t.payment_method}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <button
+                                type="button"
+                                onClick={() => handleViewReceipt(t)}
+                                className="px-2.5 py-1 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors cursor-pointer inline-flex items-center gap-1"
+                                title="Inspect Official Electronic Receipt"
+                              >
+                                <Receipt className="w-3 h-3" />
+                                <span>Receipt</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Top-Selling Products Performance Table */}
+              <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-400" />
+                    <h3 className="font-black text-sm text-[#FAFAF9]">Top-Selling Products by Revenue &amp; Volume</h3>
+                  </div>
+                  <span className="text-xs text-stone-400 font-bold">Top 5 Performers</span>
+                </div>
+
+                <div className="overflow-x-auto rounded-xl border border-[#292524]">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
+                      <tr>
+                        <th className="py-2.5 px-3">Rank</th>
+                        <th className="py-2.5 px-3">Product Name</th>
+                        <th className="py-2.5 px-3">SKU</th>
+                        <th className="py-2.5 px-3 text-center">Units Sold</th>
+                        <th className="py-2.5 px-3 text-right">Gross Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#292524] text-stone-200">
+                      {(!tables.top_selling_products || tables.top_selling_products.length === 0) ? (
+                        <tr>
+                          <td colSpan="5" className="py-8 text-center text-stone-500">
+                            No sales volume recorded yet for top products.
+                          </td>
+                        </tr>
+                      ) : (
+                        tables.top_selling_products.map((p, idx) => (
+                          <tr key={p.id || idx} className="hover:bg-[#292524]/60">
+                            <td className="py-2.5 px-3 font-bold font-mono">
+                              <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${
+                                idx === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30 font-black' :
+                                idx === 1 ? 'bg-stone-300/20 text-stone-300 border border-stone-300/30 font-bold' :
+                                idx === 2 ? 'bg-amber-700/20 text-amber-600 border border-amber-700/30 font-bold' :
+                                'text-stone-400'
+                              }`}>
+                                #{idx + 1}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 font-semibold text-[#FAFAF9]">
+                              <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded bg-[#292524] p-0.5 shrink-0 flex items-center justify-center overflow-hidden">
+                                  <img
+                                    src={getProductImageUrl(p.image_url)}
+                                    alt={p.name}
+                                    className="max-h-full max-w-full object-contain"
+                                    onError={(e) => { e.target.src = '/products/desktop.svg'; }}
+                                  />
+                                </div>
+                                <span>{p.name}</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-[11px] text-[var(--accent-light)]">{p.sku}</td>
+                            <td className="py-2.5 px-3 text-center font-mono font-bold text-emerald-400">{Number(p.units_sold).toLocaleString()}</td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-white">PHP {Number(p.revenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -929,7 +1215,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
-                    <h3 className="font-black text-sm text-slate-900 dark:text-white">Low-Stock Alert Products</h3>
+                    <h3 className="font-black text-sm text-[#FAFAF9]">Low-Stock Alert Products</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('inventory')}
@@ -939,25 +1225,86 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-xl border border-[#292524]">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold border-b border-[#292524]">
+                    <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                       <tr>
                         <th className="py-2.5 px-3">Product Name</th>
                         <th className="py-2.5 px-3">SKU</th>
-                        <th className="py-2.5 px-3 text-center">Stock</th>
-                        <th className="py-2.5 px-3 text-center">Threshold</th>
+                        <th className="py-2.5 px-3">Category</th>
+                        <th className="py-2.5 px-3">Brand</th>
+                        <th className="py-2.5 px-3 text-center">Current Stock</th>
+                        <th className="py-2.5 px-3 text-center">Reorder Threshold</th>
+                        <th className="py-2.5 px-3 text-center">Urgency Status</th>
+                        <th className="py-2.5 px-3 text-right">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-300">
-                      {(tables.low_stock_products || []).map((p) => (
-                        <tr key={p.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
-                          <td className="py-2.5 px-3 font-medium">{p.name}</td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] text-[var(--accent-light)]">{p.sku}</td>
-                          <td className="py-2.5 px-3 text-center font-bold text-red-500">{p.current_stock}</td>
-                          <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">≤ 5 units</td>
+                    <tbody className="divide-y divide-[#292524] text-stone-200">
+                      {(!tables.low_stock_products || tables.low_stock_products.length === 0) ? (
+                        <tr>
+                          <td colSpan="8" className="py-8 text-center text-stone-500">
+                            All catalog merchandise is adequately stocked above reorder thresholds.
+                          </td>
                         </tr>
-                      ))}
+                      ) : (
+                        tables.low_stock_products.map((p) => (
+                          <tr 
+                            key={p.id} 
+                            onClick={() => {
+                              setViewProduct(p);
+                              setIsViewModalOpen(true);
+                            }}
+                            className="hover:bg-[#292524]/60 cursor-pointer transition-colors"
+                          >
+                            <td className="py-2.5 px-3 font-medium text-[#FAFAF9]">
+                              <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded bg-[#292524] p-0.5 shrink-0 flex items-center justify-center overflow-hidden">
+                                  <img 
+                                    src={getProductImageUrl(p.image_url)} 
+                                    alt={p.name} 
+                                    className="max-h-full max-w-full object-contain" 
+                                    onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
+                                  />
+                                </div>
+                                <span className="font-semibold">{p.name}</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-[11px] text-[var(--accent-light)]">{p.sku}</td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#292524] text-stone-300 border border-[#3E3835]">
+                                {p.category || 'Hardware'}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-stone-400">{p.brand}</td>
+                            <td className="py-2.5 px-3 text-center font-bold text-red-400 font-mono">{p.current_stock} units</td>
+                            <td className="py-2.5 px-3 text-center text-stone-400 font-mono text-[11px]">
+                              &le; {p.reorder_level || 5} units
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                p.current_stock === 0 || p.status === 'out_of_stock'
+                                  ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                                  : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                              }`}>
+                                {p.current_stock === 0 || p.status === 'out_of_stock' ? 'OUT OF STOCK' : 'LOW STOCK'}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setViewProduct(p);
+                                  setIsViewModalOpen(true);
+                                }}
+                                className="px-2.5 py-1 rounded text-[11px] font-semibold bg-[#292524] hover:bg-[#3E3835] text-stone-300 hover:text-white border border-[#44403C] transition-colors cursor-pointer"
+                              >
+                                Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1147,92 +1494,118 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <tr>
                   <th className="py-3 px-3.5">SKU</th>
                   <th className="py-3 px-3.5">Product Name</th>
+                  <th className="py-3 px-3.5">Category</th>
                   <th className="py-3 px-3.5">Brand</th>
                   <th className="py-3 px-3.5 text-right">Cost (PHP)</th>
                   <th className="py-3 px-3.5 text-right">Retail (PHP)</th>
-                  <th className="py-3 px-3.5 text-center">Margin / Markup %</th>
+                  <th className="py-3 px-3.5 text-center">Gross Profit Margin</th>
                   <th className="py-3 px-3.5 text-center">Stock</th>
                   <th className="py-3 px-3.5 text-center">Status</th>
                   <th className="py-3 px-3.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#292524] text-stone-200">
-                {products.map((p) => {
-                  const cost = Number(p.cost_price) || 0;
-                  const retail = Number(p.selling_price) || 0;
-                  const marginPct = cost > 0 ? (((retail - cost) / cost) * 100).toFixed(1) : 0;
+                {products.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="py-10 text-center text-stone-500">
+                      No inventory merchandise found matching your search or category filter.
+                    </td>
+                  </tr>
+                ) : (
+                  products.map((p) => {
+                    const cost = Number(p.cost_price) || 0;
+                    const retail = Number(p.selling_price) || 0;
+                    const grossProfit = Math.max(0, retail - cost);
+                    const marginPct = retail > 0 ? (((retail - cost) / retail) * 100).toFixed(1) : 0;
+                    const markupPct = cost > 0 ? (((retail - cost) / cost) * 100).toFixed(1) : 0;
 
-                  return (
-                    <tr 
-                      key={p.id} 
-                      onClick={() => {
-                        setViewProduct(p);
-                        setIsViewModalOpen(true);
-                      }}
-                      className="hover:bg-[#292524]/80 transition-colors cursor-pointer group"
-                      title="Click to view full product & supplier specifications"
-                    >
-                      <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)] group-hover:underline">{p.sku}</td>
-                      <td className="py-2.5 px-3 font-medium">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-[#292524] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-110 shadow-xs">
-                            <img 
-                              src={p.image_url || '/products/desktop.svg'} 
-                              alt={p.name} 
-                              className="max-h-full max-w-full object-contain" 
-                              onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
-                            />
+                    return (
+                      <tr 
+                        key={p.id} 
+                        onClick={() => {
+                          setViewProduct(p);
+                          setIsViewModalOpen(true);
+                        }}
+                        className="hover:bg-[#292524]/80 transition-colors cursor-pointer group"
+                        title="Click to view full product & supplier specifications"
+                      >
+                        <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)] group-hover:underline">{p.sku}</td>
+                        <td className="py-2.5 px-3 font-medium">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-lg bg-[#292524] border border-[#292524] p-1 shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-110 shadow-xs">
+                              <img 
+                                src={getProductImageUrl(p.image_url)} 
+                                alt={p.name} 
+                                className="max-h-full max-w-full object-contain" 
+                                onError={(e) => { e.target.src = '/products/desktop.svg'; }} 
+                              />
+                            </div>
+                            <span className="group-hover:text-[var(--accent-light)] transition-colors font-bold block">{p.name}</span>
                           </div>
-                          <span className="group-hover:text-[var(--accent-light)] transition-colors font-bold block">{p.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-2.5 px-3">{p.brand}</td>
-                      <td className="py-2.5 px-3 text-right font-mono">PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-3 text-right font-mono font-bold text-white">PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="py-2.5 px-3 text-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-white/10 text-white border border-white/20">
-                          +{marginPct}%
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-center font-bold">{p.stock_quantity}</td>
-                      <td className="py-2.5 px-3 text-center">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'bg-red-500/10 text-red-500' : (p.stock_quantity <= 5 || p.status === 'low_stock') ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-600'
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#292524] text-stone-300 border border-[#3E3835]">
+                            {p.category_name || p.category || 'General'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-stone-300">{p.brand}</td>
+                        <td className="py-2.5 px-3 text-right font-mono text-stone-400">PHP {cost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-white">PHP {retail.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <div className="inline-flex flex-col items-center">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              {marginPct}%
+                            </span>
+                            <span className="text-[10px] text-stone-400 font-mono mt-0.5" title={`Markup on cost: +${markupPct}%`}>
+                              +₱{grossProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3 text-center font-bold text-stone-200 font-mono">{p.stock_quantity}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            p.stock_quantity === 0 || p.status === 'out_of_stock'
+                              ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                              : (p.stock_quantity <= (p.reorder_level || 5) || p.status === 'low_stock')
+                              ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                              : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                           }`}>
-                          {p.status?.replace('_', ' ').toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedProduct(p);
-                              setIsEditProductModalOpen(true);
-                            }}
-                            className="px-2.5 py-1 rounded text-white text-[11px] font-semibold hover:opacity-90 inline-flex items-center gap-1 transition-colors cursor-pointer"
-                            style={{ backgroundColor: 'var(--accent-primary)' }}
-                          >
-                            <Edit2 className="w-3 h-3" />
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteProduct(p);
-                            }}
-                            className="px-2 py-1 rounded bg-red-500/10 text-red-600 hover:bg-red-500/20 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors border border-red-500/20 cursor-pointer"
-                            title="Delete this product"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                            {p.stock_quantity === 0 || p.status === 'out_of_stock' ? 'OUT OF STOCK' : (p.stock_quantity <= (p.reorder_level || 5) || p.status === 'low_stock') ? 'LOW STOCK' : 'IN STOCK'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedProduct(p);
+                                setIsEditProductModalOpen(true);
+                              }}
+                              className="px-2.5 py-1 rounded text-white text-[11px] font-semibold hover:opacity-90 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                              style={{ backgroundColor: 'var(--accent-primary)' }}
+                            >
+                              <Edit2 className="w-3 h-3" />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteProduct(p);
+                              }}
+                              className="px-2 py-1 rounded bg-red-500/10 text-red-500 hover:bg-red-500/20 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors border border-red-500/20 cursor-pointer"
+                              title="Delete this product"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -1282,7 +1655,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     <td className="py-2.5 px-3">
                       <select
                         value={u.role}
-                        onChange={(e) => handleUpdateRole(u.id, e.target.value)}
+                        onChange={(e) => handleUpdateRole(u, e.target.value)}
                         className="text-xs px-2 py-1 rounded border border-[#292524] bg-[#141210] text-[#FAFAF9] font-semibold"
                       >
                         <option value="admin">Administrator</option>
@@ -1299,17 +1672,29 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                     </td>
                     <td className="py-2.5 px-3 text-stone-400 font-mono text-[11px]">{u.last_login || 'Never'}</td>
                     <td className="py-2.5 px-3 text-right">
-                      {u.id !== user?.id && (
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
-                          onClick={() => handleToggleUserStatus(u.id, u.status)}
-                          className={`px-2 py-1 rounded text-[11px] font-semibold ${u.status === 'active'
-                            ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20'
-                            : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
-                            }`}
+                          type="button"
+                          onClick={() => handleOpenEditUser(u)}
+                          className="px-2.5 py-1 rounded text-[11px] font-semibold bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-colors cursor-pointer inline-flex items-center gap-1"
+                          title={`Edit ${u.full_name}`}
                         >
-                          {u.status === 'active' ? 'Deactivate' : 'Activate'}
+                          <Edit2 className="w-3 h-3" />
+                          <span>Edit</span>
                         </button>
-                      )}
+                        {u.id !== user?.id && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleUserStatus(u)}
+                            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-colors cursor-pointer ${u.status === 'active'
+                              ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
+                              : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20'
+                              }`}
+                          >
+                            {u.status === 'active' ? 'Deactivate' : 'Activate'}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1324,9 +1709,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
         <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#292524]">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Store Sales Transaction Audit</h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
-                Comprehensive real-time register ledger and electronic audit trail
+              <h2 className="text-xl sm:text-2xl font-black text-[#FAFAF9]">Store Sales Transaction Audit</h2>
+              <p className="text-xs sm:text-sm text-stone-400 mt-0.5">
+                Comprehensive real-time register ledger, statutory VAT breakdown, and electronic receipt audit trail
               </p>
             </div>
             <button
@@ -1341,35 +1726,63 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
 
           <div className="overflow-x-auto rounded-xl border border-[#292524]">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-[#1C1917] bg-[#141210] text-slate-700 uppercase font-extrabold text-[11px] border-b border-[#292524]">
+              <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
                 <tr>
                   <th className="py-3 px-3.5">Invoice #</th>
-                  <th className="py-3 px-3.5">Date & Time</th>
+                  <th className="py-3 px-3.5">Date &amp; Time</th>
                   <th className="py-3 px-3.5">Customer</th>
                   <th className="py-3 px-3.5">Cashier Station</th>
-                  <th className="py-3 px-3.5 text-right">Subtotal</th>
+                  <th className="py-3 px-3.5 text-center">Items</th>
+                  <th className="py-3 px-3.5 text-right">Subtotal (VATable)</th>
                   <th className="py-3 px-3.5 text-right">12% VAT</th>
                   <th className="py-3 px-3.5 text-right">Gross Total</th>
                   <th className="py-3 px-3.5 text-center">Payment</th>
+                  <th className="py-3 px-3.5 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-800 dark:text-gray-200">
-                {salesList.map((s) => (
-                  <tr key={s.id} className="hover:bg-gray-50/50 hover:bg-[#292524]/50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)]">{s.invoice_number}</td>
-                    <td className="py-2.5 px-3 text-slate-600 font-medium">{s.created_at}</td>
-                    <td className="py-2.5 px-3 font-medium">{s.customer_name}</td>
-                    <td className="py-2.5 px-3">{s.cashier}</td>
-                    <td className="py-2.5 px-3 text-right font-mono">PHP {Number(s.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-500">PHP {Number(s.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)]">
-                        {s.payment_method}
-                      </span>
+              <tbody className="divide-y divide-[#292524] text-stone-200">
+                {salesList.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="py-10 text-center text-stone-500">
+                      No sales transactions recorded in the audit ledger yet.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  salesList.map((s) => (
+                    <tr key={s.id} className="hover:bg-[#292524]/50">
+                      <td className="py-2.5 px-3 font-mono font-bold text-[var(--accent-light)]">{s.invoice_number}</td>
+                      <td className="py-2.5 px-3 text-stone-400 font-mono text-[11px]">{s.created_at}</td>
+                      <td className="py-2.5 px-3 font-medium text-[#FAFAF9]">{s.customer_name || 'Walk-in Customer'}</td>
+                      <td className="py-2.5 px-3 text-stone-300">{s.cashier || s.cashier_name || 'Cashier Station'}</td>
+                      <td className="py-2.5 px-3 text-center font-mono">{s.item_count || s.items_count || 1}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-stone-300">
+                        PHP {Number(s.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-stone-400">
+                        PHP {Number(s.vat_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">
+                        PHP {Number(s.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-2.5 px-3 text-center">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--accent-glow)] text-[var(--accent-light)] border border-[var(--accent-border)]">
+                          {s.payment_method}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleViewReceipt(s)}
+                          className="px-2.5 py-1 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors cursor-pointer inline-flex items-center gap-1"
+                          title="View Official Electronic Receipt"
+                        >
+                          <Receipt className="w-3 h-3" />
+                          <span>Receipt</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -1413,18 +1826,30 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 </p>
               </div>
 
-              {/* Algorithm Selector for Admin */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-stone-300">Model:</span>
-                <select
-                  value={selectedAlgorithm}
-                  onChange={(e) => setSelectedAlgorithm(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] font-semibold focus:outline-none"
-                  style={{ borderColor: undefined }}
-                >
-                  <option value="random_forest" className="bg-[#1C1917] text-[#FAFAF9]">Random Forest Regression (Ensemble)</option>
-                  <option value="linear_regression" className="bg-[#1C1917] text-[#FAFAF9]">Simple Linear Regression</option>
-                </select>
+              {/* Algorithm Selector & History Modal Button */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-stone-300">Model:</span>
+                  <select
+                    value={selectedAlgorithm}
+                    onChange={(e) => setSelectedAlgorithm(e.target.value)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] font-semibold focus:outline-none cursor-pointer"
+                  >
+                    <option value="random_forest" className="bg-[#1C1917] text-[#FAFAF9]">Random Forest Regression (Ensemble)</option>
+                    <option value="linear_regression" className="bg-[#1C1917] text-[#FAFAF9]">Simple Linear Regression</option>
+                  </select>
+                </div>
+                {predictionHistory && predictionHistory.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsPredictionHistoryModalOpen(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-95 bg-[#141210] hover:bg-[#24201E] border-[#292524] hover:border-white/20 text-[#FAFAF9]"
+                    title="View Executive Prediction History & Audit Trail in Popup"
+                  >
+                    <History className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Prediction History ({predictionHistory.length})</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1673,8 +2098,9 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                       <ResponsiveLineChart
                         title={`Projected Trajectory (${predictionResult.task_name})`}
                         data={predictionResult.trend_data}
-                        xKey={Object.keys(predictionResult.trend_data[0])[0]}
-                        yKey={Object.keys(predictionResult.trend_data[0])[1]}
+                        xKey="period"
+                        yKey="forecast"
+                        unit={predictionResult.unit || predictionResult.units || ''}
                         strokeColor="#3B82F6"
                       />
                     </div>
@@ -1954,17 +2380,28 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <div className="flex-1">
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                      if (!allowedTypes.includes(file.type.toLowerCase())) {
+                        showToast('Invalid image format. Allowed formats: PNG, JPG, JPEG, WEBP.', 'error');
+                        e.target.value = '';
+                        return;
+                      }
+                      if (file.size > 5 * 1024 * 1024) {
+                        showToast('Image size exceeds the 5 MB limit. Please select a smaller photo.', 'error');
+                        e.target.value = '';
+                        return;
+                      }
                       setProductImageFile(file);
                       setProductImagePreview(URL.createObjectURL(file));
                     }
                   }}
                   className="block w-full text-xs text-stone-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#292524] file:text-stone-200 hover:file:bg-[#3E3835] cursor-pointer"
                 />
-                <p className="text-[10px] text-stone-500 mt-0.5">Optional image upload. Defaults to standard placeholder if empty.</p>
+                <p className="text-[10px] text-stone-500 mt-0.5">Supported formats: PNG, JPG, JPEG, WEBP (Max 5 MB). Defaults to standard placeholder if empty.</p>
               </div>
               {productImageFile && (
                 <button
@@ -2136,6 +2573,111 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
         </form>
       </Modal>
 
+      {/* MODAL: EDIT EMPLOYEE ACCOUNT */}
+      <Modal
+        isOpen={isEditUserModalOpen}
+        onClose={() => {
+          if (!isSavingUser) {
+            setIsEditUserModalOpen(false);
+            setEditUserError(null);
+          }
+        }}
+        title="Edit Employee Account"
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleSaveUser} className="space-y-3.5 text-xs">
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Full Legal Name *</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. John Doe"
+              value={editUser.full_name}
+              onChange={(e) => {
+                setEditUser({ ...editUser, full_name: e.target.value });
+                if (editUserError) setEditUserError(null);
+              }}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Username *</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. johnd"
+              value={editUser.username}
+              onChange={(e) => {
+                setEditUser({ ...editUser, username: e.target.value });
+                if (editUserError) setEditUserError(null);
+              }}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] font-mono placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Email Address *</label>
+            <input
+              type="email"
+              required
+              placeholder="e.g. johnd@techavenue.com"
+              value={editUser.email}
+              onChange={(e) => {
+                setEditUser({ ...editUser, email: e.target.value });
+                if (editUserError) setEditUserError(null);
+              }}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1 text-stone-300">Password</label>
+            <input
+              type="password"
+              placeholder="Leave password blank to keep current password"
+              value={editUser.password}
+              onChange={(e) => {
+                setEditUser({ ...editUser, password: e.target.value });
+                if (editUserError) setEditUserError(null);
+              }}
+              className="w-full px-3 py-2 rounded-lg border border-[#292524] bg-[#141210] text-[#FAFAF9] placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+            />
+            <p className="text-[11px] text-stone-500 mt-1">Leave password blank to keep the current one. If changing, minimum 6 characters.</p>
+          </div>
+
+          {editUserError && (
+            <div className="p-2.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{editUserError}</span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292524]">
+            <button
+              type="button"
+              disabled={isSavingUser}
+              onClick={() => {
+                setIsEditUserModalOpen(false);
+                setEditUserError(null);
+              }}
+              className="px-3.5 py-1.5 rounded-lg text-stone-300 bg-[#292524] hover:bg-[#3E3835] text-xs font-semibold cursor-pointer transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSavingUser}
+              className="px-4 py-1.5 rounded-lg text-white font-bold text-xs shadow-md transition-all active:scale-95 hover:opacity-90 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+            >
+              {isSavingUser && <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+              <span>Save</span>
+            </button>
+          </div>
+        </form>
+      </Modal>
+
       {/* VIEW PRODUCT DETAIL MODAL */}
       <ProductDetailModal
         isOpen={isViewModalOpen}
@@ -2150,6 +2692,110 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           setSelectedProduct(prod);
           setIsEditProductModalOpen(true);
         }}
+      />
+
+      {/* CONFIRMATION VALIDATION DIALOG */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmConfig.action}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmText={confirmConfig.confirmText || 'Confirm'}
+        confirmStyle={confirmConfig.confirmStyle || 'danger'}
+        loading={confirmConfig.loading || false}
+      />
+
+      {/* MODAL: EXECUTIVE PREDICTION HISTORY & AUDIT TRAIL */}
+      <Modal
+        isOpen={isPredictionHistoryModalOpen}
+        onClose={() => setIsPredictionHistoryModalOpen(false)}
+        title="Executive Prediction History & Audit Trail"
+        maxWidth="max-w-6xl"
+      >
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-[#292524]">
+            <p className="text-xs text-stone-400">
+              Chronological log of machine learning model inferences, confidence ranges, and business recommendations
+            </p>
+            <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-[#141210] text-[var(--accent-light)] border border-[#292524]">
+              {(predictionHistory || []).length} Recorded Runs
+            </span>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-[#292524]">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#141210] text-stone-400 uppercase font-extrabold text-[11px] border-b border-[#292524]">
+                <tr>
+                  <th className="py-3 px-3.5">Run ID</th>
+                  <th className="py-3 px-3.5">Prediction Task</th>
+                  <th className="py-3 px-3.5">Model Algorithm</th>
+                  <th className="py-3 px-3.5 text-right">Forecast Outcome</th>
+                  <th className="py-3 px-3.5">Confidence Range</th>
+                  <th className="py-3 px-3.5">Actionable Recommendation</th>
+                  <th className="py-3 px-3.5">Executed By</th>
+                  <th className="py-3 px-3.5">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#292524] text-stone-200">
+                {(!predictionHistory || predictionHistory.length === 0) ? (
+                  <tr>
+                    <td colSpan="8" className="py-8 text-center text-stone-500">
+                      No prediction runs recorded yet.
+                    </td>
+                  </tr>
+                ) : (
+                  predictionHistory.map((h) => (
+                    <tr key={h.id} className="hover:bg-[#292524]/50">
+                      <td className="py-2.5 px-3.5 font-mono text-stone-400">#{h.id}</td>
+                      <td className="py-2.5 px-3.5 font-bold uppercase text-[var(--accent-light)]">
+                        {String(h.task || '').replace(/_/g, ' ')}
+                      </td>
+                      <td className="py-2.5 px-3.5 text-stone-300">
+                        {h.algorithm === 'linear_regression' ? 'Simple Linear Regression' : 'Random Forest Regressor'}
+                      </td>
+                      <td className="py-2.5 px-3.5 text-right font-mono font-bold text-white">
+                        {Number(h.predicted_value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-2.5 px-3.5 font-mono text-[11px] text-stone-400">
+                        {h.confidence_interval || 'Standard Range'}
+                      </td>
+                      <td className="py-2.5 px-3.5 max-w-xs text-stone-300 truncate" title={h.recommendation}>
+                        {h.recommendation || 'Operational recommendation applied'}
+                      </td>
+                      <td className="py-2.5 px-3.5 font-medium text-stone-300">
+                        {h.user_name || 'Admin'}
+                      </td>
+                      <td className="py-2.5 px-3.5 font-mono text-[11px] text-stone-400">
+                        {h.created_at}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <button
+              type="button"
+              onClick={() => setIsPredictionHistoryModalOpen(false)}
+              className="px-4 py-2 rounded-xl bg-[#24201E] hover:bg-[#2C2724] border border-[#3E3835] text-stone-200 text-xs font-semibold transition-all cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* OFFICIAL TRANSACTION RECEIPT MODAL */}
+      <OfficialReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => {
+          setIsReceiptModalOpen(false);
+          setActiveReceipt(null);
+        }}
+        receipt={activeReceipt}
       />
     </div>
   );

@@ -38,6 +38,7 @@ export function ResponsiveLineChart({
   strokeColor,
   strokeColor2 = '#10B981',
   title = '',
+  unit = 'PHP',
 }) {
   const { currentTheme } = useThemeColor();
   const effectiveStroke = strokeColor || currentTheme?.strokeColor || 'var(--accent-primary, #9A6B4C)';
@@ -250,7 +251,19 @@ export function ResponsiveLineChart({
           {hoveredIdx !== null && pts1[hoveredIdx] && (() => {
             const p  = pts1[hoveredIdx];
             const p2 = pts2?.[hoveredIdx];
-            const tw = p2 ? 130 : 108;
+            const formatValue = (val) => {
+              if (unit === 'PHP' || unit === '₱') {
+                return `₱ ${val.toLocaleString()}`;
+              }
+              if (unit) {
+                return `${val.toLocaleString()} ${unit}`;
+              }
+              return val.toLocaleString();
+            };
+            const valStr = formatValue(p.val);
+            const valStr2 = p2 ? formatValue(p2.val) : '';
+            const maxLen = Math.max(valStr.length, valStr2.length);
+            const tw = Math.max(p2 ? 140 : 110, maxLen * 8.5 + 24);
             const th = p2 ? 46  : 28;
             const tx = Math.min(W - padRight - tw - 4, Math.max(padLeft + 4, p.x - tw / 2));
             const ty = Math.max(padTop + 4, p.y - th - 12);
@@ -267,7 +280,7 @@ export function ResponsiveLineChart({
                   fill="#ffffff"
                   style={{ fontSize: 10.5, fontFamily: 'inherit', fontWeight: 600 }}
                 >
-                  ₱ {p.val.toLocaleString()}
+                  {valStr}
                 </text>
                 {p2 && (
                   <text
@@ -276,7 +289,7 @@ export function ResponsiveLineChart({
                     fill={strokeColor2}
                     style={{ fontSize: 9.5, fontFamily: 'inherit', fontWeight: 500 }}
                   >
-                    Target: ₱ {p2.val.toLocaleString()}
+                    Target: {valStr2}
                   </text>
                 )}
               </g>

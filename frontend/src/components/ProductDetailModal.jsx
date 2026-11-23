@@ -25,6 +25,8 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 
+import { getProductImageUrl } from '../api';
+
 export default function ProductDetailModal({
   isOpen,
   onClose,
@@ -55,7 +57,7 @@ export default function ProductDetailModal({
   // Specific product photo mapping
   const getProductImage = () => {
     if (product.image_url && product.image_url !== '/products/default.svg') {
-      return product.image_url;
+      return getProductImageUrl(product.image_url);
     }
     const sku = (product.sku || '').toUpperCase();
     const map = {
@@ -71,7 +73,7 @@ export default function ProductDetailModal({
       'PRD-1010': '/products/samsung-990-pro-ssd.svg',
       'PRD-1011': '/products/archer-wifi6-router.svg'
     };
-    return map[sku] || product.image_url || '/products/beast-gaming-pc.svg';
+    return map[sku] || getProductImageUrl(product.image_url) || '/products/desktop.svg';
   };
 
   const productImage = getProductImage();

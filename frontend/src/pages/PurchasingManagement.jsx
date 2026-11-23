@@ -25,11 +25,12 @@ import {
   Mail,
   MapPin,
   ClipboardList,
-  PackageCheck
+  PackageCheck,
+  Trash2
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import Modal, { ConfirmDialog } from '../components/Modal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 import { useNotification } from '../context/NotificationContext';
 
 export default function PurchasingManagement({ user, initialTab = 'dashboard', clerkOnlyReceiving = false }) {
@@ -213,6 +214,41 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
       }
     } catch (err) {
       console.error('Error fetching supplier orders:', err);
+    }
+  };
+
+  // Delete Supplier state and handlers
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingSupplier, setDeletingSupplier] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteWarningError, setDeleteWarningError] = useState(null);
+
+  const handleOpenDeleteSupplier = (supplier) => {
+    setDeletingSupplier(supplier);
+    setDeleteWarningError(null);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDeleteSupplier = async () => {
+    if (!deletingSupplier?.id) return;
+    setIsDeleting(true);
+    setDeleteWarningError(null);
+    try {
+      const res = await api.deleteSupplier(deletingSupplier.id);
+      if (res.status === 'success') {
+        showFeedback(res.message || `Supplier '${deletingSupplier.name}' deleted successfully.`, 'success');
+        setIsDeleteModalOpen(false);
+        setDeletingSupplier(null);
+        await loadAllData();
+      } else {
+        setDeleteWarningError(res.message || 'Failed to delete supplier.');
+      }
+    } catch (err) {
+      const msg = err.message || 'Cannot delete supplier.';
+      setDeleteWarningError(msg);
+      showFeedback(msg, 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -615,10 +651,10 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                             <div className="flex items-center gap-2">
                               <div className="w-7 h-7 rounded bg-white dark:bg-darkbg border p-0.5 shrink-0 flex items-center justify-center">
                                 <img 
-                                  src={item.image_url || '/products/default.svg'} 
+                                  src={getProductImageUrl(item.image_url)} 
                                   alt={item.name} 
                                   className="max-h-full max-w-full object-contain"
-                                  onError={(e) => { e.target.src = '/products/default.svg'; }}
+                                  onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                                 />
                               </div>
                               <span className="font-bold text-gray-800 dark:text-gray-200 truncate max-w-[150px]">
@@ -1000,10 +1036,17 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           </button>
                           <button
                             onClick={() => handleOpenEditSupplier(s)}
-                            className="p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400"
+                            className="p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer"
                             title="Edit Supplier"
                           >
                             <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenDeleteSupplier(s)}
+                            className="p-1.5 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+                            title="Delete Supplier"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleToggleSupplierStatus(s)}
@@ -1573,6 +1616,93 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
             >
               Close
             </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* MODAL 6: DELETE SUPPLIER CONFIRMATION */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          if (!isDeleting) {
+            setIsDeleteModalOpen(false);
+            setDeletingSupplier(null);
+            setDeleteWarningError(null);
+          }
+        }}
+        title="Delete Supplier?"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4">
+          <div className="p-3.5 rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20 text-xs space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">Supplier to Delete:</span>
+            <p className="text-sm font-black text-gray-900 dark:text-white">
+              {deletingSupplier?.name}
+            </p>
+            {deletingSupplier?.contact_person && (
+              <p className="text-gray-500 dark:text-gray-400 text-[11px]">
+                Contact: {deletingSupplier.contact_person}
+              </p>
+            )}
+          </div>
+
+          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+            Are you sure you want to delete this supplier? This action cannot be undone.
+          </p>
+
+          {deleteWarningError && (
+            <div className="p-3 rounded-xl border border-amber-300 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 text-xs space-y-2">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold block">Deletion Restricted</span>
+                  <p className="leading-snug text-[11px] text-amber-800 dark:text-amber-300">
+                    {deleteWarningError}
+                  </p>
+                </div>
+              </div>
+              {deletingSupplier?.status === 'active' && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const sup = deletingSupplier;
+                    setIsDeleteModalOpen(false);
+                    setDeletingSupplier(null);
+                    setDeleteWarningError(null);
+                    await handleToggleSupplierStatus(sup);
+                  }}
+                  className="w-full mt-1 py-1.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-colors cursor-pointer text-center"
+                >
+                  Mark as Inactive Instead
+                </button>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-gray-100 dark:border-darkbg-border">
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setDeletingSupplier(null);
+                setDeleteWarningError(null);
+              }}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#141210] hover:bg-gray-200 dark:hover:bg-white/5 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            {!deleteWarningError && (
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleConfirmDeleteSupplier}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                {isDeleting && <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                <span>Delete Supplier</span>
+              </button>
+            )}
           </div>
         </div>
       </Modal>

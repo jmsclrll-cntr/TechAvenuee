@@ -28,7 +28,7 @@ import {
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart, ModelComparisonBarChart } from '../components/Charts';
 import Modal from '../components/Modal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { useNotification } from '../context/NotificationContext';
 import { useThemeColor } from '../context/ThemeColorContext';
@@ -548,7 +548,7 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded bg-[#1C1917] bg-[#141210] border p-0.5 shrink-0 flex items-center justify-center">
-                            <img src={p.image_url || '/products/desktop.svg'} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/desktop.svg'; }} />
+                            <img src={getProductImageUrl(p.image_url)} alt={p.name} className="max-h-full max-w-full object-contain" onError={(e) => { e.target.src = '/products/desktop.svg'; }} />
                           </div>
                           <span className="font-bold text-[#FAFAF9] dark:text-white truncate max-w-[200px] transition-colors">{p.name}</span>
                         </div>
@@ -1916,7 +1916,8 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                       title="Forecasted Trendline Projection"
                       data={predictionResult.trend_data}
                       xKey="period"
-                      yKey={Object.keys(predictionResult.trend_data[0])[1]}
+                      yKey="forecast"
+                      unit={predictionResult.unit || predictionResult.units || ''}
                       strokeColor="#8B5CF6"
                     />
                   </div>

@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { ResponsiveLineChart, ResponsiveBarChart, ResponsiveDonutChart } from '../components/Charts';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 
 export default function ReportsAnalytics({ user }) {
   const [reportData, setReportData] = useState(null);
@@ -756,7 +756,7 @@ export default function ReportsAnalytics({ user }) {
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border p-1 shrink-0 flex items-center justify-center">
                             <img
-                              src={p.image_url || '/products/desktop.svg'}
+                              src={getProductImageUrl(p.image_url)}
                               alt={p.name}
                               className="max-h-full max-w-full object-contain"
                               onError={(e) => { e.target.src = '/products/desktop.svg'; }}
@@ -837,7 +837,7 @@ export default function ReportsAnalytics({ user }) {
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded bg-white dark:bg-darkbg border p-1 shrink-0 flex items-center justify-center">
                             <img
-                              src={p.image_url || '/products/desktop.svg'}
+                              src={getProductImageUrl(p.image_url)}
                               alt={p.name}
                               className="max-h-full max-w-full object-contain"
                               onError={(e) => { e.target.src = '/products/desktop.svg'; }}

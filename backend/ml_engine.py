@@ -368,7 +368,7 @@ def generate_business_recommendation(task, val, inputs):
     return "Maintain balanced procurement and monitor daily register volume."
 
 def generate_prediction_chart_data(task, predicted_val):
-    periods = ['3 Weeks Ago', '2 Weeks Ago', 'Last Week', 'Current', 'Forecast / Target']
+    periods = ['3 Weeks Ago', '2 Weeks Ago', 'Last Week', 'Current', 'Forecast']
     base = predicted_val * 0.85
     return [
         {'period': periods[0], 'forecast': round(base * 0.95, 2), 'historical': round(base * 0.95, 2), 'predicted': round(base * 0.95, 2)},

@@ -17,7 +17,7 @@ import {
   Percent
 } from 'lucide-react';
 import Modal, { ConfirmDialog } from '../components/Modal';
-import { api } from '../api';
+import { api, getProductImageUrl } from '../api';
 
 export default function NewTransaction({ onProceedToPos, user }) {
   const [drafts, setDrafts] = useState([]);
@@ -336,10 +336,10 @@ export default function NewTransaction({ onProceedToPos, user }) {
                       <div className="flex items-start gap-2.5">
                         <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-darkbg-card border border-gray-300 dark:border-darkbg-border p-1 shrink-0 overflow-hidden flex items-center justify-center">
                           <img
-                            src={p.image_url || '/products/default.svg'}
+                            src={getProductImageUrl(p.image_url)}
                             alt={p.name}
                             className="w-full h-full object-contain"
-                            onError={(e) => { e.target.src = '/products/default.svg'; }}
+                            onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -528,10 +528,10 @@ export default function NewTransaction({ onProceedToPos, user }) {
                     <div className="flex items-center gap-2 flex-1 min-w-0 pr-2">
                       <div className="w-8 h-8 rounded bg-gray-200 dark:bg-darkbg-card p-0.5 shrink-0 overflow-hidden flex items-center justify-center">
                         <img
-                          src={item.image_url || '/products/default.svg'}
+                          src={getProductImageUrl(item.image_url)}
                           alt={item.name}
                           className="w-full h-full object-contain"
-                          onError={(e) => { e.target.src = '/products/default.svg'; }}
+                          onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                         />
                       </div>
                       <div className="min-w-0">
