@@ -802,11 +802,11 @@ def delete_product(product_id):
 
             # Remove associated foreign key records in order:
             # 1. Product gallery images
-            cursor.execute("DELETE FROM product_images WHERE product_id = %s;", (product_id,))
+            cursor.execute("DELETE FROM product_image WHERE product_id = %s;", (product_id,))
             # 2. Stock movements
-            cursor.execute("DELETE FROM stock_movements WHERE product_id = %s;", (product_id,))
+            cursor.execute("DELETE FROM inventory_movements WHERE product_id = %s;", (product_id,))
             # 3. Transaction items
-            cursor.execute("DELETE FROM transaction_items WHERE product_id = %s;", (product_id,))
+            cursor.execute("DELETE FROM sales_items WHERE product_id = %s;", (product_id,))
             # 4. Product record itself
             cursor.execute("DELETE FROM products WHERE id = %s;", (product_id,))
 

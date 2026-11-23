@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Sun,
+  Moon,
   Clock,
   ShieldCheck,
   BookOpen,
   Maximize,
+  Maximize2,
+  Minimize2,
   ChevronDown,
   LogOut,
   ExternalLink,
@@ -372,7 +375,7 @@ export default function Header({
         {isInstructor && (
           <nav
             aria-label="Instructor Workspace Navigation"
-            className="ml-auto flex items-center gap-2 sm:gap-2.5 overflow-visible"
+            className="hidden md:flex items-center gap-2 sm:gap-2.5 overflow-visible"
           >
             {/* Role Workspaces Quick Buttons */}
             <div className="flex items-center gap-1 sm:gap-1.5 bg-[#141210] p-1 rounded-full border border-[#292524]">
@@ -407,51 +410,83 @@ export default function Header({
           </nav>
         )}
 
-        {/* Right: User Profile & System Controls Dropdown */}
-        <div ref={userMenuRef} className="relative shrink-0">
+        {/* Right Controls Action Group: Theme Mode, Full Screen, and User Profile Menu */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 ml-auto">
+          {/* Quick Dark / Light Mode Toggle Button */}
           <button
-            ref={triggerButtonRef}
             type="button"
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl border transition-all cursor-pointer select-none group focus:outline-none ${
-              showUserMenu
-                ? 'bg-[#292524] text-white shadow-md'
-                : 'bg-[#1C1917] border-[#292524] hover:bg-[#292524] text-white'
-            }`}
-            style={showUserMenu ? { borderColor: currentTheme.primary } : {}}
-            aria-haspopup="menu"
-            aria-expanded={showUserMenu}
-            aria-label="User Account Menu"
+            onClick={() => setDarkMode(!darkMode)}
+            title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-[#292524] bg-white dark:bg-[#1C1917] hover:bg-slate-50 dark:hover:bg-[#292524] text-slate-700 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 focus:outline-none shrink-0"
+            aria-label={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {/* Avatar with Green Online Dot */}
-            <div className="relative">
-              <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs uppercase shadow-sm shrink-0 transition-colors"
-                style={{ 
-                  backgroundColor: 'var(--accent-primary)',
-                  color: 'var(--accent-text, #FFFFFF)'
-                }}
-              >
-                {userInitial}
-              </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-[#1C1917]" />
-            </div>
-
-            {/* Name and Role Label */}
-            <div className="text-left leading-tight hidden xs:block sm:block">
-              <p className="text-xs font-bold text-[#FAFAF9] truncate max-w-[150px]">
-                {userName}
-              </p>
-              <p className="text-[10px] font-medium text-stone-400 capitalize truncate">
-                {roleDisplay}
-              </p>
-            </div>
-
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-stone-400 group-hover:text-white transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''
-                }`}
-            />
+            {darkMode ? (
+              <Sun className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-amber-400 hover:rotate-45 transition-transform" />
+            ) : (
+              <Moon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-sky-500 hover:-rotate-12 transition-transform" />
+            )}
           </button>
+
+          {/* Quick Full Screen Mode Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit Full Screen (Esc)' : 'Full Screen Mode'}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-[#292524] bg-white dark:bg-[#1C1917] hover:bg-slate-50 dark:hover:bg-[#292524] text-slate-700 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 focus:outline-none shrink-0"
+            aria-label={isFullscreen ? 'Exit Full Screen' : 'Full Screen Mode'}
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform hover:scale-110" style={{ color: 'var(--accent-primary)' }} />
+            ) : (
+              <Maximize2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform hover:scale-110" style={{ color: 'var(--accent-primary)' }} />
+            )}
+          </button>
+
+          {/* Right: User Profile & System Controls Dropdown */}
+          <div ref={userMenuRef} className="relative shrink-0">
+            <button
+              ref={triggerButtonRef}
+              type="button"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className={`flex items-center gap-2.5 py-1.5 px-3 rounded-xl border transition-all cursor-pointer select-none group focus:outline-none ${
+                showUserMenu
+                  ? 'bg-slate-100 dark:bg-[#292524] text-slate-900 dark:text-white shadow-md'
+                  : 'bg-white dark:bg-[#1C1917] border-slate-200 dark:border-[#292524] hover:bg-slate-50 dark:hover:bg-[#292524] text-slate-800 dark:text-white'
+              }`}
+              style={showUserMenu ? { borderColor: currentTheme.primary } : {}}
+              aria-haspopup="menu"
+              aria-expanded={showUserMenu}
+              aria-label="User Account Menu"
+            >
+              {/* Avatar with Green Online Dot */}
+              <div className="relative">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs uppercase shadow-sm shrink-0 transition-colors"
+                  style={{ 
+                    backgroundColor: 'var(--accent-primary)',
+                    color: 'var(--accent-text, #FFFFFF)'
+                  }}
+                >
+                  {userInitial}
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-white dark:ring-[#1C1917]" />
+              </div>
+
+              {/* Name and Role Label */}
+              <div className="text-left leading-tight hidden xs:block sm:block">
+                <p className="text-xs font-bold text-slate-900 dark:text-[#FAFAF9] truncate max-w-[150px]">
+                  {userName}
+                </p>
+                <p className="text-[10px] font-medium text-slate-500 dark:text-stone-400 capitalize truncate">
+                  {roleDisplay}
+                </p>
+              </div>
+
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 dark:text-stone-400 group-hover:text-slate-700 dark:group-hover:text-white transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''
+                  }`}
+              />
+            </button>
 
           {/* Profile Dropdown Menu */}
           {showUserMenu && (
@@ -514,6 +549,31 @@ export default function Header({
 
                 {/* System Settings & Fullscreen Controls */}
                 <div className="py-3 space-y-2.5 border-b border-[#292524]">
+                  {/* Theme Mode Toggle (Dark / Light) */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-300 font-semibold flex items-center gap-1.5">
+                      {darkMode ? <Moon className="w-3.5 h-3.5 text-sky-400" /> : <Sun className="w-3.5 h-3.5 text-amber-400" />}
+                      <span>Theme Mode</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setDarkMode(!darkMode)}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#292524] hover:bg-[#44403C] text-xs font-bold text-stone-200 transition-colors cursor-pointer"
+                    >
+                      {darkMode ? (
+                        <>
+                          <Sun className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Light Mode</span>
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="w-3.5 h-3.5 text-sky-400" />
+                          <span>Dark Mode</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-stone-300 font-semibold">Full Screen Mode</span>
                     <button
@@ -613,6 +673,7 @@ export default function Header({
               </div>
             </>
           )}
+          </div>
         </div>
       </div>
       </div>

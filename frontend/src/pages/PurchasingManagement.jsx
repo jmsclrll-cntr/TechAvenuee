@@ -30,11 +30,12 @@ import {
 import StatCard from '../components/StatCard';
 import Modal, { ConfirmDialog } from '../components/Modal';
 import { api } from '../api';
+import { useNotification } from '../context/NotificationContext';
 
 export default function PurchasingManagement({ user, initialTab = 'dashboard', clerkOnlyReceiving = false }) {
   const [subTab, setSubTab] = useState(clerkOnlyReceiving ? 'receiving' : initialTab);
   const [loading, setLoading] = useState(true);
-  const [feedback, setFeedback] = useState(null);
+  const { showSuccess, showError, showWarning, showInfo } = useNotification();
 
   // Data states
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -85,8 +86,15 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
   const [poStatusFilter, setPoStatusFilter] = useState('All');
 
   const showFeedback = (msg, type = 'success') => {
-    setFeedback({ msg, type });
-    setTimeout(() => setFeedback(null), 4500);
+    if (type === 'error') {
+      showError(msg);
+    } else if (type === 'warning') {
+      showWarning(msg);
+    } else if (type === 'info') {
+      showInfo(msg);
+    } else {
+      showSuccess(msg);
+    }
   };
 
   const loadAllData = async () => {
@@ -459,38 +467,22 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
           <div className="flex items-center gap-3">
             <button
               onClick={handleOpenAddSupplier}
-              className="flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-gray-300 dark:border-darkbg-border bg-white dark:bg-darkbg-card text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition"
+              className="flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl border border-gray-300 dark:border-[#292524] bg-white dark:bg-[#1C1917] text-gray-800 dark:text-gray-200 hover:border-[var(--accent-primary)] shadow-sm transition-all active:scale-95 cursor-pointer"
             >
-              <Building className="w-4 h-4 text-blue-600" />
-              Add Supplier
+              <Building className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
+              <span>Add Supplier</span>
             </button>
             <button
               onClick={handleOpenCreatePo}
-              className="flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg bg-navy hover:bg-navy-dark text-white dark:bg-greige dark:text-navy shadow-sm transition"
+              className="flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl text-white shadow-md transition-all active:scale-95 hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               <PlusCircle className="w-4 h-4" />
-              Create Purchase Order
+              <span>Create Purchase Order</span>
             </button>
           </div>
         )}
       </div>
-
-      {/* Notification Toast */}
-      {feedback && (
-        <div className={`p-4 rounded-xl border text-sm font-semibold flex items-center justify-between shadow-md transition-all ${
-          feedback.type === 'error' 
-            ? 'bg-red-50 dark:bg-red-950/60 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800' 
-            : 'bg-green-50 dark:bg-green-950/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800'
-        }`}>
-          <div className="flex items-center gap-3">
-            {feedback.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle2 className="w-5 h-5 shrink-0" />}
-            <span>{feedback.msg}</span>
-          </div>
-          <button onClick={() => setFeedback(null)} className="opacity-70 hover:opacity-100">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* Sub-navigation tabs (Hidden if clerkOnlyReceiving) */}
       {!clerkOnlyReceiving && (
@@ -810,9 +802,10 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           {po.status === 'Pending' && (
                             <button
                               onClick={() => handleUpdatePoStatus(po.id, 'Ordered')}
-                              className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px]"
+                              className="px-2.5 py-1 rounded-lg text-white font-bold text-[11px] shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                              style={{ backgroundColor: 'var(--accent-primary)' }}
                             >
-                              Approve & Order
+                              Approve &amp; Order
                             </button>
                           )}
 
@@ -1147,7 +1140,8 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-xs font-bold rounded-lg bg-navy text-white dark:bg-greige dark:text-navy hover:bg-navy-dark"
+              className="px-4 py-2 text-xs font-bold rounded-lg text-white shadow-md transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               {editingSupplier ? 'Update Supplier' : 'Save Supplier'}
             </button>
@@ -1313,7 +1307,8 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
             <button
               type="submit"
               disabled={isSubmittingPo}
-              className="px-4 py-2 text-xs font-bold rounded-lg bg-navy text-white dark:bg-greige dark:text-navy hover:bg-navy-dark flex items-center gap-1.5"
+              className="px-4 py-2 text-xs font-bold rounded-lg text-white shadow-md transition-all hover:opacity-90 active:scale-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
             >
               {isSubmittingPo ? 'Submitting PO...' : 'Create Purchase Order'}
             </button>
@@ -1415,7 +1410,8 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                 {selectedPo.status === 'Pending' && (
                   <button
                     onClick={() => handleUpdatePoStatus(selectedPo.id, 'Ordered')}
-                    className="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700"
+                    className="px-3 py-1.5 rounded-lg text-white font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                    style={{ backgroundColor: 'var(--accent-primary)' }}
                   >
                     Approve Order
                   </button>

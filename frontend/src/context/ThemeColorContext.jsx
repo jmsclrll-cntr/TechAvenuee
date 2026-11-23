@@ -68,15 +68,20 @@ export const THEME_PALETTES = [
 const DEFAULT_THEME_ID = 'mocha';
 const STORAGE_KEY = 'tech_avenue_accent_theme';
 const LEGACY_STORAGE_KEY = 'techavenue_theme_color';
+const DARK_MODE_STORAGE_KEY = 'techavenue_theme';
 
 const ThemeColorContext = createContext({
   themeId: DEFAULT_THEME_ID,
   setThemeId: () => {},
   currentTheme: THEME_PALETTES.find((t) => t.id === DEFAULT_THEME_ID),
-  THEME_PALETTES
+  THEME_PALETTES,
+  darkMode: true,
+  setDarkMode: () => {},
+  toggleDarkMode: () => {}
 });
 
 export function ThemeColorProvider({ children }) {
+  // Accent Theme Palette State
   const [themeId, setThemeIdState] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -87,6 +92,19 @@ export function ThemeColorProvider({ children }) {
       // ignore
     }
     return DEFAULT_THEME_ID;
+  });
+
+  // Dark / Light Theme Mode State (persisted in localStorage)
+  const [darkMode, setDarkModeState] = useState(() => {
+    try {
+      const savedTheme = localStorage.getItem(DARK_MODE_STORAGE_KEY);
+      if (savedTheme) {
+        return savedTheme === 'dark';
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return true;
+    }
   });
 
   const currentTheme = THEME_PALETTES.find((t) => t.id === themeId) || THEME_PALETTES[3];
@@ -100,6 +118,36 @@ export function ThemeColorProvider({ children }) {
       // ignore
     }
   };
+
+  const setDarkMode = (val) => {
+    setDarkModeState((prev) => {
+      const nextVal = typeof val === 'function' ? val(prev) : Boolean(val);
+      try {
+        localStorage.setItem(DARK_MODE_STORAGE_KEY, nextVal ? 'dark' : 'light');
+      } catch {
+        // ignore
+      }
+      return nextVal;
+    });
+  };
+
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+
+  // Sync dark/light mode class and data attribute to document root
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      root.setAttribute('data-color-scheme', 'dark');
+      try { localStorage.setItem(DARK_MODE_STORAGE_KEY, 'dark'); } catch {}
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+      root.setAttribute('data-color-scheme', 'light');
+      try { localStorage.setItem(DARK_MODE_STORAGE_KEY, 'light'); } catch {}
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -122,7 +170,15 @@ export function ThemeColorProvider({ children }) {
   }, [themeId, currentTheme]);
 
   return (
-    <ThemeColorContext.Provider value={{ themeId, setThemeId, currentTheme, THEME_PALETTES }}>
+    <ThemeColorContext.Provider value={{
+      themeId,
+      setThemeId,
+      currentTheme,
+      THEME_PALETTES,
+      darkMode,
+      setDarkMode,
+      toggleDarkMode
+    }}>
       {children}
     </ThemeColorContext.Provider>
   );

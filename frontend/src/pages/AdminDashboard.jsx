@@ -435,7 +435,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               <div className="bg-[#1C1917] text-[#FAFAF9] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-lg relative overflow-hidden">
                 {/* Subtle theme background ambient tint */}
                 <div 
-                  className="absolute inset-0 pointer-events-none rounded-xl"
+                  className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                   style={{
                     background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
                   }}
@@ -559,7 +559,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   >
                     {/* Faded effect: Black into Theme color gradient overlay */}
                     <div 
-                      className="absolute inset-0 pointer-events-none rounded-xl"
+                      className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                       style={{
                         background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
                       }}
@@ -593,7 +593,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                   >
                     {/* Faded effect: Black into Theme color gradient overlay */}
                     <div 
-                      className="absolute inset-0 pointer-events-none rounded-xl"
+                      className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                       style={{
                         background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
                       }}
@@ -630,7 +630,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm flex flex-col justify-between transition-colors relative overflow-hidden">
                   {/* Faded effect: Black into Theme color gradient overlay */}
                   <div 
-                    className="absolute inset-0 pointer-events-none rounded-xl"
+                    className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                     style={{
                       background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
                     }}
@@ -661,7 +661,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
                 <div className="lg:col-span-4 bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between relative overflow-hidden transition-all duration-300 group">
                   {/* Faded effect: Black into Theme color gradient overlay */}
                   <div 
-                    className="absolute inset-0 pointer-events-none rounded-xl"
+                    className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                     style={{
                       background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}14)`
                     }}
@@ -801,7 +801,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
               {/* Sales Charts - Full Width Trend with Blended Fade Effect */}
               <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 shadow-sm transition-all relative overflow-hidden">
                 <div 
-                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  className="absolute inset-0 pointer-events-none rounded-2xl hidden dark:block"
                   style={{
                     background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
                   }}
@@ -1392,7 +1392,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           <div className="bg-[#1C1917] border border-[#292524] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5 relative overflow-hidden">
             {/* Faded Effect Header Background Overlay */}
             <div 
-              className="absolute inset-0 pointer-events-none rounded-2xl"
+              className="absolute inset-0 pointer-events-none rounded-2xl hidden dark:block"
               style={{
                 background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
               }}
@@ -1462,7 +1462,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             <div className="p-5 sm:p-6 rounded-2xl bg-[#1C1917] border border-[#292524] transition-all relative overflow-hidden shadow-sm space-y-4">
               {/* Atmospheric Black-into-Theme Fade Gradient Overlay */}
               <div 
-                className="absolute inset-0 pointer-events-none rounded-2xl"
+                className="absolute inset-0 pointer-events-none rounded-2xl hidden dark:block"
                 style={{
                   background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
                 }}
@@ -1630,7 +1630,7 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             {predictionResult && (
               <div className="p-5 sm:p-6 rounded-2xl bg-[#1C1917] border border-[#292524] space-y-4 relative overflow-hidden shadow-sm">
                 <div 
-                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  className="absolute inset-0 pointer-events-none rounded-2xl hidden dark:block"
                   style={{
                     background: `linear-gradient(to bottom right, rgba(0,0,0,0.75), rgba(28,25,23,0.6), ${currentTheme.primary}12)`
                   }}
@@ -1993,7 +1993,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
             <button type="button" onClick={() => setIsAddProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Save Product</button>
+            <button
+              type="submit"
+              className="px-4 py-1.5 rounded text-white font-bold transition-all shadow-md active:scale-95 hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+            >
+              Save Product
+            </button>
           </div>
         </form>
       </Modal>
@@ -2043,7 +2049,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
             </button>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setIsEditProductModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210] text-slate-700 dark:text-gray-300 font-medium">Cancel</button>
-              <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Update Details</button>
+              <button
+                type="submit"
+                className="px-4 py-1.5 rounded text-white font-bold transition-all shadow-md active:scale-95 hover:opacity-90 cursor-pointer"
+                style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+              >
+                Update Details
+              </button>
             </div>
           </div>
         </form>
@@ -2113,7 +2125,13 @@ export default function AdminDashboard({ activeTab, setActiveTab, user }) {
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 border-[#292524]">
             <button type="button" onClick={() => setIsAddUserModalOpen(false)} className="px-3 py-1.5 rounded bg-gray-100 bg-[#141210]">Cancel</button>
-            <button type="submit" className="px-4 py-1.5 rounded bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold transition-colors">Register Account</button>
+            <button
+              type="submit"
+              className="px-4 py-1.5 rounded text-white font-bold transition-all shadow-md active:scale-95 hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 4px 14px var(--accent-glow)' }}
+            >
+              Register Account
+            </button>
           </div>
         </form>
       </Modal>

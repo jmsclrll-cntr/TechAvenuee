@@ -583,7 +583,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           {/* Top KPI Cards (Clean 4 Cards with Blended Fade Effect) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Sales Today</span>
@@ -599,7 +599,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Transactions Today</span>
@@ -612,7 +612,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Avg. Transaction</span>
@@ -627,7 +627,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[#14B8A6]/40 transition-all relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Items Sold Today</span>
@@ -644,7 +644,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             {/* Sales by Product Category Donut Card */}
             <div className="lg:col-span-5 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm hover:border-[#14B8A6]/30 transition-colors flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex-1 flex flex-col justify-between">
                 <ResponsiveDonutChart
@@ -659,7 +659,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
             {/* Best-Selling Items Today Table Card */}
             <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
               
               <div className="relative z-10 flex items-center justify-between mb-3 pb-2 border-b border-[#292524]">
@@ -707,7 +707,7 @@ export default function SalesDashboard({ activeTab, setActiveTab, user }) {
 
           {/* Bottom Row: Full-Width Recent Completed Transactions Table */}
           <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-5 shadow-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
             <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
 
             <div className="relative z-10 flex items-center justify-between mb-4 pb-2 border-b border-[#292524]">

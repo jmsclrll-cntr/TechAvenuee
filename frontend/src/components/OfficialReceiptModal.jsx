@@ -67,6 +67,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
 
   // Open formatted print / PDF window
   const handlePrintOrPdf = (isPdfDownload = false) => {
+    const computedAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim() || '#10B981';
     const printWindow = window.open('', '_blank', 'width=480,height=720');
     if (!printWindow) {
       alert('Please allow popups to print or download the official receipt.');
@@ -135,7 +136,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             justify-content: space-between;
             font-size: 13px;
             font-weight: 900;
-            color: #065f46;
+            color: ${computedAccent};
             margin: 4px 0;
           }
           .change-highlight {
@@ -143,7 +144,7 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             justify-content: space-between;
             font-size: 12px;
             font-weight: 800;
-            color: #065f46;
+            color: ${computedAccent};
           }
           .footer { text-align: center; font-size: 9px; color: #4b5563; margin-top: 12px; }
           @media print {
@@ -253,10 +254,19 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
         {/* Top Bar with Status Badge & Close button */}
         <div className="flex items-center justify-between px-5 py-3.5 bg-[#181818] border-b border-[#2A2A2A]">
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-md bg-emerald-500/20 text-emerald-400">
+            <span
+              className="p-1 rounded-md"
+              style={{
+                backgroundColor: 'var(--accent-glow, rgba(16,185,129,0.2))',
+                color: 'var(--accent-primary, #10B981)'
+              }}
+            >
               <CheckCircle2 className="w-4 h-4" />
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+            <span
+              className="text-xs font-bold uppercase tracking-wider"
+              style={{ color: 'var(--accent-primary, #10B981)' }}
+            >
               Official Transaction Receipt
             </span>
             <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-[#242424] text-gray-300 border border-[#333333]">
@@ -298,7 +308,14 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               Tel: (02) 8821-4920 • VAT Reg TIN: 401-889-223-000
             </p>
             <div className="pt-2">
-              <span className="inline-block px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+              <span
+                className="inline-block px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest border"
+                style={{
+                  backgroundColor: 'var(--accent-glow, rgba(16,185,129,0.15))',
+                  color: 'var(--accent-primary, #10B981)',
+                  borderColor: 'var(--accent-glow, rgba(16,185,129,0.3))'
+                }}
+              >
                 Official Transaction Receipt
               </span>
             </div>
@@ -421,13 +438,22 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               </div>
             )}
 
-            {/* Total Amount Due with Vibrant Green Highlighting */}
+            {/* Total Amount Due with Dynamic Theme Accent Highlighting */}
             <div className="pt-2 pb-1 border-t border-[#2A2A2A]">
-              <div className="p-3 rounded-xl bg-emerald-950/50 border border-emerald-500/40 flex justify-between items-center">
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-300">
+              <div
+                className="p-3 rounded-xl border flex justify-between items-center"
+                style={{
+                  backgroundColor: 'var(--accent-glow, rgba(16,185,129,0.15))',
+                  borderColor: 'var(--accent-glow, rgba(16,185,129,0.4))'
+                }}
+              >
+                <span className="text-xs font-black uppercase tracking-wider text-slate-200">
                   TOTAL AMOUNT DUE:
                 </span>
-                <span className="text-lg font-black font-mono text-emerald-400 tracking-tight">
+                <span
+                  className="text-lg font-black font-mono tracking-tight"
+                  style={{ color: 'var(--accent-primary, #10B981)' }}
+                >
                   ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -436,7 +462,10 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             {/* Payment Method - Cash Only */}
             <div className="flex justify-between items-center pt-1 text-gray-300">
               <span>Payment Method:</span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1E1E1E] text-emerald-400 font-bold border border-[#2A2A2A] text-xs">
+              <span
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1E1E1E] font-bold border border-[#2A2A2A] text-xs"
+                style={{ color: 'var(--accent-primary, #10B981)' }}
+              >
                 <Banknote className="w-3.5 h-3.5" />
                 CASH
               </span>
@@ -449,12 +478,21 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
               </span>
             </div>
 
-            {/* Change with Vibrant Green Highlighting */}
-            <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex justify-between items-center">
-              <span className="font-bold text-emerald-300 text-xs">
+            {/* Change with Dynamic Theme Accent Highlighting */}
+            <div
+              className="p-2.5 rounded-xl border flex justify-between items-center"
+              style={{
+                backgroundColor: 'var(--accent-glow, rgba(16,185,129,0.1))',
+                borderColor: 'var(--accent-glow, rgba(16,185,129,0.3))'
+              }}
+            >
+              <span className="font-bold text-xs text-slate-200">
                 Change:
               </span>
-              <span className="text-base font-black font-mono text-emerald-400">
+              <span
+                className="text-base font-black font-mono"
+                style={{ color: 'var(--accent-primary, #10B981)' }}
+              >
                 ₱{changeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -480,7 +518,11 @@ export default function OfficialReceiptModal({ isOpen, onClose, receipt }) {
             <button
               type="button"
               onClick={() => handlePrintOrPdf(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-white font-bold text-xs shadow-md transition-all cursor-pointer hover:opacity-90 active:scale-95"
+              style={{
+                backgroundColor: 'var(--accent-primary, #10B981)',
+                boxShadow: '0 2px 10px var(--accent-glow, rgba(16,185,129,0.3))'
+              }}
               title="Save Receipt as PDF"
             >
               <Download className="w-3.5 h-3.5" />
