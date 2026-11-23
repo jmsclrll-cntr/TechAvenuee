@@ -1790,6 +1790,65 @@ def get_suppliers():
     finally:
         conn.close()
 
+# ----- SUPPLIER MANAGEMENT -----
+@app.route("/api/suppliers/<int:supplier_id>", methods=["DELETE"])
+@require_role("admin", "inventory_clerk", "instructor")
+def delete_supplier(supplier_id):
+    """Delete a supplier if no dependent purchase orders or stock‑in records exist."""
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # 1️⃣ Check for related purchase orders
+            cursor.execute(
+                "SELECT COUNT(*) AS cnt FROM purchase_orders WHERE supplier_id = %s;",
+                (supplier_id,),
+            )
+            po_cnt = cursor.fetchone()["cnt"]
+
+            # 2️⃣ Check for stock‑in movements (type = 'stock_in')
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS cnt
+                FROM inventory_movements
+                WHERE supplier_id = %s AND movement_type = 'stock_in';
+                """,
+                (supplier_id,),
+            )
+            stock_in_cnt = cursor.fetchone()["cnt"]
+
+            if po_cnt > 0 or stock_in_cnt > 0:
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": (
+                                "Cannot delete supplier because it has related purchase orders "
+                                "or stock‑in records. Consider marking it inactive instead."
+                            ),
+                        }
+                    ),
+                    400,
+                )
+
+            # 3️⃣ Safe to delete
+            cursor.execute(
+                "DELETE FROM suppliers WHERE id = %s;", (supplier_id,)
+            )
+            conn.commit()
+            return jsonify(
+                {"status": "success", "message": "Supplier deleted successfully."}
+            )
+    except Exception as e:
+        conn.rollback()
+        return (
+            jsonify(
+                {"status": "error", "message": f"Deletion failed: {str(e)}"}
+            ),
+            500,
+        )
+    finally:
+        conn.close()
+
 @app.route("/api/suppliers", methods=["POST"])
 @require_role("admin", "inventory_clerk")
 def create_supplier():
