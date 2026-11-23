@@ -74,7 +74,6 @@ export const api = {
     const q = new URLSearchParams(params).toString();
     return apiRequest(`/inventory?${q}`);
   },
-<<<<<<< HEAD
   addProduct: (productData) => {
     const isFormData = productData instanceof FormData;
     return apiRequest("/inventory", {
@@ -92,17 +91,6 @@ export const api = {
   deleteProduct: (id) => apiRequest(`/inventory/${id}`, {
     method: "DELETE"
   }),
-=======
-  addProduct: (productData) => apiRequest("/inventory", {
-    method: "POST",
-    body: JSON.stringify(productData)
-  }),
-  updateProduct: (id, productData) => apiRequest(`/inventory/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(productData)
-  }),
-  deleteProduct: (id) => apiRequest(`/inventory/${id}`, { method: "DELETE" }),
->>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a
   uploadProductImage: (id, formData) => apiRequest(`/products/${id}/image`, {
     method: "POST",
     body: formData
@@ -223,7 +211,6 @@ export const api = {
   createUser: (userData) => apiRequest("/users", {
     method: "POST",
     body: JSON.stringify(userData)
-<<<<<<< HEAD
   }),
   updateUser: (id, userData) => apiRequest(`/users/${id}`, {
     method: "PUT",
@@ -296,7 +283,3 @@ export const api = {
     return apiRequest(`/models/cross-validate?task=${encodeURIComponent(task)}&algorithm=${encodeURIComponent(algorithm)}`);
   }
 };
-=======
-  })
-};
->>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a

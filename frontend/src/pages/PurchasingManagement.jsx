@@ -651,15 +651,9 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           <td className="py-2.5 px-3">
                             <div className="flex items-center gap-2">
                               <div className="w-7 h-7 rounded bg-white dark:bg-darkbg border p-0.5 shrink-0 flex items-center justify-center">
-<<<<<<< HEAD
                                 <img 
                                   src={getProductImageUrl(item.image_url)} 
                                   alt={item.name} 
-=======
-                                <img
-                                  src={item.image_url || '/products/default.svg'}
-                                  alt={item.name}
->>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a
                                   className="max-h-full max-w-full object-contain"
                                   onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                                 />
