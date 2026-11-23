@@ -172,8 +172,6 @@ export const api = {
     body: JSON.stringify({ status })
   }),
   getSupplierOrders: (id) => apiRequest(`/suppliers/${id}/orders`),
-  // NEW: Delete a supplier
-  deleteSupplier: (id) => apiRequest(`/suppliers/${id}`, { method: "DELETE" }),
 
   // Purchase Orders & Receiving
   getPurchaseOrders: (params = {}) => {
