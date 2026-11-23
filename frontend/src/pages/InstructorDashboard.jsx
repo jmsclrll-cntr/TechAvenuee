@@ -764,34 +764,49 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
                     </thead>
                     <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                       {currentDatasetMeta.columns?.map((col) => {
-                        const isTarget = col.name === currentDatasetMeta.target_variable;
+                        const columnRole = col.role || "Not Used";
+                        const isTarget = columnRole.toLowerCase().includes("target");
+                        const isInput = columnRole.toLowerCase().includes("input");
+
                         return (
-                          <tr key={col.name} className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors">
+                          <tr
+                            key={col.name}
+                            className="hover:bg-[#1C1917]/70 dark:hover:bg-darkbg-card/50 transition-colors"
+                          >
                             <td className="py-2.5 px-4 font-mono font-bold" style={{ color: 'var(--accent-light)' }}>
                               {col.name}
                             </td>
+
                             <td className="py-2.5 px-4">
                               {isTarget ? (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                                   Target Variable
                                 </span>
+                              ) : isInput ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                  Input Feature
+                                </span>
                               ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#1C1917] text-stone-300 bg-[#1C1917] dark:text-gray-300 border border-[#292524]">
-                                  Feature
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#1C1917] text-stone-400 dark:text-gray-400 border border-[#292524]">
+                                  Not Used
                                 </span>
                               )}
                             </td>
+
                             <td className="py-2.5 px-4 font-mono font-medium text-stone-200 dark:text-gray-300">
-                              <span className="px-2 py-0.5 rounded text-[11px] bg-[#292524] bg-[#1C1917] text-stone-200 dark:text-gray-300 font-mono">
+                              <span className="px-2 py-0.5 rounded text-[11px] bg-[#292524] text-stone-200 dark:text-gray-300 font-mono">
                                 {col.type}
                               </span>
                             </td>
+
                             <td className="py-2.5 px-4 text-center font-mono font-semibold text-[#FAFAF9] dark:text-gray-200">
                               {col.unique_count?.toLocaleString() ?? '—'}
                             </td>
+
                             <td className="py-2.5 px-4 text-center font-mono text-emerald-600 dark:text-emerald-400 font-bold">
                               0 (0%)
                             </td>
+
                             <td className="py-2.5 px-4 text-right">
                               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
                                 Validated
@@ -1559,16 +1574,40 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {savedModels.map((m, idx) => (
                   <tr key={idx} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
-                    <td className="py-2.5 px-3 font-mono font-bold" style={{ color: 'var(--accent-primary)' }}>{m.filename}</td>
-                    <td className="py-2.5 px-3 font-medium">{m.task_name}</td>
+                    <td className="py-2.5 px-3 font-mono font-bold"
+                      style={{ color: 'var(--accent-primary)' }}>
+                      {m.model_filename || m.filename || 'Unknown File'}
+                    </td>
+
+                    <td className="py-2.5 px-3 font-medium">
+                      {m.task || m.task_name || 'Unknown Task'}
+                    </td>
+
                     <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold border" style={{ backgroundColor: 'var(--accent-glow)', color: 'var(--accent-light)', borderColor: 'var(--accent-border)' }}>
+                      <span
+                        className="px-2 py-0.5 rounded text-[10px] font-bold border"
+                        style={{
+                          backgroundColor: 'var(--accent-glow)',
+                          color: 'var(--accent-light)',
+                          borderColor: 'var(--accent-border)'
+                        }}
+                      >
                         {m.algorithm}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">{m.r2_score}</td>
-                    <td className="py-2.5 px-3 text-right font-mono">{m.rmse} {m.units}</td>
-                    <td className="py-2.5 px-3 text-gray-400 font-mono text-[11px]">{m.trained_at}</td>
+
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
+                      {m.r2_score}
+                    </td>
+
+                    <td className="py-2.5 px-3 text-right font-mono">
+                      {m.rmse} {m.units}
+                    </td>
+
+                    <td className="py-2.5 px-3 text-gray-400 font-mono text-[11px]">
+                      {m.trained_at}
+                    </td>
+
                     <td className="py-2.5 px-3 text-right">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
                         Active in Production
@@ -1606,15 +1645,50 @@ export default function InstructorDashboard({ activeTab, setActiveTab, user }) {
               <tbody className="divide-y divide-[#292524] dark:divide-darkbg-border text-stone-200 dark:text-gray-200">
                 {predictionHistory.map((h) => (
                   <tr key={h.id} className="hover:bg-[#1C1917]/50 hover:bg-[#292524]/50">
-                    <td className="py-2.5 px-3 font-mono text-gray-400">#{h.id}</td>
-                    <td className="py-2.5 px-3 font-bold uppercase" style={{ color: 'var(--accent-primary)' }}>{h.task_type}</td>
-                    <td className="py-2.5 px-3">{h.model_type}</td>
+
+                    {/* Run ID */}
+                    <td className="py-2.5 px-3 font-mono text-gray-400">
+                      #{h.id}
+                    </td>
+
+                    {/* Task */}
+                    <td
+                      className="py-2.5 px-3 font-bold uppercase"
+                      style={{ color: 'var(--accent-primary)' }}
+                    >
+                      {String(h.task || '')
+                        .replace(/_/g, ' ')}
+                    </td>
+
+                    {/* Model Type */}
+                    <td className="py-2.5 px-3">
+                      {h.algorithm === 'linear_regression'
+                        ? 'Multiple Linear Regression'
+                        : h.algorithm === 'random_forest'
+                          ? 'Random Forest Regressor'
+                          : h.algorithm || 'Unknown Model'}
+                    </td>
+
+                    {/* Forecast Value */}
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">
                       {Number(h.predicted_value).toLocaleString()}
                     </td>
-                    <td className="py-2.5 px-3 max-w-xs truncate text-stone-400 dark:text-gray-300">{h.recommendation}</td>
-                    <td className="py-2.5 px-3">{h.generated_by}</td>
-                    <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">{h.created_at}</td>
+
+                    {/* Executive Recommendation */}
+                    <td className="py-2.5 px-3 max-w-xs truncate text-stone-400 dark:text-gray-300">
+                      {h.recommendation || 'No recommendation available'}
+                    </td>
+
+                    {/* Executed By */}
+                    <td className="py-2.5 px-3">
+                      {h.user_name || 'Unknown User'}
+                    </td>
+
+                    {/* Date and Time */}
+                    <td className="py-2.5 px-3 font-mono text-[11px] text-gray-400">
+                      {h.created_at}
+                    </td>
+
                   </tr>
                 ))}
               </tbody>

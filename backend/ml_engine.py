@@ -62,6 +62,20 @@ def normalize_task(task):
         return 'best_selling'
     return task
 
+def get_column_role(column_name, config):
+    if column_name == config['target']:
+        return 'Used – Target'
+    elif column_name in config['features']:
+        return 'Used – Input'
+    return 'Not Used'
+
+
+def get_config_for_dataset(filename):
+    for task, config in TASK_CONFIGS.items():
+        if config['dataset'] == filename:
+            return config
+    return None
+
 def get_dataset_path(dataset_name):
     return os.path.join(DATASETS_DIR, dataset_name)
 
@@ -495,7 +509,13 @@ def get_datasets_list():
             stat = os.stat(fpath)
             
             columns_info = [
-                {'name': col, 'type': str(df[col].dtype), 'unique_count': int(df[col].nunique())}
+                {
+                    'name': col,
+                    'type': str(df[col].dtype),
+                    'unique_count': int(df[col].nunique()),
+                    'missing': int(df[col].isna().sum()),
+                    'role': get_column_role(col, cfg)
+                }
                 for col in df.columns
             ]
             
@@ -526,14 +546,19 @@ def get_dataset_preview(filename, page=1, per_page=15, search=''):
         
     df = pd.read_csv(fpath)
     
-    # Feature types summary
+    # Feature types and machine learning usage summary
+    config = get_config_for_dataset(filename)
+
     feature_info = []
+
     for col in df.columns:
         feature_info.append({
             'name': col,
             'type': str(df[col].dtype),
             'non_null': int(df[col].count()),
-            'missing': int(df[col].isna().sum())
+            'missing': int(df[col].isna().sum()),
+            'unique_count': int(df[col].nunique()),
+            'role': get_column_role(col, config) if config else 'Not Used'
         })
         
     if search:
