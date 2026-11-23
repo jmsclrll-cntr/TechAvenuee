@@ -11,7 +11,7 @@ function getAuthHeaders() {
 export async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
   const isFormData = options.body instanceof FormData;
-  
+
   const headers = {
     ...(isFormData ? {} : getAuthHeaders()),
     ...(options.headers || {})
@@ -23,11 +23,8 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   try {
-    const res = await fetch(url, {
-      ...options,
-      headers
-    });
-    
+    const res = await fetch(url, { ...options, headers });
+
     if (res.status === 401) {
       localStorage.removeItem("techavenue_token");
       localStorage.removeItem("techavenue_user");
@@ -77,6 +74,7 @@ export const api = {
     const q = new URLSearchParams(params).toString();
     return apiRequest(`/inventory?${q}`);
   },
+<<<<<<< HEAD
   addProduct: (productData) => {
     const isFormData = productData instanceof FormData;
     return apiRequest("/inventory", {
@@ -94,6 +92,17 @@ export const api = {
   deleteProduct: (id) => apiRequest(`/inventory/${id}`, {
     method: "DELETE"
   }),
+=======
+  addProduct: (productData) => apiRequest("/inventory", {
+    method: "POST",
+    body: JSON.stringify(productData)
+  }),
+  updateProduct: (id, productData) => apiRequest(`/inventory/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(productData)
+  }),
+  deleteProduct: (id) => apiRequest(`/inventory/${id}`, { method: "DELETE" }),
+>>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a
   uploadProductImage: (id, formData) => apiRequest(`/products/${id}/image`, {
     method: "POST",
     body: formData
@@ -123,9 +132,7 @@ export const api = {
     method: "PUT",
     body: JSON.stringify(data)
   }),
-  cancelDraft: (id) => apiRequest(`/transactions/drafts/${id}`, {
-    method: "DELETE"
-  }),
+  cancelDraft: (id) => apiRequest(`/transactions/drafts/${id}`, { method: "DELETE" }),
 
   // Point of Sale (POS)
   getPosProducts: () => apiRequest("/pos/products"),
@@ -177,6 +184,8 @@ export const api = {
     body: JSON.stringify({ status })
   }),
   getSupplierOrders: (id) => apiRequest(`/suppliers/${id}/orders`),
+  // NEW: Delete a supplier
+  deleteSupplier: (id) => apiRequest(`/suppliers/${id}`, { method: "DELETE" }),
 
   // Purchase Orders & Receiving
   getPurchaseOrders: (params = {}) => {
@@ -214,6 +223,7 @@ export const api = {
   createUser: (userData) => apiRequest("/users", {
     method: "POST",
     body: JSON.stringify(userData)
+<<<<<<< HEAD
   }),
   updateUser: (id, userData) => apiRequest(`/users/${id}`, {
     method: "PUT",
@@ -286,3 +296,7 @@ export const api = {
     return apiRequest(`/models/cross-validate?task=${encodeURIComponent(task)}&algorithm=${encodeURIComponent(algorithm)}`);
   }
 };
+=======
+  })
+};
+>>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a

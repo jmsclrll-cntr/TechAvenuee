@@ -81,6 +81,9 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
   const [selectedSupplierForHistory, setSelectedSupplierForHistory] = useState(null);
   const [supplierOrders, setSupplierOrders] = useState([]);
 
+  //Delete Supplier
+  const [supplierToDelete, setSupplierToDelete] = useState(null);
+
   // Search and Filter states
   const [supplierSearch, setSupplierSearch] = useState('');
   const [poSearch, setPoSearch] = useState('');
@@ -465,20 +468,20 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
   const filteredSuppliers = suppliers.filter(s => {
     if (!supplierSearch) return true;
     const q = supplierSearch.toLowerCase();
-    return s.name.toLowerCase().includes(q) || 
+    return s.name.toLowerCase().includes(q) ||
       (s.contact_person && s.contact_person.toLowerCase().includes(q)) ||
       (s.supplied_categories && s.supplied_categories.toLowerCase().includes(q));
   });
 
   const filteredOrders = purchaseOrders.filter(po => {
     const matchesStatus = poStatusFilter === 'All' || po.status === poStatusFilter;
-    const matchesSearch = !poSearch || 
+    const matchesSearch = !poSearch ||
       po.po_number.toLowerCase().includes(poSearch.toLowerCase()) ||
       po.supplier_name.toLowerCase().includes(poSearch.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
-  const eligibleForReceivingOrders = purchaseOrders.filter(po => 
+  const eligibleForReceivingOrders = purchaseOrders.filter(po =>
     po.status === 'Ordered' || po.status === 'Partially Received' || po.status === 'Pending'
   );
 
@@ -492,7 +495,7 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
             {clerkOnlyReceiving ? 'Authorized Stock Receiving' : 'Supplier & Purchasing Management'}
           </h1>
           <p className="text-xs text-gray-500 dark:text-stone-400 mt-1">
-            {clerkOnlyReceiving 
+            {clerkOnlyReceiving
               ? 'Receive verified vendor shipments against approved purchase orders and update physical inventory.'
               : 'End-to-end procurement lifecycle: manage verified vendors, draft purchase orders, and receive verified stock shipments.'}
           </p>
@@ -535,18 +538,16 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
               <button
                 key={tab.id}
                 onClick={() => setSubTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
-                  isActive
-                    ? 'bg-navy text-white dark:bg-greige dark:text-navy shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-darkbg'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${isActive
+                  ? 'bg-navy text-white dark:bg-greige dark:text-navy shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-darkbg'
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                  }`}>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    }`}>
                     {tab.count}
                   </span>
                 )}
@@ -607,7 +608,7 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
 
           {/* Quick Split: Low-Stock Products Requiring Replenishment & Recent Receiving Batches */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
+
             {/* Low-Stock Products Replenishment List */}
             <div className="bg-white dark:bg-darkbg-card border border-gray-200 dark:border-darkbg-border rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
@@ -650,9 +651,15 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           <td className="py-2.5 px-3">
                             <div className="flex items-center gap-2">
                               <div className="w-7 h-7 rounded bg-white dark:bg-darkbg border p-0.5 shrink-0 flex items-center justify-center">
+<<<<<<< HEAD
                                 <img 
                                   src={getProductImageUrl(item.image_url)} 
                                   alt={item.name} 
+=======
+                                <img
+                                  src={item.image_url || '/products/default.svg'}
+                                  alt={item.name}
+>>>>>>> 1790beb8841682c360ce4fe9e0a2ec6a78dd285a
                                   className="max-h-full max-w-full object-contain"
                                   onError={(e) => { e.target.src = '/products/desktop.svg'; }}
                                 />
@@ -771,11 +778,10 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                 <button
                   key={st}
                   onClick={() => setPoStatusFilter(st)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-                    poStatusFilter === st
-                      ? 'bg-navy text-white dark:bg-greige dark:text-navy shadow-sm'
-                      : 'bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${poStatusFilter === st
+                    ? 'bg-navy text-white dark:bg-greige dark:text-navy shadow-sm'
+                    : 'bg-gray-100 dark:bg-darkbg text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
                 >
                   {st}
                 </button>
@@ -1018,11 +1024,10 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           </span>
                         </td>
                         <td className="py-3 px-3 text-center">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            s.status === 'active'
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
-                              : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
-                          }`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${s.status === 'active'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                            : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                            }`}>
                             {s.status === 'active' ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -1050,15 +1055,83 @@ export default function PurchasingManagement({ user, initialTab = 'dashboard', c
                           </button>
                           <button
                             onClick={() => handleToggleSupplierStatus(s)}
-                            className={`p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border ${
-                              s.status === 'active' 
-                                ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40' 
-                                : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-950/40'
-                            }`}
+                            className={`p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border ${s.status === 'active'
+                              ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40'
+                              : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-950/40'
+                              }`}
                             title={s.status === 'active' ? 'Deactivate Supplier' : 'Activate Supplier'}
                           >
                             <Power className="w-3.5 h-3.5" />
                           </button>
+                          <td className="py-3 px-4 text-right space-x-1.5">
+                            {/* View PO History */}
+                            <button
+                              onClick={() => handleViewSupplierHistory(s)}
+                              className="p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+                              title="View PO History"
+                            >
+                              <ClipboardList className="w-3.5 h-3.5" />
+                            </button>
+
+                            {/* Edit Supplier */}
+                            <button
+                              onClick={() => handleOpenEditSupplier(s)}
+                              className="p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400"
+                              title="Edit Supplier"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+
+                            {/* *** NEW Delete Supplier button *** */}
+                            <button
+                              onClick={() => {
+                                setSupplierToDelete(s);
+                                setIsConfirmOpen(true);
+                                setConfirmConfig({
+                                  title: "Delete Supplier?",
+                                  message: (
+                                    <>
+                                      <p>Supplier: <strong>{s.name}</strong></p>
+                                      <p className="mt-2 text-sm text-red-600">
+                                        Are you sure you want to delete this supplier? This action cannot be undone.
+                                      </p>
+                                    </>
+                                  ),
+                                  confirmLabel: "Delete Supplier",
+                                  cancelLabel: "Cancel",
+                                  confirmStyle: "danger",
+                                  action: async () => {
+                                    try {
+                                      const res = await api.deleteSupplier(s.id);
+                                      if (res.status === "success") {
+                                        showFeedback(`Supplier "${s.name}" deleted.`);
+                                        loadAllData();   // refresh the table
+                                      }
+                                    } catch (err) {
+                                      // API already returns a clear message
+                                      showFeedback(err.message || "Failed to delete supplier.", "error");
+                                    }
+                                  },
+                                });
+                              }}
+                              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Delete</span>
+                            </button>
+
+                            {/* Activate / Deactivate Supplier */}
+                            <button
+                              onClick={() => handleToggleSupplierStatus(s)}
+                              className={`p-1.5 rounded-lg border border-gray-200 dark:border-darkbg-border ${s.status === 'active'
+                                  ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40'
+                                  : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-950/40'
+                                }`}
+                              title={s.status === 'active' ? 'Deactivate Supplier' : 'Activate Supplier'}
+                            >
+                              <Power className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
                         </td>
                       </tr>
                     ))
