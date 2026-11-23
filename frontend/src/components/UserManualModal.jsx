@@ -1258,11 +1258,10 @@ export default function UserManualModal({
                     key={sec.id}
                     type="button"
                     onClick={() => setActiveSectionId(sec.id)}
-                    className={`w-full text-left p-2.5 rounded-xl text-xs font-medium transition-all flex items-start justify-between gap-2 cursor-pointer ${
-                      isActive
+                    className={`w-full text-left p-2.5 rounded-xl text-xs font-medium transition-all flex items-start justify-between gap-2 cursor-pointer ${isActive
                         ? 'bg-white dark:bg-[#1C1917] shadow-xs border border-gray-200 dark:border-[#292524] font-bold'
                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#292524]'
-                    }`}
+                      }`}
                     style={isActive ? { color: 'var(--accent-light)', borderColor: 'var(--accent-border)' } : {}}
                   >
                     <span className="truncate">{sec.title}</span>
