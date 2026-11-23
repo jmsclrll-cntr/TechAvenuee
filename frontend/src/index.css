@@ -106,6 +106,298 @@ aside {
   --header-bg: #1C1917;
 }
 
+/* =======================================================
+   SYSTEM-WIDE LIGHT THEME MODE (Active when html does not have .dark)
+   Supports all role workspaces, modals, cards, tables, inputs,
+   navigation bars, and controls without affecting logic.
+   Guarantees 0% shade of black on all cards and surfaces.
+   ======================================================= */
+
+html:not(.dark) {
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  --card-border: #E2E8F0;
+  --header-bg: #FFFFFF;
+  color-scheme: light;
+}
+
+html:not(.dark),
+html:not(.dark) body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* COMPLETE REMOVAL OF ALL DARK GRADIENT OVERLAYS & SHADES OF BLACK IN LIGHT MODE */
+html:not(.dark) [class*="from-black"],
+html:not(.dark) [class*="via-black"],
+html:not(.dark) [class*="to-black"],
+html:not(.dark) [class*="from-stone-900"],
+html:not(.dark) [class*="from-zinc-900"] {
+  background-image: none !important;
+}
+
+/* Any ambient card overlay divs or decorative dark overlays in light mode */
+html:not(.dark) div.absolute.inset-0.pointer-events-none:empty,
+html:not(.dark) div.absolute.inset-0.pointer-events-none[class*="gradient"],
+html:not(.dark) div.absolute.inset-0.pointer-events-none[style*="gradient"] {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+html:not(.dark) [style*="rgba(0,0,0"],
+html:not(.dark) [style*="rgba(0, 0, 0"],
+html:not(.dark) [style*="rgba(28,25,23"],
+html:not(.dark) [style*="rgba(28, 25, 23"] {
+  background: transparent !important;
+}
+
+/* App root canvas and main scroll container */
+html:not(.dark) .bg-darkbg,
+html:not(.dark) main {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* Primary card containers, panels, modals, popovers, chart boxes (PURE CRISP WHITE) */
+html:not(.dark) .bg-\[\#1C1917\],
+html:not(.dark) [class*="bg-[#1C1917]"],
+html:not(.dark) .bg-\[\#18181B\],
+html:not(.dark) [class*="bg-[#18181B]"],
+html:not(.dark) .bg-\[\#141210\],
+html:not(.dark) [class*="bg-[#141210]"],
+html:not(.dark) .bg-\[\#121212\],
+html:not(.dark) [class*="bg-[#121212]"],
+html:not(.dark) .bg-\[\#15121E\],
+html:not(.dark) [class*="bg-[#15121E]"],
+html:not(.dark) .bg-\[\#171412\],
+html:not(.dark) [class*="bg-[#171412]"],
+html:not(.dark) .bg-\[\#181818\],
+html:not(.dark) [class*="bg-[#181818]"],
+html:not(.dark) .bg-\[\#1E1E1E\],
+html:not(.dark) [class*="bg-[#1E1E1E]"],
+html:not(.dark) .bg-\[\#0B0F17\],
+html:not(.dark) [class*="bg-[#0B0F17]"] {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Secondary panels, pills, sub-boxes, inactive items, hover states */
+html:not(.dark) .bg-\[\#292524\],
+html:not(.dark) [class*="bg-[#292524]"],
+html:not(.dark) .bg-\[\#24201E\],
+html:not(.dark) [class*="bg-[#24201E]"],
+html:not(.dark) .bg-\[\#242424\],
+html:not(.dark) [class*="bg-[#242424]"],
+html:not(.dark) .bg-\[\#252033\],
+html:not(.dark) [class*="bg-[#252033]"],
+html:not(.dark) .bg-\[\#282828\],
+html:not(.dark) [class*="bg-[#282828]"],
+html:not(.dark) .bg-\[\#2C2724\],
+html:not(.dark) [class*="bg-[#2C2724]"],
+html:not(.dark) .bg-\[\#333333\],
+html:not(.dark) [class*="bg-[#333333]"],
+html:not(.dark) .bg-\[\#342F2D\],
+html:not(.dark) [class*="bg-[#342F2D]"],
+html:not(.dark) .bg-\[\#3E3835\],
+html:not(.dark) [class*="bg-[#3E3835]"],
+html:not(.dark) .bg-\[\#44403C\],
+html:not(.dark) [class*="bg-[#44403C]"] {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* Dark borders across all components */
+html:not(.dark) [class*="border-[#292524]"],
+html:not(.dark) [class*="border-[#2A2A2A]"],
+html:not(.dark) [class*="border-[#333333]"],
+html:not(.dark) [class*="border-[#383330]"],
+html:not(.dark) [class*="border-[#383838]"],
+html:not(.dark) [class*="border-[#3A3A3A]"],
+html:not(.dark) [class*="border-[#44403C]"],
+html:not(.dark) [class*="border-white/"] {
+  border-color: #E2E8F0 !important;
+}
+
+/* Primary text headers and dark-mode light text */
+html:not(.dark) .text-\[\#FAFAF9\],
+html:not(.dark) .text-\[\#FAFAFA\],
+html:not(.dark) .text-\[\#FFFBEB\] {
+  color: #0F172A !important;
+}
+
+/* Plain headings and text elements with text-white (excluding accent buttons and badges) */
+html:not(.dark) h1.text-white,
+html:not(.dark) h2.text-white,
+html:not(.dark) h3.text-white,
+html:not(.dark) h4.text-white,
+html:not(.dark) h5.text-white,
+html:not(.dark) h6.text-white,
+html:not(.dark) p.text-white,
+html:not(.dark) th.text-white,
+html:not(.dark) td.text-white,
+html:not(.dark) span.text-white:not([class*="bg-"]):not([style*="background"]) {
+  color: #0F172A !important;
+}
+
+/* Secondary & Muted Typography */
+html:not(.dark) .text-stone-300,
+html:not(.dark) .text-stone-400,
+html:not(.dark) .text-gray-300,
+html:not(.dark) .text-gray-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-stone-200,
+html:not(.dark) .text-gray-200,
+html:not(.dark) .text-gray-100 {
+  color: #1E293B !important;
+}
+
+html:not(.dark) .text-stone-500,
+html:not(.dark) .text-gray-500 {
+  color: #64748B !important;
+}
+
+/* Form Controls: Inputs, Selects, Textareas */
+html:not(.dark) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) select:focus,
+html:not(.dark) textarea:focus {
+  background-color: #FFFFFF !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-glow) !important;
+}
+
+/* Header & Floating Navigation */
+html:not(.dark) header {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) nav[aria-label="Workspace Navigation Dock"] {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) nav[aria-label="Workspace Navigation Dock"] button:not([style*="background-color: var(--accent-primary)"]) {
+  color: #475569 !important;
+}
+
+html:not(.dark) nav[aria-label="Workspace Navigation Dock"] button:not([style*="background-color: var(--accent-primary)"]):hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html:not(.dark) nav[aria-label="Instructor Workspace Navigation"] > div {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) nav[aria-label="Instructor Workspace Navigation"] button:not([style*="background-color: var(--accent-primary)"]) {
+  color: #475569 !important;
+}
+
+html:not(.dark) nav[aria-label="Instructor Workspace Navigation"] button:not([style*="background-color: var(--accent-primary)"]):hover {
+  background-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+/* Profile Dropdown & Popovers */
+html:not(.dark) [role="menu"] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+html:not(.dark) [role="menu"] h3,
+html:not(.dark) [role="menu"] span.font-bold {
+  color: #0F172A !important;
+}
+
+html:not(.dark) [role="menu"] .border-b {
+  border-color: #E2E8F0 !important;
+}
+
+/* Modals & Dialog Windows */
+html:not(.dark) .fixed.inset-0.z-50 > div[class*="rounded-"],
+html:not(.dark) [role="dialog"] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Data Tables */
+html:not(.dark) table {
+  color: #0F172A !important;
+}
+
+html:not(.dark) table thead,
+html:not(.dark) table thead tr,
+html:not(.dark) table th {
+  background-color: #F8FAFC !important;
+  color: #475569 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) table td {
+  border-color: #F1F5F9 !important;
+  color: #1E293B !important;
+}
+
+html:not(.dark) table tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+/* Charts & Tooltips */
+html:not(.dark) .recharts-default-tooltip,
+html:not(.dark) .chart-tooltip {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Scrollbars in Light Mode */
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Login Page Ambient Light Mode Styling */
+html:not(.dark) .min-h-screen.flex.items-center.justify-center {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F6 45%, #E2E8F0 100%) !important;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;

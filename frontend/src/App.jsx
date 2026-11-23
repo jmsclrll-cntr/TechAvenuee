@@ -8,16 +8,11 @@ import AdminDashboard from './pages/AdminDashboard';
 import InstructorDashboard from './pages/InstructorDashboard';
 import Login from './pages/Login';
 import { api } from './api';
+import { useThemeColor } from './context/ThemeColorContext';
 
 function App() {
-  // Theme state persisted in localStorage
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('techavenue_theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  // Theme state persisted in localStorage via ThemeColorContext
+  const { darkMode, setDarkMode } = useThemeColor();
 
   // Sidebar collapsed state persisted in localStorage
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -69,6 +64,64 @@ function App() {
       // Ignore localStorage errors
     }
   }, [sidebarCollapsed]);
+
+  // Maintain Fullscreen Mode across login, role switches, and navigation
+  useEffect(() => {
+    const handleFullscreenSync = () => {
+      const isFs = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+      if (isFs) {
+        localStorage.setItem('techavenue_fullscreen', 'true');
+      } else if (document.hasFocus()) {
+        localStorage.setItem('techavenue_fullscreen', 'false');
+      }
+    };
+
+    const autoMaintainFullscreen = () => {
+      try {
+        const shouldBeFullscreen = localStorage.getItem('techavenue_fullscreen') === 'true';
+        const isFs = Boolean(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        );
+        if (shouldBeFullscreen && !isFs) {
+          const docEl = document.documentElement;
+          if (docEl.requestFullscreen) {
+            docEl.requestFullscreen().catch(() => {});
+          } else if (docEl.webkitRequestFullscreen) {
+            docEl.webkitRequestFullscreen().catch(() => {});
+          } else if (docEl.mozRequestFullScreen) {
+            docEl.mozRequestFullScreen().catch(() => {});
+          } else if (docEl.msRequestFullscreen) {
+            docEl.msRequestFullscreen().catch(() => {});
+          }
+        }
+      } catch {}
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenSync);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenSync);
+    document.addEventListener('mozfullscreenchange', handleFullscreenSync);
+
+    window.addEventListener('click', autoMaintainFullscreen, { passive: true });
+    window.addEventListener('pointerdown', autoMaintainFullscreen, { passive: true });
+    window.addEventListener('keydown', autoMaintainFullscreen, { passive: true });
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenSync);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenSync);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenSync);
+      window.removeEventListener('click', autoMaintainFullscreen);
+      window.removeEventListener('pointerdown', autoMaintainFullscreen);
+      window.removeEventListener('keydown', autoMaintainFullscreen);
+    };
+  }, []);
 
   // Listen for invalid auth
   useEffect(() => {

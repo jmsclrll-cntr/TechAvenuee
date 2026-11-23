@@ -301,7 +301,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
               <div 
-                className="absolute inset-0 pointer-events-none rounded-xl"
+                className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
               <div 
@@ -319,7 +319,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             </div>
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-amber-500/40 transition-all relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-amber-500/[0.08] pointer-events-none rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-amber-500/[0.08] pointer-events-none rounded-xl hidden dark:block" />
               <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-amber-500/[0.08] blur-xl pointer-events-none" />
               <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Pending Restocks</span>
@@ -336,7 +336,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
             <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-all relative overflow-hidden group">
               <div 
-                className="absolute inset-0 pointer-events-none rounded-xl"
+                className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
               <div 
@@ -361,7 +361,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
             {/* Left 7 cols: Category Distribution Bar Chart */}
             <div className="lg:col-span-7 bg-[#1C1917] border border-[#292524] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[var(--accent-border)] transition-colors flex flex-col justify-between relative overflow-hidden">
               <div 
-                className="absolute inset-0 pointer-events-none rounded-xl"
+                className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                 style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
               />
               <div 
@@ -383,7 +383,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
               {/* Low-Stock vs In-Stock Ratio Donut */}
               <div className="flex-1 bg-[#1C1917] border border-[#292524] rounded-xl p-4 shadow-sm hover:border-[var(--accent-border)] transition-colors relative overflow-hidden">
                 <div 
-                  className="absolute inset-0 pointer-events-none rounded-xl"
+                  className="absolute inset-0 pointer-events-none rounded-xl hidden dark:block"
                   style={{ background: 'linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(28,25,23,0.5), var(--accent-glow))' }}
                 />
                 <div 
@@ -408,7 +408,7 @@ export default function ClerkDashboard({ activeTab, setActiveTab, user }) {
 
               {/* Single Consolidated Box Transferred from Top Row */}
               <div className="bg-[#1C1917] border border-[#292524] rounded-xl p-3.5 shadow-sm relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-[#1C1917]/50 to-white/[0.08] pointer-events-none rounded-xl hidden dark:block" />
                 <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/[0.08] blur-xl pointer-events-none" />
                 
                 <div className="relative z-10 grid grid-cols-3 gap-2 divide-x divide-[#292524]">
